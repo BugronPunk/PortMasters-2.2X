@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 import { JustForChip, PathDeskRow } from "./phases/PhaseShared";
 
@@ -118,6 +119,11 @@ export function MarketEmpty({
  * press, and the buyer's Take and Turn Down buttons with the refusal note
  * under them.
  *
+ * The accept and decline labels arrive from the desk that names them,
+ * already read, because each market's button says something different.
+ * The Cancel press is the same press on every board, so its label is the
+ * row's own and reads through the pack right here.
+ *
  * The two readings the row draws its buttons from are deliberately two
  * rather than one. `standing` is whether this row is still an offer somebody
  * may act on, which is what the buttons answer to; `chip` is whether the
@@ -179,7 +185,7 @@ export function OfferRow({
             className="h-7 px-2.5 text-[10px] rounded shrink-0"
             onClick={onCancel}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
         ) : (
           <span className="flex flex-col items-end gap-0.5 shrink-0">

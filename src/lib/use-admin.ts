@@ -40,11 +40,20 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import { api } from "@/lib/api";
+// This hook composes three of the console's sentences, and every one of
+// them is read at the moment it is composed, so an operator who reads
+// Mandarin gets the words at the language they picked. The reading
+// constant below keeps its English value: the two surfaces that print it
+// wrap their own read.
+import { t } from "@/lib/game/i18n";
 
 // The console's loading line, said once for the two surfaces that print
 // it: the page's splash while the session is checked (see app/admin), and
-// the console's own register panel while the roster is read.
-export const READING_THE_REGISTER = "Reading the register…";
+// the console's own register panel while the roster is read. The dots are
+// three periods rather than an ellipsis character, matching the pack's
+// row byte for byte, which is what the read at those two surfaces needs
+// to resolve.
+export const READING_THE_REGISTER = "Reading the register...";
 
 // The five things an operator can do to one account. The four of them a
 // selection can take ride the same socket event, admin:bulk, and are named
@@ -61,10 +70,19 @@ const ANSWER_TIMEOUT_MS = 20_000;
 // What the operator is told when an action is given up on. It says what is
 // actually known rather than what probably happened: the console has no way
 // to see that the write landed, and the register it is about to read is.
+// The reason arrives already worded for the reader, because the two sites
+// below read their own phrase through the pack, so only the frame around
+// it is composed here.
 function unanswered(count: number, why: string): string {
   return count === 1
-    ? `One action ${why}, so nothing here can vouch for whether it landed. The register has been read again.`
-    : `${count} actions ${why}, so nothing here can vouch for whether they landed. The register has been read again.`;
+    ? t(
+        "One action {why}, so nothing here can vouch for whether it landed. The register has been read again.",
+        { why },
+      )
+    : t(
+        "{count} actions {why}, so nothing here can vouch for whether they landed. The register has been read again.",
+        { count, why },
+      );
 }
 
 // The socket event each single account action is sent on. Kept together so
@@ -147,7 +165,10 @@ export function useAdmin(
     answerTimer.current = setTimeout(() => {
       answerTimer.current = null;
       if (inFlight.current.length === 0) return;
-      abandon.current(inFlight.current.length, "went unanswered by the server");
+      abandon.current(
+        inFlight.current.length,
+        t("went unanswered by the server"),
+      );
     }, ANSWER_TIMEOUT_MS);
   }, []);
 
@@ -167,7 +188,7 @@ export function useAdmin(
       if (inFlight.current.length === 0) return;
       abandon.current(
         inFlight.current.length,
-        "was cut off by a dropped connection",
+        t("was cut off by a dropped connection"),
       );
     };
     socket.on("connect", onConnect);

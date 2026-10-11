@@ -49,6 +49,8 @@ import {
   type LaunchState,
   type LaunchVerdict,
 } from "@/lib/game/gates";
+import { t } from "@/lib/game/i18n";
+import { useLanguage } from "@/lib/use-language-preference";
 import { Notice, Pill, Th } from "@/components/portmasters/shared";
 import { Gauge, Loader2, RefreshCw, ShieldCheck } from "lucide-react";
 
@@ -88,6 +90,11 @@ const LAUNCH: Record<LaunchState, { tone: ChipTone; word: string }> = {
 };
 
 export function BalanceDashboard() {
+  // This page renders outside the harbor room, so it subscribes to the
+  // captain's language at its own root: a flip redraws the screen
+  // through the state write below rather than waiting for the next
+  // route change.
+  useLanguage();
   const [reading, setReading] = useState<DashboardReading | null>(null);
   const [error, setError] = useState<string | null>(null);
   // The read runs in an effect and Refresh asks for another run, so the
@@ -111,7 +118,7 @@ export function BalanceDashboard() {
         setError(
           err instanceof Error
             ? err.message
-            : "The reading could not be loaded.",
+            : t("The reading could not be loaded."),
         );
       }
       setPending(false);
@@ -126,8 +133,8 @@ export function BalanceDashboard() {
     reading !== null
       ? windowLine(reading.window)
       : error !== null
-        ? "The window could not be read."
-        : "Reading the window...";
+        ? t("The window could not be read.")
+        : t("Reading the window...");
 
   return (
     <div className="pm-canvas min-h-screen">
@@ -154,7 +161,7 @@ export function BalanceDashboard() {
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="font-display text-sm leading-tight font-bold tracking-tight">
-                  Balance Dashboard
+                  {t("Balance Dashboard")}
                 </h1>
                 <p className="line-clamp-2 text-[11px] leading-tight text-muted-foreground">
                   {subtitle}
@@ -163,10 +170,10 @@ export function BalanceDashboard() {
               <a
                 href="/admin"
                 className="pm-tool pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="The operator console"
+                title={t("The operator console")}
               >
                 <ShieldCheck className="h-3.5 w-3.5" />
-                <span className="hidden @md:inline">Console</span>
+                <span className="hidden @md:inline">{t("Console")}</span>
               </a>
               <button
                 onClick={() => {
@@ -174,15 +181,15 @@ export function BalanceDashboard() {
                   setNonce((current) => current + 1);
                 }}
                 className="pm-tool pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="Read the window again"
-                aria-label="Read the window again"
+                title={t("Read the window again")}
+                aria-label={t("Read the window again")}
               >
                 {pending ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 ) : (
                   <RefreshCw className="h-3.5 w-3.5" />
                 )}
-                <span className="hidden @md:inline">Refresh</span>
+                <span className="hidden @md:inline">{t("Refresh")}</span>
               </button>
             </div>
           </div>
@@ -194,7 +201,7 @@ export function BalanceDashboard() {
           {reading === null && !error && (
             <div className="pm-glass flex items-center justify-center gap-2 rounded-2xl py-12 text-xs text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Reading the window...
+              {t("Reading the window...")}
             </div>
           )}
 
@@ -265,9 +272,9 @@ function LaunchStrip({ verdict }: { verdict: LaunchVerdict }) {
     <section className="pm-glass overflow-hidden rounded-2xl">
       <div className="flex flex-wrap items-center gap-2 border-b border-black/[0.06] px-4 py-3 dark:border-white/[0.08]">
         <h2 className="font-display text-sm font-bold tracking-tight">
-          Launch gates
+          {t("Launch gates")}
         </h2>
-        <Pill tone={chip.tone}>{chip.word}</Pill>
+        <Pill tone={chip.tone}>{t(chip.word)}</Pill>
         <p className="w-full text-[11px] leading-relaxed text-muted-foreground">
           {verdict.answer}
         </p>
@@ -275,11 +282,10 @@ function LaunchStrip({ verdict }: { verdict: LaunchVerdict }) {
 
       <div className="grid gap-x-6 gap-y-1 px-4 py-3 text-xs @xl:grid-cols-2">
         <p className="text-muted-foreground">
-          Run{" "}
-          <span className="tabular-nums text-foreground">
-            {verdict.voyages} of {verdict.required}
-          </span>{" "}
-          recorded voyages
+          {t("Run {voyages} of {required} recorded voyages", {
+            voyages: verdict.voyages,
+            required: verdict.required,
+          })}
         </p>
         <p className="text-muted-foreground">{verdict.tally}</p>
       </div>
@@ -346,7 +352,7 @@ function FrontNumber({ line }: { line: DashboardReadingLine }) {
         {/* The chip keeps its width and the label wraps around it: a chip
             squeezed by a long question would rather break its own word. */}
         <Pill tone={chip.tone} className="shrink-0">
-          {chip.word}
+          {t(chip.word)}
         </Pill>
       </div>
       {judged ? (
@@ -386,7 +392,7 @@ function FrontTile({
       <div className="flex items-start justify-between gap-2">
         <h2 className="text-xs leading-snug font-semibold">{title}</h2>
         <Pill tone={state.tone} className="shrink-0">
-          {state.word}
+          {t(state.word)}
         </Pill>
       </div>
       <p className="mt-auto text-[11px] leading-relaxed text-muted-foreground">
@@ -408,7 +414,7 @@ function Panel({ panel }: { panel: DashboardPanel }) {
         <h2 className="font-display text-sm font-bold tracking-tight">
           {panel.title}
         </h2>
-        <Pill tone={STATE[panel.state].tone}>{STATE[panel.state].word}</Pill>
+        <Pill tone={STATE[panel.state].tone}>{t(STATE[panel.state].word)}</Pill>
         <p className="w-full text-[11px] leading-relaxed text-muted-foreground">
           {panel.answer}
         </p>
@@ -446,10 +452,12 @@ function Panel({ panel }: { panel: DashboardPanel }) {
                 what its longest strings need to say them: Reading 32%,
                 Window 28%, Gate 28%, Verdict 12%. */}
             <tr className="border-b border-black/[0.06] text-left dark:border-white/[0.08]">
-              <Th className="w-[32%]">Reading</Th>
-              <Th className="w-[28%] text-right">Window</Th>
-              <Th className="w-[28%]">Gate</Th>
-              <Th className="w-[12%] whitespace-nowrap text-right">Verdict</Th>
+              <Th className="w-[32%]">{t("Reading")}</Th>
+              <Th className="w-[28%] text-right">{t("Window")}</Th>
+              <Th className="w-[28%]">{t("Gate")}</Th>
+              <Th className="w-[12%] whitespace-nowrap text-right">
+                {t("Verdict")}
+              </Th>
             </tr>
           </thead>
           <tbody>
@@ -531,7 +539,7 @@ function VerdictWord({ verdict }: { verdict: ReadingVerdict }) {
         aria-hidden
         className="h-1.5 w-1.5 shrink-0 rounded-full bg-current"
       />
-      {word}
+      {t(word)}
     </span>
   );
 }
@@ -543,23 +551,39 @@ function VerdictWord({ verdict }: { verdict: ReadingVerdict }) {
 // rather than in a gap at the bottom of a panel.
 function windowLine(window: DashboardWindow): string {
   if (window.voyages === 0) {
-    return "No Ocean Gambit voyage in the window yet: the panels below are the gates, and what each one waits on.";
+    return t(
+      "No Ocean Gambit voyage in the window yet: the panels below are the gates, and what each one waits on.",
+    );
   }
   const parts = [
-    `${window.voyages} ${window.voyages === 1 ? "voyage" : "voyages"}, ${window.captains} captains.`,
+    t("{window.voyages} {voyageWord}, {window.captains} captains.", {
+      "window.voyages": window.voyages,
+      voyageWord: window.voyages === 1 ? "voyage" : "voyages",
+      "window.captains": window.captains,
+    }),
   ];
   if (window.sampleRate < 1) {
     parts.push(
       window.sampleRate > 0
-        ? `Recorded at a sample rate of ${Math.round(window.sampleRate * 100)}%.`
-        : "Nothing in this window was recorded: the sampler was off.",
+        ? t("Recorded at a sample rate of {samplePercent}%.", {
+            samplePercent: Math.round(window.sampleRate * 100),
+          })
+        : t("Nothing in this window was recorded: the sampler was off."),
     );
   }
   if (window.truncated > 0) {
-    parts.push(`${window.truncated} hit the event cap.`);
+    parts.push(
+      t("{window.truncated} hit the event cap.", {
+        "window.truncated": window.truncated,
+      }),
+    );
   }
   if (window.unreadable > 0) {
-    parts.push(`${window.unreadable} could not be read.`);
+    parts.push(
+      t("{window.unreadable} could not be read.", {
+        "window.unreadable": window.unreadable,
+      }),
+    );
   }
   return parts.join(" ");
 }

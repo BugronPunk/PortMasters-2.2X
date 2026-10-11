@@ -8,6 +8,7 @@ import {
   leavePhase,
   payrollIndex,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import { phaseFace } from "@/lib/game/phases";
 import { unlockedProducts, unlockedWorkerTypes } from "@/lib/game/pools";
 import { cn } from "@/lib/utils";
@@ -80,16 +81,20 @@ export function WorkerMgmt({
   const nW = roster.reduce((sum, r) => sum + r.list.length, 0);
   // The phase the wage bill lands in, named through its face rather than
   // typed into the sentence below, so the note and the tile above it cannot
-  // come apart.
-  const duePhase = phaseFace("resolve").label;
+  // come apart. Read through the pack here, at the composer, because both
+  // benches below print this one value inside sentences of their own.
+  const duePhase = t(phaseFace("resolve").label);
 
   return (
     <div className="max-w-3xl mx-auto">
       <div className="text-2xl font-bold text-center mb-1">
-        👥 Artisan Bench
+        {t("👥 Artisan Bench")}
       </div>
       <p className="text-center text-sm text-muted-foreground mb-4">
-        💰 Current Funds: {game.money} Gold | 📦 See Inventory on the left
+        {t(
+          "💰 Current Funds: {game.money} Gold | 📦 See Inventory on the left",
+          { "game.money": game.money },
+        )}
       </p>
 
       <BenchCycle game={game} duePhase={duePhase} />
@@ -107,23 +112,26 @@ export function WorkerMgmt({
       )}
 
       <HuePanel tone="market" className="p-4 mb-4">
-        <PanelHeading>🔨 Hire Workers</PanelHeading>
+        <PanelHeading>{t("🔨 Hire Workers")}</PanelHeading>
         <div className="text-xs space-y-1 mb-3">
           {roster.map((r) => (
             <div key={r.id} className={artisanTint(r.id)}>
               <strong className="pm-artisan-ink">
-                {r.icon} <Term term={r.label}>{r.label}</Term>
+                {r.icon} <Term term={r.label}>{t(r.label)}</Term>
               </strong>
               :{" "}
               {r.tasks
-                .map((t) => {
-                  const mats = Object.entries(RECIPES[t].materials)
-                    .map(([m, a]) => `${a} ${m}`)
+                .map((task) => {
+                  const mats = Object.entries(RECIPES[task].materials)
+                    .map(([m, a]) => t("{a} {m}", { a, m: t(m) }))
                     .join("+");
-                  return `${t}(${mats})`;
+                  return t("{t}({mats})", { t: t(task), mats });
                 })
-                .join(" or ")}
-              , <span className="text-due">{r.cost} Gold/round</span>
+                .join(t(" or "))}
+              ,{" "}
+              <span className="text-due">
+                {t("{cost} Gold/round", { cost: r.cost })}
+              </span>
             </div>
           ))}
         </div>
@@ -144,7 +152,11 @@ export function WorkerMgmt({
               )}
               onClick={() => act((g, l) => hireWorker(g, r.id, l))}
             >
-              {r.icon} Hire {r.label} ({r.cost}💰/round)
+              {t("{icon} Hire {label} ({cost}💰/round)", {
+                icon: r.icon,
+                label: t(r.label),
+                cost: r.cost,
+              })}
             </Button>
           ))}
         </div>
@@ -157,7 +169,7 @@ export function WorkerMgmt({
       <ReadyFooter
         phaseSync={phaseSync}
         members={members}
-        idleLabel="✅ Complete Market, Continue"
+        idleLabel={t("✅ Complete Market, Continue")}
         onConfirm={() => phaseSync.markReady((g, l) => leavePhase(g, ctx, l))}
       />
     </div>

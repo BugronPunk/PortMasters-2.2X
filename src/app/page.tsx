@@ -8,12 +8,18 @@ import type { PublicUser } from "@/lib/db";
 import { AuthScreen } from "@/components/portmasters/AuthScreen";
 import { Lobby } from "@/components/portmasters/Lobby";
 import { GameRoom } from "@/components/portmasters/GameRoom";
+import { t } from "@/lib/game/i18n";
+import { useLanguage } from "@/lib/use-language-preference";
 import type { RoomDetail } from "@/lib/rooms";
 import type { RoomSummary } from "@/lib/api";
 
 type Status = "loading" | "auth" | "lobby" | "game";
 
 export default function Home() {
+  // The shell this page draws above the two screens that subscribe for
+  // themselves: the splash line is this page's own, so the pick has to
+  // redraw here as well.
+  useLanguage();
   const [user, setUser] = useState<PublicUser | null>(null);
   const [status, setStatus] = useState<Status>("loading");
   const [room, setRoom] = useState<RoomDetail | null>(null);
@@ -77,7 +83,7 @@ export default function Home() {
   };
 
   if (status === "loading") {
-    return <PageSplash line="Reading the tide tables..." badge />;
+    return <PageSplash line={t("Reading the tide tables...")} badge />;
   }
 
   if (status === "auth" || !user) {

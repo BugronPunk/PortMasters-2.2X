@@ -2,6 +2,7 @@
 
 import { PrivateEntry } from "@/types/realtime/private-entry";
 import { useEffect, useRef } from "react";
+import { t } from "@/lib/game/i18n";
 import type { VoyageLog } from "@/lib/use-voyage-log";
 
 // [B4: the log surfaces] Dusk's two logs, side by side.
@@ -55,11 +56,17 @@ export function VoyageLogPanel({
   return (
     <div className="max-w-2xl mx-auto rounded-xl border-2 border-dusk/20 bg-dusk/[0.04] p-4">
       <div className="flex items-baseline justify-between gap-2">
-        <h3 className="text-sm font-bold text-dusk">The voyage log</h3>
+        <h3 className="text-sm font-bold text-dusk">{t("The voyage log")}</h3>
         <span className="text-[10px] text-muted-foreground">
-          {entries.length} {entries.length === 1 ? "line" : "lines"} in the
-          harbor, {privateLog.length}{" "}
-          {privateLog.length === 1 ? "line" : "lines"} to you alone
+          {t(
+            "{entries.length} {harborLines} in the harbor, {privateLog.length} {privateLines} to you alone",
+            {
+              "entries.length": entries.length,
+              harborLines: entries.length === 1 ? "line" : "lines",
+              "privateLog.length": privateLog.length,
+              privateLines: privateLog.length === 1 ? "line" : "lines",
+            },
+          )}
         </span>
       </div>
       {/* The two columns split once the stage is wide enough to hold them
@@ -71,12 +78,13 @@ export function VoyageLogPanel({
         className="pm-scroll mt-2 max-h-64 overflow-y-auto pr-1 grid grid-cols-1 @2xl:grid-cols-2 gap-x-4 gap-y-3"
       >
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-            The harbor&apos;s log
-          </div>
+          <div
+            className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1"
+            dangerouslySetInnerHTML={{ __html: t("The harbor&apos;s log") }}
+          />
           {entries.length === 0 ? (
             <p className="text-[11px] italic text-muted-foreground">
-              The harbor has recorded nothing on this voyage yet.
+              {t("The harbor has recorded nothing on this voyage yet.")}
             </p>
           ) : (
             entries.map((entry, index) => (
@@ -87,7 +95,7 @@ export function VoyageLogPanel({
                     are what turn one long list into a voyage. */}
                 {(index === 0 || entries[index - 1].round !== entry.round) && (
                   <div className="mt-1.5 mb-0.5 text-[10px] font-semibold uppercase tracking-wide text-dusk/70">
-                    Leg {entry.round}
+                    {t("Leg {leg}", { leg: entry.round })}
                   </div>
                 )}
                 <div className="text-[11px] leading-relaxed text-foreground break-words">
@@ -99,11 +107,11 @@ export function VoyageLogPanel({
         </div>
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-            Sent to you alone
+            {t("Sent to you alone")}
           </div>
           {privateLog.length === 0 ? (
             <p className="text-[11px] italic text-muted-foreground">
-              Nothing has been sent to you alone on this voyage.
+              {t("Nothing has been sent to you alone on this voyage.")}
             </p>
           ) : (
             privateLog.map((entry, index) => (

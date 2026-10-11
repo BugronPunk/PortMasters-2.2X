@@ -18,6 +18,7 @@
 // =====================================================================
 import { cardLead } from "../cards";
 import { ICONS } from "../constants/brand";
+import { t } from "@/lib/game/i18n";
 import {
   COMMODITIES,
   PRODUCT_PRICES,
@@ -208,7 +209,7 @@ function genProductPurchaseCard(
   for (const [m, a] of Object.entries(recipe.materials)) {
     const avg = (COMMODITIES[m].basePrice[0] + COMMODITIES[m].basePrice[1]) / 2;
     matCost += avg * a;
-    details.push(`${m}×${a}`);
+    details.push(t("{m}×{a}", { m, a }));
   }
   const markup = 1.4 + rng() * 0.4;
   let unitPrice = Math.floor(matCost * markup);
@@ -451,7 +452,9 @@ export function applyTidewatchSurge(state: GameState, logs: string[]) {
   if (state.tidewatchSurge) return;
   state.tidewatchSurge = true;
   logs.push(
-    `🌊 Tidewatch Alert: the harbor takes notice of a bustling crew! One more cargo lot joins the Port Purchase board, every round, for the rest of this voyage.`,
+    t(
+      "🌊 Tidewatch Alert: the harbor takes notice of a bustling crew! One more cargo lot joins the Port Purchase board, every round, for the rest of this voyage.",
+    ),
   );
 }
 
@@ -462,7 +465,10 @@ export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
   const cost = getCardFinalCost(state, card);
   if (state.money < cost) {
     logs.push(
-      `❌ Insufficient funds! Need ${cost} Gold, Have ${state.money} Gold`,
+      t("❌ Insufficient funds! Need {cost} Gold, Have {state.money} Gold", {
+        cost,
+        "state.money": state.money,
+      }),
     );
     return;
   }
@@ -478,7 +484,15 @@ export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
   const room = cargoRoom(state);
   if (units > room) {
     logs.push(
-      `❌ No room in the hold for that lot: it takes ${units} ${units === 1 ? "slot" : "slots"} and ${room} ${room === 1 ? "is" : "are"} free.`,
+      t(
+        "❌ No room in the hold for that lot: it takes {units} {slotWord} and {room} {beWord} free.",
+        {
+          units,
+          slotWord: units === 1 ? "slot" : "slots",
+          room,
+          beWord: room === 1 ? "is" : "are",
+        },
+      ),
     );
     return;
   }
@@ -504,25 +518,58 @@ export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
     const r = card.resources[0];
     if (r) {
       logs.push(
-        `🛒 Bought Product at ${card.port}: ${ICONS[r.type]}${r.type}×${r.quantity} (@${r.price} Gold/item, Mat Cost ${r.materialCost} Gold), Total ${cost} Gold`,
+        t(
+          "🛒 Bought Product at {card.port}: {icon}{type}×{quantity} (@{price} Gold/item, Mat Cost {matCost} Gold), Total {cost} Gold",
+          {
+            "card.port": t(card.port),
+            icon: ICONS[r.type],
+            type: t(r.type),
+            quantity: r.quantity ?? 0,
+            price: r.price ?? 0,
+            matCost: r.materialCost ?? 0,
+            cost,
+          },
+        ),
       );
     } else {
-      logs.push(`🛒 Bought Product at ${card.port}, Total ${cost} Gold`);
+      logs.push(
+        t("🛒 Bought Product at {card.port}, Total {cost} Gold", {
+          "card.port": t(card.port),
+          cost,
+        }),
+      );
     }
-    logs.push("   💡 Tip: VAT applies when selling finished products");
+    logs.push("   " + t("💡 Tip: VAT applies when selling finished products"));
   } else {
     const txt = card.resources
-      .map(
-        (r) => `${ICONS[r.type]}${r.type}×${r.quantity}(${r.price} Gold/item)`,
+      .map((r) =>
+        t("{goodIcon}{r.type}×{r.quantity}({r.price} Gold/item)", {
+          goodIcon: ICONS[r.type],
+          "r.type": t(r.type),
+          "r.quantity": r.quantity ?? 0,
+          "r.price": r.price ?? 0,
+        }),
       )
       .join(" + ");
-    logs.push(`🛒 Bought at ${card.port}: ${txt}, Total ${cost} Gold`);
+    logs.push(
+      t("🛒 Bought at {card.port}: {txt}, Total {cost} Gold", {
+        "card.port": t(card.port),
+        txt,
+        cost,
+      }),
+    );
     if (cost < card.totalCost)
       logs.push(
-        `   ✨ Boon Discount Applied! Saved ${card.totalCost - cost} Gold`,
+        t("   ✨ Boon Discount Applied! Saved {saved} Gold", {
+          saved: card.totalCost - cost,
+        }),
       );
   }
-  logs.push(`📊 Purchased ${state.purchaseCount} cargo batches`);
+  logs.push(
+    t("📊 Purchased {state.purchaseCount} cargo batches", {
+      "state.purchaseCount": state.purchaseCount,
+    }),
+  );
 }
 
 /**
@@ -530,19 +577,23 @@ export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
  * from the ones this captain has open, the pair pushed onto the intel
  * every board prints from, and the one line a captain reads about it.
  *
- * Two callers draw from the same pool with the same dice and differ only
- * in the sentence's lead: the free Farsight intel this phase opens with
+ * Two callers draw from the same pool with the same dice and differ in the
+ * sentence they say it in: the free Farsight intel this phase opens with
  * (below) and the paid Broker's Whisper (see purchaseIntel in ./orders).
  * Whichever a captain holds, the promise is one promise, word from a port
- * about a good in demand, and this is the one place it is kept.
+ * about a good in demand, and this is the one place it is kept. The
+ * sentence arrives from the caller, one row per caller rather than a frame
+ * with a lead glued into it, because the two are written as two whole
+ * sentences in the pack; this fills the port and the good every version
+ * names, and the caller's own values ride in beside them.
  *
  * The caller guards the pool being empty; this reads the pool straight.
  */
 export function revealRumor(
   state: GameState,
   logs: string[],
-  lead: string,
-  suffix = "",
+  sentence: string,
+  params: Record<string, string | number> = {},
 ): void {
   const tags = state.marketDemandTags;
   const idx = Math.floor(Math.random() * tags.length);
@@ -550,7 +601,7 @@ export function revealRumor(
   const openPorts = unlockedPorts(state.difficulty, state.currentRound);
   const port = openPorts[Math.floor(Math.random() * openPorts.length)];
   state.revealedIntel.push({ item, port });
-  logs.push(`${lead}: 'Word from ${port}: High demand for ${item}!'${suffix}`);
+  logs.push(t(sentence, { port, item, ...params }));
 }
 
 // Named for the phase it opens rather than for its position in the leg. See
@@ -572,8 +623,8 @@ export function startMarket(
   const marketPools = poolsFor(state);
   const allItems = [...marketPools.resources, ...marketPools.products];
   for (let i = 0; i < 5; i++) {
-    let t = pick(intelRng, allItems as readonly string[]);
-    if (!state.marketDemandTags.includes(t)) state.marketDemandTags.push(t);
+    let tag = pick(intelRng, allItems as readonly string[]);
+    if (!state.marketDemandTags.includes(tag)) state.marketDemandTags.push(tag);
   }
   state.revealedIntel = [];
   // Farsight hands over its rumors here rather than at boon selection, since
@@ -583,10 +634,21 @@ export function startMarket(
   const freeIntel = state.modifierFlags.free_intel ?? 0;
   for (let i = 0; i < freeIntel; i++) {
     if (!state.marketDemandTags.length) break;
-    revealRumor(state, logs, cardLead("farsight"), " (free)");
+    revealRumor(
+      state,
+      logs,
+      "{farsightLead}: 'Word from {port}: High demand for {item}!' (free)",
+      { farsightLead: cardLead("farsight") },
+    );
   }
-  logs.push(`\n⚓=== Round ${state.currentRound} · Market: Port Purchase ===`);
-  logs.push(`💰 Current Funds: ${state.money} Gold`);
+  logs.push(
+    t("\n⚓=== Round {state.currentRound} · Market: Port Purchase ===", {
+      "state.currentRound": state.currentRound,
+    }),
+  );
+  logs.push(
+    t("💰 Current Funds: {state.money} Gold", { "state.money": state.money }),
+  );
   // [ONLINE] Deterministic port market: this captain's seed, this
   // voyage, this round.
   const marketRng = createRng(
@@ -606,7 +668,10 @@ export function startMarket(
   // banner never takes credit for a card the room itself earned.
   if (silkRoadCharterOpensOn(state.difficulty, state.currentRound)) {
     logs.push(
-      `🗺️ The Silk Road Charter opens! The harbor grows busier: ${tierPurchaseCount} cargo lots and as many buyers from this voyage on.`,
+      t(
+        "🗺️ The Silk Road Charter opens! The harbor grows busier: {tierPurchaseCount} cargo lots and as many buyers from this voyage on.",
+        { tierPurchaseCount },
+      ),
     );
   }
   // [MANIFEST 03: Tidewatch Alerts] Purely additive on top of whatever the
@@ -647,8 +712,13 @@ export function startMarket(
 }
 
 export function completeMarket(state: GameState, logs: string[]) {
-  if (state.purchaseCount === 0) logs.push("⏭️ Purchasing skipped");
-  else logs.push(`✅ Purchasing ended, bought ${state.purchaseCount} batches`);
+  if (state.purchaseCount === 0) logs.push(t("⏭️ Purchasing skipped"));
+  else
+    logs.push(
+      t("✅ Purchasing ended, bought {state.purchaseCount} batches", {
+        "state.purchaseCount": state.purchaseCount,
+      }),
+    );
   // Record price history: for each good the captain bought this round,
   // compute the average unit price paid and append it to the history
   // array. Used by the Purchase phase sparkline to show price trends.

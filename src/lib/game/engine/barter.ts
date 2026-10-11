@@ -19,6 +19,7 @@
 // the board stops listing it. These functions are only the local half,
 // moving goods on whichever client they run on.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "../types";
 import { ageBarterReputation } from "./ages";
 import { addOwnedAmount, getOwnedAmount } from "./core";
@@ -32,7 +33,9 @@ function awardBarterReputation(state: GameState, logs: string[]) {
   if (gain <= 0) return;
   state.score += gain;
   logs.push(
-    `⚖️ Age of the Trader: +${gain} Reputation for the completed trade.`,
+    t("⚖️ Age of the Trader: +{gain} Reputation for the completed trade.", {
+      gain,
+    }),
   );
 }
 
@@ -83,7 +86,7 @@ export function postBarterOffer(
   logs: string[],
 ): boolean {
   if (offerItem === requestItem) {
-    logs.push("❌ Can't barter an item for itself");
+    logs.push(t("❌ Can't barter an item for itself"));
     return false;
   }
   if (
@@ -92,17 +95,31 @@ export function postBarterOffer(
     offerAmount < 1 ||
     requestAmount < 1
   ) {
-    logs.push("❌ Barter amounts must be whole numbers of at least 1");
+    logs.push(t("❌ Barter amounts must be whole numbers of at least 1"));
     return false;
   }
   const owned = getOwnedAmount(state, offerItem);
   if (offerAmount > owned) {
-    logs.push(`❌ Can't offer ${offerAmount} ${offerItem}, only have ${owned}`);
+    logs.push(
+      t("❌ Can't offer {offerAmount} {offerItem}, only have {owned}", {
+        offerAmount,
+        offerItem,
+        owned,
+      }),
+    );
     return false;
   }
   addOwnedAmount(state, offerItem, -offerAmount);
   logs.push(
-    `🤝 Posted a barter offer: ${offerAmount} ${offerItem} for ${requestAmount} ${requestItem}`,
+    t(
+      "🤝 Posted a barter offer: {offerAmount} {offerItem} for {requestAmount} {requestItem}",
+      {
+        offerAmount,
+        offerItem,
+        requestAmount,
+        requestItem,
+      },
+    ),
   );
   return true;
 }
@@ -135,7 +152,13 @@ export function refundBarterOffer(
 ) {
   addOwnedAmount(state, offerItem, offerAmount);
   logs.push(
-    `↩️ Barter offer ${REFUND_PHRASE[cause]}, ${offerAmount} ${offerItem} returned`,
+    t("↩️ Barter offer {cause}, {offerAmount} {offerItem} returned", {
+      // The cause fragment is read here rather than at the constant, which
+      // is module scope and would freeze at the process's first language.
+      cause: t(REFUND_PHRASE[cause]),
+      offerAmount,
+      offerItem,
+    }),
   );
 }
 
@@ -154,14 +177,23 @@ export function acceptBarterOffer(
   const owned = getOwnedAmount(state, requestItem);
   if (requestAmount > owned) {
     logs.push(
-      `❌ Can't pay ${requestAmount} ${requestItem}, only have ${owned}`,
+      t("❌ Can't pay {requestAmount} {requestItem}, only have {owned}", {
+        requestAmount,
+        requestItem,
+        owned,
+      }),
     );
     return false;
   }
   addOwnedAmount(state, requestItem, -requestAmount);
   addOwnedAmount(state, offerItem, offerAmount);
   logs.push(
-    `🤝 Traded ${requestAmount} ${requestItem} for ${offerAmount} ${offerItem}`,
+    t("🤝 Traded {requestAmount} {requestItem} for {offerAmount} {offerItem}", {
+      requestAmount,
+      requestItem,
+      offerAmount,
+      offerItem,
+    }),
   );
   awardBarterReputation(state, logs);
   awardPeerTradeProfit(
@@ -193,7 +225,10 @@ export function settleBarterTrade(
 ) {
   addOwnedAmount(state, requestItem, requestAmount);
   logs.push(
-    `🤝 Barter offer accepted, received ${requestAmount} ${requestItem}`,
+    t("🤝 Barter offer accepted, received {requestAmount} {requestItem}", {
+      requestAmount,
+      requestItem,
+    }),
   );
   awardBarterReputation(state, logs);
   awardPeerTradeProfit(
@@ -209,7 +244,7 @@ export function settleBarterTrade(
 // departure does: settling the board is not part of it, and where the phase
 // leads belongs to the lap, so no game state is read here.
 export function completeParley(logs: string[]) {
-  logs.push("⏭️ Bartering ended");
+  logs.push(t("⏭️ Bartering ended"));
   // The successor is not named here on purpose. The trade board sits between
   // the same two phases in the founding mode, but the experimental one runs
   // it after the manifest instead of before, so a hardcoded next phase would

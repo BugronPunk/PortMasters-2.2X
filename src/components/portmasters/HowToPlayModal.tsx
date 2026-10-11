@@ -33,6 +33,7 @@ import {
   escortContractsOn,
   moduleTradesOn,
 } from "@/lib/game/flags";
+import { listJoiner, t } from "@/lib/game/i18n";
 import { modeConfig, type GameMode } from "@/lib/game/mode";
 import { openingPhase } from "@/lib/game/checkpoint";
 import { pathFactText, pathGuide } from "@/lib/game/paths";
@@ -158,9 +159,14 @@ function voyagePage(mode: GameMode): Step {
   const play = modeConfig(mode);
   return {
     icon: Compass,
-    title: `${play.badge}: The Voyage You Are Sailing`,
+    // The badge and the two record sentences are read here, where the page
+    // is built, rather than assembled raw: a title or a body built at
+    // module load would wear whatever language the process started in.
+    title: t("{play.badge}: The Voyage You Are Sailing", {
+      "play.badge": t(play.badge),
+    }),
     gradient: "pm-grad-guide",
-    body: `${play.tagline} ${play.failureRule}`,
+    body: `${t(play.tagline)} ${t(play.failureRule)}`,
     points: play.differences,
     tip: play.differences.length
       ? "Everything else is the voyage you would sail in Classic, so the rest of this manual reads the same for both."
@@ -188,7 +194,10 @@ function artisanPage(mode: GameMode): Step {
     // phase table in @/lib/game/phases, where the worker bench folds into
     // Market), which is why this page follows Buy at Port.
     body: "Hire weavers, potters, coppersmiths, and other artisans, then assign each a product to craft. Production does not happen instantly: a task assigned now delivers at this round's Resolve, after Orders has already closed.",
-    tip: `Hire artisans only when you can sustain at least two rounds of wages. ${play.failureRule}`,
+    tip: t(
+      "Hire artisans only when you can sustain at least two rounds of wages. {play.failureRule}",
+      { "play.failureRule": t(play.failureRule) },
+    ),
   };
 }
 
@@ -204,22 +213,35 @@ function artisanPage(mode: GameMode): Step {
  * no station at all, keeps the one sentence that is true of every mode.
  */
 function barterPage(mode: GameMode): Step {
+  // The three market names have rows of their own, and the list they build
+  // joins with the separator the language writes a list with. The joining
+  // word before the last name reads the pack's own fragment row, so the
+  // whole list arrives in the language on screen.
   const markets = [
-    escortContractsOn(mode) ? "the escort market" : null,
-    moduleTradesOn(mode) ? "the module market" : null,
-    bazaarRumorsOn(mode) ? "the bazaar window" : null,
+    escortContractsOn(mode) ? t("the escort market") : null,
+    moduleTradesOn(mode) ? t("the module market") : null,
+    bazaarRumorsOn(mode) ? t("the bazaar window") : null,
   ].filter((market): market is string => market !== null);
   const held = markets.length
-    ? `${markets.slice(0, -1).join(", ")}${markets.length > 1 ? " and " : ""}${markets[markets.length - 1]}`
+    ? `${markets.slice(0, -1).join(listJoiner())}${markets.length > 1 ? t(" and ") : ""}${markets[markets.length - 1]}`
     : "";
   return {
     icon: Handshake,
     title: "Barter with Captains",
     gradient: "pm-grad-parley",
     body: "At the Parley you can trade goods and Gold directly with the other captains, whether your voyage runs it before the orders or after them. Post an offer of what you have and what you want, or accept an offer someone else posted. Offered goods are escrowed the moment you post.",
+    // The two tips are one row each, and the longer one carries the held
+    // list as its token. The shorter sentence reads its own row, so a
+    // voyage whose Parley holds no markets still lands in the language on
+    // screen.
     tip: markets.length
-      ? `You can target a specific captain with a Direct Barter Offer if you want to trade with only them. The Markets station of the Parley holds ${held}.`
-      : "You can target a specific captain with a Direct Barter Offer if you want to trade with only them.",
+      ? t(
+          "You can target a specific captain with a Direct Barter Offer if you want to trade with only them. The Markets station of the Parley holds {held}.",
+          { held },
+        )
+      : t(
+          "You can target a specific captain with a Direct Barter Offer if you want to trade with only them.",
+        ),
   };
 }
 
@@ -249,11 +271,16 @@ function pathsPage(mode: GameMode): Step[] {
       title: "Draft Your Path",
       gradient: "pm-grad-path-draft",
       body: "A dealing voyage opens with a card deal rather than a market. Three cards land face down, and at each beat you keep one and pass the rest on: what you hold at the end is your path for the voyage, and one change of papers is allowed: at a port, for a fee in Gold that grows with your Renown. Your path decides your hold, how far your Renown can climb, and which trade orders lock to you.",
+      // One line per path: the crest and the punctuation are the site's, and
+      // the name, the signature sentence and each fact read their own rows
+      // (pathFactText composes a fact where it is called, so a reworded rung
+      // arrives in the language on screen). The facts join with the
+      // language's own separator.
       points: pathGuide().map(
         (entry) =>
-          `${entry.crest} ${entry.name}: ${entry.signature} ${entry.facts
+          `${entry.crest} ${t(entry.name)}: ${t(entry.signature)} ${entry.facts
             .map(pathFactText)
-            .join(", ")}.`,
+            .join(listJoiner())}.`,
       ),
       tip: "Weigh the numbers under each name rather than the crest. The five paths trade different holds, Renown ceilings and locked order pools, and the one you keep sails with you to the end.",
     },
@@ -305,7 +332,10 @@ export function HowToPlayModal({
   return (
     <AnimatePresence>
       {open && (
-        <ModalOverlay label="How to Play" onClose={() => onOpenChange(false)}>
+        <ModalOverlay
+          label={t("How to Play")}
+          onClose={() => onOpenChange(false)}
+        >
           <ModalSheet maxW="max-w-2xl">
             {/* Header */}
             <div className="relative shrink-0 overflow-hidden border-b border-border/40 p-5">
@@ -317,15 +347,19 @@ export function HowToPlayModal({
                   </div>
                   <div>
                     <h2 className="font-display text-lg font-bold text-guide">
-                      How to Play
+                      {t("How to Play")}
                     </h2>
                     <p className="text-[11px] text-muted-foreground">
-                      Step {at + 1} of {pages.length}: {current.title}
+                      {t("Step {step} of {total}: {title}", {
+                        step: at + 1,
+                        total: pages.length,
+                        title: t(current.title),
+                      })}
                     </p>
                   </div>
                 </div>
                 <ModalClose
-                  label="Close guide"
+                  label={t("Close guide")}
                   onClick={() => onOpenChange(false)}
                 />
               </div>
@@ -360,26 +394,30 @@ export function HowToPlayModal({
                     <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="font-display text-lg font-bold text-guide">
-                    {current.title}
+                    {t(current.title)}
                   </h3>
                 </div>
                 <p className="text-sm leading-relaxed text-foreground">
-                  {current.body}
+                  {t(current.body)}
                 </p>
                 {/* The rules a mode changes, listed rather than folded
                     into the paragraph above, because a reader asking what
-                    is different is counting as much as reading. */}
+                    is different is counting as much as reading. The lines
+                    are the mode record's own sentences, numbers baked in
+                    at module load, so the plain read here is what localizes
+                    them; the paths page above builds its own points and
+                    those already read the pack. */}
                 {current.points && current.points.length > 0 && (
                   <ul className="list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-foreground">
                     {current.points.map((point) => (
-                      <li key={point}>{point}</li>
+                      <li key={point}>{t(point)}</li>
                     ))}
                   </ul>
                 )}
                 <div className="rounded-xl bg-warn/[0.07] border border-warn/20 p-3">
                   <p className="text-xs text-warn">
-                    <span className="font-semibold">Tip: </span>
-                    {current.tip}
+                    <span className="font-semibold">{t("Tip:") + " "}</span>
+                    {t(current.tip)}
                   </p>
                 </div>
                 {/* The manual's appendix, under the advice rather than
@@ -389,7 +427,7 @@ export function HowToPlayModal({
                 {current.aside && (
                   <div className="rounded-xl bg-charter/[0.07] p-3">
                     <p className="text-xs leading-relaxed text-charter">
-                      {current.aside}
+                      {t(current.aside)}
                     </p>
                   </div>
                 )}
@@ -409,7 +447,10 @@ export function HowToPlayModal({
                       ? "w-5 bg-celadon"
                       : "w-1.5 bg-black/15 dark:bg-white/20 hover:bg-black/25 dark:hover:bg-white/30",
                   )}
-                  aria-label={`Go to step ${i + 1}: ${s.title}`}
+                  aria-label={t("Go to step {stepNo}: {s.title}", {
+                    stepNo: i + 1,
+                    "s.title": t(s.title),
+                  })}
                 />
               ))}
             </div>
@@ -423,7 +464,7 @@ export function HowToPlayModal({
                   disabled={at === 0}
                   className="pm-pressable rounded-xl px-4 py-2 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-black/5 dark:hover:bg-white/10"
                 >
-                  Back
+                  {t("Back")}
                 </button>
               </div>
               <span className="justify-self-center text-xs text-muted-foreground tabular-nums">
@@ -437,14 +478,14 @@ export function HowToPlayModal({
                     }
                     className="pm-pressable pm-grad-guide rounded-xl px-4 py-2 text-sm font-medium"
                   >
-                    Continue
+                    {t("Continue")}
                   </button>
                 ) : (
                   <button
                     onClick={() => onOpenChange(false)}
                     className="pm-pressable pm-grad-guide rounded-xl px-4 py-2 text-sm font-medium"
                   >
-                    Set Sail
+                    {t("Set Sail")}
                   </button>
                 )}
               </div>

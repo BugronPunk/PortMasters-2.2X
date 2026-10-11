@@ -12,6 +12,7 @@
 // =====================================================================
 
 import type { PublicUser } from "@/lib/api";
+import { t } from "@/lib/game/i18n";
 import { Select } from "@/components/ui/select";
 
 export function AudienceSelect({
@@ -36,10 +37,10 @@ export function AudienceSelect({
       aria-label={label}
       className={className}
     >
-      <option value="">🌊 Anyone in the harbor</option>
+      <option value="">{t("🌊 Anyone in the harbor")}</option>
       {others.map((m) => (
         <option key={m.id} value={m.id}>
-          🔒 {m.displayName} only
+          {t("🔒 {name} only", { name: m.displayName })}
         </option>
       ))}
     </Select>

@@ -8,11 +8,16 @@ import {
   ModalOverlay,
 } from "@/components/ui/modal-overlay";
 import { SHORTCUTS, type KeyboardShortcut } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
 
 /**
  * Keyboard Shortcut Help overlay. Shows all available keyboard shortcuts
  * in a clean, readable layout. Opens with the ? key or F2, closes with
  * Escape or clicking the backdrop.
+ *
+ * The two tables below keep the record's own English group names, because
+ * the name is also the key the list filters by; the heading a captain reads
+ * is that name read through the pack.
  */
 
 const GROUP_ORDER: KeyboardShortcut["group"][] = [
@@ -37,7 +42,7 @@ export function KeyboardShortcutHelp({
     <AnimatePresence>
       {open && (
         <ModalOverlay
-          label="Keyboard Shortcuts"
+          label={t("Keyboard Shortcuts")}
           onClose={() => onOpenChange(false)}
         >
           <ModalCard>
@@ -47,11 +52,11 @@ export function KeyboardShortcutHelp({
                   <Keyboard className="h-5 w-5" />
                 </div>
                 <h2 className="font-display text-lg font-bold text-shortcuts">
-                  Keyboard Shortcuts
+                  {t("Keyboard Shortcuts")}
                 </h2>
               </div>
               <ModalClose
-                label="Close shortcut help"
+                label={t("Close shortcut help")}
                 onClick={() => onOpenChange(false)}
               />
             </div>
@@ -64,7 +69,7 @@ export function KeyboardShortcutHelp({
                   <div key={group}>
                     <h3 className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                       <span>{GROUP_ICONS[group]}</span>
-                      {group}
+                      {t(group)}
                     </h3>
                     <div className="space-y-1.5">
                       {shortcuts.map((s) => (
@@ -78,7 +83,7 @@ export function KeyboardShortcutHelp({
                           className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-black/5 dark:hover:bg-white/5"
                         >
                           <span className="text-sm text-foreground">
-                            {s.label}
+                            {t(s.label)}
                           </span>
                           <div className="flex items-center gap-1">
                             {s.keys.map((key, i) => (
@@ -99,7 +104,7 @@ export function KeyboardShortcutHelp({
             </div>
 
             <p className="mt-5 text-center text-[11px] text-muted-foreground">
-              Shortcuts are ignored while typing in inputs or text areas.
+              {t("Shortcuts are ignored while typing in inputs or text areas.")}
             </p>
           </ModalCard>
         </ModalOverlay>

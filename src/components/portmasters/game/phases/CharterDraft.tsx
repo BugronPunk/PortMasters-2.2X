@@ -3,6 +3,7 @@
 import { answerCharter } from "@/lib/game/engine";
 import { CHARTER_MOMENT } from "@/lib/game/constants/charters";
 import { charterChoices, charterPending } from "@/lib/game/charters";
+import { t } from "@/lib/game/i18n";
 import { MomentOverlay } from "./MomentOverlay";
 import type { PhasePanelProps } from "./PhaseShared";
 
@@ -42,7 +43,9 @@ export function CharterDraft({
       pending={charterPending}
       moment={() => CHARTER_MOMENT}
       choices={charterChoices}
-      actionLabel="Sail Under This"
+      // The charter's own words for the press, read here at the caller so
+      // the label arrives in this captain's language.
+      actionLabel={t("Sail Under This")}
       answer={answerCharter}
     />
   );

@@ -11,6 +11,7 @@ import {
   Sun,
   Monitor,
   Bell,
+  Languages,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
@@ -27,17 +28,20 @@ import {
   TIDEWATCH_SURGE_THRESHOLD,
   WORD_ON_THE_DOCKS_THRESHOLD,
 } from "@/lib/game/constants/world";
+import { t, type Locale } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 
 /**
  * Settings modal. A central place for captain preferences: sound
- * volume, theme, colorblind palette, and notification settings.
+ * volume, theme, colorblind palette, language, and notification
+ * settings.
  *
  * The sound volume slider controls the gain of the ambient harbor bed
  * and the UI feedback tones. The theme toggle switches between light,
  * dark, and system. The colorblind palette toggle is mirrored from the
- * GameRoom header. Notification preferences control which events
- * produce a toast.
+ * GameRoom header. The language pair switches the pack the whole tree
+ * prints from (see use-language-preference). Notification preferences
+ * control which events produce a toast.
  */
 
 export function SettingsModal({
@@ -49,6 +53,8 @@ export function SettingsModal({
   onToggleColorblind,
   volume,
   onVolumeChange,
+  locale,
+  onSetLocale,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -58,6 +64,8 @@ export function SettingsModal({
   onToggleColorblind: () => void;
   volume: number;
   onVolumeChange: (v: number) => void;
+  locale: Locale;
+  onSetLocale: (next: Locale) => void;
 }) {
   const { theme, setTheme } = useTheme();
   const [notifRoom, setNotifRoom] = useState(() => notifCategoryPref("room"));
@@ -90,7 +98,7 @@ export function SettingsModal({
   return (
     <AnimatePresence>
       {open && (
-        <ModalOverlay label="Settings" onClose={() => onOpenChange(false)}>
+        <ModalOverlay label={t("Settings")} onClose={() => onOpenChange(false)}>
           <ModalSheet>
             {/* Header */}
             <div className="relative shrink-0 overflow-hidden border-b border-border/40 p-6">
@@ -101,11 +109,11 @@ export function SettingsModal({
                     <Settings className="h-5 w-5" />
                   </div>
                   <h2 className="font-display text-lg font-bold text-settings">
-                    Settings
+                    {t("Settings")}
                   </h2>
                 </div>
                 <ModalClose
-                  label="Close settings"
+                  label={t("Close settings")}
                   onClick={() => onOpenChange(false)}
                 />
               </div>
@@ -114,17 +122,17 @@ export function SettingsModal({
             {/* Content */}
             <div className="flex-1 min-h-0 space-y-5 overflow-y-auto p-6 pm-scroll">
               {/* Sound */}
-              <Section icon={Volume2} title="Sound">
+              <Section icon={Volume2} title={t("Sound")}>
                 <ToggleRow
-                  label="Harbor sounds"
-                  description="Ambient harbor bed and UI feedback tones"
+                  label={t("Harbor sounds")}
+                  description={t("Ambient harbor bed and UI feedback tones")}
                   checked={soundEnabled}
                   onChange={onToggleSound}
                 />
                 {soundEnabled && (
                   <div className="pt-2">
                     <label className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
-                      <span>Volume</span>
+                      <span>{t("Volume")}</span>
                       <span className="font-mono">{volume}%</span>
                     </label>
                     <input
@@ -143,34 +151,53 @@ export function SettingsModal({
               </Section>
 
               {/* Theme */}
-              <Section icon={theme === "dark" ? Moon : Sun} title="Theme">
+              <Section icon={theme === "dark" ? Moon : Sun} title={t("Theme")}>
                 <div className="grid grid-cols-3 gap-2">
                   <ThemeButton
                     active={theme === "light"}
                     onClick={() => setTheme("light")}
                     icon={Sun}
-                    label="Light"
+                    label={t("Light")}
                   />
                   <ThemeButton
                     active={theme === "dark"}
                     onClick={() => setTheme("dark")}
                     icon={Moon}
-                    label="Dark"
+                    label={t("Dark")}
                   />
                   <ThemeButton
                     active={theme === "system"}
                     onClick={() => setTheme("system")}
                     icon={Monitor}
-                    label="Auto"
+                    label={t("Auto")}
+                  />
+                </div>
+              </Section>
+
+              {/* Language. The pair is the whole switch: each button
+                  names a language, and the pack reads the pair beside
+                  every other string on this screen, so a captain sees
+                  each language named in the language they are reading. */}
+              <Section icon={Languages} title={t("Language")}>
+                <div className="grid grid-cols-2 gap-2">
+                  <ThemeButton
+                    active={locale === "en"}
+                    onClick={() => onSetLocale("en")}
+                    label={t("English")}
+                  />
+                  <ThemeButton
+                    active={locale === "zh"}
+                    onClick={() => onSetLocale("zh")}
+                    label={t("Chinese")}
                   />
                 </div>
               </Section>
 
               {/* Colorblind palette */}
-              <Section icon={Palette} title="Visual">
+              <Section icon={Palette} title={t("Visual")}>
                 <ToggleRow
-                  label="Colorblind safe palette"
-                  description="Use Okabe Ito anchored colors for all goods"
+                  label={t("Colorblind safe palette")}
+                  description={t("Use Okabe Ito anchored colors for all goods")}
                   checked={colorblindSafe}
                   onChange={onToggleColorblind}
                 />
@@ -181,24 +208,32 @@ export function SettingsModal({
                   GameRoom (see the chat:room handler), so the description
                   names that one thing. The label matches the panel the
                   notification opens. */}
-              <Section icon={Bell} title="Notifications">
+              <Section icon={Bell} title={t("Notifications")}>
                 <ToggleRow
-                  label="Harbor chat"
-                  description="Messages from the other captains in the harbor"
+                  label={t("Harbor chat")}
+                  description={t(
+                    "Messages from the other captains in the harbor",
+                  )}
                   checked={notifRoom}
                   onChange={() => toggleNotif("room", setNotifRoom, notifRoom)}
                 />
                 <ToggleRow
-                  label="Word on the Docks"
-                  description={`The race to ${WORD_ON_THE_DOCKS_THRESHOLD} completed orders`}
+                  label={t("Word on the Docks")}
+                  description={t(
+                    "The race to {WORD_ON_THE_DOCKS_THRESHOLD} completed orders",
+                    { WORD_ON_THE_DOCKS_THRESHOLD },
+                  )}
                   checked={notifDocks}
                   onChange={() =>
                     toggleNotif("docks", setNotifDocks, notifDocks)
                   }
                 />
                 <ToggleRow
-                  label="Tidewatch Alerts"
-                  description={`The harbor crossing ${TIDEWATCH_SURGE_THRESHOLD} combined Reputation`}
+                  label={t("Tidewatch Alerts")}
+                  description={t(
+                    "The harbor crossing {TIDEWATCH_SURGE_THRESHOLD} combined Reputation",
+                    { TIDEWATCH_SURGE_THRESHOLD },
+                  )}
                   checked={notifTidewatch}
                   onChange={() =>
                     toggleNotif("tidewatch", setNotifTidewatch, notifTidewatch)
@@ -207,17 +242,11 @@ export function SettingsModal({
               </Section>
 
               {/* Keyboard shortcuts reference */}
-              <Section icon={Keyboard} title="Shortcuts">
+              <Section icon={Keyboard} title={t("Shortcuts")}>
                 <div className="rounded-lg bg-black/5 p-3 text-xs text-muted-foreground dark:bg-white/5">
-                  Press{" "}
-                  <kbd className="rounded bg-white px-1 dark:bg-white/10">
-                    ?
-                  </kbd>{" "}
-                  or{" "}
-                  <kbd className="rounded bg-white px-1 dark:bg-white/10">
-                    F2
-                  </kbd>{" "}
-                  in a game room to see all keyboard shortcuts.
+                  {t(
+                    "Press ? or F2 in a game room to see all keyboard shortcuts.",
+                  )}
                 </div>
               </Section>
             </div>
@@ -293,7 +322,10 @@ function ThemeButton({
 }: {
   active: boolean;
   onClick: () => void;
-  icon: React.ComponentType<{ className?: string }>;
+  // Optional because the language pair has nothing to draw above its two
+  // labels: a word for each language reads better than two of the same
+  // glyph, and the theme row keeps its three.
+  icon?: React.ComponentType<{ className?: string }>;
   label: string;
 }) {
   return (
@@ -306,7 +338,7 @@ function ThemeButton({
           : "border-black/10 text-muted-foreground hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5",
       )}
     >
-      <Icon className="h-4 w-4" />
+      {Icon && <Icon className="h-4 w-4" />}
       {label}
     </button>
   );

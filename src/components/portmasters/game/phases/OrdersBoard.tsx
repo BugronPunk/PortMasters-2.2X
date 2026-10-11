@@ -20,6 +20,7 @@ import {
   OPPORTUNIST_SPENT_LINE,
   type PriceBreakdown,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import { pathConfig, pathLockLine } from "@/lib/game/paths";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
@@ -150,13 +151,15 @@ function OrderCard({
       header={
         <>
           <span>
-            📍 {o.demandPort}{" "}
+            {/* The port is a content name and reads at the print; the
+                three demand labels are the card's own. */}
+            📍 {t(o.demandPort)}{" "}
             <span className="text-muted-foreground">
               {o.isMandate
-                ? "· Imperial Commission"
+                ? t("· Imperial Commission")
                 : o.isProductOrder
-                  ? "· Finished Product Demand"
-                  : "· Raw Material Demand"}
+                  ? t("· Finished Product Demand")
+                  : t("· Raw Material Demand")}
             </span>
           </span>
           {path ? (
@@ -171,17 +174,24 @@ function OrderCard({
                 locked ? "text-muted-foreground" : "text-orders",
               )}
             >
-              {path.crest} {path.name} order
+              {path.crest}{" "}
+              {t("{path.name} order", { "path.name": t(path.name) })}
             </span>
           ) : o.isMandate ? (
             <span className="text-orders shrink-0 font-bold">
-              📜 Imperial Mandate
+              {t("📜 Imperial Mandate")}
             </span>
           ) : o.isBrokerFavor ? (
-            <span className="text-favor shrink-0">🤝 Broker&apos;s Favor</span>
+            // The pack carries this row with the source's &apos; entity,
+            // so it is read as HTML and the browser decodes it to the
+            // same apostrophe JSX used to print.
+            <span
+              className="text-favor shrink-0"
+              dangerouslySetInnerHTML={{ __html: t("🤝 Broker&apos;s Favor") }}
+            />
           ) : (
             matchesIntel && (
-              <span className="text-intel shrink-0">🔮 Guaranteed</span>
+              <span className="text-intel shrink-0">{t("🔮 Guaranteed")}</span>
             )
           )}
         </>
@@ -226,7 +236,7 @@ function OrderCard({
                   disabled={!canBorrow || completed}
                   onClick={() => act((g, l) => completeOrder(g, o.id, l, true))}
                 >
-                  {completed ? "✅ Completed" : "🎭 Borrow this order"}
+                  {completed ? t("✅ Completed") : t("🎭 Borrow this order")}
                 </Button>
                 <div className="text-[10px] text-muted-foreground">
                   {opportunistUsesLine(game)}
@@ -234,7 +244,9 @@ function OrderCard({
               </>
             ) : borrowSpent ? (
               <div className="text-[11px] text-muted-foreground leading-snug">
-                {OPPORTUNIST_SPENT_LINE}
+                {/* The spent line is the engine's constant, so the read
+                    happens where it is printed. */}
+                {t(OPPORTUNIST_SPENT_LINE)}
               </div>
             ) : null}
           </div>
@@ -248,7 +260,9 @@ function OrderCard({
             disabled={!canComplete || completed}
             onClick={() => act((g, l) => completeOrder(g, o.id, l))}
           >
-            {completed ? "✅ Completed" : `🤝 Trade (Net ${netProfit}💰)`}
+            {completed
+              ? t("✅ Completed")
+              : t("🤝 Trade (Net {netProfit}💰)", { netProfit })}
           </Button>
         )
       }
@@ -265,8 +279,10 @@ function OrderCard({
             <span className="mr-1.5">{has ? "✅" : "❌"}</span>
             <ItemIcon item={r.type} className="mr-1.5 h-4 w-4" />
             <Term term={r.type}>
+              {/* The good's name is data (the Term keeps the English as
+                  its lookup key) and reads at the print. */}
               <span className="font-medium" style={{ color: colorFor(r.type) }}>
-                {r.type}
+                {t(r.type)}
               </span>
             </Term>
             <span className="mx-1.5">×{r.required ?? 0}</span>
@@ -274,7 +290,7 @@ function OrderCard({
               className="ml-auto text-[10px]"
               style={{ color: has ? "var(--gain)" : "var(--alarm)" }}
             >
-              Inv: {game.inventory[r.type] || 0}
+              {t("Inv: {count}", { count: game.inventory[r.type] || 0 })}
             </span>
           </div>
         );
@@ -283,7 +299,7 @@ function OrderCard({
         <Term
           content={<PriceBreakdownTooltip breakdown={transportBreakdown} />}
         >
-          ⚓ Freight: {transport} Gold
+          {t("⚓ Freight: {gold} Gold", { gold: transport })}
         </Term>
       </div>
       <div
@@ -292,7 +308,10 @@ function OrderCard({
           netProfit >= 0 ? "text-gain" : "text-alarm",
         )}
       >
-        💰 Reward: {rewardBasis} Gold 📊 Net: {netProfit} Gold
+        {t("💰 Reward: {reward} Gold 📊 Net: {net} Gold", {
+          reward: rewardBasis,
+          net: netProfit,
+        })}
         {(() => {
           const margin =
             rewardBasis > 0 ? Math.round((netProfit / rewardBasis) * 100) : 0;
@@ -306,7 +325,10 @@ function OrderCard({
                     ? "bg-warn"
                     : "bg-alarm",
               )}
-              title={`Profit margin: ${margin}% of reward is net profit after transport, VAT, and commission`}
+              title={t(
+                "Profit margin: {margin}% of reward is net profit after transport, VAT, and commission",
+                { margin },
+              )}
             >
               {margin}%
             </span>
@@ -316,15 +338,19 @@ function OrderCard({
       {o.isBrokerFavor && (
         <div className="text-[10px] text-favor">
           <Term term="Commission">
-            🤝 Broker&apos;s cut ({brokerCommissionPct}%): {brokerCommission}{" "}
-            Gold
+            {t("🤝 Broker's cut ({pct}%): {gold} Gold", {
+              pct: brokerCommissionPct,
+              gold: brokerCommission,
+            })}
           </Term>
         </div>
       )}
       {o.isProductOrder && vatBreakdown && (
         <div className="text-[10px] text-muted-foreground">
           <Term content={<PriceBreakdownTooltip breakdown={vatBreakdown} />}>
-            🧾 Est. VAT: {totalVat} Gold (per unit shown on hover)
+            {t("🧾 Est. VAT: {totalVat} Gold (per unit shown on hover)", {
+              totalVat,
+            })}
           </Term>
         </div>
       )}
@@ -335,7 +361,7 @@ function OrderCard({
         // ones too, so a captain holding a path sees the same card
         // their tablemates see with the lock taken off.
         <div className="text-[11px] text-muted-foreground leading-snug mt-2 pt-1.5 border-t border-black/5 dark:border-white/10">
-          {path.crest} {path.signature}
+          {path.crest} {t(path.signature)}
         </div>
       )}
     </TradeCard>

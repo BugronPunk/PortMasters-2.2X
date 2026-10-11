@@ -35,6 +35,9 @@
 
 import type { Objective } from "./objectives";
 import type { Flourish, GambitRole } from "./gambit";
+// The promise below is read at the moment it is built, so the card a captain
+// holds follows the language they read it in.
+import { t } from "./i18n";
 import { normalizeInventory } from "./types";
 
 // What the Broker has to realize in coin from other captains to win. The
@@ -223,11 +226,18 @@ export function victoryLine(
   switch (role) {
     case "honest":
       return flourish
-        ? "You win if the fleet fills its commission and your own goal above is met with it."
-        : "You win if the fleet fills its commission.";
+        ? t(
+            "You win if the fleet fills its commission and your own goal above is met with it.",
+          )
+        : t("You win if the fleet fills its commission.");
     case "broker":
-      return `You win if you take at least ${BROKER_PAYOUT_TARGET} Gold from other captains in trade. The commission is their business rather than yours, so a voyage they finish well is no loss to you.`;
+      return t(
+        "You win if you take at least {BROKER_PAYOUT_TARGET} Gold from other captains in trade. The commission is their business rather than yours, so a voyage they finish well is no loss to you.",
+        { BROKER_PAYOUT_TARGET },
+      );
     case "pirate":
-      return "You win if the fleet falls short of its commission, and you still end the voyage solvent and rated at least a Qualified Trader.";
+      return t(
+        "You win if the fleet falls short of its commission, and you still end the voyage solvent and rated at least a Qualified Trader.",
+      );
   }
 }

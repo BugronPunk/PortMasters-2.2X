@@ -42,7 +42,9 @@
 // captain's "my clicks stopped landing" needs to find.
 // =====================================================================
 import type { Socket } from "socket.io";
+import { tFor } from "@/lib/game/i18n";
 import { spendToken, type TokenBucket } from "@/lib/token-bucket";
+import { readLocaleCookie } from "./cookies";
 import { sockets } from "./presence";
 
 /** Frames a socket may hold at once. The header holds the reading this
@@ -108,8 +110,13 @@ export function guardInbound(socket: Socket): void {
     // it on yet.
     socket.emit("room:error", {
       roomId: state?.roomId ?? "",
-      error:
+      // The captain being slowed is the only reader, so the refusal is read
+      // in their own language, off the socket's state or the cookie the
+      // handshake carried before the state was filed.
+      error: tFor(
+        state?.locale ?? readLocaleCookie(socket.handshake?.headers?.cookie),
         "Too many actions at once. Give the harbor a moment, then try again.",
+      ),
     });
     console.warn(
       `[inbound] socket ${socket.id} went over its frame budget on "${String(event)}".`,

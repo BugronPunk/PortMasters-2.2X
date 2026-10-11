@@ -15,6 +15,7 @@
 // =====================================================================
 
 import { ICONS } from "../constants/brand";
+import { t } from "@/lib/game/i18n";
 import type { GameState, Phase } from "../types";
 import {
   higherObjectiveTally,
@@ -139,8 +140,8 @@ export function deliverToObjective(
     // take, or the hold answers nothing the commission still asks for.
     logs.push(
       objectiveProgress(objective, already).met
-        ? "📜 The commission is already filled, and nothing was taken."
-        : "📜 Nothing in the hold answers the commission.",
+        ? t("📜 The commission is already filled, and nothing was taken.")
+        : t("📜 Nothing in the hold answers the commission."),
     );
     return;
   }
@@ -156,10 +157,19 @@ export function deliverToObjective(
     state.roundRevenue += sum;
     state.totalRevenue += sum;
     paid += sum;
-    parts.push(`${ICONS[r.type]}${r.type}×${r.take}`);
+    parts.push(
+      t("{goodIcon}{r.type}×{r.take}", {
+        goodIcon: ICONS[r.type],
+        "r.type": r.type,
+        "r.take": r.take,
+      }),
+    );
   }
   logs.push(
-    `📜 Fleet Commission: delivered ${parts.join(" + ")} for ${paid} Gold. The Emperor's commission is exempt from VAT.`,
+    t(
+      "📜 Fleet Commission: delivered {partList} for {paid} Gold. The Emperor's commission is exempt from VAT.",
+      { partList: parts.join(" + "), paid },
+    ),
   );
   // [F4: boons at milestone moments] The mandate moment: the plan's
   // "contributing to a Joint Mandate", read at the first delivery to the

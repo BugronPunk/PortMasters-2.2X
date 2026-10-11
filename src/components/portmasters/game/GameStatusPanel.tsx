@@ -9,6 +9,7 @@ import {
   shortOfWarmth,
   warmthScore,
 } from "@/lib/game/garments";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import type { WorkerType } from "@/lib/game/constants/crew";
 import { unlockedWorkerTypes } from "@/lib/game/pools";
@@ -153,25 +154,25 @@ export function GameStatusPanel({
         <TabsList className="grid w-full shrink-0 grid-cols-4">
           <TabsTrigger value="hold" className="text-[11px]">
             <Term term="Hold" focusable={false}>
-              Hold
+              {t("Hold")}
             </Term>
           </TabsTrigger>
           <TabsTrigger value="ship" className="text-[11px]">
-            Ship
+            {t("Ship")}
           </TabsTrigger>
           <TabsTrigger value="dues" className="text-[11px]">
             <Term term="Dues" focusable={false}>
-              Dues
+              {t("Dues")}
             </Term>
             {duesAlert && (
               <span
                 className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-alarm"
-                aria-label="attention needed"
+                aria-label={t("attention needed")}
               />
             )}
           </TabsTrigger>
           <TabsTrigger value="log" className="text-[11px]">
-            Ledger
+            {t("Ledger")}
           </TabsTrigger>
         </TabsList>
 

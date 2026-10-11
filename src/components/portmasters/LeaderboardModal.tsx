@@ -13,6 +13,7 @@ import {
   ModalSheet,
 } from "@/components/ui/modal-overlay";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 
 // The crest beside a captain's Renown, read off the House table the
 // Lobby's own picker draws, so a House that retunes its emblem moves both
@@ -39,7 +40,7 @@ const SORT_OPTIONS: {
     label: "Renown",
     caption: "Renown XP",
     icon: Star,
-    format: (e) => `${e.renownXP} XP`,
+    format: (e) => t("{renownXP} XP", { renownXP: e.renownXP }),
   },
   {
     key: "seaMasterCrowns",
@@ -108,7 +109,7 @@ export function LeaderboardModal({
 
   return (
     <ModalOverlay
-      label="Harbor Leaderboard"
+      label={t("Harbor Leaderboard")}
       onClose={() => onOpenChange(false)}
     >
       <ModalSheet maxW="max-w-lg" maxH="max-h-[85vh]">
@@ -127,15 +128,15 @@ export function LeaderboardModal({
               </div>
               <div>
                 <h2 className="font-display text-lg font-bold text-leaderboard">
-                  Harbor Leaderboard
+                  {t("Harbor Leaderboard")}
                 </h2>
                 <p className="text-[11px] text-muted-foreground">
-                  Top captains across all voyages
+                  {t("Top captains across all voyages")}
                 </p>
               </div>
             </div>
             <ModalClose
-              label="Close leaderboard"
+              label={t("Close leaderboard")}
               onClick={() => onOpenChange(false)}
             />
           </div>
@@ -155,7 +156,7 @@ export function LeaderboardModal({
               )}
             >
               <opt.icon className="h-3 w-3" />
-              {opt.label}
+              {t(opt.label)}
             </button>
           ))}
         </div>
@@ -169,9 +170,9 @@ export function LeaderboardModal({
           ) : sorted.length === 0 ? (
             <div className="flex h-32 items-center justify-center text-center">
               <p className="text-sm text-muted-foreground">
-                No captains have completed a voyage yet.
+                {t("No captains have completed a voyage yet.")}
                 <br />
-                Set sail to be the first on the board.
+                {t("Set sail to be the first on the board.")}
               </p>
             </div>
           ) : (
@@ -216,12 +217,12 @@ export function LeaderboardModal({
                         </span>
                         {isMe && (
                           <Pill tone="default" className="shrink-0">
-                            you
+                            {t("you")}
                           </Pill>
                         )}
                       </div>
                       <div className="text-[10px] text-muted-foreground">
-                        Renown {entry.renownLevel}
+                        {t("Renown {level}", { level: entry.renownLevel })}
                         {entry.houseId && (
                           <span className="ml-1.5">
                             {HOUSE_ICON.get(entry.houseId)}
@@ -235,7 +236,7 @@ export function LeaderboardModal({
                         {sort.format(entry)}
                       </div>
                       <div className="text-[9px] text-muted-foreground">
-                        {sort.caption}
+                        {t(sort.caption)}
                       </div>
                     </div>
                   </motion.div>

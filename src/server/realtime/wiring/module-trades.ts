@@ -19,6 +19,7 @@ import {
   type ModuleTrade,
 } from "@/lib/game/engine";
 import { moduleTradesOn } from "@/lib/game/flags";
+import { tFor } from "@/lib/game/i18n";
 import { auditSpentLeg, auditSpentReason } from "../audit";
 import { requireAuth, seated } from "../auth";
 import { getCheckpoint } from "../checkpoint";
@@ -86,7 +87,7 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
         socket.emit("module:error", { roomId, error });
       };
       if (!moduleTradesOn(s.mode)) {
-        fail(MARKET_OFF);
+        fail(tFor(s.locale, MARKET_OFF));
         return;
       }
       // The fee is read through the same reader the panel reads it
@@ -94,7 +95,7 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
       // about what a price is (see consentFeeFor).
       const fee = consentFeeFor(payload?.fee);
       if (fee === null) {
-        fail(consentFeeRule());
+        fail(consentFeeRule(s.locale));
         return;
       }
       // The term is a card rather than a number, so it is validated
@@ -105,27 +106,28 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
       // could take, and it would sit on the board for a whole leg.
       const moduleId = payload?.module;
       if (!isModuleId(moduleId)) {
-        fail("A listing names a module the yard can bolt on.");
+        fail(tFor(s.locale, "A listing names a module the yard can bolt on."));
         return;
       }
       // The one await in this handler, and every check is after it, so
       // nothing between a check and the change it guards can yield.
       const cp = await getCheckpoint(roomId);
       if (cp.phase !== "parley") {
-        fail("A module is listed in the Parley phase.");
+        fail(tFor(s.locale, "A module is listed in the Parley phase."));
         return;
       }
       // The audit's spend closes this board on the tick it lands rather
       // than on the advance that follows it (see auditSpentLeg).
       if (auditSpentLeg(roomId, cp.round)) {
-        fail(auditSpentReason("Modules are listed"));
+        fail(auditSpentReason("Modules are listed", s.locale));
         return;
       }
       const named = await resolveNamedBuyer(
         roomId,
         s.userId,
         payload?.targetUserId,
-        "You can't sell a module to yourself.",
+        tFor(s.locale, "You can't sell a module to yourself."),
+        s.locale,
       );
       if (!named.ok) {
         fail(named.reason);
@@ -141,7 +143,7 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
       // seller could not honour, which is a worse thing to hand a buyer
       // than a sentence at the moment the second listing is made.
       if (moduleListedThisLeg(list, s.userId, moduleId, cp.round)) {
-        fail("You have already listed that module this leg.");
+        fail(tFor(s.locale, "You have already listed that module this leg."));
         return;
       }
       const standing = offerStandingRefusal(
@@ -149,6 +151,7 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
         s.userId,
         buyerUserId,
         buyerName,
+        s.locale,
       );
       if (standing !== null) {
         fail(standing);
@@ -197,7 +200,7 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
         socket.emit("module:error", { roomId, error });
       };
       if (!moduleTradesOn(s.mode)) {
-        fail(MARKET_OFF);
+        fail(tFor(s.locale, MARKET_OFF));
         return;
       }
       const cp = await getCheckpoint(roomId);
@@ -207,29 +210,29 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
       const board = moduleTrades.list(roomId);
       const opening = board.find((t) => t.id === tradeId);
       if (!opening || opening.status !== "offered") {
-        fail(OFFER_ALREADY_GONE);
+        fail(tFor(s.locale, OFFER_ALREADY_GONE));
         return;
       }
       if (opening.sellerUserId === s.userId) {
-        fail("You are the one selling that module.");
+        fail(tFor(s.locale, "You are the one selling that module."));
         return;
       }
       if (opening.buyerUserId !== null && opening.buyerUserId !== s.userId) {
-        fail(OFFER_FOR_ANOTHER_CAPTAIN);
+        fail(tFor(s.locale, OFFER_FOR_ANOTHER_CAPTAIN));
         return;
       }
       if (opening.round !== cp.round) {
-        fail(STALE_OFFER);
+        fail(tFor(s.locale, STALE_OFFER));
         return;
       }
       if (cp.phase !== "parley") {
-        fail("A module trade is agreed in the Parley phase.");
+        fail(tFor(s.locale, "A module trade is agreed in the Parley phase."));
         return;
       }
       // A trade agreed after the spend is trading the leg the harbor
       // just closed (see auditSpentLeg).
       if (auditSpentLeg(roomId, cp.round)) {
-        fail(auditSpentReason("Module trades are agreed"));
+        fail(auditSpentReason("Module trades are agreed", s.locale));
         return;
       }
       // No party busy check here, and the absence is the design rather
@@ -267,7 +270,7 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
         socket.emit("module:error", { roomId, error });
       };
       if (!moduleTradesOn(s.mode)) {
-        fail(MARKET_OFF);
+        fail(tFor(s.locale, MARKET_OFF));
         return;
       }
       const board = moduleTrades.list(roomId);
@@ -279,7 +282,12 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
       // than a button. It matters more here than there, since the module
       // stops being the seller's the moment the buyer's side settles.
       if (mine.status !== "offered") {
-        fail("That module has been agreed, so the listing can't be withdrawn.");
+        fail(
+          tFor(
+            s.locale,
+            "That module has been agreed, so the listing can't be withdrawn.",
+          ),
+        );
         return;
       }
       moduleTrades.set(

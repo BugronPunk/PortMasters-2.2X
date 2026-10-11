@@ -26,6 +26,7 @@
 // =====================================================================
 import { cardLead, cargoCarriesTag, carriesTag } from "../cards";
 import { ICONS } from "../constants/brand";
+import { t } from "@/lib/game/i18n";
 import { PRODUCTS, RESOURCES } from "../constants/goods";
 import { PATH_ORDER_SLOTS } from "../constants/paths";
 import {
@@ -214,7 +215,12 @@ export function completeOrder(
   }
   const short = orderShortfall(state, order);
   if (short) {
-    logs.push(`❌ Inventory short! Need ${short.type}×${short.required}`);
+    logs.push(
+      t("❌ Inventory short! Need {short.type}×{short.required}", {
+        "short.type": short.type,
+        "short.required": short.required ?? 0,
+      }),
+    );
     return;
   }
   // Silk, and everything made from it, read off the woven tag rather than a
@@ -266,7 +272,7 @@ export function completeOrder(
     totalVat = unitVat * productUnits;
     reward -= totalVat;
     state.vatPaid += totalVat;
-    logs.push(`🧾 Product Sales VAT: ${totalVat} Gold`);
+    logs.push(t("🧾 Product Sales VAT: {totalVat} Gold", { totalVat }));
   }
   // Fleet of Treasures discount applied before money moves, so the captain
   // is never charged the pre discount freight.
@@ -284,7 +290,10 @@ export function completeOrder(
     if (luxuryItems > 0) {
       transport = Math.max(0, transport - luxuryItems * 3);
       logs.push(
-        `${cardLead("fleet_of_treasures")}: ${luxuryItems * 3}g off freight`,
+        t("{fleetLead}: {freightOff}g off freight", {
+          fleetLead: cardLead("fleet_of_treasures"),
+          freightOff: luxuryItems * 3,
+        }),
       );
     }
   }
@@ -294,7 +303,12 @@ export function completeOrder(
   const origTransport = transport;
   if (hasModule(state, "silk_monopoly") && hasWoven) {
     reward = Math.floor(reward * 1.2);
-    logs.push(`${cardLead("silk_monopoly")}: +20% Reward!`);
+    logs.push(
+      t("{lead}: +{pct}% Reward!", {
+        lead: cardLead("silk_monopoly"),
+        pct: 20,
+      }),
+    );
   }
   // Charter lane payouts: the Kiln and Forge Guild boon and the Maritime
   // Bureau Token both reward trading the goods a charter opened, so they only
@@ -326,18 +340,26 @@ export function completeOrder(
     const pct = state.modifierFlags.charter_order_bonus;
     reward += Math.floor(reward * pct);
     logs.push(
-      `${cardLead("kiln_and_forge_guild")}: +${Math.round(pct * 100)}% Reward!`,
+      t("{lead}: +{pct}% Reward!", {
+        lead: cardLead("kiln_and_forge_guild"),
+        pct: Math.round(pct * 100),
+      }),
     );
   }
   if (hasCharterGood && hasModule(state, "bureau_token")) {
     reward += Math.floor(reward * 0.1);
-    logs.push(`${cardLead("bureau_token")}: +10% Reward!`);
+    logs.push(
+      t("{lead}: +{pct}% Reward!", { lead: cardLead("bureau_token"), pct: 10 }),
+    );
   }
   if (hasTier2Good && state.modifierFlags.exotic_order_bonus) {
     const pct = state.modifierFlags.exotic_order_bonus;
     reward += Math.floor(reward * pct);
     logs.push(
-      `${cardLead("exotic_treasures")}: +${Math.round(pct * 100)}% Reward!`,
+      t("{lead}: +{pct}% Reward!", {
+        lead: cardLead("exotic_treasures"),
+        pct: Math.round(pct * 100),
+      }),
     );
   }
   // [F4: boons at milestone moments] Route Mastery, the boon the first
@@ -356,7 +378,10 @@ export function completeOrder(
     const pct = state.modifierFlags.route_mastery;
     reward += Math.floor(reward * pct);
     logs.push(
-      `${cardLead("route_mastery")}: +${Math.round(pct * 100)}% Reward!`,
+      t("{lead}: +{pct}% Reward!", {
+        lead: cardLead("route_mastery"),
+        pct: Math.round(pct * 100),
+      }),
     );
   }
   // [F6: charters at leg four] The Standing Manifest and the Quality Mark,
@@ -371,26 +396,39 @@ export function completeOrder(
     const pct = state.modifierFlags.manifest_order_bonus;
     reward += Math.floor(reward * pct);
     logs.push(
-      `${cardLead("standing_manifest")}: +${Math.round(pct * 100)}% Reward!`,
+      t("{lead}: +{pct}% Reward!", {
+        lead: cardLead("standing_manifest"),
+        pct: Math.round(pct * 100),
+      }),
     );
   }
   if (hasWoven && state.modifierFlags.loom_sale_bonus) {
     const pct = state.modifierFlags.loom_sale_bonus;
     reward += Math.floor(reward * pct);
     logs.push(
-      `${cardLead("quality_mark")}: +${Math.round(pct * 100)}% Reward!`,
+      t("{lead}: +{pct}% Reward!", {
+        lead: cardLead("quality_mark"),
+        pct: Math.round(pct * 100),
+      }),
     );
   }
   if (hasModule(state, "salvage_crane") && Math.random() < 0.3) {
     state.money += transport;
     logs.push(
-      `${cardLead("salvage_crane")}: Refunded ${transport} Gold transport!`,
+      t("{lead}: Refunded {transport} Gold transport!", {
+        lead: cardLead("salvage_crane"),
+        transport,
+      }),
     );
     transport = 0;
   }
   if (hasModule(state, "tax_evasion") && Math.random() < 0.15) {
     state.money -= 20;
-    logs.push(`🚨 AUDIT! ${cardLead("tax_evasion")} triggered. Lost 20 Gold!`);
+    logs.push(
+      t("🚨 AUDIT! {taxEvasionLead} triggered. Lost 20 Gold!", {
+        taxEvasionLead: cardLead("tax_evasion"),
+      }),
+    );
   }
   if (transport !== origTransport) {
     // Only the Salvage Crane above can move `transport`, and it has already
@@ -409,7 +447,12 @@ export function completeOrder(
     reward -= commission;
     const pct =
       order.reward > 0 ? Math.round((commission / order.reward) * 100) : 0;
-    logs.push(`🤝 Broker's Commission (${pct}%): ${commission} Gold`);
+    logs.push(
+      t("🤝 Broker's Commission ({pct}%): {commission} Gold", {
+        pct,
+        commission,
+      }),
+    );
   }
   state.money += reward;
   state.roundRevenue += reward;
@@ -449,13 +492,32 @@ export function completeOrder(
   });
   state.orderFills = state.orderFills.slice(-AUDIT_WINDOW);
   const txt = order.resources
-    .map((r) => `${ICONS[r.type]}${r.type}×${r.required ?? 0}`)
+    .map((r) =>
+      t("{goodIcon}{r.type}×{r.required}", {
+        goodIcon: ICONS[r.type],
+        "r.type": r.type,
+        "r.required": r.required ?? 0,
+      }),
+    )
     .join(" + ");
-  logs.push(`📦 Completed Order at ${order.demandPort}: ${txt}`);
   logs.push(
-    `   💰 Reward: ${reward} Gold · ⚓ Freight: ${transport} Gold = 📊 Net Profit: ${reward - transport} Gold`,
+    t("📦 Completed Order at {order.demandPort}: {txt}", {
+      "order.demandPort": order.demandPort,
+      txt,
+    }),
   );
-  logs.push(`📊 Completed ${state.orderCount} transactions`);
+  logs.push(
+    "   " +
+      t(
+        "💰 Reward: {reward} Gold · ⚓ Freight: {transport} Gold = 📊 Net Profit: {netProfit} Gold",
+        { reward, transport, netProfit: reward - transport },
+      ),
+  );
+  logs.push(
+    t("📊 Completed {state.orderCount} transactions", {
+      "state.orderCount": state.orderCount,
+    }),
+  );
   // [MANIFEST 02: Word on the Docks] Fires exactly once per voyage, the
   // instant this captain's own running total crosses the threshold, whether
   // or not they actually turn out to be first in the room. The React layer
@@ -482,7 +544,10 @@ export function completeOrder(
 export function claimWordOnTheDocksReward(state: GameState, logs: string[]) {
   state.money += WORD_ON_THE_DOCKS_REWARD;
   logs.push(
-    `📣 Word on the Docks: you were first to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage! +${WORD_ON_THE_DOCKS_REWARD} Gold`,
+    t(
+      "📣 Word on the Docks: you were first to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage! +{WORD_ON_THE_DOCKS_REWARD} Gold",
+      { WORD_ON_THE_DOCKS_THRESHOLD, WORD_ON_THE_DOCKS_REWARD },
+    ),
   );
 }
 
@@ -507,28 +572,40 @@ export function callBrokersFavor(
   if (state.phase !== "orders") return;
   if (state.renownLevel < BROKERS_FAVOR_UNLOCK_LEVEL) {
     logs.push(
-      `❌ Broker's Favor unlocks at Renown Level ${BROKERS_FAVOR_UNLOCK_LEVEL}`,
+      t(
+        "❌ Broker's Favor unlocks at Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL}",
+        {
+          BROKERS_FAVOR_UNLOCK_LEVEL,
+        },
+      ),
     );
     return;
   }
   if (state.brokersFavorUsed) {
-    logs.push("❌ You've already called in a Broker's Favor this voyage");
+    logs.push(t("❌ You've already called in a Broker's Favor this voyage"));
     return;
   }
   const isRaw = (RESOURCES as readonly string[]).includes(item);
   const isProduct = (PRODUCTS as readonly string[]).includes(item);
   if (!isRaw && !isProduct) {
-    logs.push(`❌ The Broker can't find a buyer for ${item}`);
+    logs.push(t("❌ The Broker can't find a buyer for {item}", { item }));
     return;
   }
   const held = state.inventory[item] || 0;
   if (held <= 0) {
-    logs.push(`❌ You have no ${item} in the hold for the Broker to sell`);
+    logs.push(
+      t("❌ You have no {item} in the hold for the Broker to sell", { item }),
+    );
     return;
   }
   const qty = Math.floor(quantity);
   if (!Number.isFinite(qty) || qty < 1 || qty > held) {
-    logs.push(`❌ Choose between 1 and ${held} ${item} for the Broker to sell`);
+    logs.push(
+      t("❌ Choose between 1 and {held} {item} for the Broker to sell", {
+        held,
+        item,
+      }),
+    );
     return;
   }
   const localRng: Rng = Math.random;
@@ -539,10 +616,19 @@ export function callBrokersFavor(
   state.customerCards.push({ id: nextId, ...order, isBrokerFavor: true });
   state.brokersFavorUsed = true;
   const txt = order.resources
-    .map((r) => `${ICONS[r.type]}${r.type}×${r.required}`)
+    .map((r) =>
+      t("{goodIcon}{r.type}×{r.required}", {
+        goodIcon: ICONS[r.type],
+        "r.type": r.type,
+        "r.required": r.required ?? 0,
+      }),
+    )
     .join(" + ");
   logs.push(
-    `🤝 Broker's Favor called in: a buyer at ${order.demandPort} now wants ${txt}. The bigger the ask, the bigger the Broker's cut.`,
+    t(
+      "🤝 Broker's Favor called in: a buyer at {order.demandPort} now wants {txt}. The bigger the ask, the bigger the Broker's cut.",
+      { "order.demandPort": order.demandPort, txt },
+    ),
   );
 }
 
@@ -553,16 +639,16 @@ export function purchaseIntel(state: GameState, logs: string[]) {
   // could never be honoured. The dialog can outlive the market leg, so the
   // engine refuses a late press rather than charging for it.
   if (state.phase !== "market") {
-    logs.push("🔮 The Broker only deals during Market.");
+    logs.push(t("🔮 The Broker only deals during Market."));
     return;
   }
   if (!state.marketDemandTags.length) {
-    logs.push("🔮 The Broker has no more whispers...");
+    logs.push(t("🔮 The Broker has no more whispers..."));
     return;
   }
   const cost = getIntelCost(state);
   if (state.money < cost) {
-    logs.push(`❌ Need ${cost} Gold for a rumor`);
+    logs.push(t("❌ Need {cost} Gold for a rumor", { cost }));
     return;
   }
   // One press is one purchase, and one fee: what the hull's modules
@@ -582,7 +668,11 @@ export function purchaseIntel(state: GameState, logs: string[]) {
   state.money -= cost;
   for (let i = 0; i < count; i++) {
     if (!state.marketDemandTags.length) break;
-    revealRumor(state, logs, "🗣️ Broker's Whisper");
+    revealRumor(
+      state,
+      logs,
+      "🗣️ Broker's Whisper: 'Word from {port}: High demand for {item}!'",
+    );
     // [DIFFICULTY] Corrupt broker (Monsoon only). The rumor above is always
     // delivered and always true, on every tier: the intel guarantee is never
     // touched. What a corrupt broker does instead is also sell word of this
@@ -596,7 +686,10 @@ export function purchaseIntel(state: GameState, logs: string[]) {
     ) {
       state.brokerTippedPirates = true;
       logs.push(
-        `🕵️ That broker was corrupt. The word is good, but your position leaked: raid risk is up ${Math.round(cfg.brokerCorruptionRisk * 100)} points this round.`,
+        t(
+          "🕵️ That broker was corrupt. The word is good, but your position leaked: raid risk is up {riskPoints} points this round.",
+          { riskPoints: Math.round(cfg.brokerCorruptionRisk * 100) },
+        ),
       );
     }
   }
@@ -611,7 +704,9 @@ export function startOrders(
   state.orderCount = 0;
   state.completedOrders = [];
   logs.push(
-    `\n🤝=== Round ${state.currentRound} · Orders: Trade Transaction ===`,
+    t("\n🤝=== Round {state.currentRound} · Orders: Trade Transaction ===", {
+      "state.currentRound": state.currentRound,
+    }),
   );
   // [ONLINE] Deterministic trade orders: this captain's seed, this voyage,
   // this round. The loop below reads nothing captain specific, so what
@@ -638,7 +733,11 @@ export function startOrders(
       id: nextId,
       ...genMixedOrder(orderRng, orderPools),
     });
-    logs.push(`${cardLead("merchants_converge")}: One extra order appeared.`);
+    logs.push(
+      t("{lead}: One extra order appeared.", {
+        lead: cardLead("merchants_converge"),
+      }),
+    );
   }
   // Broker's Whisper guarantee, applied after the seeded draw above and
   // entirely with this captain's own randomness, so it cannot shift the
@@ -704,10 +803,23 @@ export function startOrders(
       isMandate: true,
     });
     const need = mandate.resources
-      .map((r) => `${ICONS[r.type]}${r.type}×${r.required}`)
+      .map((r) =>
+        t("{goodIcon}{r.type}×{r.required}", {
+          goodIcon: ICONS[r.type],
+          "r.type": r.type,
+          "r.required": r.required,
+        }),
+      )
       .join(" + ");
     logs.push(
-      `📜 Imperial Mandate at ${mandate.port}: ${need} for ${mandate.reward} Gold. The Emperor's commission is exempt from VAT.`,
+      t(
+        "📜 Imperial Mandate at {mandate.port}: {need} for {mandate.reward} Gold. The Emperor's commission is exempt from VAT.",
+        {
+          "mandate.port": mandate.port,
+          need,
+          "mandate.reward": mandate.reward,
+        },
+      ),
     );
   }
   // [D2: the nine slot order board] The pathbound slots, filled last and

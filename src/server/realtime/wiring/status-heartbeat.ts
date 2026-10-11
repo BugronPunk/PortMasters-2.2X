@@ -15,6 +15,7 @@ import { TIDEWATCH_SURGE_THRESHOLD } from "@/lib/game/constants/world";
 import type { Server, Socket } from "socket.io";
 
 import { db } from "@/lib/db";
+import { tFor } from "@/lib/game/i18n";
 import { voyageRoundsFor } from "@/lib/game/mode";
 import { normalizePhase, seatOf } from "@/lib/game/phases";
 import { type Phase } from "@/lib/game/types";
@@ -291,11 +292,20 @@ function maybeAnnounceSurge(io: Server, roomId: string): void {
   }
   markSurged(roomId);
   io.to(`room:${roomId}`).emit("tidewatch:surge", { roomId });
-  io.to(`room:${roomId}`).emit("room:system", {
-    roomId,
-    content:
-      "Tidewatch Alert: the harbor takes notice of a bustling crew. One more cargo lot joins every captain's Port Purchase board, for the rest of this voyage.",
-  });
+  // The notice is read by the whole table, so it goes to every socket in
+  // the harbor in that captain's own language rather than as one
+  // broadcast. The tidewatch:surge frame above carries structure only, so
+  // it stays a single send.
+  for (const [socketId, state] of sockets) {
+    if (state.roomId !== roomId) continue;
+    io.to(socketId).emit("room:system", {
+      roomId,
+      content: tFor(
+        state.locale,
+        "Tidewatch Alert: the harbor takes notice of a bustling crew. One more cargo lot joins every captain's Port Purchase board, for the rest of this voyage.",
+      ),
+    });
+  }
 }
 
 // Moves the room's checkpoint onto the seat this report is standing at. The

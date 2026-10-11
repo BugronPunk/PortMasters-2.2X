@@ -19,6 +19,7 @@ import {
   type ModuleTrade,
 } from "@/lib/game/engine";
 import { moduleTradesOn } from "@/lib/game/flags";
+import { t } from "@/lib/game/i18n";
 import { powerAfterTaking, powerBudgetAllows } from "@/lib/game/held-cards";
 import type { GameState } from "@/lib/game/types";
 import { RefusalLine } from "../shared";
@@ -110,18 +111,13 @@ export function ModuleMarket({
 
   return (
     <MarketPanel
-      title={`${UNKNOWN_MODULE_ICON} Module Market`}
-      intro={
-        <>
-          A module bolted to a hull, sold at a price the two of you agree. It
-          comes off the seller&apos;s hull and onto the buyer&apos;s the moment
-          the two of you shake hands, so the buyer needs an open slot, and a
-          hull&apos;s ladder tops out at {MAX_SHIP_LEVEL} slots at ship level{" "}
-          {MAX_SHIP_LEVEL}. The fee is paid when you shake hands. One listing
-          per module a leg, one open offer per captain you name, and an offer
-          nobody takes before the Parley closes is gone.
-        </>
-      }
+      title={t("{UNKNOWN_MODULE_ICON} Module Market", {
+        UNKNOWN_MODULE_ICON,
+      })}
+      intro={t(
+        "A module bolted to a hull, sold at a price the two of you agree. It comes off the seller's hull and onto the buyer's the moment the two of you shake hands, so the buyer needs an open slot, and a hull's ladder tops out at {MAX_SHIP_LEVEL} slots at ship level {MAX_SHIP_LEVEL}. The fee is paid when you shake hands. One listing per module a leg, one open offer per captain you name, and an offer nobody takes before the Parley closes is gone.",
+        { MAX_SHIP_LEVEL },
+      )}
     >
       {/* The listing form belongs to a captain with something to sell. A
           captain with an empty hull reads the board below it and nothing
@@ -130,19 +126,20 @@ export function ModuleMarket({
         <MarketBlock>
           {sellable.length === 0 ? (
             <p className="text-center text-[11px] text-muted-foreground">
-              Every module on your hull is already on the board this leg. The
-              market opens again next leg.
+              {t(
+                "Every module on your hull is already on the board this leg. The market opens again next leg.",
+              )}
             </p>
           ) : (
             <>
               <PrivateOffer
                 lead={
                   <>
-                    <span className="text-muted-foreground">Sell</span>
+                    <span className="text-muted-foreground">{t("Sell")}</span>
                     <Select
                       value={chosen}
                       onChange={(e) => setModuleId(e.target.value)}
-                      aria-label="The module this listing sells"
+                      aria-label={t("The module this listing sells")}
                     >
                       {sellable.map((card) => (
                         <option key={card.id} value={card.id}>
@@ -150,7 +147,7 @@ export function ModuleMarket({
                         </option>
                       ))}
                     </Select>
-                    <span className="text-muted-foreground">for</span>
+                    <span className="text-muted-foreground">{t("for")}</span>
                   </>
                 }
                 fee={fee}
@@ -158,8 +155,8 @@ export function ModuleMarket({
                 targetId={targetId}
                 onTarget={setTargetId}
                 others={others}
-                audienceLabel="Offer this module to a specific captain"
-                deadline="before the Parley closes."
+                audienceLabel={t("Offer this module to a specific captain")}
+                deadline={t("before the Parley closes.")}
                 action={
                   <Button
                     className="rounded-lg pm-grad-parley"
@@ -167,7 +164,7 @@ export function ModuleMarket({
                       modules.post(fee, chosen, targetId || undefined)
                     }
                   >
-                    {UNKNOWN_MODULE_ICON} Offer the Module
+                    {UNKNOWN_MODULE_ICON} {t("Offer the Module")}
                   </Button>
                 }
               />
@@ -185,8 +182,12 @@ export function ModuleMarket({
       {modules.moduleTrades.length === 0 ? (
         <MarketEmpty>
           {canSell
-            ? "Nothing on the market yet. List a module and yours is the first row. A listing comes off the board when the leg turns or the Parley closes, so a row you posted earlier may already be gone."
-            : "No modules on offer this Parley. Any captain with a module bolted on can list one, and a listing aimed at one captain waits on that captain."}
+            ? t(
+                "Nothing on the market yet. List a module and yours is the first row. A listing comes off the board when the leg turns or the Parley closes, so a row you posted earlier may already be gone.",
+              )
+            : t(
+                "No modules on offer this Parley. Any captain with a module bolted on can list one, and a listing aimed at one captain waits on that captain.",
+              )}
         </MarketEmpty>
       ) : (
         <div className="space-y-1.5">
@@ -258,11 +259,14 @@ function ModuleRow({
   // for.
   const hold = getOwnedAmount(game, "Gold");
   const blocked = stale
-    ? STALE_OFFER
+    ? t(STALE_OFFER)
     : roomOpen < 1
-      ? "Every slot on your hull is full. Make room at the yard first."
+      ? t("Every slot on your hull is full. Make room at the yard first.")
       : card !== null && !powerBudgetAllows(game, card)
-        ? `Taking it would put your hull at ${powerAfterTaking(game, card)} power, and a hull carries at most ${HELD_POWER_CAP}.`
+        ? t(
+            "Taking it would put your hull at {newPower} power, and a hull carries at most {HELD_POWER_CAP}.",
+            { newPower: powerAfterTaking(game, card), HELD_POWER_CAP },
+          )
         : !canPayFee(game, trade.fee)
           ? feeShortfallLine(hold, trade.fee)
           : null;
@@ -280,7 +284,7 @@ function ModuleRow({
           ? { forMe: isBuyer, name: trade.buyerName }
           : null
       }
-      acceptLabel={`${icon} Take It`}
+      acceptLabel={t("{icon} Take It", { icon })}
       acceptClassName="pm-grad-parley"
       blocked={blocked}
       onCancel={() => modules.cancel(trade.id)}
@@ -299,22 +303,39 @@ function ModuleRow({
  * The module is named through the pool rather than off the row, which is
  * the same resolver the voyage log's own two lines read and what keeps a
  * row and a log line saying the same words about the same card.
+ *
+ * All five lines read through the pack here, which is the composition
+ * boundary: the function is called at render and nowhere else, so the
+ * language in force is the one the row is drawn in.
  */
 function moduleLine(trade: ModuleTrade, me: PublicUser): string {
   const mine = trade.sellerUserId === me.id;
   const isBuyer = trade.buyerUserId === me.id;
   const name = cardName(trade.module);
-  const other = trade.buyerName ?? "a captain";
-  const fee = `${trade.fee} Gold`;
+  const other = trade.buyerName ?? t("a captain");
+  const fee = t("{trade.fee} Gold", { "trade.fee": trade.fee });
   if (trade.status === "offered") {
     return mine
-      ? `You are selling ${name} for ${fee}`
-      : `${trade.sellerName} sells ${name} for ${fee}`;
+      ? t("You are selling {name} for {fee}", { name, fee })
+      : t("{sellerName} sells {name} for {fee}", {
+          sellerName: trade.sellerName,
+          name,
+          fee,
+        });
   }
   if (mine) {
-    return `You sold ${name} to ${other} for ${fee}`;
+    return t("You sold {name} to {other} for {fee}", { name, other, fee });
   }
   return isBuyer
-    ? `${trade.sellerName} sold you ${name} for ${fee}`
-    : `${trade.sellerName} sold ${name} to ${other} for ${fee}`;
+    ? t("{sellerName} sold you {name} for {fee}", {
+        sellerName: trade.sellerName,
+        name,
+        fee,
+      })
+    : t("{sellerName} sold {name} to {other} for {fee}", {
+        sellerName: trade.sellerName,
+        name,
+        other,
+        fee,
+      });
 }

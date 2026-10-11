@@ -16,6 +16,7 @@
 // =====================================================================
 
 import { Label } from "@/components/ui/label";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 
 // The shape of one stop, private to this file: it is the props contract
@@ -90,7 +91,7 @@ export function WatersScale<T extends string>({
                 {option.badge}
               </span>
               <span className="text-[10px] tabular-nums text-muted-foreground">
-                {option.rounds} rounds
+                {t("{rounds} rounds", { rounds: option.rounds })}
               </span>
             </button>
           );

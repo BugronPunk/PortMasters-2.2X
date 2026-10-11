@@ -31,6 +31,7 @@ import { ChatPanel } from "@/components/portmasters/ChatPanel";
 import type { ChatMessage, PublicUser } from "@/lib/api";
 import type { OnlineUser } from "@/types/realtime/presence";
 import { renownProgress, type CaptainLegacySummary } from "@/lib/game/legacy";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 import { CardHead } from "./CardHead";
 
@@ -79,7 +80,11 @@ export function HarborRail({
   return (
     <aside className="-order-1 space-y-3 lg:order-2 lg:sticky lg:top-40 lg:max-h-[calc(100dvh-11rem)] lg:self-start lg:overflow-y-auto pm-scroll lg:pr-1">
       <div className="pm-glass pm-panel">
-        <CardHead icon={Users} tone="text-captains" title="Captains Online">
+        <CardHead
+          icon={Users}
+          tone="text-captains"
+          title={t("Captains Online")}
+        >
           <Pill tone="gain">
             <OnlineDot online size={8} /> {totalOnline}
           </Pill>
@@ -93,8 +98,8 @@ export function HarborRail({
           {onlineUsers.length === 0 ? (
             <p className="py-6 text-center text-xs text-muted-foreground">
               {connected
-                ? "No other captains online yet."
-                : "Connecting to the harbor…"}
+                ? t("No other captains online yet.")
+                : t("Connecting to the harbor…")}
             </p>
           ) : (
             <div className="space-y-1">
@@ -128,12 +133,12 @@ export function HarborRail({
                         {u.displayName}{" "}
                         {isMe && (
                           <span className="text-[10px] text-muted-foreground">
-                            (you)
+                            {t("(you)")}
                           </span>
                         )}
                       </div>
                       <div className="truncate text-[10px] text-muted-foreground">
-                        {u.roomId ? "In a harbor" : "In the lobby"}
+                        {u.roomId ? t("In a harbor") : t("In the lobby")}
                       </div>
                     </div>
                     {otherLegacy && (
@@ -172,18 +177,18 @@ export function HarborRail({
             <MessageCircle className="h-4 w-4 shrink-0 text-messages" />
             <span className="pm-truncate min-w-0 flex-1 text-sm font-medium">
               {chatTab === "lobby"
-                ? "Harbor chat"
+                ? t("Harbor chat")
                 : dmTarget
-                  ? `Direct · ${dmTarget.displayName}`
-                  : "Direct messages"}
+                  ? `${t("Direct")} · ${dmTarget.displayName}`
+                  : t("Direct messages")}
             </span>
           </div>
           <TabsList className="mx-4 mt-2 grid grid-cols-2">
             <TabsTrigger value="lobby">
-              <MessageCircle className="mr-1.5 h-3.5 w-3.5" /> Harbor
+              <MessageCircle className="mr-1.5 h-3.5 w-3.5" /> {t("Harbor")}
             </TabsTrigger>
             <TabsTrigger value="dm">
-              <MessageCircle className="mr-1.5 h-3.5 w-3.5" /> Direct
+              <MessageCircle className="mr-1.5 h-3.5 w-3.5" /> {t("Direct")}
             </TabsTrigger>
           </TabsList>
           {/* Both channels stay mounted, so the square keeps filling in
@@ -211,7 +216,8 @@ export function HarborRail({
             {dmTarget ? (
               dmLoading ? (
                 <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loading…
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                  {t("Loading…")}
                 </div>
               ) : (
                 <ChatPanel
@@ -225,8 +231,9 @@ export function HarborRail({
             ) : (
               <div className="flex h-full items-center justify-center px-6 text-center">
                 <p className="text-xs leading-relaxed text-muted-foreground">
-                  Pick a captain from the list above to start a private
-                  conversation.
+                  {t(
+                    "Pick a captain from the list above to start a private conversation.",
+                  )}
                 </p>
               </div>
             )}

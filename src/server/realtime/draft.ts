@@ -69,6 +69,7 @@ import {
 } from "@/lib/game/draft";
 import { createRng } from "@/lib/game/rng";
 import { pathDraftOn } from "@/lib/game/flags";
+import { DEFAULT_LOCALE, tFor, type Locale } from "@/lib/game/i18n";
 import type { PathId } from "@/lib/game/paths";
 import { announceDraftComplete, disarmTimer } from "./checkpoint";
 import { emitToUser, userSockets } from "./presence";
@@ -78,7 +79,8 @@ import { noteVoyageLog } from "./voyage-log";
 // The one sentence a pick off the board is refused with, said once because
 // the guard below answers it from two checks (the shape of the index and
 // the card it names), and the captain only ever reads whichever fired
-// first.
+// first. The constant keeps its English, and the read below is what
+// translates it.
 const PICK_OFF_BOARD = "That is not one of the cards in front of you.";
 
 // One captain's seat in a live draft. The kept cards are the ones this
@@ -202,6 +204,10 @@ function fireDraftWatch(io: Server, roomId: string): void {
       draft.seats[seat].userId,
       DRAFT_AUTO_PICK,
       draft.step,
+      // The seat this lays for holds no socket, so no refusal this call
+      // could hand back has a reader; the shipped language stands in for
+      // the one nobody is here to name.
+      DEFAULT_LOCALE,
     );
     if (!drafts.has(roomId)) return;
   }
@@ -415,6 +421,10 @@ export function draftViewFor(roomId: string, userId: string): DraftView | null {
  * was answering (see keep in @/lib/use-path-draft), and the room's own
  * absence watch lays through this same door naming the step it is laying
  * for (see fireDraftWatch), so there is no pick anywhere without its step.
+ *
+ * The refused sentences are composed in the locale the caller names,
+ * which is the language of the captain whose press was refused: the
+ * caller passes the sender's own.
  */
 export function takeDraftPick(
   io: Server,
@@ -422,25 +432,26 @@ export function takeDraftPick(
   userId: string,
   pick: unknown,
   step: unknown,
+  locale: Locale,
 ): string | null {
   const draft = drafts.get(roomId);
-  if (!draft) return "The draft is not running.";
+  if (!draft) return tFor(locale, "The draft is not running.");
   const seat = draft.seats.findIndex((held) => held.userId === userId);
-  if (seat < 0) return "You are not in this draft.";
+  if (seat < 0) return tFor(locale, "You are not in this draft.");
   if (step !== draft.step) {
-    return "The table has moved past that step.";
+    return tFor(locale, "The table has moved past that step.");
   }
   if (draft.picks[seat] !== null) {
-    return "Your card is already laid down.";
+    return tFor(locale, "Your card is already laid down.");
   }
   // The type guard is the caller's rather than keepFrom's, and it is what
   // lets the index be stored as the number it was checked to be; keepFrom
   // repeats the check so the rule itself stays total for any caller.
   if (typeof pick !== "number" || !Number.isInteger(pick)) {
-    return PICK_OFF_BOARD;
+    return tFor(locale, PICK_OFF_BOARD);
   }
   if (keepFrom(draft.hands[seat], pick) === null) {
-    return PICK_OFF_BOARD;
+    return tFor(locale, PICK_OFF_BOARD);
   }
   draft.picks[seat] = pick;
   // A step closes when the last captain has answered, and that is the only

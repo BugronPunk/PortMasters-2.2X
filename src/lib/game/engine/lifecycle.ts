@@ -22,6 +22,7 @@
 // where a phase leads, and it asks the lap.
 // =====================================================================
 import { APP_NAME } from "../constants/brand";
+import { t } from "@/lib/game/i18n";
 import { endgameRatingFor } from "../constants/reputation";
 import { closesRound, isGatedPhase, lapSuccessor } from "../checkpoint";
 import { tickGarments } from "../garments";
@@ -56,21 +57,41 @@ import { payMaintenance, payWages, processProduction } from "./workers";
 // from there.
 
 function endRound(state: GameState, logs: string[]) {
-  logs.push(`\n📊=== Round ${state.currentRound} Settlement ===`);
-  logs.push(`💰 Revenue this round: ${state.roundRevenue} Gold`);
+  logs.push(
+    t("\n📊=== Round {state.currentRound} Settlement ===", {
+      "state.currentRound": state.currentRound,
+    }),
+  );
+  logs.push(
+    t("💰 Revenue this round: {state.roundRevenue} Gold", {
+      "state.roundRevenue": state.roundRevenue,
+    }),
+  );
   const totalCost =
     state.roundCosts + state.maintenanceCosts + state.workerWages;
-  logs.push(`💸 Total Cost this round: ${totalCost} Gold`);
-  logs.push(`   🔧 Maintenance: ${state.maintenanceCosts} Gold`);
+  logs.push(t("💸 Total Cost this round: {totalCost} Gold", { totalCost }));
+  // The indent is the ledger's own nesting, not the row's, so it stays
+  // outside the read.
+  logs.push(
+    "   " +
+      t("🔧 Maintenance: {state.maintenanceCosts} Gold", {
+        "state.maintenanceCosts": state.maintenanceCosts,
+      }),
+  );
   // A Materials line sat here, reading a materialCosts field that nothing in
   // the engine ever wrote, so it printed 0 Gold every round of every voyage.
   // Field and line are both gone, and the goods and freight spending they
   // stood in front of is inside roundCosts above, counted there once: wages
   // and maintenance used to be added into roundCosts as well as summed here,
   // which charged them twice against the tax base this ledger feeds.
-  logs.push(`   👥 Wages: ${state.workerWages} Gold`);
+  // This row carries its own indent, unlike the maintenance row above.
+  logs.push(
+    t("   👥 Wages: {state.workerWages} Gold", {
+      "state.workerWages": state.workerWages,
+    }),
+  );
   const preTax = state.roundRevenue - totalCost;
-  logs.push(`📈 Pretax Profit: ${preTax} Gold`);
+  logs.push(t("📈 Pretax Profit: {preTax} Gold", { preTax }));
   const tax = calcIncomeTax(state, preTax);
   if (tax > 0) {
     state.money -= tax;
@@ -82,10 +103,19 @@ function endRound(state: GameState, logs: string[]) {
     // charge that is still being taken.
     const rate =
       (state.modifierFlags.income_tax_override || INCOME_TAX_RATE) * 100;
-    logs.push(`🏛️ Income Tax Paid (${rate.toFixed(0)}%): ${tax} Gold`);
-  } else logs.push("🏛️ No profit, no income tax due");
+    logs.push(
+      t("🏛️ Income Tax Paid ({rate}%): {tax} Gold", {
+        rate: rate.toFixed(0),
+        tax,
+      }),
+    );
+  } else logs.push(t("🏛️ No profit, no income tax due"));
   if (state.vatPaid > 0)
-    logs.push(`🧾 VAT Paid this round: ${state.vatPaid} Gold`);
+    logs.push(
+      t("🧾 VAT Paid this round: {state.vatPaid} Gold", {
+        "state.vatPaid": state.vatPaid,
+      }),
+    );
 
   // [F4: boons at milestone moments] The round's flags are rebuilt from
   // the held boons rather than emptied, because a boon taken from a
@@ -106,7 +136,11 @@ function endRound(state: GameState, logs: string[]) {
     endGame(state, logs);
     return;
   }
-  logs.push(`\n🔄=== Preparing for Round ${state.currentRound} ===`);
+  logs.push(
+    t("\n🔄=== Preparing for Round {state.currentRound} ===", {
+      "state.currentRound": state.currentRound,
+    }),
+  );
   state.phase = "harbor";
   state.purchaseCount = 0;
   state.orderCount = 0;
@@ -129,8 +163,13 @@ function endRound(state: GameState, logs: string[]) {
 // Private so the lap stays the only caller: a second caller is exactly the
 // second code path that would keep its own opinion about what comes next.
 function completeOrders(state: GameState, logs: string[]) {
-  if (state.orderCount === 0) logs.push("⏭️ Trading skipped");
-  else logs.push(`✅ Trading ended, completed ${state.orderCount} trades`);
+  if (state.orderCount === 0) logs.push(t("⏭️ Trading skipped"));
+  else
+    logs.push(
+      t("✅ Trading ended, completed {state.orderCount} trades", {
+        "state.orderCount": state.orderCount,
+      }),
+    );
 }
 
 // Opens Resolve, the phase that turns the round's work into gold: production
@@ -143,7 +182,7 @@ function completeOrders(state: GameState, logs: string[]) {
 // translate.
 function startResolve(state: GameState, logs: string[]) {
   state.phase = "resolve";
-  logs.push("\n👥=== Processing Worker Production ===");
+  logs.push(t("\n👥=== Processing Worker Production ==="));
   processProduction(state, logs);
 }
 
@@ -193,11 +232,13 @@ function finishSettlement(state: GameState, logs: string[]) {
   // who wrote their evidence, and never at a screen (see
   // noteSettlementMilestones in ./milestones).
   noteSettlementMilestones(state, logs);
-  logs.push("\n💰=== Paying Worker Wages ===");
+  logs.push(t("\n💰=== Paying Worker Wages ==="));
   const wageResult = payWages(state, logs);
   if (wageResult === "bankruptcy") return failSeat(state, logs);
   logs.push(
-    `\n🔧=== Round ${state.currentRound} · Resolve: Ship Maintenance ===`,
+    t("\n🔧=== Round {state.currentRound} · Resolve: Ship Maintenance ===", {
+      "state.currentRound": state.currentRound,
+    }),
   );
   const maintResult = payMaintenance(state, logs);
   if (maintResult === "bankruptcy") return failSeat(state, logs);
@@ -206,7 +247,9 @@ function finishSettlement(state: GameState, logs: string[]) {
 function startDusk(state: GameState, logs: string[]) {
   state.phase = "dusk";
   logs.push(
-    `\n🚢=== Round ${state.currentRound} · Dusk: Shipyard & Modules ===`,
+    t("\n🚢=== Round {state.currentRound} · Dusk: Shipyard & Modules ===", {
+      "state.currentRound": state.currentRound,
+    }),
   );
 }
 
@@ -219,18 +262,30 @@ function startDusk(state: GameState, logs: string[]) {
 // whether the lap says this is its last entry, so a longer leg settles on its
 // own closing phase without the engine being told which one that is.
 function skipUpgrade(logs: string[]) {
-  logs.push("⏭️ Skipped Shipyard Actions");
+  logs.push(t("⏭️ Skipped Shipyard Actions"));
 }
 
 function endGame(state: GameState, logs: string[]) {
   state.gameOver = true;
   state.phase = "endgame";
   logs.push("\n" + "=".repeat(50));
-  logs.push(`🎮 ${APP_NAME} · Game Over!`);
-  logs.push(`💰 Final Funds: ${state.money} Gold`);
-  logs.push(`🏆 Final Reputation: ${state.score}`);
-  logs.push(`🧾 Total Taxes Paid: ${state.vatPaid + state.incomeTaxPaid} Gold`);
-  logs.push(`📈 Rank: ${endgameRatingFor(state.score, state.defaultedDebt)}`);
+  logs.push(t("🎮 {APP_NAME} · Game Over!", { APP_NAME }));
+  logs.push(
+    t("💰 Final Funds: {state.money} Gold", { "state.money": state.money }),
+  );
+  logs.push(
+    t("🏆 Final Reputation: {state.score}", { "state.score": state.score }),
+  );
+  logs.push(
+    t("🧾 Total Taxes Paid: {taxesPaid} Gold", {
+      taxesPaid: state.vatPaid + state.incomeTaxPaid,
+    }),
+  );
+  logs.push(
+    t("📈 Rank: {rating}", {
+      rating: endgameRatingFor(state.score, state.defaultedDebt),
+    }),
+  );
   logs.push("=".repeat(50));
 }
 
@@ -262,9 +317,9 @@ export function restartGame(
 export function showWelcome(state: GameState, logs: string[]) {
   state.phase = "harbor";
   logs.push("=".repeat(50));
-  logs.push(`⚓ Welcome to ${APP_NAME}!`);
-  logs.push("🚢 Sail across ports, build your business empire!");
-  logs.push("👥 Hire artisans to craft valuable goods for higher profits!");
+  logs.push(t("⚓ Welcome to {APP_NAME}!", { APP_NAME }));
+  logs.push(t("🚢 Sail across ports, build your business empire!"));
+  logs.push(t("👥 Hire artisans to craft valuable goods for higher profits!"));
   logs.push("=".repeat(50));
 }
 
@@ -627,7 +682,15 @@ export function phaseLabel(state: {
   currentRound: GameState["currentRound"];
 }): string {
   const face = phaseFace(state.phase);
+  // The compound leaves here as one sentence: the round's frame is read the
+  // same way and the already spoken label is handed to it as a value. The
+  // status frame still carries phaseLabel, because the wire contract pins
+  // the pass-through (the smoke battery checks it), but every surface that
+  // prints another captain's phase derives it again from the frame's own
+  // phase and round, so each reader reads their own language rather than
+  // whichever captain reported last.
+  const label = t(face.label);
   return isLegPhase(state.phase)
-    ? `R${state.currentRound} · ${face.label}`
-    : face.label;
+    ? t("R{round} · {label}", { round: state.currentRound, label })
+    : label;
 }

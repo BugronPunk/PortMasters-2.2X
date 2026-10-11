@@ -7,6 +7,7 @@ import type { Server, Socket } from "socket.io";
 
 import { pathSwitchOpenLine, pathSwitchSpentLine } from "@/lib/game/engine";
 import { pathDraftOn } from "@/lib/game/flags";
+import { tFor } from "@/lib/game/i18n";
 import { normalizePath } from "@/lib/game/paths";
 import { seated } from "../auth";
 import { getCheckpoint } from "../checkpoint";
@@ -73,6 +74,7 @@ export function wirePathDraft(io: Server, socket: Socket): void {
         s.userId,
         payload?.pick,
         payload?.step,
+        s.locale,
       );
       if (refused !== null) {
         socket.emit("draft:error", { roomId, error: refused });
@@ -103,7 +105,9 @@ export function wirePathDraft(io: Server, socket: Socket): void {
         socket.emit("path:error", { roomId, error });
       };
       if (!pathDraftOn(s.mode)) {
-        fail(DRAFT_OFF);
+        // The constant keeps its English value; the read is the caller's
+        // own language, off the socket this refusal answers.
+        fail(tFor(s.locale, DRAFT_OFF));
         return;
       }
       // The destination is read off the wire and answered as a path this
@@ -112,7 +116,7 @@ export function wirePathDraft(io: Server, socket: Socket): void {
       // normalizePath takes everywhere else.
       const to = normalizePath(payload?.path);
       if (!to) {
-        fail("No such path.");
+        fail(tFor(s.locale, "No such path."));
         return;
       }
       // The checkpoint read first and every check after it, so nothing

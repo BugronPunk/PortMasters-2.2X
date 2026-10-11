@@ -13,7 +13,12 @@
 // before opening a socket at all.
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
+import { tFor } from "@/lib/game/i18n";
 
 const Schema = z.object({
   difficulty: z.string().optional(),
@@ -31,8 +36,13 @@ export async function POST(req: NextRequest) {
   }
   const parsed = Schema.safeParse(body);
   if (!parsed.success) {
+    // The refusal is a sentence the caller reads, so the language is read
+    // here, where it is needed, the same way readJson reads it.
+    const locale = await requestLocale();
     return NextResponse.json(
-      { error: parsed.error.issues[0]?.message ?? "Invalid input" },
+      {
+        error: tFor(locale, parsed.error.issues[0]?.message ?? "Invalid input"),
+      },
       { status: 400 },
     );
   }

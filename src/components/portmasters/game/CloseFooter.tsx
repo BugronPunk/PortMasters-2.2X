@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 
 /**
  * The close row every reading dialog ends on: a secondary button that
@@ -11,7 +12,7 @@ import { cn } from "@/lib/utils";
  */
 export function CloseFooter({
   onClose,
-  label = "Close",
+  label = t("Close"),
   className,
 }: {
   onClose: () => void;

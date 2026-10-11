@@ -5,6 +5,7 @@ import {
   getCardFinalCost,
   priceRatio,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { Lightbulb, TrendingUp, ArrowUp, ArrowDown } from "lucide-react";
@@ -76,7 +77,7 @@ export function TradeAdvisor({
   return (
     <HuePanel tone="advisor">
       <PanelLabel tone="text-advisor">
-        <Lightbulb className="h-3.5 w-3.5" /> Best Deals This Round
+        <Lightbulb className="h-3.5 w-3.5" /> {t("Best Deals This Round")}
       </PanelLabel>
       <div className="flex flex-wrap gap-2">
         {scored.map((s, i) => (
@@ -86,16 +87,18 @@ export function TradeAdvisor({
           >
             <span className="font-bold text-intel">{i + 1}.</span>
             <ItemIcon item={s.goodName} className="h-3.5 w-3.5" />
-            <span style={{ color: colorFor(s.goodName) }}>{s.goodName}</span>
+            <span style={{ color: colorFor(s.goodName) }}>{t(s.goodName)}</span>
             <span className="text-muted-foreground">x{s.qty}</span>
             <span className="font-bold text-gain">{s.unitPrice}</span>
-            <span className="text-[9px] text-muted-foreground">g</span>
+            <span className="text-[9px] text-muted-foreground">{t("g")}</span>
             {s.matchesIntel && (
               <span
                 className="rounded-full bg-intel/5 px-1 py-0.5 text-[7px] font-bold text-intel"
-                title="Matches a Broker's Whisper, guaranteed order at Orders"
+                title={t(
+                  "Matches a Broker's Whisper, guaranteed order at Orders",
+                )}
               >
-                Intel
+                {t("Intel")}
               </span>
             )}
             <span
@@ -147,37 +150,47 @@ export function MarketPulse({ game }: { game: GameState }) {
 
   return (
     <HuePanel tone="pulse">
-      <PanelLabel tone="text-pulse" note="already priced into this board">
+      <PanelLabel tone="text-pulse" note={t("already priced into this board")}>
         <TrendingUp className="h-3.5 w-3.5" />
-        Harbor Pulse
+        {t("Harbor Pulse")}
       </PanelLabel>
       <div className="flex flex-wrap gap-x-4 gap-y-1.5">
         {pricier.length > 0 && (
           <div className="flex items-center gap-1.5">
-            <span className="text-[9px] text-alarm font-semibold">Pricier</span>
+            <span className="text-[9px] text-alarm font-semibold">
+              {t("Pricier")}
+            </span>
             {pricier.map(([good, v]) => (
               <span
                 key={good}
                 className="inline-flex items-center gap-0.5 rounded-full bg-alarm/5 px-1.5 py-0.5 text-[10px] font-medium text-alarm"
-                title={`${good} is about ${Math.round(v * 100)} percent above its usual price this round`}
+                title={t(
+                  "{good} is about {abovePct} percent above its usual price this round",
+                  { good: t(good), abovePct: Math.round(v * 100) },
+                )}
               >
                 <ArrowUp className="h-2.5 w-2.5" />
-                {good}
+                {t(good)}
               </span>
             ))}
           </div>
         )}
         {softer.length > 0 && (
           <div className="flex items-center gap-1.5">
-            <span className="text-[9px] text-gain font-semibold">Softer</span>
+            <span className="text-[9px] text-gain font-semibold">
+              {t("Softer")}
+            </span>
             {softer.map(([good, v]) => (
               <span
                 key={good}
                 className="inline-flex items-center gap-0.5 rounded-full bg-gain/5 px-1.5 py-0.5 text-[10px] font-medium text-gain"
-                title={`${good} is about ${Math.round(Math.abs(v) * 100)} percent below its usual price this round`}
+                title={t(
+                  "{good} is about {belowPct} percent below its usual price this round",
+                  { good: t(good), belowPct: Math.round(Math.abs(v) * 100) },
+                )}
               >
                 <ArrowDown className="h-2.5 w-2.5" />
-                {good}
+                {t(good)}
               </span>
             ))}
           </div>
@@ -218,17 +231,21 @@ export function MarketDepth({
   return (
     <HuePanel tone="depth" className="px-3.5 py-2 mb-3.5">
       <div className="text-[9px] font-semibold tracking-wide text-muted-foreground mb-1">
-        Market Depth
+        {t("Market Depth")}
       </div>
       <div className="flex flex-wrap gap-1.5">
         {entries.map(([good, count]) => (
           <div
             key={good}
             className="inline-flex items-center gap-1 rounded-md bg-black/5 dark:bg-white/5 px-1.5 py-0.5 text-[10px]"
-            title={`${count} card${count === 1 ? "" : "s"} offering ${good} this round`}
+            title={t("{count} card{pluralS} offering {good} this round", {
+              count,
+              pluralS: count === 1 ? "" : "s",
+              good: t(good),
+            })}
           >
             <ItemIcon item={good} className="h-3 w-3" />
-            <span style={{ color: colorFor(good) }}>{good}</span>
+            <span style={{ color: colorFor(good) }}>{t(good)}</span>
             <span
               className={cn(
                 "rounded px-1 text-[8px] font-bold text-white",

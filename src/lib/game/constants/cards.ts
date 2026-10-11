@@ -61,6 +61,7 @@
 //     weight above one leans toward; there is no weight that removes a
 //     card from a path, and the validator holds that line.
 // =====================================================================
+import { DEFAULT_LOCALE, LOCALES, type Locale } from "../i18n";
 import type { GameMode } from "../mode";
 import type { PathId } from "../paths";
 import type { ModifierKey } from "../types";
@@ -201,13 +202,18 @@ export const GAMBIT_ONLY: ModeWeights = { classic: 0, ocean_gambit: 1 };
 // that could arrive with a name in one language and a description in the
 // other.
 export type CardText = { name: string; desc: string };
-type Language = "en" | "zh";
-export const LANGUAGES: readonly Language[] = ["en", "zh"];
+// The card's two languages are the book's own two, re-exported rather than
+// declared again: the language a card carries and the language the pack
+// prints are the same two by construction, so the day the book widens,
+// one list widens rather than two that could drift apart.
+type Language = Locale;
+export const LANGUAGES: readonly Language[] = LOCALES;
 
-// The language the tree prints. Named rather than implied, so J3's switch
-// is a change to this line plus whatever reads it, and never a hunt for
-// the places a pool was read in the wrong one.
-export const SHIPPED_LANGUAGE: Language = "en";
+// The language the tree prints before a captain picks one. Named rather
+// than implied, so the switch is a change to this line plus whatever reads
+// it, and never a hunt for the places a pool was read in the wrong one.
+// It is the book's default rather than a second declaration of English.
+export const SHIPPED_LANGUAGE: Language = DEFAULT_LOCALE;
 type CardStrings = Record<Language, CardText>;
 
 // The record itself. Every field the plan's F2 names, in the plan's order.

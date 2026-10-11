@@ -46,6 +46,12 @@
 // =====================================================================
 
 import { createRng } from "./rng";
+// The manifest line below is read at the moment it is built rather than
+// stored, so the line the reveal hands the room follows the language that
+// room prints in. The two constants above keep their English values
+// instead: they are shared strings, and a shared string is read where it
+// is rendered rather than wrapped where it is written.
+import { t } from "./i18n";
 import type { OrderFill } from "./types";
 
 // The first leg an audit may be called. Five, because the window below is
@@ -357,8 +363,21 @@ export function pruneStaleVotes(
  * kept here so the prose a captain sees and the record behind it cannot
  * drift, and worded without a verdict: the audit shows what was filed and
  * leaves the conclusion to the table.
+ *
+ * The line and the goods inside it are read through the pack where they
+ * are composed, so the reveal follows the language of the room reading
+ * it while the port and the good are the same facts either way. The
+ * joining " and " between two goods carries its own fragment row, the
+ * same reading the chronicle's joined sentence takes.
  */
 export function fulfillmentLine(fill: OrderFill): string {
-  const goods = fill.items.map((i) => `${i.qty} ${i.type}`).join(" and ");
-  return `Leg ${fill.round}: ${goods} to ${fill.port}, ${fill.reward} Gold`;
+  const goods = fill.items
+    .map((i) => t("{i.qty} {i.type}", { "i.qty": i.qty, "i.type": t(i.type) }))
+    .join(t(" and "));
+  return t("Leg {fill.round}: {goods} to {fill.port}, {fill.reward} Gold", {
+    "fill.round": fill.round,
+    goods,
+    "fill.port": t(fill.port),
+    "fill.reward": fill.reward,
+  });
 }

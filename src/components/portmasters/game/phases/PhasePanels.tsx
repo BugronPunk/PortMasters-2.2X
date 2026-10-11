@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { ItemIcon } from "../../shared";
@@ -377,7 +378,14 @@ export function IntelBanner({
         "px-3.5 py-2.5 mb-3.5 text-xs",
       )}
     >
-      <strong>🗣️ Broker&apos;s Whispers active this round:</strong>{" "}
+      {/* The banner's own line is one read of the row as HTML: the pack
+          carries the apostrophe as an entity, so the answer is handed back
+          to the renderer rather than printed as text. */}
+      <strong
+        dangerouslySetInnerHTML={{
+          __html: t("🗣️ Broker&apos;s Whispers active this round:"),
+        }}
+      />{" "}
       {game.revealedIntel.map((i, idx) => (
         <span key={idx}>
           {idx > 0 && ", "}
@@ -450,7 +458,12 @@ export function JustForChip({
 }) {
   return (
     <span className="rounded-full bg-sea/5 px-1.5 py-0.5 text-[9px] font-medium text-sea">
-      🔒 {forMe ? "Just for you" : `Just for ${name ?? "a captain"}`}
+      🔒{" "}
+      {forMe
+        ? t("Just for you")
+        : t("Just for {recipientName}", {
+            recipientName: name ?? t("a captain"),
+          })}
     </span>
   );
 }

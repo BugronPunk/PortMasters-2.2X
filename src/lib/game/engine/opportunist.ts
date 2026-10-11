@@ -39,6 +39,7 @@
 // ./flags, which is where the epic keeps that policy.
 // =====================================================================
 import { cardByFlag, cardText } from "../cards";
+import { t } from "@/lib/game/i18n";
 import { OPPORTUNIST_PENALTY, OPPORTUNIST_USES } from "../constants/paths";
 import { pathOrdersOn } from "../flags";
 import type { PathId } from "../paths";
@@ -214,9 +215,9 @@ export function opportunistPayout(
  * without the card to account for it.
  */
 function borrowLead(state: Pick<GameState, "path" | "modifierFlags">): string {
-  if (state.path === OPPORTUNIST_PATH) return "🎭 Free Captain";
+  if (state.path === OPPORTUNIST_PATH) return t("🎭 Free Captain");
   const factor = cardByFlag("factor_borrows");
-  return factor === null ? "🎭 Borrow" : `🎭 ${cardText(factor).name}`;
+  return factor === null ? t("🎭 Borrow") : `🎭 ${cardText(factor).name}`;
 }
 
 /**
@@ -235,7 +236,10 @@ export function opportunistLine(
   reward: number,
   payout: number,
 ): string {
-  return `${borrowLead(state)}: ${payout} Gold instead of ${reward}. One order filled without joining the path.`;
+  return t(
+    "{lead}: {payout} Gold instead of {reward}. One order filled without joining the path.",
+    { lead: borrowLead(state), payout, reward },
+  );
 }
 
 /**
@@ -253,7 +257,10 @@ export function opportunistLine(
 export function opportunistUsesLine(
   state: Pick<GameState, "opportunistBorrows" | "modifierFlags">,
 ): string {
-  return `🎭 Borrows left this voyage: ${opportunistBorrowsLeft(state)} of ${opportunistAllowance(state)}.`;
+  return t("🎭 Borrows left this voyage: {left} of {allowance}.", {
+    left: opportunistBorrowsLeft(state),
+    allowance: opportunistAllowance(state),
+  });
 }
 
 /**

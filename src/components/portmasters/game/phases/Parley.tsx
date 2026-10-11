@@ -22,6 +22,7 @@ import {
   escortContractsOn,
   moduleTradesOn,
 } from "@/lib/game/flags";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 import { namedCountLine } from "@/lib/voteTally";
 import { Handshake } from "lucide-react";
@@ -79,6 +80,9 @@ import {
 // all.
 type Station = "exchange" | "markets";
 
+// The station table keeps the English the pack is keyed on; the strip draws
+// the labels through the reader below, because a t() call up here would
+// freeze at whatever language the process started in.
 const STATIONS: { id: Station; label: string; icon: string }[] = [
   { id: "exchange", label: "Exchange", icon: "🤝" },
   { id: "markets", label: "Markets", icon: "🏪" },
@@ -172,24 +176,32 @@ export function Parley({
   // namedCountLine in @/lib/voteTally), so the number and its verb agree
   // in one place rather than in a phrasing kept beside it.
   const gistOf = (
-    label: string,
+    labelEn: string,
     votes: Record<string, string>,
     census: { roster: number } | null,
   ) => {
     const named = Object.keys(votes).length;
+    // The vote's own name is read here, so the fold's summary and the card
+    // inside it call the vote the same thing in either language. The count
+    // beside it is the shared sentence the tally renders (see
+    // namedCountLine in @/lib/voteTally), which carries its own reading.
+    const label = t(labelEn);
     return census && census.roster > 0
       ? `${label}: ${namedCountLine(named, census.roster)}`
-      : `${label} is open.`;
+      : t("{label} is open.", { label });
   };
   const businessGist = anyLive
     ? auditLive && maroonLive
-      ? `Two votes are open. ${gistOf("The audit vote", audit.votes, audit.census)} ${gistOf("The maroon vote", maroon.votes, maroon.census)}`
+      ? `${t("Two votes are open.")} ${gistOf("The audit vote", audit.votes, audit.census)} ${gistOf("The maroon vote", maroon.votes, maroon.census)}`
       : auditLive
         ? gistOf("The audit vote", audit.votes, audit.census)
         : gistOf("The maroon vote", maroon.votes, maroon.census)
     : ledgerShown
-      ? "No vote is open. The fleet's picks are on the record."
-      : "No vote is open yet.";
+      ? t("No vote is open. The fleet's picks are on the record.")
+      : t("No vote is open yet.");
+  // The two stations as the strip draws them, read here for the reason the
+  // table above says.
+  const stations = STATIONS.map((s) => ({ ...s, label: t(s.label) }));
 
   // [H6: the Manifest Audit] The leg this screen is on ends the moment the
   // vote carries, so the captain reads the finding on the strip above and
@@ -218,12 +230,12 @@ export function Parley({
     <div className="max-w-3xl mx-auto">
       <PanelTitle className="mb-3">
         <Handshake className="h-5 w-5 text-parley" />
-        <Term term="Barter">Captain's Exchange</Term>
+        <Term term="Barter">{t("Captain's Exchange")}</Term>
       </PanelTitle>
 
       {marketsOn && (
         <StationStrip
-          stations={STATIONS}
+          stations={stations}
           active={station}
           onSelect={setStation}
           waiting={phaseSync.waiting}
@@ -256,7 +268,7 @@ export function Parley({
         <FoldRow
           tone="intel"
           icon="⚖️"
-          title="Harbor Business"
+          title={t("Harbor Business")}
           gist={businessGist}
           open={businessOpen}
           onToggle={() => setBizOpen(!businessOpen)}
@@ -293,10 +305,12 @@ export function Parley({
               to sit under the form, which at a middling window put the
               market itself under the fold. */}
           <HuePanel tone="ship" className="p-4 mb-4">
-            <PanelHeading className="mb-3 text-sm">📋 Open Offers</PanelHeading>
+            <PanelHeading className="mb-3 text-sm">
+              {t("📋 Open Offers")}
+            </PanelHeading>
             {barter.offers.length === 0 ? (
               <MarketEmpty className="py-4">
-                No offers on the board yet. Be the first.
+                {t("No offers on the board yet. Be the first.")}
               </MarketEmpty>
             ) : (
               <div className="space-y-1.5">
@@ -316,44 +330,46 @@ export function Parley({
 
           <HuePanel tone="parley" className="p-4 mb-4">
             <PanelHeading className="mb-3 text-sm">
-              📤 Post an Offer
+              {t("📤 Post an Offer")}
             </PanelHeading>
             <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
-              <span className="text-muted-foreground">{OFFER_GIVE_LABEL}</span>
+              <span className="text-muted-foreground">
+                {t(OFFER_GIVE_LABEL)}
+              </span>
               <QuantityInput
                 value={draft.offerAmount}
                 onCommit={draft.setOfferAmount}
                 min={1}
-                aria-label={OFFER_GIVE_AMOUNT_LABEL}
+                aria-label={t(OFFER_GIVE_AMOUNT_LABEL)}
                 className="w-16 h-9"
               />
               <Select
                 value={draft.offerItem}
                 onChange={(e) => draft.setOfferItem(e.target.value)}
-                aria-label={OFFER_GIVE_ITEM_LABEL}
+                aria-label={t(OFFER_GIVE_ITEM_LABEL)}
               >
                 {draft.items.map((it) => (
                   <option key={it} value={it}>
-                    {ICONS[it]} {it}
+                    {ICONS[it]} {t(it)}
                   </option>
                 ))}
               </Select>
-              <span className="text-muted-foreground">for</span>
+              <span className="text-muted-foreground">{t("for")}</span>
               <QuantityInput
                 value={draft.requestAmount}
                 onCommit={draft.setRequestAmount}
                 min={1}
-                aria-label={OFFER_WANT_AMOUNT_LABEL}
+                aria-label={t(OFFER_WANT_AMOUNT_LABEL)}
                 className="w-16 h-9"
               />
               <Select
                 value={draft.requestItem}
                 onChange={(e) => draft.setRequestItem(e.target.value)}
-                aria-label={OFFER_WANT_ITEM_LABEL}
+                aria-label={t(OFFER_WANT_ITEM_LABEL)}
               >
                 {draft.items.map((it) => (
                   <option key={it} value={it}>
-                    {ICONS[it]} {it}
+                    {ICONS[it]} {t(it)}
                   </option>
                 ))}
               </Select>
@@ -363,32 +379,33 @@ export function Parley({
                 disabled={!draft.canPost}
                 onClick={() => draft.submit()}
               >
-                {OFFER_POST_LABEL}
+                {t(OFFER_POST_LABEL)}
               </Button>
             </div>
             <div className="flex flex-wrap items-center justify-center gap-2 text-sm mt-2">
-              <span className="text-muted-foreground">With</span>
+              <span className="text-muted-foreground">{t("With")}</span>
               <AudienceSelect
                 value={draft.targetUserId}
                 onChange={(id) => draft.setChosenTargetId(id)}
                 others={otherMembers}
-                label={OFFER_TARGET_LABEL}
+                label={t(OFFER_TARGET_LABEL)}
               />
             </div>
             {draft.targetUserId && (
               <p className="text-center text-[11px] text-muted-foreground mt-1.5">
-                Only{" "}
-                {
-                  otherMembers.find((m) => m.id === draft.targetUserId)
-                    ?.displayName
-                }{" "}
-                will see this offer. A safeguard so nobody else can take it
-                first.
+                {t(
+                  "Only {name} will see this offer. A safeguard so nobody else can take it first.",
+                  {
+                    name:
+                      otherMembers.find((m) => m.id === draft.targetUserId)
+                        ?.displayName ?? "",
+                  },
+                )}
               </p>
             )}
             {draft.sameItem && (
               <p className="text-center text-[11px] text-alarm mt-2">
-                {SAME_ITEM_OFFER}
+                {t(SAME_ITEM_OFFER)}
               </p>
             )}
             {!draft.sameItem && draft.offerAmount > draft.owned && (
@@ -438,7 +455,7 @@ export function Parley({
       <ReadyFooter
         phaseSync={phaseSync}
         members={members}
-        idleLabel="✅ Done Bartering, Continue"
+        idleLabel={t("✅ Done Bartering, Continue")}
         onConfirm={() => phaseSync.markReady((g, l) => leavePhase(g, ctx, l))}
       />
     </div>

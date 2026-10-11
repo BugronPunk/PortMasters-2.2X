@@ -3,6 +3,7 @@
 import { VoyageChronicle } from "@/types/realtime/voyage";
 import { motion } from "framer-motion";
 import { Anchor, ChevronDown, Crown, Skull } from "lucide-react";
+import { t } from "@/lib/game/i18n";
 import { Pill } from "../shared";
 import { cn, formatTime } from "@/lib/utils";
 import { ChronicleDetail } from "./ChronicleDetail";
@@ -31,21 +32,27 @@ export function ChronicleRow({
       {/* Clickable header */}
       <button onClick={onToggle} className="w-full p-4 text-left">
         <div className="mb-2 flex items-center gap-2">
-          <Pill tone="sea">{chronicle.difficulty.replace(/_/g, " ")}</Pill>
-          <Pill tone="due">{chronicle.rounds} rounds</Pill>
+          {/* The tier word is the slug with its underscores opened up, and it
+              reads through the pack, which carries the lowercase spelling of
+              each tier for this pill (the capitalized names are the lobby
+              picker's). */}
+          <Pill tone="sea">{t(chronicle.difficulty.replace(/_/g, " "))}</Pill>
+          <Pill tone="due">
+            {t("{rounds} rounds", { rounds: chronicle.rounds })}
+          </Pill>
           {chronicle.crowned && (
             <Pill tone="gold">
-              <Crown className="h-3 w-3" /> Crowned
+              <Crown className="h-3 w-3" /> {t("Crowned")}
             </Pill>
           )}
           {chronicle.bankrupt && (
             <Pill tone="alarm">
-              <Skull className="h-3 w-3" /> Bankrupt
+              <Skull className="h-3 w-3" /> {t("Bankrupt")}
             </Pill>
           )}
           {chronicle.marooned && (
             <Pill tone="alarm">
-              <Anchor className="h-3 w-3" /> Put ashore
+              <Anchor className="h-3 w-3" /> {t("Put ashore")}
             </Pill>
           )}
           <span className="ml-auto text-xs text-muted-foreground">

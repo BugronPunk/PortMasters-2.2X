@@ -26,6 +26,7 @@ import {
   fulfillmentLine,
 } from "@/lib/game/audit";
 import { auditOpensAt } from "@/lib/game/mode";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import type { useAudit } from "@/lib/use-audit";
 import { cn } from "@/lib/utils";
@@ -103,23 +104,24 @@ export function AuditVoteCard({
   const rows = tallyRows(audit.votes, members);
 
   return (
-    <VoteCardShell tone="intel" icon="🔎" title="Manifest Audit">
+    <VoteCardShell tone="intel" icon="🔎" title={t("Manifest Audit")}>
       {open ? (
         <>
-          <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-            A majority of the captains still sailing can open one manifest. What
-            comes back is a sample of what they filed. A carried vote ends this
-            leg&apos;s trading, and the voyage carries on at the next leg. The
-            count below names who is still to vote, and what the vote does when
-            the names it needs land on one captain.
-          </p>
+          <p
+            className="text-xs text-muted-foreground mb-3 leading-relaxed"
+            dangerouslySetInnerHTML={{
+              __html: t(
+                "A majority of the captains still sailing can open one manifest. What comes back is a sample of what they filed. A carried vote ends this leg&apos;s trading, and the voyage carries on at the next leg. The count below names who is still to vote, and what the vote does when the names it needs land on one captain.",
+              ),
+            }}
+          />
           {/* The press and the list of seats it may be aimed at are the
               shared picker's (see VoteSeatPicker), and the note it carries
               is this vote's: a captain the harbor has written off cannot
               be audited, and the list says why rather than leaving its
               short length unexplained. */}
           <VoteSeatPicker
-            selectLabel="Captain to audit"
+            selectLabel={t("Captain to audit")}
             target={target}
             onPick={(id) => setPick({ round: game.currentRound, target: id })}
             members={members}
@@ -128,9 +130,9 @@ export function AuditVoteCard({
             myVote={audit.myVote !== null}
             canVote={audit.canVote}
             onVote={() => audit.vote(target)}
-            callLabel="Call the audit"
-            pickLabel={(name) => `Open ${name}'s manifest`}
-            note="A captain the harbor has written off cannot be audited."
+            callLabel={t("Call the audit")}
+            pickLabel={(name) => t("Open {name}'s manifest", { name })}
+            note={t("A captain the harbor has written off cannot be audited.")}
           />
           <RefusalLine
             className="mt-2"
@@ -147,16 +149,26 @@ export function AuditVoteCard({
             members={members}
             myVote={audit.myVote}
             nextStep={(needed) =>
-              `${nameCount(needed)} on one captain opens that captain's manifest to the whole harbor and closes this leg's trading.`
+              t(
+                "{namesNeeded} on one captain opens that captain's manifest to the whole harbor and closes this leg's trading.",
+                { namesNeeded: nameCount(needed) },
+              )
             }
           />
           <p className="text-[10px] text-muted-foreground/80 mt-2">
-            {AUDIT_VOTE_RULE}
+            {t(AUDIT_VOTE_RULE)}
           </p>
         </>
       ) : (
         <p className="text-xs text-muted-foreground leading-relaxed">
-          {`This vote opens at leg ${opensAt}, and this is leg ${game.currentRound}. A simple majority of the captains still sailing then opens one captain's manifest: ${AUDIT_REVEAL_WORDS} of their most recent order fulfillments, and nothing else. A carried vote ends that leg's trading, the voyage carries on at the next leg, and the harbor opens one manifest a voyage.`}
+          {t(
+            "This vote opens at leg {opensAt}, and this is leg {game.currentRound}. A simple majority of the captains still sailing then opens one captain's manifest: {AUDIT_REVEAL_WORDS} of their most recent order fulfillments, and nothing else. A carried vote ends that leg's trading, the voyage carries on at the next leg, and the harbor opens one manifest a voyage.",
+            {
+              opensAt,
+              "game.currentRound": game.currentRound,
+              AUDIT_REVEAL_WORDS: t(AUDIT_REVEAL_WORDS),
+            },
+          )}
         </p>
       )}
     </VoteCardShell>
@@ -178,16 +190,16 @@ export function AuditRevealStrip({ reveal }: { reveal: AuditReveal | null }) {
           🔎
         </span>
         <span className="text-[10px] font-semibold uppercase tracking-wide text-intel">
-          Manifest Audit · Leg {reveal.round}
+          {t("Manifest Audit")} · {t("Leg {leg}", { leg: reveal.round })}
         </span>
         <span className="font-display text-sm font-semibold">
-          {reveal.target.name}&apos;s manifest
+          {t("{name}'s manifest", { name: reveal.target.name })}
         </span>
         <button
           type="button"
           className="ml-auto text-muted-foreground hover:text-foreground"
           onClick={() => setDismissed(key)}
-          aria-label="Hide the audit"
+          aria-label={t("Hide the audit")}
         >
           ✕
         </button>
@@ -201,7 +213,7 @@ export function AuditRevealStrip({ reveal }: { reveal: AuditReveal | null }) {
           cannot be confused with a captain who filed nothing. */}
       {reveal.flagged ? null : reveal.fulfillments.length === 0 ? (
         <p className="mt-1 text-[11px] text-muted-foreground">
-          No order fulfillments filed this voyage.
+          {t("No order fulfillments filed this voyage.")}
         </p>
       ) : (
         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -237,24 +249,32 @@ export function AuditRevealStrip({ reveal }: { reveal: AuditReveal | null }) {
             )}
           >
             <Utensils className="h-3 w-3" />
-            Larder {reveal.larder}
+            {t("Larder")} {reveal.larder}
           </span>
           <span className="ml-1.5 text-[10px] text-muted-foreground/80">
             {reveal.shortRations
-              ? "an empty larder: this captain's crew is on short rations."
+              ? t("an empty larder: this captain's crew is on short rations.")
               : reveal.larder === 0
-                ? "an empty larder, with no crew aboard to go hungry."
-                : "rations aboard, eaten one a head each leg."}
+                ? t("an empty larder, with no crew aboard to go hungry.")
+                : t("rations aboard, eaten one a head each leg.")}
           </span>
         </div>
       )}
 
       <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground/80">
-        {`${
-          reveal.flagged
-            ? "The harbor's own checks could not reconcile this manifest, so its lines are withheld."
-            : "A random sample of this captain's most recent order fulfillments, opened by a vote of the harbor. Their card, their Gold and the rest of their hold were not opened."
-        } Opened by a majority in leg ${reveal.round}, which closed that leg's trading; the finding stays on the table for the rest of the voyage.`}
+        {t(
+          "{manifestLine} Opened by a majority in leg {reveal.round}, which closed that leg's trading; the finding stays on the table for the rest of the voyage.",
+          {
+            manifestLine: reveal.flagged
+              ? t(
+                  "The harbor's own checks could not reconcile this manifest, so its lines are withheld.",
+                )
+              : t(
+                  "A random sample of this captain's most recent order fulfillments, opened by a vote of the harbor. Their card, their Gold and the rest of their hold were not opened.",
+                ),
+            "reveal.round": reveal.round,
+          },
+        )}
       </p>
     </div>
   );

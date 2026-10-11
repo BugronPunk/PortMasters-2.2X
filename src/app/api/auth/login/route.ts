@@ -10,8 +10,9 @@ import {
   createSession,
   verifyPassword,
 } from "@/lib/auth";
-import { signedInResponse } from "@/lib/api-auth";
+import { signedInResponse, requestLocale } from "@/lib/api-auth";
 import { readJson } from "@/lib/api-json";
+import { tFor } from "@/lib/game/i18n";
 import { noteDoorAttempt, spendDoorBudget } from "@/lib/auth-limit";
 
 const Schema = z.object({
@@ -20,9 +21,12 @@ const Schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // Every refusal on this route is a sentence the sign in card prints, so
+  // the captain's language is read once, here, and handed to each of them.
+  const locale = await requestLocale();
   // One sentence whatever was wrong with the shape, because this is a sign
   // in: naming the field that failed tells a guesser which half they got.
-  const body = await readJson(req, Schema, "Invalid input");
+  const body = await readJson(req, Schema, tFor(locale, "Invalid input"));
   if (!body.ok) return body.response;
   const { username, password } = body.data;
 
@@ -30,7 +34,7 @@ export async function POST(req: NextRequest) {
   // this is the route that pays a synchronous scrypt per attempt on the
   // event loop serving every live socket, and the one a password guess
   // arrives at first (see the two counters in lib/auth-limit.ts).
-  const budget = spendDoorBudget(req, username);
+  const budget = spendDoorBudget(req, username, locale);
   if (!budget.ok) return budget.response;
 
   const user = await db.user.findUnique({ where: { username } });
@@ -38,8 +42,10 @@ export async function POST(req: NextRequest) {
     noteDoorAttempt(username, false);
     return NextResponse.json(
       {
-        error:
+        error: tFor(
+          locale,
           "No account found with that captain name. Please check the spelling or register a new account.",
+        ),
       },
       { status: 401 },
     );
@@ -47,7 +53,7 @@ export async function POST(req: NextRequest) {
   if (!verifyPassword(password, user.passwordHash)) {
     noteDoorAttempt(username, false);
     return NextResponse.json(
-      { error: "The password you entered is incorrect." },
+      { error: tFor(locale, "The password you entered is incorrect.") },
       { status: 401 },
     );
   }
@@ -59,7 +65,10 @@ export async function POST(req: NextRequest) {
   // confirmed to someone who has proven the account is theirs. Anyone else
   // gets the same answer as a wrong password.
   if (user.bannedAt) {
-    return NextResponse.json({ error: BANNED_ACCOUNT_ERROR }, { status: 403 });
+    return NextResponse.json(
+      { error: tFor(locale, BANNED_ACCOUNT_ERROR) },
+      { status: 403 },
+    );
   }
 
   // Trim stale expired sessions for this user (housekeeping).

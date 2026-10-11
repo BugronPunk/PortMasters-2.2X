@@ -41,22 +41,25 @@ import {
   NO_LONGER_AN_ADMINISTRATOR,
   NOT_AN_ADMINISTRATOR,
 } from "@/lib/game/constants/copy";
+import { DEFAULT_LOCALE, tFor, type Locale } from "@/lib/game/i18n";
 import { roomIdsForUser } from "@/lib/rooms";
+import { readLocaleCookie } from "./cookies";
 import {
   detachUser,
   emptyRoom,
   reapDeparture,
   sockets,
   userSockets,
-  emitToUser,
   type DepartureCleanup,
 } from "./presence";
 
 // The acting account, as much of it as any handler needs from it: the id,
 // which is what tells the operator apart from the account an action is
-// aimed at. The rest of that row was read to decide whether the caller may
-// use the console at all and is not carried any further.
-export type AdminActor = { id: string };
+// aimed at, and the language their console reads, because every refusal
+// this module composes is answered to them. The rest of that row was read
+// to decide whether the caller may use the console at all and is not
+// carried any further.
+export type AdminActor = { id: string; locale: Locale };
 
 // What every admin event carries: the account it acts on, and, for the
 // one action that cannot be undone, the confirmation the operator typed.
@@ -103,8 +106,13 @@ const PURGED_ACCOUNT = "This account was deleted by the harbor operator.";
 export async function requireAdmin(socket: Socket): Promise<AdminActor | null> {
   const state = sockets.get(socket.id);
   if (!state?.authed || !state.userId) {
+    // The refusal is read by whoever is holding this socket, which may
+    // hold no state yet, so the handshake cookie answers when it does
+    // not.
+    const locale =
+      state?.locale ?? readLocaleCookie(socket.handshake?.headers?.cookie);
     socket.emit("admin:error", {
-      error: "Sign in to use the operator console.",
+      error: tFor(locale, "Sign in to use the operator console."),
     });
     return null;
   }
@@ -114,15 +122,22 @@ export async function requireAdmin(socket: Socket): Promise<AdminActor | null> {
   });
   if (!actor || actor.bannedAt || actor.role !== "admin") {
     socket.emit("admin:error", {
-      error: NOT_AN_ADMINISTRATOR,
+      error: tFor(state.locale, NOT_AN_ADMINISTRATOR),
     });
     return null;
   }
-  return { id: actor.id };
+  return { id: actor.id, locale: state.locale };
 }
 
-async function resolveTarget(payload: AdminPayload): Promise<FindTarget> {
-  if (!payload?.userId) return { ok: false, error: "No account was named." };
+// The account an action names, or the sentence the console is owed when
+// there is no such account. Both refusals are read by the operator who
+// asked, so they are composed in the language the actor carries.
+async function resolveTarget(
+  payload: AdminPayload,
+  locale: Locale,
+): Promise<FindTarget> {
+  if (!payload?.userId)
+    return { ok: false, error: tFor(locale, "No account was named.") };
   const target = await db.user.findUnique({
     where: { id: payload.userId },
     select: {
@@ -133,7 +148,8 @@ async function resolveTarget(payload: AdminPayload): Promise<FindTarget> {
       bannedAt: true,
     },
   });
-  if (!target) return { ok: false, error: "That account no longer exists." };
+  if (!target)
+    return { ok: false, error: tFor(locale, "That account no longer exists.") };
   return { ok: true, target };
 }
 
@@ -200,6 +216,10 @@ export async function listAccounts(): Promise<AdminRoster> {
 // the grace window would leave a flagged captain holding a chair and a
 // host's authority while the rest of the harbor waited on a status
 // message that is never coming.
+//
+// The message arrives as the pack's English for the reason the connection
+// is closing; the captain it closes is the one who reads it, so it is
+// composed per socket in that socket's own language.
 async function endAccountSessions(
   io: Server,
   cleanup: DepartureCleanup,
@@ -227,7 +247,9 @@ async function endAccountSessions(
     // that is what has just happened to this connection: it is no longer
     // an authenticated captain. The message carries the reason, and the
     // client's existing handler puts it on the sign in screen.
-    socket.emit("auth:fail", { error: message });
+    socket.emit("auth:fail", {
+      error: tFor(sockets.get(socketId)?.locale ?? DEFAULT_LOCALE, message),
+    });
     socket.disconnect(true);
   }
 }
@@ -253,15 +275,23 @@ export async function banAccount(
   actor: AdminActor,
   payload: AdminPayload,
 ): Promise<AdminResult> {
-  const found = await resolveTarget(payload);
+  const found = await resolveTarget(payload, actor.locale);
   if (!found.ok) return found;
   const { target } = found;
 
   if (target.id === actor.id) {
-    return { ok: false, error: "You cannot ban your own account." };
+    return {
+      ok: false,
+      error: tFor(actor.locale, "You cannot ban your own account."),
+    };
   }
   if (target.bannedAt) {
-    return { ok: false, error: `${target.displayName} is already banned.` };
+    return {
+      ok: false,
+      error: tFor(actor.locale, "{account} is already banned.", {
+        account: target.displayName,
+      }),
+    };
   }
 
   await db.user.update({
@@ -277,14 +307,20 @@ export async function banAccount(
 }
 
 export async function unbanAccount(
+  actor: AdminActor,
   payload: AdminPayload,
 ): Promise<AdminResult> {
-  const found = await resolveTarget(payload);
+  const found = await resolveTarget(payload, actor.locale);
   if (!found.ok) return found;
   const { target } = found;
 
   if (!target.bannedAt) {
-    return { ok: false, error: `${target.displayName} is not banned.` };
+    return {
+      ok: false,
+      error: tFor(actor.locale, "{account} is not banned.", {
+        account: target.displayName,
+      }),
+    };
   }
   await db.user.update({
     where: { id: target.id },
@@ -293,15 +329,20 @@ export async function unbanAccount(
   return { ok: true };
 }
 
-export async function grantAdmin(payload: AdminPayload): Promise<AdminResult> {
-  const found = await resolveTarget(payload);
+export async function grantAdmin(
+  actor: AdminActor,
+  payload: AdminPayload,
+): Promise<AdminResult> {
+  const found = await resolveTarget(payload, actor.locale);
   if (!found.ok) return found;
   const { target } = found;
 
   if (target.role === "admin") {
     return {
       ok: false,
-      error: `${target.displayName} is already an administrator.`,
+      error: tFor(actor.locale, "{account} is already an administrator.", {
+        account: target.displayName,
+      }),
     };
   }
   // An administrator who is banned cannot open the console, so handing the
@@ -310,7 +351,11 @@ export async function grantAdmin(payload: AdminPayload): Promise<AdminResult> {
   if (target.bannedAt) {
     return {
       ok: false,
-      error: `${target.displayName} is banned. Unban the account first.`,
+      error: tFor(
+        actor.locale,
+        "{account} is banned. Unban the account first.",
+        { account: target.displayName },
+      ),
     };
   }
   await db.user.update({ where: { id: target.id }, data: { role: "admin" } });
@@ -322,37 +367,51 @@ export async function revokeAdmin(
   actor: AdminActor,
   payload: AdminPayload,
 ): Promise<AdminResult> {
-  const found = await resolveTarget(payload);
+  const found = await resolveTarget(payload, actor.locale);
   if (!found.ok) return found;
   const { target } = found;
 
   if (target.role !== "admin") {
     return {
       ok: false,
-      error: `${target.displayName} is not an administrator.`,
+      error: tFor(actor.locale, "{account} is not an administrator.", {
+        account: target.displayName,
+      }),
     };
   }
   if (target.id === actor.id) {
     return {
       ok: false,
-      error: "You cannot revoke your own administrator role.",
+      error: tFor(
+        actor.locale,
+        "You cannot revoke your own administrator role.",
+      ),
     };
   }
   if (await isLastAdministrator(target)) {
     return {
       ok: false,
-      error:
+      error: tFor(
+        actor.locale,
         "This is the only administrator left, so the role cannot be revoked.",
+      ),
     };
   }
 
   await db.user.update({ where: { id: target.id }, data: { role: "captain" } });
   // Their next click would be refused anyway, since every handler reads the
   // role again. Saying so now means an open console reports it instead of
-  // going quiet until something is asked of it.
-  emitToUser(io, target.id, "admin:error", {
-    error: NO_LONGER_AN_ADMINISTRATOR,
-  });
+  // going quiet until something is asked of it. The line lands on the
+  // demoted administrator's own console, a different captain from the
+  // operator, so it is composed per socket in the reader's own language.
+  for (const socketId of userSockets.get(target.id) ?? []) {
+    io.to(socketId).emit("admin:error", {
+      error: tFor(
+        sockets.get(socketId)?.locale ?? DEFAULT_LOCALE,
+        NO_LONGER_AN_ADMINISTRATOR,
+      ),
+    });
+  }
   return { ok: true };
 }
 
@@ -362,7 +421,7 @@ export async function purgeAccount(
   actor: AdminActor,
   payload: AdminPayload,
 ): Promise<AdminResult> {
-  const found = await resolveTarget(payload);
+  const found = await resolveTarget(payload, actor.locale);
   if (!found.ok) return found;
   const { target } = found;
 
@@ -373,7 +432,11 @@ export async function purgeAccount(
   if (payload?.confirmUsername !== target.username) {
     return {
       ok: false,
-      error: `Type ${target.username} to confirm the deletion.`,
+      error: tFor(
+        actor.locale,
+        "Type {target.username} to confirm the deletion.",
+        { "target.username": target.username },
+      ),
     };
   }
   return purgeResolved(io, cleanup, actor, target);
@@ -393,13 +456,18 @@ async function purgeResolved(
   target: TargetAccount,
 ): Promise<AdminResult> {
   if (target.id === actor.id) {
-    return { ok: false, error: "You cannot delete your own account." };
+    return {
+      ok: false,
+      error: tFor(actor.locale, "You cannot delete your own account."),
+    };
   }
   if (await isLastAdministrator(target)) {
     return {
       ok: false,
-      error:
+      error: tFor(
+        actor.locale,
         "This is the only administrator left, so the account cannot be deleted.",
+      ),
     };
   }
 
@@ -436,10 +504,16 @@ async function purgeResolved(
     where: { OR: [{ reporterId: target.id }, { targetUserId: target.id }] },
   });
   for (const roomId of hosted) {
-    io.to(`room:${roomId}`).emit("room:closed", {
-      roomId,
-      reason: HARBOR_CLOSED,
-    });
+    // The notice is read by the whole crew of a harbor that is about to
+    // stop existing, so it goes to every socket in it in that captain's
+    // own language rather than as one broadcast.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:closed", {
+        roomId,
+        reason: tFor(state.locale, HARBOR_CLOSED),
+      });
+    }
     emptyRoom(io, roomId);
     // No room row is left to repair, so every per room structure goes with
     // it here rather than through the departure path.
@@ -478,7 +552,14 @@ async function purgeResolved(
   for (const socketId of socketIds) {
     const socket = io.sockets.sockets.get(socketId);
     if (!socket) continue;
-    socket.emit("auth:fail", { error: PURGED_ACCOUNT });
+    // The account is gone, so this is the last line it will hear, read by
+    // whoever is holding the socket, in that socket's own language.
+    socket.emit("auth:fail", {
+      error: tFor(
+        sockets.get(socketId)?.locale ?? DEFAULT_LOCALE,
+        PURGED_ACCOUNT,
+      ),
+    });
     socket.disconnect(true);
   }
   return { ok: true };
@@ -517,7 +598,10 @@ export async function bulkAct(
   payload: BulkPayload,
 ): Promise<BulkOutcome> {
   if (!isBulkAction(payload?.action)) {
-    return { ok: false, error: "That is not an action the console can take." };
+    return {
+      ok: false,
+      error: tFor(actor.locale, "That is not an action the console can take."),
+    };
   }
   const action = payload.action;
   const named = Array.isArray(payload.userIds)
@@ -529,7 +613,10 @@ export async function bulkAct(
   // of accounts this request will actually touch.
   const ids = Array.from(new Set(named));
   if (ids.length === 0) {
-    return { ok: false, error: "Select at least one account first." };
+    return {
+      ok: false,
+      error: tFor(actor.locale, "Select at least one account first."),
+    };
   }
 
   // The delete is confirmed once for the whole selection rather than by a
@@ -542,8 +629,12 @@ export async function bulkAct(
       ok: false,
       error:
         ids.length === 1
-          ? "Type 1 to confirm deleting one account."
-          : `Type ${ids.length} to confirm deleting ${ids.length} accounts.`,
+          ? tFor(actor.locale, "Type 1 to confirm deleting one account.")
+          : tFor(
+              actor.locale,
+              "Type {ids.length} to confirm deleting {ids.length} accounts.",
+              { "ids.length": ids.length },
+            ),
     };
   }
 
@@ -558,11 +649,11 @@ export async function bulkAct(
       case "ban":
         return banAccount(io, cleanup, actor, { userId });
       case "unban":
-        return unbanAccount({ userId });
+        return unbanAccount(actor, { userId });
       case "grant":
-        return grantAdmin({ userId });
+        return grantAdmin(actor, { userId });
       case "purge": {
-        const found = await resolveTarget({ userId });
+        const found = await resolveTarget({ userId }, actor.locale);
         return found.ok
           ? purgeResolved(io, cleanup, actor, found.target)
           : found;

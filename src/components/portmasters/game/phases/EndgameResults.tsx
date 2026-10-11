@@ -4,6 +4,7 @@ import { VoyageResult, VoyageReveal } from "@/types/realtime/voyage";
 import { RivalEntry } from "@/types/realtime/standings";
 import { Anchor, Crown, Skull } from "lucide-react";
 import { BROKERS_FAVOR_UNLOCK_LEVEL } from "@/lib/game/constants/world";
+import { t } from "@/lib/game/i18n";
 import { meritById } from "@/lib/game/merits";
 import type { CaptainLegacySummary } from "@/lib/game/legacy";
 import { cn } from "@/lib/utils";
@@ -27,7 +28,7 @@ function Standings({
   return (
     <div className="rounded-xl border border-black/5 dark:border-white/10 overflow-hidden">
       <div className="px-3 py-2 text-xs font-semibold bg-black/[0.03] dark:bg-white/[0.05]">
-        🏁 Final Standings
+        {t("🏁 Final Standings")}
       </div>
       <div className="divide-y divide-black/5 dark:divide-white/10">
         {standings.map((s, i) => (
@@ -58,7 +59,7 @@ function Standings({
               <Anchor className="h-3.5 w-3.5 text-alarm shrink-0" />
             )}
             <span className="text-xs text-muted-foreground shrink-0">
-              {s.reputation} Rep.
+              {t("{reputation} Rep.", { reputation: s.reputation })}
             </span>
           </div>
         ))}
@@ -100,8 +101,9 @@ export function EndgameResults({
           <RevealPanel reveal={reveal} myUserId={myUserId} />
         ) : (
           <div className="text-sm text-center text-muted-foreground">
-            ⏳ Waiting on the rest of the harbor to finish their voyage before
-            Sea Master is crowned…
+            {t(
+              "⏳ Waiting on the rest of the harbor to finish their voyage before Sea Master is crowned…",
+            )}
           </div>
         )}
       </div>
@@ -112,22 +114,31 @@ export function EndgameResults({
       {mine?.crowned && (
         <div className="pm-grad-gold rounded-xl px-4 py-3 text-center">
           <div className="text-lg font-bold flex items-center justify-center gap-2">
-            <Crown className="h-5 w-5" /> Crowned Sea Master!
+            <Crown className="h-5 w-5" /> {t("Crowned Sea Master!")}
           </div>
-          <div className="text-xs opacity-80 mt-0.5">
-            Highest Reputation in this harbor&apos;s voyage.
-          </div>
+          {/* The pack carries the apostrophe as an entity, so the answer
+              goes back to the renderer as HTML rather than as text. */}
+          <div
+            className="text-xs opacity-80 mt-0.5"
+            dangerouslySetInnerHTML={{
+              __html: t("Highest Reputation in this harbor&apos;s voyage."),
+            }}
+          />
         </div>
       )}
       {mine?.brokersFavorUnlocked && (
         <div className="rounded-xl border-2 border-favor/40 bg-favor/5 px-4 py-3 text-center">
-          <div className="text-lg font-bold text-favor flex items-center justify-center gap-2">
-            🤝 Broker&apos;s Favor Unlocked!
-          </div>
+          <div
+            className="text-lg font-bold text-favor flex items-center justify-center gap-2"
+            dangerouslySetInnerHTML={{
+              __html: t("🤝 Broker&apos;s Favor Unlocked!"),
+            }}
+          />
           <div className="text-xs text-muted-foreground mt-0.5">
-            Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL} reached. Starting next
-            voyage, call one in from the Trade Manifest to summon a guaranteed
-            buyer.
+            {t(
+              "Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL} reached. Starting next voyage, call one in from the Trade Manifest to summon a guaranteed buyer.",
+              { BROKERS_FAVOR_UNLOCK_LEVEL },
+            )}
           </div>
         </div>
       )}
@@ -139,11 +150,13 @@ export function EndgameResults({
             key={meritId}
             className="pm-grad-endgame rounded-xl px-4 py-3 text-center"
           >
+            {/* The merit's own name and description are read where they
+                print, the way the merits showcase reads them. */}
             <div className="text-lg font-bold flex items-center justify-center gap-2">
               <MeritIcon id={merit.id} className="h-5 w-5" /> Captain&apos;s
-              Merit: {merit.name}
+              Merit: {t(merit.name)}
             </div>
-            <div className="text-xs opacity-80 mt-0.5">{merit.desc}</div>
+            <div className="text-xs opacity-80 mt-0.5">{t(merit.desc)}</div>
           </div>
         );
       })}
@@ -159,8 +172,10 @@ export function EndgameResults({
         <div>
           {mine && (
             <div className="text-xs text-center text-muted-foreground mb-1.5">
-              +{mine.xpGained} Renown XP this voyage
-              {mine.leveledUp ? " · Renown level up!" : ""}
+              {t("+{mine.xpGained} Renown XP this voyage{levelUpMark}", {
+                "mine.xpGained": mine.xpGained,
+                levelUpMark: mine.leveledUp ? t(" · Renown level up!") : "",
+              })}
             </div>
           )}
           <CaptainLegacyCard

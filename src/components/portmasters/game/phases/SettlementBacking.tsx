@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { QuantityInput } from "@/components/ui/quantity-input";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 import { Term } from "../../Term";
 import { type PhasePanelProps } from "./PhaseShared";
@@ -28,7 +29,9 @@ export function LoanBacking({
 
   return (
     <div className="rounded-xl border border-black/10 dark:border-white/10 bg-background/50 p-3.5 my-3.5">
-      <h3 className="font-semibold mb-2 text-sm">🛡️ Loans You Could Back</h3>
+      <h3 className="font-semibold mb-2 text-sm">
+        {t("🛡️ Loans You Could Back")}
+      </h3>
       <div className="space-y-1.5">
         {backableLoans.map((l) => {
           // Both ends of the range are held by the field itself: it
@@ -43,9 +46,9 @@ export function LoanBacking({
               className="flex flex-wrap items-center justify-between rounded-md px-3 py-2 text-xs border border-black/5 dark:border-white/10 bg-background/60 gap-2"
             >
               <span>
-                <b>{l.lenderName}</b> lent <b>{l.borrowerName}</b>{" "}
+                <b>{l.lenderName}</b> {t("lent")} <b>{l.borrowerName}</b>{" "}
                 <span className="text-alarm font-semibold">
-                  {l.amount} Gold
+                  {t("{contract.fee} Gold", { "contract.fee": l.amount })}
                 </span>
               </span>
               <div className="flex items-center gap-1.5">
@@ -56,7 +59,13 @@ export function LoanBacking({
                   }
                   min={1}
                   max={l.amount}
-                  aria-label={`Gold to pledge backing ${l.lenderName}'s loan to ${l.borrowerName}`}
+                  aria-label={t(
+                    "Gold to pledge backing {l.lenderName}'s loan to {l.borrowerName}",
+                    {
+                      "l.lenderName": l.lenderName,
+                      "l.borrowerName": l.borrowerName,
+                    },
+                  )}
                   className="w-16 h-7"
                 />
                 <Button
@@ -69,7 +78,7 @@ export function LoanBacking({
                   disabled={!canBack}
                   onClick={() => backing.offer(l.debtId, pledge)}
                 >
-                  🛡️ Back {pledge} Gold
+                  {t("🛡️ Back {pledge} Gold", { pledge })}
                 </Button>
               </div>
             </div>
@@ -77,9 +86,10 @@ export function LoanBacking({
         })}
       </div>
       <p className="text-[11px] text-muted-foreground mt-2">
-        Pledged Gold is <Term term="Escrow">escrowed</Term> now, only spent if
-        the loan actually defaults, up to what you pledged. Never called on? It
-        all comes back, plus a small Reputation bonus.
+        {t("Pledged Gold is")} <Term term="Escrow">{t("escrowed")}</Term>{" "}
+        {t(
+          "now, only spent if the loan actually defaults, up to what you pledged. Never called on? It all comes back, plus a small Reputation bonus.",
+        )}
       </p>
     </div>
   );

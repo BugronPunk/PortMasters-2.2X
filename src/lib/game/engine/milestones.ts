@@ -38,6 +38,7 @@
 // trigger when its terms already hold.
 // =====================================================================
 import { cardLead, noteCardOffer, noteCardPick } from "../cards";
+import { t } from "@/lib/game/i18n";
 import {
   MILESTONE_MOMENTS,
   type MilestoneTrigger,
@@ -93,8 +94,16 @@ export function queueMilestoneMoment(
   for (const card of choices) noteCardOffer(state.cardTally, card);
   state.milestoneOffers.push(trigger);
   const moment = MILESTONE_MOMENTS[trigger];
-  logs.push(`\n${moment.icon}=== ${moment.title} ===`);
-  logs.push(moment.line);
+  // The title is read here because it prints inside this line: the row
+  // carries the moment's glyph and its own words whole, and the title
+  // arrives as a token value the way a label always does.
+  logs.push(
+    t("\n{moment.icon}=== {moment.title} ===", {
+      "moment.icon": moment.icon,
+      "moment.title": t(moment.title),
+    }),
+  );
+  logs.push(t(moment.line));
 }
 
 /**
@@ -166,8 +175,14 @@ export function answerMilestone(
   };
   markAnswered(state, trigger);
   state.milestoneOffers.shift();
+  // The receipt is one row, the same shape the arm above pushes: the
+  // moment's glyph and the card's lead arrive as its tokens, and the lead
+  // carries the card's own words in the language already.
   logs.push(
-    `${MILESTONE_MOMENTS[trigger].icon} Milestone boon: ${cardLead(card.id)}`,
+    t("{icon} Milestone boon: {lead}", {
+      icon: MILESTONE_MOMENTS[trigger].icon,
+      lead: cardLead(card.id),
+    }),
   );
   return true;
 }

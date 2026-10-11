@@ -24,6 +24,7 @@
 // would have taken, because the seller is the one who prices what they eat.
 // =====================================================================
 import { cardLead } from "../cards";
+import { t } from "@/lib/game/i18n";
 import { difficultyConfig, pirateChanceFor } from "../difficulty";
 import type { GameState } from "../types";
 import { escortClaimFrom, escortCoverOf } from "./contracts";
@@ -118,7 +119,10 @@ export function resolvePirateAttack(state: GameState, logs: string[]) {
       if (claim !== null) {
         state.pendingEscortClaim = claim;
         logs.push(
-          `🛡️ Pirates closed on your hold and met ${cover.sellerName}'s guns. All ${raidGold} Gold saved, and the boarding party is theirs to answer for.`,
+          t(
+            "🛡️ Pirates closed on your hold and met {cover.sellerName}'s guns. All {raidGold} Gold saved, and the boarding party is theirs to answer for.",
+            { "cover.sellerName": cover.sellerName, raidGold },
+          ),
         );
         return;
       }
@@ -127,7 +131,10 @@ export function resolvePirateAttack(state: GameState, logs: string[]) {
       // to raise: a claim of zero Gold would put a loss on the seller's
       // ledger that never happened. See escortClaimFrom in ./contracts.
       logs.push(
-        `🛡️ Pirates boarded and found the hold already bare. ${cover.sellerName}'s escort turned them away for nothing.`,
+        t(
+          "🛡️ Pirates boarded and found the hold already bare. {cover.sellerName}'s escort turned them away for nothing.",
+          { "cover.sellerName": cover.sellerName },
+        ),
       );
       return;
     }
@@ -145,13 +152,22 @@ export function resolvePirateAttack(state: GameState, logs: string[]) {
       lost * (state.modifierFlags.marque_salvage || 0),
     );
     state.money = salvaged;
+    // Both arms are rows of their own, and the salvage clause names the
+    // card that recovered the Gold: its lead carries the card's own words
+    // in the language already, the reading every other lead line takes.
     if (salvaged > 0)
       logs.push(
-        `🏴‍☠️ Pirates raided your hold! Lost all ${lost} Gold, and ${cardLead("letter_of_marque")} recovered ${salvaged} of it.`,
+        t(
+          "🏴‍☠️ Pirates raided your hold! Lost all {lost} Gold, and {lead} recovered {salvaged} of it.",
+          { lost, lead: cardLead("letter_of_marque"), salvaged },
+        ),
       );
-    else logs.push(`🏴‍☠️ Pirates raided your hold! Lost all ${lost} Gold.`);
+    else
+      logs.push(
+        t("🏴‍☠️ Pirates raided your hold! Lost all {lost} Gold.", { lost }),
+      );
   } else {
-    logs.push("🌊 Clear seas. No pirates sighted this round.");
+    logs.push(t("🌊 Clear seas. No pirates sighted this round."));
   }
 }
 
@@ -161,7 +177,7 @@ export function resolvePirateAttack(state: GameState, logs: string[]) {
 // off for the round, same as resolving it here closes off that one.
 export function hireEscort(state: GameState, logs: string[]) {
   if (state.pirateAttackResolved) {
-    logs.push("❌ Too late, this round's waters are already resolved");
+    logs.push(t("❌ Too late, this round's waters are already resolved"));
     return;
   }
   const cost = escortCost(state);
@@ -169,6 +185,11 @@ export function hireEscort(state: GameState, logs: string[]) {
   state.escortHired = true;
   state.pirateAttackResolved = true;
   logs.push(
-    `🛡️ Hired an escort for ${cost} Gold. Safe passage guaranteed this round.`,
+    t(
+      "🛡️ Hired an escort for {cost} Gold. Safe passage guaranteed this round.",
+      {
+        cost,
+      },
+    ),
   );
 }

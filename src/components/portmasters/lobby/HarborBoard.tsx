@@ -24,6 +24,7 @@ import type { RoomSummary } from "@/lib/api";
 import { roomLockedFor } from "@/lib/rooms";
 import { normalizeRoomName } from "@/lib/utils";
 import { difficultyConfig } from "@/lib/game/difficulty";
+import { t } from "@/lib/game/i18n";
 import { DEFAULT_MODE, modeConfig } from "@/lib/game/mode";
 // The labels of the doors a harbor can be opened through, so a room card
 // names the code that made it rather than an id this screen would have to
@@ -52,7 +53,7 @@ export function HarborBoard({
   if (loading && rooms.length === 0) {
     return (
       <div>
-        <span className="sr-only">Scanning the horizon</span>
+        <span className="sr-only">{t("Scanning the horizon")}</span>
         <div className="space-y-2" aria-hidden>
           {[0, 1, 2].map((row) => (
             <div key={row} className="pm-row pm-glass">
@@ -81,11 +82,12 @@ export function HarborBoard({
           <Ship className="h-6 w-6 text-muted-foreground" />
         </div>
         <p className="mt-3 font-display text-sm font-semibold">
-          No harbors open yet
+          {t("No harbors open yet")}
         </p>
         <p className="mt-1 max-w-[22rem] text-[11px] leading-relaxed text-muted-foreground">
-          Hit Quick Start above to be paired with the next captain looking, or
-          switch to Chart a new harbor and open a room of your own.
+          {t(
+            "Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a room of your own.",
+          )}
         </p>
       </div>
     );
@@ -112,11 +114,11 @@ export function HarborBoard({
                   the Enter button beside it. */}
               <div className="flex flex-wrap items-center gap-2">
                 <span className="pm-truncate font-display text-sm font-semibold">
-                  {normalizeRoomName(room.name)}
+                  {t(normalizeRoomName(room.name))}
                 </span>
                 <Pill tone="sea">
                   {difficultyConfig(room.difficulty).icon}{" "}
-                  {difficultyConfig(room.difficulty).badge}
+                  {t(difficultyConfig(room.difficulty).badge)}
                 </Pill>
                 {/* Only the exceptions carry a chip. Every harbor a captain
                     has seen so far is Classic, so labelling that one would
@@ -127,7 +129,8 @@ export function HarborBoard({
                     not which panel it belongs to. */}
                 {room.mode !== DEFAULT_MODE && (
                   <Pill tone="none" className="bg-warn/5 text-warn">
-                    {modeConfig(room.mode).icon} {modeConfig(room.mode).badge}
+                    {modeConfig(room.mode).icon}{" "}
+                    {t(modeConfig(room.mode).badge)}
                   </Pill>
                 )}
                 {/* [H9: the unlock code] What opened the harbor, worn beside
@@ -139,19 +142,23 @@ export function HarborBoard({
                     opened with a phrase rather than found. */}
                 {room.unlock && (
                   <Pill tone="none" className="bg-charter/[0.07] text-charter">
-                    🔑 {UNLOCKS[room.unlock].label}
+                    🔑 {t(UNLOCKS[room.unlock].label)}
                   </Pill>
                 )}
-                {room.host.id === meId && <Pill tone="gold">Host</Pill>}
-                {!room.isPublic && <Pill tone="default">Private</Pill>}
+                {room.host.id === meId && <Pill tone="gold">{t("Host")}</Pill>}
+                {!room.isPublic && <Pill tone="default">{t("Private")}</Pill>}
                 {room.started && (
                   <Pill tone="none" className="bg-sailing/5 text-sailing">
-                    ⛵ Sailing
+                    {t("⛵ Sailing")}
                   </Pill>
                 )}
               </div>
               <div className="mt-0.5 flex items-center gap-2 text-[11px] text-muted-foreground">
-                <span>Hosted by {room.host.displayName}</span>
+                <span>
+                  {t("Hosted by {room.host.displayName}", {
+                    "room.host.displayName": room.host.displayName,
+                  })}
+                </span>
                 <span>·</span>
                 <span className="font-mono">{room.code}</span>
                 <span>·</span>
@@ -164,16 +171,16 @@ export function HarborBoard({
               size="sm"
               onClick={() => onEnter(room)}
               disabled={joining === room.id || locked}
-              title={locked ? "This voyage has already set sail" : undefined}
+              title={locked ? t("This voyage has already set sail") : undefined}
               className="pm-grad-harbors h-10 shrink-0 rounded-xl text-white"
             >
               {joining === room.id ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : locked ? (
-                "Locked"
+                t("Locked")
               ) : (
                 <>
-                  Enter <ArrowRight className="ml-1 h-4 w-4" />
+                  {t("Enter")} <ArrowRight className="ml-1 h-4 w-4" />
                 </>
               )}
             </Button>

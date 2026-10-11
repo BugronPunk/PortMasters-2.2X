@@ -4,6 +4,7 @@ import { HouseStanding } from "@/types/realtime/standings";
 import { motion } from "framer-motion";
 import { Crown, Ship, Star, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 import { RANK_MEDALS } from "./shared";
 import {
   HOUSE_BAR,
@@ -45,10 +46,10 @@ export function HouseLeaderboard({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-display text-sm font-semibold text-muted-foreground">
-          Harbor Leaderboard
+          {t("Harbor Leaderboard")}
         </h3>
         <span className="text-[10px] text-muted-foreground">
-          Across all pledged captains
+          {t("Across all pledged captains")}
         </span>
       </div>
 
@@ -119,11 +120,11 @@ export function HouseLeaderboard({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="text-sm font-semibold font-display">
-                      {s.name}
+                      {t(s.name)}
                     </span>
                     {isMine && (
                       <span className="rounded-full bg-houses/5 px-1.5 py-0.5 text-[9px] font-semibold text-houses">
-                        Yours
+                        {t("Yours")}
                       </span>
                     )}
                   </div>
@@ -167,17 +168,17 @@ export function HouseLeaderboard({
       {ranked.length > 0 && (
         <div className="grid grid-cols-3 gap-2 border-t border-border/30 pt-3">
           <SummaryStat
-            label="Total Crowns"
+            label={t("Total Crowns")}
             value={ranked.reduce((sum, s) => sum + s.crowns, 0)}
             icon={Crown}
           />
           <SummaryStat
-            label="Total Voyages"
+            label={t("Total Voyages")}
             value={ranked.reduce((sum, s) => sum + s.voyages, 0)}
             icon={Ship}
           />
           <SummaryStat
-            label="Top Score"
+            label={t("Top Score")}
             value={Math.max(...ranked.map((s) => s.bestScore))}
             icon={TrendingUp}
           />
@@ -220,10 +221,10 @@ function PodiumCard({
       >
         <span className="text-lg">{standing.icon}</span>
         <span className="mt-0.5 text-[9px] font-bold leading-tight">
-          {standing.name}
+          {t(standing.name)}
         </span>
         <span className="text-[8px] text-white/80">
-          {standing.crowns} crowns
+          {t("{crowns} crowns", { crowns: standing.crowns })}
         </span>
       </div>
     </div>

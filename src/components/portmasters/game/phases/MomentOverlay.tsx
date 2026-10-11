@@ -2,6 +2,7 @@
 
 import { cardText } from "@/lib/game/cards";
 import type { CardRecord } from "@/lib/game/constants/cards";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { DraftCard, DraftGrid, PhaseHeading } from "./PhaseShared";
 import type { PhasePanelProps } from "./PhaseShared";
@@ -100,13 +101,20 @@ export function MomentOverlay({
   if (!pending(game)) return null;
   const face = moment(game);
   const cards = choices(game);
+  // The moment's words arrive as the vocabulary's English (see the two
+  // constants files above), so the two lines and the action's own words
+  // read through the pack here, at the print. The glyph goes through as
+  // it is: every row under it carries the words alone.
+  const title = t(face.title);
+  const line = t(face.line);
+  const action = t(actionLabel);
   return (
     <div className="pm-glass-strong pm-scroll absolute inset-0 z-20 overflow-y-auto rounded-2xl p-4 sm:p-5">
       <div className="max-w-4xl mx-auto text-center py-2">
         <PhaseHeading layout="mb-1" tone="text-dawn">
-          {face.icon} {face.title}
+          {face.icon} {title}
         </PhaseHeading>
-        <p className="text-sm text-muted-foreground mb-4">{face.line}</p>
+        <p className="text-sm text-muted-foreground mb-4">{line}</p>
         <DraftGrid>
           {cards.map((card) => {
             const text = cardText(card);
@@ -118,7 +126,7 @@ export function MomentOverlay({
                 name={text.name}
                 nameClassName="text-foreground"
                 desc={text.desc}
-                actionLabel={`${face.icon} ${actionLabel}`}
+                actionLabel={`${face.icon} ${action}`}
                 actionClassName="pm-grad-dawn"
                 onSelect={() => act((g, l) => answer(g, card.id, l))}
               />

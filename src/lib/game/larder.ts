@@ -70,6 +70,7 @@ import { survivalLayerOn } from "./flags";
 import { addLot, drawMeals, foodRoomMeals, reconcileLarder } from "./foods";
 import { pathCargoModifier } from "./paths";
 import { flatWorkerRoster, wholeStamp, type GameState } from "./types";
+import { t } from "@/lib/game/i18n";
 
 /**
  * The crew: the artisan roster, counted through the one helper that
@@ -189,12 +190,22 @@ export function feedCrew(state: GameState, logs: string[]): boolean {
     // sentence claims both because the engine applies both.
     const pace = Math.round(SHORT_RATIONS_YIELD * 100);
     logs.push(
-      `⚠️ Short rations! ${crew} aboard and the larder is empty: the crew works this leg at ${pace}% pace, and every line still brings home at least one item. The fleet can see it.`,
+      t(
+        "⚠️ Short rations! {crew} aboard and the larder is empty: the crew works this leg at {pace}% pace, and every line still brings home at least one item. The fleet can see it.",
+        { crew, pace },
+      ),
     );
     return true;
   }
   logs.push(
-    `🍲 The crew eats ${need} ${need === 1 ? "ration" : "rations"}. ${state.larder} left in the larder.`,
+    t(
+      "🍲 The crew eats {need} {rationWord}. {state.larder} left in the larder.",
+      {
+        need,
+        rationWord: need === 1 ? "ration" : "rations",
+        "state.larder": state.larder,
+      },
+    ),
   );
   return true;
 }
@@ -302,7 +313,7 @@ export function provisioningCrew(
 ): number | null {
   const crew = crewSize(state);
   if (crew === 0) {
-    logs.push(NO_CREW_LINE);
+    logs.push(t(NO_CREW_LINE));
     return null;
   }
   return crew;
@@ -353,7 +364,7 @@ export function provisionFood(
   reconcileLarder(state);
   const room = provisionRoom(state, food);
   if (room <= 0) {
-    logs.push(LARDER_FULL_LINE);
+    logs.push(t(LARDER_FULL_LINE));
     return 0;
   }
   const affordable = provisionAffordable(state);
@@ -361,7 +372,12 @@ export function provisionFood(
   if (wanted <= 0) {
     const cost = legRationCost(state);
     logs.push(
-      `❌ Not enough Gold to provision the crew: a leg of rations is ${cost} Gold.`,
+      t(
+        "❌ Not enough Gold to provision the crew: a leg of rations is {cost} Gold.",
+        {
+          cost,
+        },
+      ),
     );
     return 0;
   }
@@ -380,7 +396,17 @@ export function provisionFood(
   // between them is the plan's front page number.
   state.foodSpend += cost;
   logs.push(
-    `🧺 Provisioned ${rations} ${rations === 1 ? "ration" : "rations"} of ${food} for ${crew} aboard (${cost} Gold). ${state.larder} in the larder.`,
+    t(
+      "🧺 Provisioned {rations} {rationWord} of {food} for {crew} aboard ({cost} Gold). {state.larder} in the larder.",
+      {
+        rations,
+        rationWord: rations === 1 ? "ration" : "rations",
+        food: t(food),
+        crew,
+        cost,
+        "state.larder": state.larder,
+      },
+    ),
   );
   return wanted;
 }

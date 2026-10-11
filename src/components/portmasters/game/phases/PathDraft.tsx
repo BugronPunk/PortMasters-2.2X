@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { pathGuide } from "@/lib/game/paths";
+import { t } from "@/lib/game/i18n";
+import { pathFactText, pathGuide } from "@/lib/game/paths";
 import type { DraftStep } from "@/types/realtime/draft";
-import { Term } from "../../Term";
 import { PhaseError, PhaseHeading, type PhasePanelProps } from "./PhaseShared";
 
 // The three beats, in the words a captain reads them in.
@@ -14,6 +14,10 @@ import { PhaseError, PhaseHeading, type PhasePanelProps } from "./PhaseShared";
 // button label are one beat told three ways and a reader editing a beat has
 // to see all three at once. The keys are the wire's own step names, so a
 // fourth beat would be a compile error here rather than a blank card.
+//
+// The table keeps the English the pack is keyed on; the reads happen where
+// the beat is drawn, because a t() call up here would freeze at whatever
+// language the process started in.
 //
 // The lines are the plan's deal read out loud: "Keep one, pass two to the
 // left, keep one of the two received, pass one, discard the last." The last
@@ -111,7 +115,9 @@ export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
     return (
       <div className="flex min-h-[clamp(280px,44dvh,420px)] items-center justify-center px-6 text-center">
         <p className="text-sm text-muted-foreground">
-          The cards are being cut. If a hand was dealt to you, it lands here.
+          {t(
+            "The cards are being cut. If a hand was dealt to you, it lands here.",
+          )}
         </p>
       </div>
     );
@@ -135,23 +141,24 @@ export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
     (picked?.roomId === view.roomId && picked.step === view.step);
   // The count is of the cards still in front of somebody, and this captain
   // is one of them until they answer: the caption says which of the two
-  // readings it is rather than leaving the number to be interpreted.
+  // readings it is rather than leaving the number to be interpreted. Each
+  // reading is this card's own words, so the sentence that carries the
+  // caption below takes it as it arrives.
   const caption = answered
     ? view.open === 0
-      ? "The table is in. The step closes now."
-      : `Waiting on ${view.open} more.`
-    : `Cards still out: ${view.open}`;
+      ? t("The table is in. The step closes now.")
+      : t("Waiting on {view.open} more.", { "view.open": view.open })
+    : t("Cards still out: {view.open}", { "view.open": view.open });
 
   return (
     <div className="mx-auto max-w-3xl py-2">
       <PhaseHeading layout="mb-1" tone="text-path-draft">
-        🃏 The Path Draft
+        {t("🃏 The Path Draft")}
       </PhaseHeading>
       <p className="mb-3 text-center text-sm text-muted-foreground">
-        Three cards each, dealt face down. What you hold at the end is the path
-        you sail this voyage, and the deal comes first because every stop after
-        it reads your path: your hold, your Renown ceiling and the orders that
-        lock to you.
+        {t(
+          "Three cards each, dealt face down. What you hold at the end is the path you sail this voyage, and the deal comes first because every stop after it reads your path: your hold, your Renown ceiling and the orders that lock to you.",
+        )}
       </p>
 
       {draft.error && (
@@ -166,16 +173,16 @@ export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
           this step is asking for. */}
       <div className="mb-3 rounded-xl border border-path-draft/20 bg-path-draft/[0.04] px-3.5 py-2.5 text-center">
         <div className="text-[11px] font-semibold uppercase tracking-wide text-path-draft">
-          {face.title}
+          {t(face.title)}
         </div>
         {!answered && (
-          <p className="mt-1 text-xs text-foreground">{face.line}</p>
+          <p className="mt-1 text-xs text-foreground">{t(face.line)}</p>
         )}
       </div>
 
       {answered ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
-          Your card is down. {caption}
+          {t("Your card is down. {caption}", { caption })}
         </p>
       ) : (
         <>
@@ -210,29 +217,26 @@ export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
                     </span>
                     <div className="min-w-0">
                       <div className="font-display text-sm font-semibold text-foreground">
-                        {entry.name}
+                        {t(entry.name)}
                       </div>
                       <p className="mt-0.5 text-[11px] leading-snug text-muted-foreground">
-                        {entry.signature}
+                        {t(entry.signature)}
                       </p>
                       {entry.facts.length > 0 && (
                         <p className="mt-1.5 text-[10px] text-muted-foreground">
                           {entry.facts.map((fact, index) => (
                             <span key={index}>
                               {index > 0 && " · "}
-                              {/* The rung's own title, drawn through the
-                                  glossary's Term rather than printed
-                                  plain: the deal is the first place a
-                                  captain meets the word Renown, and the
-                                  rung it names means nothing until the
-                                  word does. */}
-                              {fact.kind === "renown" ? (
-                                <>
-                                  <Term>Renown</Term> to {fact.title}
-                                </>
-                              ) : (
-                                fact.text
-                              )}
+                              {/* Every reading is composed at this read
+                                  by the record's own reader (see
+                                  pathFactText in @/lib/game/paths): the
+                                  sentence is built here rather than
+                                  when the guide above is built, which
+                                  is what lets the language of this
+                                  visit decide the words, and what
+                                  keeps the readings out of the
+                                  module-load table. */}
+                              {pathFactText(fact)}
                             </span>
                           ))}
                         </p>
@@ -247,7 +251,7 @@ export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
                       draft.keep(index);
                     }}
                   >
-                    {face.keep}
+                    {t(face.keep)}
                   </Button>
                 </motion.div>
               );

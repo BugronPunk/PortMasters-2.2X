@@ -28,6 +28,7 @@
 // =====================================================================
 import type { GameState } from "../types";
 import { standingBoon, standingBuyFor, type StandingOrders } from "../standing";
+import { t } from "@/lib/game/i18n";
 import { upgradeShip } from "./boons";
 import { purchaseCard, tallyCardPurchases } from "./market";
 import { canFillOrder, completeOrder } from "./orders";
@@ -96,9 +97,13 @@ export function workStandingOrders(
       const bought = state.purchasedCards.filter((id) => !before.has(id));
       if (!bought.length) return;
       logs.push(
-        `🪧 Standing orders at the port board: bought ${bought.length} cargo ${
-          bought.length === 1 ? "lot" : "lots"
-        } you had priced.`,
+        t(
+          "🪧 Standing orders at the port board: bought {bought.length} cargo {lotWord} you had priced.",
+          {
+            "bought.length": bought.length,
+            lotWord: bought.length === 1 ? "lot" : "lots",
+          },
+        ),
       );
       // [MANIFEST 01: The Harbor Pulse] The lots above are purchases the
       // room's next pulse should count, and the report that carries a
@@ -124,9 +129,13 @@ export function workStandingOrders(
       const filled = state.orderCount - before;
       if (!filled) return;
       logs.push(
-        `🪧 Standing orders at the trade board: filled ${filled} ${
-          filled === 1 ? "order" : "orders"
-        } the hold could cover.`,
+        t(
+          "🪧 Standing orders at the trade board: filled {filled} {orderWord} the hold could cover.",
+          {
+            filled,
+            orderWord: filled === 1 ? "order" : "orders",
+          },
+        ),
       );
       return;
     }
@@ -139,7 +148,10 @@ export function workStandingOrders(
       upgradeShip(state, logs);
       if (state.shipLevel === before) return;
       logs.push(
-        `🪧 Standing orders at the shipyard: upgraded the hull to level ${state.shipLevel}.`,
+        t(
+          "🪧 Standing orders at the shipyard: upgraded the hull to level {state.shipLevel}.",
+          { "state.shipLevel": state.shipLevel },
+        ),
       );
       return;
     }

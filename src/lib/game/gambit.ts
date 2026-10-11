@@ -27,6 +27,7 @@
 // =====================================================================
 
 import { createRng, pick, weightedPick, type Rng } from "./rng";
+import { t } from "@/lib/game/i18n";
 
 export type GambitRole = "honest" | "pirate" | "broker";
 
@@ -282,13 +283,29 @@ function drawFlourish(rng: Rng, objectiveId: string): Flourish | null {
 export function flourishLine(flourish: Flourish): string {
   switch (flourish.kind) {
     case "purse":
-      return `Finish the voyage holding at least ${flourish.amount} Gold of your own.`;
+      return t(
+        "Finish the voyage holding at least {flourish.amount} Gold of your own.",
+        { "flourish.amount": flourish.amount },
+      );
     case "reputation":
-      return `Finish the voyage at ${flourish.amount} Reputation or better.`;
+      return t("Finish the voyage at {flourish.amount} Reputation or better.", {
+        "flourish.amount": flourish.amount,
+      });
     case "stock":
-      return `Finish the voyage still holding ${flourish.amount} ${flourish.good} of your own.`;
+      return t(
+        "Finish the voyage still holding {flourish.amount} {flourish.good} of your own.",
+        {
+          "flourish.amount": flourish.amount,
+          // The good has a row of its own (goods.*), so the reader answers
+          // it here and the sentence arrives whole.
+          "flourish.good": flourish.good ? t(flourish.good) : "",
+        },
+      );
     case "delivery":
-      return `Hand over at least ${flourish.amount} items of the commission yourself.`;
+      return t(
+        "Hand over at least {flourish.amount} items of the commission yourself.",
+        { "flourish.amount": flourish.amount },
+      );
   }
 }
 
@@ -296,7 +313,9 @@ export function flourishLine(flourish: Flourish): string {
 // Takes the partner's name rather than an id because the sentence is the
 // whole delivery: the card prints it and does nothing else with it.
 export function allyLine(name: string): string {
-  return `${name} sails the same flag you do, and the two of you know it.`;
+  return t("{name} sails the same flag you do, and the two of you know it.", {
+    name,
+  });
 }
 
 // What one card says. The wording lives here rather than on a screen

@@ -2,6 +2,7 @@
 
 import { readyLine, type ReadyState } from "@/lib/use-phase-sync";
 import type { PhaseClock } from "@/lib/phase-clock";
+import { t } from "@/lib/game/i18n";
 import type { PublicUser } from "@/lib/api";
 import { Avatar } from "../shared";
 import { cn } from "@/lib/utils";
@@ -65,7 +66,9 @@ export function ReadyBar({
             "flex items-center gap-1.5 text-[11px] font-semibold tabular-nums",
             urgent ? "text-warn" : "text-muted-foreground",
           )}
-          title="This leg ends when the clock does, whether or not every captain has readied."
+          title={t(
+            "This leg ends when the clock does, whether or not every captain has readied.",
+          )}
         >
           <Clock className="h-3 w-3" />
           {clock.label}
@@ -90,7 +93,13 @@ export function ReadyBar({
             <div
               key={id}
               className="relative"
-              title={`${m?.displayName ?? "Captain"} ${isReady ? "ready" : "still deciding"}`}
+              // The two words beside the name are read here rather than
+              // handed on raw: both are rows of their own, and a captain
+              // reading the bar in Mandarin reads the state in it too.
+              title={t("{captainName} {readyWord}", {
+                captainName: m?.displayName ?? t("Captain"),
+                readyWord: isReady ? t("ready") : t("still deciding"),
+              })}
             >
               <Avatar
                 hue={m?.avatarHue ?? 0}

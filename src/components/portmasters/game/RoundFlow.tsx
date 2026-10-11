@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 import { phaseFace } from "@/lib/game/phases";
 import type { RoundLeg } from "@/lib/game/mode";
 import { Term } from "../Term";
@@ -110,11 +111,11 @@ export function RoundFlow({
                   <span className="font-semibold">
                     {face.icon}{" "}
                     <Term term={face.label} focusable={false}>
-                      {face.label}
+                      {t(face.label)}
                     </Term>
                   </span>
                   <span className="block text-xs leading-snug text-muted-foreground">
-                    {leg.body}
+                    {t(leg.body)}
                   </span>
                 </span>
                 <ChevronRight
@@ -144,7 +145,7 @@ export function RoundFlow({
           <span aria-hidden className="mt-px text-sea">
             ↳
           </span>
-          <span>{held.setsUp}</span>
+          <span>{t(held.setsUp)}</span>
         </motion.p>
       </AnimatePresence>
 
@@ -152,7 +153,7 @@ export function RoundFlow({
         <span aria-hidden className="mt-px">
           ↺
         </span>
-        <span>{closes}</span>
+        <span>{t(closes)}</span>
       </p>
     </div>
   );

@@ -12,6 +12,7 @@ import {
   contributorShareCap,
   ventureAlreadySpentReason,
 } from "@/lib/game/convoy";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { useConvoy } from "@/lib/use-convoy";
 import { Button } from "@/components/ui/button";
@@ -62,9 +63,10 @@ export function ConvoyVentures({
   const roundsAheadCount = Math.floor(Number(roundsAhead));
 
   function submitPost() {
-    const t = Math.floor(Number(target));
-    if (!Number.isFinite(t) || !Number.isFinite(roundsAheadCount)) return;
-    convoy.post(t, game.currentRound + roundsAheadCount);
+    const targetGold = Math.floor(Number(target));
+    if (!Number.isFinite(targetGold) || !Number.isFinite(roundsAheadCount))
+      return;
+    convoy.post(targetGold, game.currentRound + roundsAheadCount);
     setTarget("");
     setRoundsAhead(String(CONVOY_VENTURE_MIN_ROUNDS_AHEAD));
   }
@@ -80,7 +82,7 @@ export function ConvoyVentures({
   return (
     <div className="mt-3 border-t border-black/5 pt-2 dark:border-white/10">
       <div className="mb-1 text-[10px] font-semibold tracking-wide text-muted-foreground">
-        ━━ Ventures ━━
+        {t("━━ Ventures ━━")}
       </div>
 
       {/* The refusal is about one press, so it is handed back on request
@@ -93,8 +95,8 @@ export function ConvoyVentures({
             type="button"
             onClick={convoy.clearError}
             className="-mr-0.5 shrink-0 rounded-full p-0.5 transition-colors hover:bg-alarm/10"
-            title="Dismiss"
-            aria-label="Dismiss"
+            title={t("Dismiss")}
+            aria-label={t("Dismiss")}
           >
             <X className="h-3 w-3" />
           </button>
@@ -107,15 +109,16 @@ export function ConvoyVentures({
         </p>
       ) : tooLateToPost ? (
         <p className="mb-2 rounded bg-black/[0.03] px-2 py-1.5 text-[10px] text-muted-foreground dark:bg-white/[0.04]">
-          Too late in this voyage to post a new Venture: there is no round left
-          that would leave time to spend the reward.
+          {t(
+            "Too late in this voyage to post a new Venture: there is no round left that would leave time to spend the reward.",
+          )}
         </p>
       ) : (
         <>
           <div className="mb-2 flex items-end gap-1.5">
             <div className="flex-1">
               <label className="mb-0.5 block text-[9px] text-muted-foreground">
-                Target Gold
+                {t("Target Gold")}
               </label>
               <Input
                 type="number"
@@ -123,13 +126,15 @@ export function ConvoyVentures({
                 max={CONVOY_VENTURE_MAX_TARGET}
                 value={target}
                 onChange={(e) => setTarget(e.target.value)}
-                placeholder={`${CONVOY_VENTURE_MIN_TARGET}+`}
+                placeholder={t("{CONVOY_VENTURE_MIN_TARGET}+", {
+                  CONVOY_VENTURE_MIN_TARGET,
+                })}
                 className="h-7 text-[11px]"
               />
             </div>
             <div className="flex-1">
               <label className="mb-0.5 block text-[9px] text-muted-foreground">
-                Rounds to fill
+                {t("Rounds to fill")}
               </label>
               <Input
                 type="number"
@@ -145,13 +150,15 @@ export function ConvoyVentures({
               className="h-7 rounded px-2 text-[10px]"
               onClick={submitPost}
             >
-              Post
+              {t("Post")}
             </Button>
           </div>
 
           {Number.isFinite(roundsAheadCount) && (
             <p className="mb-2 text-[9px] text-muted-foreground">
-              Fills by Round {game.currentRound + roundsAheadCount}.
+              {t("Fills by Round {round}.", {
+                round: game.currentRound + roundsAheadCount,
+              })}
             </p>
           )}
         </>
@@ -163,15 +170,20 @@ export function ConvoyVentures({
           backing somebody else's venture, and a backer never opens that
           form, so the board has to carry them. */}
       <p className="mb-2 text-[10px] text-muted-foreground">
-        Miss the deadline and every contributor only gets back a partial refund.
-        This harbor only gets one venture per voyage, so make it count.
+        {t(
+          "Miss the deadline and every contributor only gets back a partial refund. This harbor only gets one venture per voyage, so make it count.",
+        )}
       </p>
 
       {convoy.ventures.length === 0 ? (
         <p className="py-1 text-[11px] text-muted-foreground">
           {convoy.locked
-            ? "No ventures open. This voyage's one chance has already been used."
-            : "No ventures open right now. Post one, or wait for another captain to."}
+            ? t(
+                "No ventures open. This voyage's one chance has already been used.",
+              )
+            : t(
+                "No ventures open right now. Post one, or wait for another captain to.",
+              )}
         </p>
       ) : (
         <div className="space-y-2">
@@ -191,10 +203,13 @@ export function ConvoyVentures({
               >
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-muted-foreground">
-                    {v.posterId === myUserId ? "Your venture" : v.posterName}
+                    {v.posterId === myUserId ? t("Your venture") : v.posterName}
                   </span>
                   <span className="font-semibold">
-                    {v.total} of {v.targetGold} Gold funded
+                    {t("{total} of {targetGold} Gold funded", {
+                      total: v.total,
+                      targetGold: v.targetGold,
+                    })}
                   </span>
                 </div>
                 <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
@@ -204,13 +219,22 @@ export function ConvoyVentures({
                   />
                 </div>
                 <div className="mt-1 flex items-center justify-between text-[9px] text-muted-foreground">
-                  <span>By Round {v.deadlineRound}</span>
-                  {mine && <span>You have backed {mine.amount} Gold</span>}
+                  <span>
+                    {t("By Round {round}", { round: v.deadlineRound })}
+                  </span>
+                  {mine && (
+                    <span>
+                      {t("You have backed {mine.amount} Gold", {
+                        "mine.amount": mine.amount,
+                      })}
+                    </span>
+                  )}
                 </div>
                 {atMyShareCap ? (
                   <p className="mt-1.5 text-[9px] text-muted-foreground">
-                    You have backed this as much as any single captain can. It
-                    needs another captain to fund the rest.
+                    {t(
+                      "You have backed this as much as any single captain can. It needs another captain to fund the rest.",
+                    )}
                   </p>
                 ) : (
                   <div className="mt-1.5 flex items-center gap-1.5">
@@ -225,7 +249,7 @@ export function ConvoyVentures({
                           [v.id]: e.target.value,
                         }))
                       }
-                      placeholder="Gold"
+                      placeholder={t("Gold")}
                       className="h-6 text-[10px]"
                     />
                     <Button
@@ -234,7 +258,7 @@ export function ConvoyVentures({
                       className="h-6 shrink-0 rounded px-2 text-[10px]"
                       onClick={() => submitContribute(v.id)}
                     >
-                      Back it
+                      {t("Back it")}
                     </Button>
                   </div>
                 )}

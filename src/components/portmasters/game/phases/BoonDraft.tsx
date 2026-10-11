@@ -3,6 +3,7 @@
 import { cardText } from "@/lib/game/cards";
 import { lockInBoon, swapBoonChoices } from "@/lib/game/engine";
 import { BOON_SWAP_COST } from "@/lib/game/constants/drafts";
+import { t } from "@/lib/game/i18n";
 import { OpenBoons } from "../OpenBoons";
 import {
   CancelReadyButton,
@@ -34,10 +35,10 @@ export function BoonDraft({
     return (
       <div className="max-w-md mx-auto text-center py-10">
         <PhaseHeading layout="mb-1" tone="text-dawn">
-          🧭 Boon Locked In
+          {t("🧭 Boon Locked In")}
         </PhaseHeading>
         <p className="text-sm text-muted-foreground mb-5">
-          The voyage begins once every captain has chosen.
+          {t("The voyage begins once every captain has chosen.")}
         </p>
         <PhaseClockBar
           phaseSync={phaseSync}
@@ -45,7 +46,7 @@ export function BoonDraft({
           className="mb-5"
         />
         <CancelReadyButton phaseSync={phaseSync}>
-          ↩️ Choose a different Boon
+          {t("↩️ Choose a different Boon")}
         </CancelReadyButton>
         {/* [F5: public offers] The ledger follows a captain who has
             locked in, because the wait is exactly when the table's other
@@ -65,10 +66,10 @@ export function BoonDraft({
   return (
     <div className="max-w-4xl mx-auto text-center py-2">
       <PhaseHeading layout="mb-1" tone="text-dawn">
-        🧭 The Navigator's Compass
+        {t("🧭 The Navigator's Compass")}
       </PhaseHeading>
       <p className="text-sm text-muted-foreground mb-2">
-        Draft a Boon to synergize with your strategy
+        {t("Draft a Boon to synergize with your strategy")}
       </p>
       <PhaseClockBar phaseSync={phaseSync} members={members} className="mb-3" />
       <DraftSwapButton
@@ -76,8 +77,10 @@ export function BoonDraft({
         onClick={() => act((g, l) => swapBoonChoices(g, l))}
       >
         {game.boonSwapUsed
-          ? "✅ Boons Swapped This Round"
-          : `🔄 Swap Boons (${BOON_SWAP_COST}💰, 1 use/round)`}
+          ? t("✅ Boons Swapped This Round")
+          : t("🔄 Swap Boons ({BOON_SWAP_COST}💰, 1 use/round)", {
+              BOON_SWAP_COST,
+            })}
       </DraftSwapButton>
       <DraftGrid>
         {picks.map((card) => {
@@ -90,7 +93,7 @@ export function BoonDraft({
               name={text.name}
               nameClassName="text-foreground"
               desc={text.desc}
-              actionLabel="🔒 Lock In Boon"
+              actionLabel={t("🔒 Lock In Boon")}
               actionClassName="pm-grad-dawn"
               onSelect={() =>
                 phaseSync.markChoiceReady((g, l) =>

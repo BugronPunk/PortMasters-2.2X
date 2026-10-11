@@ -2,6 +2,7 @@
 
 import { cardName, cardText } from "@/lib/game/cards";
 import { MODULES } from "@/lib/game/constants/drafts";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { HuePanel } from "./PhasePanels";
@@ -29,42 +30,85 @@ import { HuePanel } from "./PhasePanels";
  */
 const MODULE_SYNERGY_RULES: {
   ids: string[];
+  // The sentence this pair prints, in the pack's own spelling: the two
+  // module names ride as tokens ({smugglersHoldName} and friends), so
+  // the read can happen at the print rather than freezing at module
+  // scope.
   label: string;
+  // Fills the tokens the label names: the two records this rule pairs,
+  // asked through the name reader the print site hands in, so a card
+  // renamed for its captain is renamed here the same afternoon.
+  params?: (name: (id: string) => string) => Record<string, string>;
   tone: "gain" | "intel" | "warn";
 }[] = [
   {
     ids: ["smugglers_hold", "tax_evasion"],
-    label: `Double Tax Strategy: ${cardName("smugglers_hold")} reduces purchase costs and ${cardName("tax_evasion")} halves both VAT and income tax. A powerful financial combo.`,
+    label:
+      "Double Tax Strategy: {smugglersHoldName} reduces purchase costs and {taxEvasionName} halves both VAT and income tax. A powerful financial combo.",
+    params: (name) => ({
+      smugglersHoldName: name("smugglers_hold"),
+      taxEvasionName: name("tax_evasion"),
+    }),
     tone: "gain",
   },
   {
     ids: ["bulk_hauler", "silk_monopoly"],
-    label: `Freight Mastery: ${cardName("bulk_hauler")} reduces transport per item and ${cardName("silk_monopoly")} can zero it out on any order carrying woven goods. Shipping costs almost nothing.`,
+    label:
+      "Freight Mastery: {bulkHauler} reduces transport per item and {silkMonopoly} can zero it out on any order carrying woven goods. Shipping costs almost nothing.",
+    params: (name) => ({
+      bulkHauler: name("bulk_hauler"),
+      silkMonopoly: name("silk_monopoly"),
+    }),
     tone: "gain",
   },
   {
     ids: ["artisans_workshop", "salvage_crane"],
-    label: `Production Engine: ${cardName("artisans_workshop")} boosts worker output and ${cardName("salvage_crane")} refunds the freight on some orders. More goods, more Gold back.`,
+    label:
+      "Production Engine: {artisansWorkshopName} boosts worker output and {salvageCraneName} refunds the freight on some orders. More goods, more Gold back.",
+    params: (name) => ({
+      artisansWorkshopName: name("artisans_workshop"),
+      salvageCraneName: name("salvage_crane"),
+    }),
     tone: "gain",
   },
   {
     ids: ["brokers_network", "ocean_relay"],
-    label: `Intel Network: ${cardName("brokers_network")} discounts every whisper, and ${cardName("ocean_relay")} adds one more at no cost. Maximum market intelligence.`,
+    label:
+      "Intel Network: {brokersNetworkName} discounts every whisper, and {oceanRelayName} adds one more at no cost. Maximum market intelligence.",
+    params: (name) => ({
+      brokersNetworkName: name("brokers_network"),
+      oceanRelayName: name("ocean_relay"),
+    }),
     tone: "intel",
   },
   {
     ids: ["overdrive_engine", "bulk_hauler"],
-    label: `Penalty Stack: ${cardName("overdrive_engine")} adds maintenance and ${cardName("bulk_hauler")} raises upgrade cost. Consider swapping one if funds are tight.`,
+    label:
+      "Penalty Stack: {overdriveEngineName} adds maintenance and {bulkHaulerName} raises upgrade cost. Consider swapping one if funds are tight.",
+    params: (name) => ({
+      overdriveEngineName: name("overdrive_engine"),
+      bulkHaulerName: name("bulk_hauler"),
+    }),
     tone: "warn",
   },
   {
     ids: ["kiln_cellar", "bureau_token"],
-    label: `Charter Combo: ${cardName("kiln_cellar")} discounts every bulk good, and ${cardName("bureau_token")} pays more on orders for the charter's own goods. Buy cheap, sell high.`,
+    label:
+      "Charter Combo: {kilnCellarName} discounts every bulk good, and {bureauTokenName} pays more on orders for the charter's own goods. Buy cheap, sell high.",
+    params: (name) => ({
+      kilnCellarName: name("kiln_cellar"),
+      bureauTokenName: name("bureau_token"),
+    }),
     tone: "gain",
   },
   {
     ids: ["foreign_quarter_pass", "fleet_of_treasures"],
-    label: `Exotic Trade: ${cardName("foreign_quarter_pass")} discounts every luxury good, and ${cardName("fleet_of_treasures")} takes Gold off freight on the same trade. Tier 2 goods at tier 0 prices.`,
+    label:
+      "Exotic Trade: {foreignQuarterName} discounts every luxury good, and {fleetOfTreasuresName} takes Gold off freight on the same trade. Tier 2 goods at tier 0 prices.",
+    params: (name) => ({
+      foreignQuarterName: name("foreign_quarter_pass"),
+      fleetOfTreasuresName: name("fleet_of_treasures"),
+    }),
     tone: "gain",
   },
 ];
@@ -107,13 +151,13 @@ export function ModuleSynergyAnalyzer({
   return (
     <HuePanel tone="modules" className="p-3.5 mb-4">
       <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mb-2">
-        Module Synergy Analysis
+        {t("Module Synergy Analysis")}
       </div>
       {/* Active bonuses */}
       {activeBonuses.length > 0 && (
         <div className="mb-2">
           <div className="text-[9px] text-muted-foreground mb-1">
-            Active Bonuses
+            {t("Active Bonuses")}
           </div>
           <div className="flex flex-wrap gap-1.5">
             {activeBonuses.map((card) => {
@@ -134,7 +178,7 @@ export function ModuleSynergyAnalyzer({
       {synergies.length > 0 && (
         <div className="space-y-1.5">
           <div className="text-[9px] text-muted-foreground">
-            Module Interactions
+            {t("Module Interactions")}
           </div>
           {synergies.map((s, i) => (
             <div
@@ -144,14 +188,16 @@ export function ModuleSynergyAnalyzer({
                 SYNERGY_TONES[s.tone],
               )}
             >
-              {s.label}
+              {/* The sentence reads here, at the print, with the two
+                  names the rule pairs filled from the records. */}
+              {t(s.label, s.params?.(cardName))}
             </div>
           ))}
         </div>
       )}
       {synergies.length === 0 && activeBonuses.length > 0 && (
         <div className="text-[10px] text-muted-foreground">
-          No special interactions detected between equipped modules.
+          {t("No special interactions detected between equipped modules.")}
         </div>
       )}
     </HuePanel>

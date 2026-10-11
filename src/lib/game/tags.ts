@@ -66,6 +66,11 @@ import { GOOD_TAGS, ITEMS } from "./constants/goods";
 import { FOODS, FOOD_TAGS, type FoodId } from "./constants/supplies";
 import { MAX_TAGS_PER_ENTRY, TAGS, type Tag } from "./constants/tags";
 import { DIFFICULTIES, type Difficulty } from "./difficulty";
+// The keepings finding below is the one string here the pack carries a row
+// for, and it is read at the moment it is built. The rest of the walk's
+// findings are operator-facing build output with no rows yet, recorded in
+// the gap list rather than wired.
+import { t } from "./i18n";
 
 /** The six catalogues an entry can belong to, in the order they are walked. */
 export type TaggedKind =
@@ -221,7 +226,7 @@ export function validateTagging(
       }
       used.add(tag);
     }
-    for (const tag of tags.filter((t, at) => tags.indexOf(t) !== at)) {
+    for (const tag of tags.filter((each, at) => tags.indexOf(each) !== at)) {
       findings.push(
         `${where} carries "${tag}" twice, which is one tag counted as two.`,
       );
@@ -279,7 +284,15 @@ export function validateTagging(
       if (keptLegs === null || turningLegs === null) continue;
       if (keptLegs < turningLegs) {
         findings.push(
-          `"${kept.id}" is preserved and keeps ${keptLegs} legs while "${turning.id}" is perishable and keeps ${turningLegs}, so the tag and the keeping disagree.`,
+          t(
+            '"{kept.id}" is preserved and keeps {keptLegs} legs while "{turning.id}" is perishable and keeps {turningLegs}, so the tag and the keeping disagree.',
+            {
+              "kept.id": kept.id,
+              keptLegs,
+              "turning.id": turning.id,
+              turningLegs,
+            },
+          ),
         );
       }
     }

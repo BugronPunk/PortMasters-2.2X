@@ -48,6 +48,7 @@
 // the half this writer cannot do because it runs on the captain's own
 // machine.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import { cardLead, noteCardOffer, noteCardPick } from "../cards";
 import { CHARTER_MOMENT } from "../constants/charters";
 import { charterChoices, charterPending } from "../charters";
@@ -79,6 +80,11 @@ export function answerCharter(
   state.modifierFlags = { ...state.modifierFlags, ...heldFlagsOf(state) };
   for (const offered of choices) noteCardOffer(state.cardTally, offered);
   noteCardPick(state.cardTally, card);
-  logs.push(`${CHARTER_MOMENT.icon} Your charter: ${cardLead(card.id)}`);
+  logs.push(
+    t("{CHARTER_MOMENT.icon} Your charter: {charterLead}", {
+      "CHARTER_MOMENT.icon": CHARTER_MOMENT.icon,
+      charterLead: cardLead(card.id),
+    }),
+  );
   return true;
 }

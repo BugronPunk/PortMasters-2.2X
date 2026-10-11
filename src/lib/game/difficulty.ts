@@ -21,6 +21,10 @@
 // =====================================================================
 
 import type { TagList } from "./constants/tags";
+// The odds label below is read at the moment it is composed, so the figure
+// the advisor and the welcome screen quote follows the language they print
+// in. The tier records themselves are data, read at their display sites.
+import { t } from "./i18n";
 
 export type Difficulty = "fair_winds" | "open_waters" | "monsoon";
 
@@ -331,7 +335,9 @@ export function pirateChanceFor(
 // whether that clause belongs in the sentence is the sentence's business.
 export function pirateOddsLabel(cfg: DifficultyConfig): string {
   const pcts = cfg.pirateChance.map((r) => Math.round(r * 100));
-  return pcts.length === 1 ? `${pcts[0]}%` : `${pcts[0]}% to ${pcts[1]}%`;
+  return pcts.length === 1
+    ? t("{lowPct}%", { lowPct: pcts[0] })
+    : t("{lowPct}% to {highPct}%", { lowPct: pcts[0], highPct: pcts[1] });
 }
 
 // The scheduled mandate template index for this round, or undefined if none

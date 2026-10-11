@@ -7,6 +7,7 @@ import {
   wageBill,
   wagesDue,
 } from "@/lib/game/engine";
+import { listJoiner, t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 import { AlertTriangle } from "lucide-react";
 import {
@@ -89,8 +90,11 @@ export function SettlementBills({
   // the alarm red for the one that cannot be taken back and must not be
   // tapped by reflex.
   const settleLabel = canAfford
-    ? `💸 Settle Bills: ${totalDue} Gold`
-    : `Force Payment and Risk Bankruptcy (${game.money}/${totalDue} Gold)`;
+    ? t("💸 Settle Bills: {totalDue} Gold", { totalDue })
+    : t("Force Payment and Risk Bankruptcy ({money}/{totalDue} Gold)", {
+        money: game.money,
+        totalDue,
+      });
   const settleClassName = canAfford
     ? "pm-grad-resolve h-12 px-8"
     : "bg-alarm text-background h-12 px-8 font-semibold";
@@ -99,7 +103,7 @@ export function SettlementBills({
   return (
     <div className="max-w-2xl mx-auto">
       <PhaseHeading layout="text-center mb-4" tone="text-resolve" brush>
-        💸 Resolve: Round Settlement
+        {t("💸 Resolve: Round Settlement")}
       </PhaseHeading>
 
       {game.pirateAttackResolved && (
@@ -112,74 +116,92 @@ export function SettlementBills({
           )}
         >
           {game.escortHired
-            ? "🛡️ Escort hired, you sailed through safely this round."
-            : "🌊 You sailed without an escort this round."}
+            ? t("🛡️ Escort hired, you sailed through safely this round.")
+            : t("🌊 You sailed without an escort this round.")}
         </div>
       )}
 
       <div className="rounded-xl bg-due/[0.06] border border-due/20 p-3.5 my-3.5">
-        <h3 className="font-semibold text-due mb-2">⏳ Bills Due This Round</h3>
+        <h3 className="font-semibold text-due mb-2">
+          {t("⏳ Bills Due This Round")}
+        </h3>
         <BillRow
-          label={
-            <>
-              👥 Worker Wages ({nWorkers} worker{nWorkers !== 1 ? "s" : ""})
-            </>
-          }
+          label={t("👥 Worker Wages ({count} worker{pluralS})", {
+            count: nWorkers,
+            pluralS: nWorkers !== 1 ? "s" : "",
+          })}
         >
-          <span className="font-bold">{wages} Gold</span>
+          <span className="font-bold">
+            {t("{contract.fee} Gold", { "contract.fee": wages })}
+          </span>
         </BillRow>
         {sponsored > 0 && (
           // Why the figure above is lower than the roster times the trades'
           // wages: the pledge the engine will spend a breath later, named
           // in the engine's own shape so the sheet and the log line that
-          // replaces it tell one story.
+          // replaces it tell one story. The frame reads through the pack as
+          // one sentence, with the sponsored hands handed in as the joined
+          // list its {items} token names.
           <div className="text-[11px] text-muted-foreground pl-2.5">
-            ↳ 🪷 Jade Pavilion covers the wage for{" "}
-            {bill
-              .filter((b) => b.sponsored > 0)
-              .map(
-                (b) =>
-                  `${b.sponsored} ${b.sponsored === 1 ? b.label : b.plural}`,
-              )
-              .join(", ")}{" "}
-            this round
+            {t("↳ 🪷 Jade Pavilion covers the wage for {items} this round", {
+              items: bill
+                .filter((b) => b.sponsored > 0)
+                .map((b) =>
+                  t("{b.sponsored} {bLabel}", {
+                    "b.sponsored": b.sponsored,
+                    bLabel: t(b.sponsored === 1 ? b.label : b.plural),
+                  }),
+                )
+                .join(listJoiner()),
+            })}
           </div>
         )}
-        <BillRow size="text-sm" label="🔧 Ship Maintenance Fee">
-          <span className="font-bold">{maintCost} Gold</span>
+        <BillRow size="text-sm" label={t("🔧 Ship Maintenance Fee")}>
+          <span className="font-bold">
+            {t("{contract.fee} Gold", { "contract.fee": maintCost })}
+          </span>
         </BillRow>
         {game.maintenancePenalty > 0 && (
           <div className="text-[11px] text-muted-foreground pl-2.5">
-            ↳ Base {game.fixedCost}g + {cardName("overdrive_engine")} penalty{" "}
-            {game.maintenancePenalty}g
+            {t("↳ Base {base}g + {card} penalty {penalty}g", {
+              base: game.fixedCost,
+              card: cardName("overdrive_engine"),
+              penalty: game.maintenancePenalty,
+            })}
           </div>
         )}
         <BillRow
           size="text-sm"
           className="border-t border-due/20 pt-1.5 mt-1.5 font-bold"
-          label="💸 Total Due"
+          label={t("💸 Total Due")}
         >
-          <span className="text-due">{totalDue} Gold</span>
+          <span className="text-due">
+            {t("{contract.fee} Gold", { "contract.fee": totalDue })}
+          </span>
         </BillRow>
       </div>
 
       <div className="rounded-xl bg-resolve/[0.03] border border-resolve/15 p-3.5 my-3.5">
-        <h3 className="font-semibold mb-2">💹 Balance Summary</h3>
-        <BillRow label="Current Funds">
-          <span className="text-gain font-bold">{game.money} Gold</span>
+        <h3 className="font-semibold mb-2">{t("💹 Balance Summary")}</h3>
+        <BillRow label={t("Current Funds")}>
+          <span className="text-gain font-bold">
+            {t("{contract.fee} Gold", { "contract.fee": game.money })}
+          </span>
         </BillRow>
-        <BillRow label="After Settlement">
+        <BillRow label={t("After Settlement")}>
           <span
             className={cn(
               "font-bold",
               balanceAfter >= 0 ? "text-gain" : "text-alarm",
             )}
           >
-            {balanceAfter} Gold
+            {t("{contract.fee} Gold", { "contract.fee": balanceAfter })}
           </span>
         </BillRow>
-        <BillRow label="Round Revenue">
-          <span className="text-gain">+{game.roundRevenue} Gold</span>
+        <BillRow label={t("Round Revenue")}>
+          <span className="text-gain">
+            +{game.roundRevenue} {t("Gold")}
+          </span>
         </BillRow>
       </div>
 

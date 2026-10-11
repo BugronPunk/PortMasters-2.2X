@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { GLOSSARY } from "@/lib/game/glossary";
+import { glossaryText } from "@/lib/game/glossary";
 
 export function Term({
   children,
@@ -35,10 +35,15 @@ export function Term({
    */
   focusable?: boolean;
 }) {
+  // The lookup key stays the English term whatever language is on
+  // screen, and the description is read through the pack where the
+  // popover opens (see glossaryText), so a term hovered after a language
+  // flip reads in the language the captain holds rather than the one the
+  // bundle started in.
   const body =
     content ??
-    (term ? GLOSSARY[term] : undefined) ??
-    (typeof children === "string" ? GLOSSARY[children] : undefined);
+    (term ? glossaryText(term) : undefined) ??
+    (typeof children === "string" ? glossaryText(children) : undefined);
   if (!body) return <>{children}</>;
 
   return (

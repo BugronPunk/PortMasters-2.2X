@@ -7,6 +7,7 @@ import type { Server, Socket } from "socket.io";
 
 import { db } from "@/lib/db";
 import { HOST_ONLY_RESTART } from "@/lib/game/constants/copy";
+import { tFor } from "@/lib/game/i18n";
 import { ENTRY_PHASE } from "@/lib/game/phases";
 import { clearAid } from "../aid";
 import { clearAudits } from "../audit";
@@ -71,7 +72,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
       if (room.hostId !== s.userId) {
         socket.emit("room:error", {
           roomId,
-          error: HOST_ONLY_RESTART,
+          error: tFor(s.locale, HOST_ONLY_RESTART),
         });
         return;
       }

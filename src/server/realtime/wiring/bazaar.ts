@@ -13,6 +13,7 @@ import {
   rumorGoodAllowed,
 } from "@/lib/game/engine";
 import { bazaarRumorsOn } from "@/lib/game/flags";
+import { tFor } from "@/lib/game/i18n";
 import { voyageRoundsFor } from "@/lib/game/mode";
 import { seated } from "../auth";
 import {
@@ -24,7 +25,9 @@ import {
 import { getCheckpoint } from "../checkpoint";
 import { noteVoyageLog } from "../voyage-log";
 
-// The refusal the desk answers with when the switch is off.
+// The refusal the desk answers with when the switch is off. The constant
+// keeps its English value; the read below wraps it in tFor so the refusal
+// answers in the language of the captain who pressed.
 const BAZAAR_OFF = "The bazaar is not running in this harbor.";
 
 export function wireBazaar(io: Server, socket: Socket): void {
@@ -82,14 +85,19 @@ export function wireBazaar(io: Server, socket: Socket): void {
         socket.emit("bazaar:error", { roomId, error });
       };
       if (!bazaarRumorsOn(s.mode)) {
-        fail(BAZAAR_OFF);
+        fail(tFor(s.locale, BAZAAR_OFF));
         return;
       }
       // The lean itself, checked before anything is read: a row whose
       // direction is not exactly one way or the other is not a rumor, and
       // the row is what the whole market prices against.
       if (payload?.direction !== 1 && payload?.direction !== -1) {
-        fail("A rumor leans a price one way or the other, and no other way.");
+        fail(
+          tFor(
+            s.locale,
+            "A rumor leans a price one way or the other, and no other way.",
+          ),
+        );
         return;
       }
       const direction = payload.direction;
@@ -116,7 +124,10 @@ export function wireBazaar(io: Server, socket: Socket): void {
       const cp = await getCheckpoint(roomId);
       if (cp.phase !== "parley") {
         fail(
-          "A rumor is spread at the Parley, where the whole table hears it.",
+          tFor(
+            s.locale,
+            "A rumor is spread at the Parley, where the whole table hears it.",
+          ),
         );
         return;
       }
@@ -139,7 +150,7 @@ export function wireBazaar(io: Server, socket: Socket): void {
       // the next one, and against the room's own tier rather than against
       // the catalogue: see bazaarGoods for why the two lists are one list.
       if (!rumorGoodAllowed(payload?.good, room?.difficulty, cp.round + 1)) {
-        fail("The next port does not trade that good.");
+        fail(tFor(s.locale, "The next port does not trade that good."));
         return;
       }
       const good = payload.good as string;

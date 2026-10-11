@@ -26,6 +26,10 @@ import {
   type PhaseClock,
 } from "@/lib/phase-clock";
 import { api } from "@/lib/api";
+// The ready line below is read at the moment it is composed, so the rail
+// and the control bar word the room's count in the captain's own
+// language.
+import { t } from "@/lib/game/i18n";
 import type {
   PhaseAdvanceFrame,
   PhaseReadyFrame,
@@ -40,10 +44,16 @@ export type ReadyState = PhaseReadyFrame;
 
 /**
  * The room's ready count as a sentence, so the rail and the control bar
- * cannot word the same number two ways.
+ * cannot word the same number two ways. The verb is English glue with no
+ * row of its own; the pack's Mandarin reads the count without one, which
+ * is why the row drops the token.
  */
 export function readyLine(readyCount: number, requiredCount: number): string {
-  return `${readyCount} of ${requiredCount} captains ${readyCount === 1 ? "has" : "have"} readied.`;
+  return t("{readyCount} of {requiredCount} captains {haveWord} readied.", {
+    readyCount,
+    requiredCount,
+    haveWord: readyCount === 1 ? "has" : "have",
+  });
 }
 
 // Rank comes from the shared @/lib/game/checkpoint module so the client and

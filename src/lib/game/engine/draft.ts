@@ -24,6 +24,7 @@
 // with the good, since the reason is the only part of a refusal worth
 // printing.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import {
   PATH_SWITCH_FROM_ROUND,
   PATH_SWITCH_TO_ROUND,
@@ -50,16 +51,33 @@ import { pathOrderOf } from "./orders";
 // is what keeps a crest and a name in step). The lines name the path and
 // not its crest, the way pathLockLine does.
 function pathTakenLine(path: PathId): string {
-  return `🧭 You took up the ${pathConfig(path)!.name} path.`;
+  // The path's name travels as the sentence's token, so it is read into
+  // the language here rather than handed over as the record's spelling,
+  // the same reading pathSwitchLine below takes of its two names.
+  return t("🧭 You took up the {pathName} path.", {
+    pathName: t(pathConfig(path)!.name),
+  });
 }
 
 function pathSwitchLine(from: PathId, to: PathId, fee: number): string {
-  return `🧭 You set aside the ${pathConfig(from)!.name} path and took up the ${pathConfig(to)!.name}. The harbor charges ${fee} Gold.`;
+  // The two names travel as the sentence's tokens, so they are read into
+  // the language here rather than handed over as the record's spelling.
+  return t(
+    "🧭 You set aside the {fromPathName} path and took up the {toPathName}. The harbor charges {fee} Gold.",
+    {
+      fromPathName: t(pathConfig(from)!.name),
+      toPathName: t(pathConfig(to)!.name),
+      fee,
+    },
+  );
 }
 
 /** What a switch said when the manifest lost cards to it. */
 function pathForfeitLine(count: number): string {
-  return `📜 Forfeited ${count} unfulfilled pathbound order${count === 1 ? "" : "s"}.`;
+  return t("📜 Forfeited {count} unfulfilled pathbound order{pluralS}.", {
+    count,
+    pluralS: count === 1 ? "" : "s",
+  });
 }
 
 /**
@@ -88,11 +106,20 @@ export function pathSwitchOpenLine(
 ): string | null {
   if (!pathSwitchWindow(round)) {
     return Math.floor(round) < PATH_SWITCH_FROM_ROUND
-      ? `The harbor reads new papers from round ${PATH_SWITCH_FROM_ROUND}.`
-      : `The window for new papers closed after round ${PATH_SWITCH_TO_ROUND}.`;
+      ? t("The harbor reads new papers from round {PATH_SWITCH_FROM_ROUND}.", {
+          PATH_SWITCH_FROM_ROUND,
+        })
+      : t(
+          "The window for new papers closed after round {PATH_SWITCH_TO_ROUND}.",
+          {
+            PATH_SWITCH_TO_ROUND,
+          },
+        );
   }
   if (!pathSwitchPhase(phase)) {
-    return `Papers are changed at the port, in ${pathSwitchPortsList()}.`;
+    return t("Papers are changed at the port, in {switchPorts}.", {
+      switchPorts: pathSwitchPortsList(),
+    });
   }
   return null;
 }
@@ -110,7 +137,9 @@ export function pathSwitchOpenLine(
  * is to prevent.
  */
 export function pathSwitchSpentLine(): string {
-  return "A captain changes their papers once a voyage, and yours are already changed.";
+  return t(
+    "A captain changes their papers once a voyage, and yours are already changed.",
+  );
 }
 
 /**
@@ -131,16 +160,16 @@ export function pathSwitchSpentLine(): string {
  * src/server/realtime/wiring/path-draft.ts for the half the room can check.
  */
 export function pathSwitchBlocked(state: GameState, to: PathId): string | null {
-  if (state.path === null) return "You hold no path to set aside.";
+  if (state.path === null) return t("You hold no path to set aside.");
   if (state.pathSwitchLeg > 0) {
     return pathSwitchSpentLine();
   }
   const when = pathSwitchOpenLine(state.currentRound, state.phase);
   if (when !== null) return when;
-  if (to === state.path) return "You already hold that path.";
+  if (to === state.path) return t("You already hold that path.");
   const fee = pathSwitchFee(state.renownLevel);
   if (state.money < fee) {
-    return `❌ Need ${fee} Gold to change your papers.`;
+    return t("❌ Need {fee} Gold to change your papers.", { fee });
   }
   return null;
 }

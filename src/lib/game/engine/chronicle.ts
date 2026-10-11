@@ -14,6 +14,7 @@
 // just one that says so plainly rather than dressing it up, and in a mode
 // that sails on through insolvency the sentence says that too.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import type { Difficulty } from "../difficulty";
 
 type ChronicleInput = {
@@ -83,19 +84,47 @@ function watersLabel(difficulty: Difficulty): string {
 // marooned captain can still take one, and a chronicle that led with the
 // ship they lost would bury its own ending.
 function buildHeadline(input: ChronicleInput): string {
-  const waters = watersLabel(input.difficulty);
+  // The waters' name lands inside every headline, so it is read into the
+  // language here and handed on as the token's value.
+  const waters = t(watersLabel(input.difficulty));
   if (input.crowned) {
-    return `${input.displayName} took the crown sailing ${waters} and came home with ${input.finalReputation} Reputation.`;
+    return t(
+      "{input.displayName} took the crown sailing {waters} and came home with {input.finalReputation} Reputation.",
+      {
+        "input.displayName": input.displayName,
+        waters,
+        "input.finalReputation": input.finalReputation,
+      },
+    );
   }
   if (input.marooned) {
-    return `${input.displayName} was put ashore by a vote of the harbor and sailed ${waters} without a ship.`;
+    return t(
+      "{input.displayName} was put ashore by a vote of the harbor and sailed {waters} without a ship.",
+      {
+        "input.displayName": input.displayName,
+        waters,
+      },
+    );
   }
   if (input.bankrupt) {
     return input.bankruptcyIsFinal
-      ? `${input.displayName} sailed ${waters} and ran out of Gold before the voyage was done.`
-      : `${input.displayName} sailed ${waters}, went bankrupt, and finished the voyage.`;
+      ? t(
+          "{input.displayName} sailed {waters} and ran out of Gold before the voyage was done.",
+          { "input.displayName": input.displayName, waters },
+        )
+      : t(
+          "{input.displayName} sailed {waters}, went bankrupt, and finished the voyage.",
+          { "input.displayName": input.displayName, waters },
+        );
   }
-  return `${input.displayName} sailed ${waters} and came home with ${input.finalReputation} Reputation.`;
+  return t(
+    "{input.displayName} sailed {waters} and came home with {input.finalReputation} Reputation.",
+    {
+      "input.displayName": input.displayName,
+      waters,
+      "input.finalReputation": input.finalReputation,
+    },
+  );
 }
 
 // Composes the body. Three to five sentences, each carrying one fact a
@@ -108,10 +137,22 @@ function buildHeadline(input: ChronicleInput): string {
 // the item that is not about the voyage in front of it.
 function buildBody(input: ChronicleInput): string {
   const sentences: string[] = [];
-  sentences.push(`The voyage ran ${input.rounds} rounds.`);
-  sentences.push(`Peak Reputation hit ${input.peakReputation}.`);
+  sentences.push(
+    t("The voyage ran {input.rounds} rounds.", {
+      "input.rounds": input.rounds,
+    }),
+  );
+  sentences.push(
+    t("Peak Reputation hit {input.peakReputation}.", {
+      "input.peakReputation": input.peakReputation,
+    }),
+  );
   if (input.largestTrade > 0) {
-    sentences.push(`The largest single trade paid ${input.largestTrade} Gold.`);
+    sentences.push(
+      t("The largest single trade paid {input.largestTrade} Gold.", {
+        "input.largestTrade": input.largestTrade,
+      }),
+    );
   }
   // Lending and borrowing share one sentence so a voyage with neither
   // stays at three sentences total rather than padding.
@@ -120,34 +161,64 @@ function buildBody(input: ChronicleInput): string {
     if (input.lendCount > 0) {
       parts.push(
         input.lendCount === 1
-          ? `${input.displayName} lent once`
-          : `${input.displayName} lent ${input.lendCount} times`,
+          ? t("{input.displayName} lent once", {
+              "input.displayName": input.displayName,
+            })
+          : t("{input.displayName} lent {input.lendCount} times", {
+              "input.displayName": input.displayName,
+              "input.lendCount": input.lendCount,
+            }),
       );
     }
     if (input.borrowCount > 0) {
       parts.push(
         input.borrowCount === 1
-          ? `borrowed once`
-          : `borrowed ${input.borrowCount} times`,
+          ? t("borrowed once")
+          : t("borrowed {input.borrowCount} times", {
+              "input.borrowCount": input.borrowCount,
+            }),
       );
     }
-    const joined = parts.join(" and ");
-    sentences.push(`${joined}.`);
+    // The joining " and " carries its own row; the two parts carry the
+    // reading.
+    const joined = parts.join(t(" and "));
+    sentences.push(t("{joined}.", { joined }));
   }
   if (input.crowned) {
-    sentences.push(`The crown went home with ${input.displayName}.`);
+    sentences.push(
+      t("The crown went home with {input.displayName}.", {
+        "input.displayName": input.displayName,
+      }),
+    );
   } else if (input.marooned) {
     sentences.push(
-      `The harbor voted to put ${input.displayName} ashore, and the voyage went on without a ship under them.`,
+      t(
+        "The harbor voted to put {input.displayName} ashore, and the voyage went on without a ship under them.",
+        { "input.displayName": input.displayName },
+      ),
     );
   } else if (input.bankrupt) {
     sentences.push(
       input.bankruptcyIsFinal
-        ? `The voyage ended in bankruptcy before ${input.displayName} could finish.`
-        : `The books ran out mid voyage, and ${input.displayName} sailed the rest of it bankrupt.`,
+        ? t(
+            "The voyage ended in bankruptcy before {input.displayName} could finish.",
+            {
+              "input.displayName": input.displayName,
+            },
+          )
+        : t(
+            "The books ran out mid voyage, and {input.displayName} sailed the rest of it bankrupt.",
+            {
+              "input.displayName": input.displayName,
+            },
+          ),
     );
   } else {
-    sentences.push(`The harbor closed the books at ${input.merchantRating}.`);
+    sentences.push(
+      t("The harbor closed the books at {input.merchantRating}.", {
+        "input.merchantRating": input.merchantRating,
+      }),
+    );
   }
   if (input.unlockLine) sentences.push(input.unlockLine);
   return sentences.join(" ");

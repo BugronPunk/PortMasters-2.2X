@@ -5,6 +5,7 @@ import { ICONS } from "@/lib/game/constants/brand";
 import { RECIPES } from "@/lib/game/constants/goods";
 import { assignTask, fireWorker } from "@/lib/game/engine";
 import { isFrostbitten } from "@/lib/game/garments";
+import { t } from "@/lib/game/i18n";
 import {
   SKILLED_LEGEND,
   frozenBenchLine,
@@ -35,7 +36,9 @@ import {
 export function workerStatusLine(w: Worker, round: number): string {
   if (isFrostbitten(w, round)) return frozenBenchLine();
   return w.task
-    ? `Working on: ${w.task}${w.isSkilled ? " (Skilled)" : ""}`
+    ? w.isSkilled
+      ? t("Working on: {task} (Skilled)", { task: t(w.task) })
+      : t("Working on: {task}", { task: t(w.task) })
     : idleBenchLine(w.isSkilled);
 }
 
@@ -78,8 +81,12 @@ function WorkerList({
       )}
     >
       <div className="pm-artisan-ink text-xs font-semibold">
-        {icon} {name}
-        {list.length === 1 ? "" : "s"}: {list.length}
+        {icon}{" "}
+        {t("{name}{pluralS}: {count}", {
+          name: t(name),
+          pluralS: list.length === 1 ? "" : "s",
+          count: list.length,
+        })}
       </div>
       {list.map((w, i) => (
         <div
@@ -116,26 +123,29 @@ function WorkerList({
               className="h-6 px-2 text-[10px] rounded border border-alarm/25 bg-alarm/5 text-alarm hover:border-alarm/40 hover:bg-alarm/5 hover:text-alarm"
               onClick={() => act((g, l) => fireWorker(g, type, i, l))}
             >
-              Dismiss ({cost}💰)
+              {t("Dismiss")}
+              {t(" ({cost}💰)", { cost })}
             </Button>
           )}
         </div>
       ))}
       <div className="mt-1.5 flex flex-wrap gap-1.5">
-        {tasks.map((t) => {
-          const recipe = RECIPES[t];
+        {tasks.map((task) => {
+          const recipe = RECIPES[task];
           const mats = Object.entries(recipe.materials)
-            .map(([m, a]) => `${ICONS[m]}${m}×${a}`)
+            .map(([m, a]) =>
+              t("{moduleIcon}{m}×{a}", { moduleIcon: ICONS[m], m: t(m), a }),
+            )
             .join("+");
           return (
             <Button
-              key={t}
+              key={task}
               size="sm"
               variant="secondary"
               className="pm-artisan-chip h-7 px-2.5 text-[10px] rounded border"
-              onClick={() => act((g, l) => assignTask(g, type, t, l))}
+              onClick={() => act((g, l) => assignTask(g, type, task, l))}
             >
-              Make {t} (Need {mats})
+              {t("Make {task} (Need {mats})", { task: t(task), mats })}
             </Button>
           );
         })}
@@ -167,7 +177,7 @@ export function WorkerStatus({
 }) {
   return (
     <HuePanel tone="market" className="p-4 mb-4">
-      <PanelHeading>👥 Worker Status & Tasks</PanelHeading>
+      <PanelHeading>{t("👥 Worker Status & Tasks")}</PanelHeading>
       {/* [W3: the status convention] The star the idle rows carry is
           explained once above them rather than in each row, and only
           while a star is on the board: the legend is a definition of a
@@ -175,7 +185,7 @@ export function WorkerStatus({
           screen a captain opens before meeting one. */}
       {rows.some((r) => r.list.some((w) => w.isSkilled)) && (
         <p className="mb-1 px-1 text-[11px] text-muted-foreground">
-          {SKILLED_LEGEND}
+          {t(SKILLED_LEGEND)}
         </p>
       )}
       {rows.map((r) => (

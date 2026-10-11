@@ -41,6 +41,7 @@ import {
   TARGET_NOT_COUNTED,
 } from "@/lib/game/constants/copy";
 import { normalizeDifficulty, type Difficulty } from "@/lib/game/difficulty";
+import { tFor, type Locale } from "@/lib/game/i18n";
 import {
   maroonCarried,
   maroonNamesNeeded,
@@ -337,7 +338,9 @@ async function settleMaroon(
  *
  * The shapes this hands back are the audit's own: null where the
  * nomination was accepted, and a sentence for the captain who sent it
- * wherever it was refused.
+ * wherever it was refused. The sentence is composed in the language the
+ * caller names, which is the sender's own, because the sender is its one
+ * reader.
  *
  * The tally goes out after every vote including the last one, and the
  * result only ever goes out once. The carry itself is the walk in
@@ -353,6 +356,7 @@ export async function recordMaroonVote(
   voterId: string,
   round: number,
   targetUserId: string,
+  locale: Locale,
 ): Promise<string | null> {
   const facts = await maroonRoomFacts(roomId);
   // Silence where the harbor itself is wrong, the same call the audit
@@ -360,10 +364,15 @@ export async function recordMaroonVote(
   // to a captain who asked for one.
   if (!facts) return null;
   if (round < facts.maroonFrom)
-    return `The maroon vote opens from leg ${facts.maroonFrom}.`;
+    return tFor(locale, "The maroon vote opens from leg {facts.maroonFrom}.", {
+      "facts.maroonFrom": facts.maroonFrom,
+    });
   const state = maroonStateFor(roomId, round);
   if (state.result)
-    return "The harbor has already voted one of its own ashore this voyage.";
+    return tFor(
+      locale,
+      "The harbor has already voted one of its own ashore this voyage.",
+    );
   const roster = await activeRosterSet(roomId);
   // The book is derived again before the door rather than after it, for the
   // reason the audit's is: a nomination the prune drops is the room's news
@@ -389,7 +398,7 @@ export async function recordMaroonVote(
       );
     return sentence;
   };
-  if (!roster.has(voterId)) return refuse(SEAT_NOT_COUNTED);
+  if (!roster.has(voterId)) return refuse(tFor(locale, SEAT_NOT_COUNTED));
   // A captain the harbor has already written off is not a captain the
   // harbor may put ashore. The marks are read from the status the room
   // holds for them rather than from the caller, so a vote cannot be aimed
@@ -405,10 +414,15 @@ export async function recordMaroonVote(
   // why this door has to read the mark for itself.
   const marked = roomStatuses.get(roomId)?.get(targetUserId);
   if (writtenOff(marked))
-    return refuse("The harbor has already written that captain off.");
-  if (!roster.has(targetUserId)) return refuse(TARGET_NOT_COUNTED);
+    return refuse(
+      tFor(locale, "The harbor has already written that captain off."),
+    );
+  if (!roster.has(targetUserId))
+    return refuse(tFor(locale, TARGET_NOT_COUNTED));
   if (state.votes.has(voterId))
-    return refuse("Your name is already in for this leg's maroon vote.");
+    return refuse(
+      tFor(locale, "Your name is already in for this leg's maroon vote."),
+    );
   state.votes.set(voterId, targetUserId);
   // [I1: the telemetry spine] The nomination, recorded where the vote is
   // accepted and before the tally goes out, so the record and the room
@@ -479,7 +493,9 @@ export async function maroonTallyFor(
  * hand theirs back and for the reason the plan gives the whole mode's
  * refusals: the captain holding this lever is the one captain in the
  * harbor whose presses move other captains' books, so a press that did
- * nothing has to say what it was missing rather than disappear. The one
+ * nothing has to say what it was missing rather than disappear. The
+ * sentence is composed in the language the caller names, which is the
+ * Harbormaster's own, because they are its one reader. The one
  * silence left is the harbor itself being wrong, which is the same silence
  * the votes keep: a room whose mode deals no such hand has nothing to
  * explain about it.
@@ -491,31 +507,49 @@ export async function recordPortShift(
   round: number,
   port: unknown,
   direction: unknown,
+  locale: Locale,
 ): Promise<string | null> {
   const facts = await maroonRoomFacts(roomId);
   if (!facts) return null;
   if (round < facts.maroonFrom)
-    return `The Harbormaster's hand is not dealt before leg ${facts.maroonFrom}.`;
+    return tFor(
+      locale,
+      "The Harbormaster's hand is not dealt before leg {facts.maroonFrom}.",
+      { "facts.maroonFrom": facts.maroonFrom },
+    );
   // A call leans the market that opens after the leg it was made in, so a
   // call made in the closing leg would lean a market that never opens. The
   // console is hidden there for the same reason; refused here as well so
   // the rule has one authority rather than a screen's opinion.
   if (round >= facts.voyageRounds)
-    return "A call in the closing leg would lean a market this voyage never opens.";
+    return tFor(
+      locale,
+      "A call in the closing leg would lean a market this voyage never opens.",
+    );
   if (direction !== 1 && direction !== -1)
-    return "A call leans a market up or down, and that frame named neither direction.";
-  if (typeof port !== "string" || !port) return "A call has to name a port.";
+    return tFor(
+      locale,
+      "A call leans a market up or down, and that frame named neither direction.",
+    );
+  if (typeof port !== "string" || !port)
+    return tFor(locale, "A call has to name a port.");
   const state = maroonStateFor(roomId, round);
   if (state.result?.target.userId !== userId)
-    return "The Harbormaster's hand belongs to the captain the harbor put ashore.";
+    return tFor(
+      locale,
+      "The Harbormaster's hand belongs to the captain the harbor put ashore.",
+    );
   if (!unlockedPorts(facts.difficulty, round + 1).includes(port))
-    return "The market this call lands on has not unlocked that port.";
+    return tFor(
+      locale,
+      "The market this call lands on has not unlocked that port.",
+    );
 
   const member = await db.roomMember.findUnique({
     where: { userId_roomId: { userId, roomId } },
     select: { user: { select: { displayName: true } } },
   });
-  if (!member) return SEAT_NOT_COUNTED;
+  if (!member) return tFor(locale, SEAT_NOT_COUNTED);
   const notice: PortShiftNotice = {
     roomId,
     round,

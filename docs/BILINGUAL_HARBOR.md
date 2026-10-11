@@ -356,18 +356,18 @@ The three tables below walk all 43 records. "In the tree now" is the shipped zh,
 
 ### Charters (10)
 
-| Card                  | Chinese    | In the tree now                                | Proposed                                                           | Why                                                                          |
-| --------------------- | ---------- | ---------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| The Bulk Charter      | 大宗契     | 大批装运，本航程每批运费降低 1 金币。          | 大宗特许 / 大批装运，本航程每件运费降低 1 金币。                   | 特许, the charter family's word                                              |
-| The Standing Manifest | 常备舱单   | 本航程每笔完成订单多付 15%。                   | 本航程每笔完成的订单多付 15%。                                     | 订单, per the register ruling                                                |
-| The Gun Charter       | 火炮特许   | 全船武装，本航程遭遇袭击的概率降低 30%。       | 全船武装，本航程遭遇劫掠的概率降低 30%。                           | 劫掠, the raid family sweep (see the second sweep below)                     |
-| The Standing Escort   | 常驻护航   | 快船随行，本航程护航合同费用减半。             | 常备护航                                                           | 常备 everywhere else; 常驻 reads garrison                                    |
-| The Weavers' Charter  | 织工特许   | 织机不停，本航程每位织工每轮多产出 1 件货物。  | 织机不停，本航程每位织女每轮多产出1件货物。                        | 每位织女, the roster word (zh.js:35-39); the name is held for your signature |
-| The Quality Mark      | 品质印记   | 织物皆盖印记，本航程织物售价提高 10%。         | as is                                                              |                                                                              |
-| The Long Ledger       | 长账簿     | 港口记账，本航程港口采购降价 10%。             | as is                                                              |                                                                              |
-| The Quiet Account     | 静默账户   | 费用预先结清，本航程港口费用减半。             | 费用预先结清，本航程港务费减半。                                   | 港务费                                                                       |
-| The Factor            | 代理人     | 账房有人打理，本航程可借款三次，每次扣除 60%。 | 管事 / 有管事替你打理账目，本航程可借款三次，每笔附带 60% 的罚息。 | 管事 rather than 代理人; 罚息 is the right word for the penalty              |
-| The Letter of Marque  | 私掠许可证 | 皇家授权，本航程被劫掠的财物可追回四分之一。   | as is                                                              |                                                                              |
+| Card                  | Chinese    | In the tree now                                | Proposed                                                           | Why                                                                   |
+| --------------------- | ---------- | ---------------------------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| The Bulk Charter      | 大宗契     | 大批装运，本航程每批运费降低 1 金币。          | 大宗特许 / 大批装运，本航程每件运费降低 1 金币。                   | 特许, the charter family's word                                       |
+| The Standing Manifest | 常备舱单   | 本航程每笔完成订单多付 15%。                   | 本航程每笔完成的订单多付 15%。                                     | 订单, per the register ruling                                         |
+| The Gun Charter       | 火炮特许   | 全船武装，本航程遭遇袭击的概率降低 30%。       | 全船武装，本航程遭遇劫掠的概率降低 30%。                           | 劫掠, the raid family sweep (see the second sweep below)              |
+| The Standing Escort   | 常驻护航   | 快船随行，本航程护航合同费用减半。             | 常备护航                                                           | 常备 everywhere else; 常驻 reads garrison                             |
+| The Weavers' Charter  | 织工特许   | 织机不停，本航程每位织工每轮多产出 1 件货物。  | 织女特许 / 织机不停，本航程每位织女每轮多产出1件货物。             | 每位织女, the roster word (zh.js:35-39); the name signed for the lift |
+| The Quality Mark      | 品质印记   | 织物皆盖印记，本航程织物售价提高 10%。         | as is                                                              |                                                                       |
+| The Long Ledger       | 长账簿     | 港口记账，本航程港口采购降价 10%。             | as is                                                              |                                                                       |
+| The Quiet Account     | 静默账户   | 费用预先结清，本航程港口费用减半。             | 费用预先结清，本航程港务费减半。                                   | 港务费                                                                |
+| The Factor            | 代理人     | 账房有人打理，本航程可借款三次，每次扣除 60%。 | 管事 / 有管事替你打理账目，本航程可借款三次，每笔附带 60% 的罚息。 | 管事 rather than 代理人; 罚息 is the right word for the penalty       |
+| The Letter of Marque  | 私掠许可证 | 皇家授权，本航程被劫掠的财物可追回四分之一。   | as is                                                              |                                                                       |
 
 52 of the 86 strings stand as they are. Of the 34 that change: 25 are description edits, most a single word (委托, 商道, 掮客, 市舶税, and a few others), and nine are card names (生意经, 关津减税, 商道精通, 掮客人脉, 管事, and the four the terminology panel moved: 船队旗帜, 织物垄断, 大宗特许, 常备护航). Seven of the ten charter names stand, and twelve of the fourteen module names stand. Since the table was written, the register round returned the order family and the tax to the edition's words, and the charm card's name settled on 商贾魅力, the edition's own name; two rows have left the table below.
 
@@ -450,12 +450,13 @@ What the changes amount to, in one place.
 | 织物专卖 | 织物垄断     | one word for monopoly, beside 大宗垄断                          | 1 card, name and desc |
 | 大宗契   | 大宗特许     | the charter family holds 特许                                   | 1 card, name and desc |
 | 常驻护航 | 常备护航     | standing reads 常备 everywhere                                  | 1 card, name          |
+| 织工特许 | 织女特许     | the roster word (zh.js:35-39); pairs with 雇佣织女              | 1 card, name and desc |
 
 ## The whole surface, sentence by sentence
 
-The slices above settle the vocabulary, the cards and the labels that carried a decision. These tables hold the rest: every remaining line a captain can actually read, one row per string, gathered over ten sweeps and grouped by the file it lives in, 1,816 rows in all. They are here in the same order the `sentences` group of the mapping file reads, so any row can be quoted by its key.
+The slices above settle the vocabulary, the cards and the labels that carried a decision. These tables hold the rest: every remaining line a captain can actually read, one row per string, gathered over ten sweeps and grouped by the file it lives in, 2,193 rows in all. They are here in the same order the `sentences` group of the mapping file reads, so any row can be quoted by its key.
 
-### The shell (13)
+### The shell (20)
 
 The edges of the game: the page title and description, the loading lines, and what the API answers when it cannot.
 
@@ -463,7 +464,7 @@ The edges of the game: the page title and description, the loading lines, and wh
 
 | English                                                                                                                                                                              | Chinese                                                                                                |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| ${APP_NAME}: a multiplayer maritime trade game on the ancient Silk Road. Captains gather in a shared harbor, sail in lockstep, and the highest Reputation wins the Sea Master crown. | {APP_NAME}：古丝路上的多人海上贸易游戏。船长们聚在同一个港湾，步调一致地航行，声誉最高者赢得沧海之冠。 |
+| ${APP_NAME}: A multiplayer maritime trade game on the ancient Silk Road. Captains gather in a shared harbor, sail in lockstep, and the highest Reputation wins the Sea Master crown. | {APP_NAME}：古丝路上的多人海上贸易游戏。船长们聚在同一个港湾，步调一致地航行，声誉最高者赢得沧海之冠。 |
 | Silk Road                                                                                                                                                                            | 丝路                                                                                                   |
 | trading game                                                                                                                                                                         | 贸易游戏                                                                                               |
 
@@ -492,12 +493,13 @@ The edges of the game: the page title and description, the loading lines, and wh
 | Cannot reach the server. It may be temporarily offline. | 连不上服务器，可能只是暂时离线。           |
 | Server error (${res.status}). Please try again later.   | 服务器出错了（{res.status}）。请稍后再试。 |
 
-**`src/lib/auth.ts`** (2)
+**`src/lib/auth.ts`** (3)
 
 | English                                                                                     | Chinese                                                  |
 | ------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | This account has been banned. Contact the harbor operator if you believe this is a mistake. | 这个账号已经被封停了。要是觉得封错了，请联系港湾操作员。 |
 | That captain name is already registered                                                     | 这个船长名已经有人用了。                                 |
+| Too many attempts at once. Give it a moment, then try again.                                | 尝试太频繁了。缓一缓，再试一次。                         |
 
 **`src/lib/credentials.ts`** (3)
 
@@ -507,7 +509,23 @@ The edges of the game: the page title and description, the loading lines, and wh
 | Username may only contain letters, numbers and underscores             | 船长名只能用字母、数字和下划线                           |
 | at least ${PASSWORD_MIN} characters                                    | 至少{PASSWORD_MIN}个字符                                 |
 
-### The guide and the glossary (86)
+**`src/app/error.tsx`** (4)
+
+| English                                                                                                                                                                     | Chinese                                                                                            |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| This screen hit rough water                                                                                                                                                 | 这个画面触了礁                                                                                     |
+| Something went wrong while drawing it. Your voyage is stored on the server, so nothing sailed on without you. Try again first; a reload settles what trying again does not. | 绘制时出了岔子。你的航程存在服务器上，不会背着你继续开。先试试重试；重试不成的，刷新一下就能定下。 |
+| Try again                                                                                                                                                                   | 再试一次                                                                                           |
+| Back to the harbor                                                                                                                                                          | 回到港湾                                                                                           |
+
+**`src/app/not-found.tsx`** (2)
+
+| English                                                                                                                               | Chinese                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| This harbor is not on the chart                                                                                                       | 图上没有这个港湾                                                       |
+| The page you were looking for does not exist. The address may have a typo, or it may point at a screen this build does not sail with. | 你要找的页面不存在。地址可能打错了，也可能指向这一版还没有随航的界面。 |
+
+### The guide and the glossary (167)
 
 The reference shelf: glossary entries, price tooltips, and what the harbor says when nothing is happening.
 
@@ -524,18 +542,19 @@ The reference shelf: glossary entries, price tooltips, and what the harbor says 
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | \<li>\<strong>${entry.crest} ${entry.name}\</strong>: ${entry.signature}\<br>\<span style="font-size:12px;color:var(--muted-foreground)">${entry.facts\n .map(pathFactText)\n .join(" · ")}\</span>\</li> | \<li>\<strong>${entry.crest} ${entry.name}\</strong>: ${entry.signature}\<br>\<span style="font-size:12px;color:var(--muted-foreground)">${entry.facts\n .map(pathFactText)\n .join(" · ")}\</span>\</li> |
 
-**`src/components/portmasters/game/PriceTooltips.tsx`** (6)
+**`src/components/portmasters/game/PriceTooltips.tsx`** (7)
 
-| English                                       | Chinese                  |
-| --------------------------------------------- | ------------------------ |
-| Base                                          | 基价                     |
-| Final                                         | 最终价                   |
-| ±1 Gold depending on the port                 | 随港口浮动 ±1金币        |
-| Actual market cards this round can still vary | 本轮实际行情仍可能有出入 |
-| per item                                      | 每件                     |
-| per unit                                      | 每单位                   |
+| English                                       | Chinese                        |
+| --------------------------------------------- | ------------------------------ |
+| Base                                          | 基价                           |
+| Final                                         | 最终价                         |
+| ±1 Gold depending on the port                 | 随港口浮动 ±1金币              |
+| Actual market cards this round can still vary | 本轮实际行情仍可能有出入       |
+| per item                                      | 每件                           |
+| per unit                                      | 每单位                         |
+| Typically {min} to {max} Gold {unit}          | 通常 {min} 到 {max} 金币{unit} |
 
-**`src/lib/game/constants/copy.ts`** (13)
+**`src/lib/game/constants/copy.ts`** (92)
 
 | English                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Chinese                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -543,60 +562,140 @@ The reference shelf: glossary entries, price tooltips, and what the harbor says 
 | \<p>This voyage does not play like the founding one. Here is what \<strong>${play.badge}\</strong> changes about it, all of it:\</p>\n\<ul style="padding-left:18px;line-height:1.9;font-size:14px">\n${items}\n\</ul>\n\<p style="font-size:12px;color:var(--muted-foreground);margin:8px 0 0">Everything else is the voyage you would sail in Classic, so everything you learn there carries over. You can read the same list any time with F1.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | \<p>这趟航程跟最初那趟不一样。以下是 \<strong>{play.badge}\</strong> 带来的全部改动：\</p>\n\<ul style="padding-left:18px;line-height:1.9;font-size:14px">\n{items}\n\</ul>\n\<p style="font-size:12px;color:var(--muted-foreground);margin:8px 0 0">其余的跟经典航程一样，你在经典里学到的都管用。随时按 F1 重看这份清单。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | \<p>The voyage opens with a deal rather than a market. Three cards land face down in front of you, and at each beat you keep one and pass the rest on. What you hold when the deal ends is your path, and it sails with you to the end of the voyage. One change of papers is allowed: at a port, for a fee in Gold that grows with your Renown, the path chip in your rail offers the switch.\</p>\n\<p>Your path decides three things about your seat: your hold, how far your Renown can climb, and which trade orders lock to you. An order demanding a locked good can only be filled by the captain holding the path that carries it.\</p>\n\<ul style="padding-left:18px;line-height:1.7;font-size:14px">\n${rows}\n\</ul>\n\<p style="font-size:12px;color:var(--muted-foreground);margin:8px 0 0">Every card in the deal carries these numbers, so what you read here is what the table deals you.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | \<p>这趟航程以发牌开局，而不是开市。三张牌背面朝上落在你面前，一路留一张、传走其余。发牌结束时留在手上的，就是你的商道，它会陪你走到航程尽头。商道可以换一次：在港口花一笔金币，价格随声望涨，船长栏里的商道小牌就能换。\</p>\n\<p>你的商道定下你席位的三件事：货舱多大、声望最高能爬到哪、哪些订单只认这条道。遇上要专属货物的订单，全桌只有持那条商道的船长接得下。\</p>\n\<ul style="padding-left:18px;line-height:1.7;font-size:14px">\n{rows}\n\</ul>\n\<p style="font-size:12px;color:var(--muted-foreground);margin:8px 0 0">牌桌上的每张牌都带这些数字，这里读到的就是你会拿到的。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | \<p>${APP_NAME} puts you on the ancient Silk Road: one voyage of ${rounds} rounds, limited gold, and a lot of merchants trying to outmaneuver you at every port.\</p>\n\<p>You are sailing \<strong>${play.badge}\</strong>: ${play.tagline}\</p>\n\<p>These waters are \<strong>${cfg.name}\</strong>: ${cfg.tagline}\</p>\n\<p>The rules are easy to pick up, but money is tight early on and a string of bad calls compounds quickly. This covers the things that catch new captains out most.\</p>\n\<p style="color:var(--muted-foreground);font-size:13px">Two minutes to read. Saves a lot of frustrated restarts.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | \<p>{APP_NAME} 把你带上了古丝路：{rounds}轮的航程，有限的金币，还有一群商人，个个都想在每个港口比你多走一步。\</p>\n\<p>你走的是\<strong>{play.badge}\</strong>：{play.tagline}\</p>\n\<p>这片水域是\<strong>{cfg.name}\</strong>：{cfg.tagline}\</p>\n\<p>规则好上手，只是前期手头紧，一连串坏判断很快就会滚成雪球。这里讲的是新船长最容易栽的几件事。\</p>\n\<p style="color:var(--muted-foreground);font-size:13px">两分钟读完，能省下好几次懊恼的重开。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| \<p>After ${rounds} rounds, the captain with the highest score wins the title of \<strong>Sea Master\</strong>. Score comes from trade profits and fulfilled orders.\</p>\n\<p>${play.failureRule}\</p>\n\<p>Starting gold is \<strong>${cfg.startingGold}\</strong>. That is enough to get going, but not enough to be careless with.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | \<p>{rounds}轮之后，积分最高的船长赢得\<strong>沧海之主\</strong>的头衔。积分来自贸易利润和完成的订单。\</p>\n\<p>{play.failureRule}\</p>\n\<p>初始金币是\<strong>{cfg.startingGold}\</strong>。够起步，不够大手大脚。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| \<p>After ${rounds} rounds, the captain with the highest Reputation wins the title of \<strong>Sea Master\</strong>. Reputation comes from trade profits and fulfilled orders.\</p>\n\<p>${play.failureRule}\</p>\n\<p>Starting gold is \<strong>${cfg.startingGold}\</strong>. That is enough to get going, but not enough to be careless with.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | \<p>{rounds}轮之后，声誉最高的船长赢得\<strong>沧海之主\</strong>的头衔。声誉来自贸易利润和完成的订单。\</p>\n\<p>{play.failureRule}\</p>\n\<p>初始金币是\<strong>{cfg.startingGold}\</strong>。够起步，不够大手大脚。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | \<p>A round is one lap of the voyage, and this voyage runs ${rounds} of them. Each round walks the phases below in the order your voyage puts them:\</p>\n${roundStepHtml(mode)}\n\<p style="font-size:12px;color:var(--muted-foreground);margin:4px 0 0">\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+N\</kbd> readies you for the next phase without clicking (the room sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | \<p>一轮是航程里的一圈，这趟要走{rounds}轮。每轮依次走过下面的阶段，顺序由你的航程排定：\</p>\n{roundStepHtml(mode)}\n\<p style="font-size:12px;color:var(--muted-foreground);margin:4px 0 0">\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+N\</kbd> 可以不点鼠标直接就绪（所有船长都就绪，港湾才继续）；航程是这些轮连起来的一整趟，不是单独的一轮。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | \<p>The port market has Hemp, Silk, and Tea at prices that shift every round. Buy here, barter with the other captains at Parley, and fill trade orders at Orders. Which of those two stops comes first is a rule of the voyage you are sailing rather than a choice you make, and your captain's rail always shows the order. That is the core loop.\</p>\n\<p>One thing worth knowing about: the \<strong>Broker\</strong>. Pay a small fee for a demand rumor and a specific trade order is \<em>guaranteed\</em> to appear when Orders opens. Useful when you have stocked a particular good and want to make sure a buyer shows up.\</p>\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 💡 For the first two or three voyages, stick to raw materials. You can fill an order with them the same round you buy them. No waiting and no risk.\n\</div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | \<p>集市里有麻布、丝绸和茶叶，价格每轮都在动。在这里采购，到洽谈去易货，去订单交单。开市和订单谁先谁后，由你所走航程的规则定，没得选，船长栏里一直标着顺序。这就是核心循环。\</p>\n\<p>还有一个人要记住：\<strong>掮客\</strong>。花点小钱买一条需求密语，订单一开，指定的那张\<em>必定\</em>出现。囤着货想保准有买家，就用这个。\</p>\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 💡 最初两三趟航程，先做原材料。买进的当轮就能拿去交订单，不用等，也没有风险。\n\</div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | \<p>The Parley is a short window where captains trade directly with each other instead of through the market. Post an offer, like Hemp you don't need for Silk you do, and any other captain in the harbor can take it with one click.\</p>\n\<p>Where it falls in the round is set by the voyage you are sailing rather than changing from round to round: ${MODES.classic.badge} runs it right after Market, and ${MODES.ocean_gambit.badge} runs it right after Orders, and your captain's rail always shows which. Either way, it is the easiest way to recover from a bad draw. All Tea and no Silk, with a Sachet order already on the board? Someone else in the harbor has probably drawn the opposite problem.\</p>\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n A few ground rules: you can't offer an item for itself, both amounts have to be whole numbers of at least one, and you can never offer more than you currently have. The moment you post an offer, that amount is set aside until someone takes it or you cancel it.\n\</div>\n\<p style="font-size:13px;color:var(--muted-foreground);margin-top:8px">Nobody has to barter. If nothing on the board interests you, or nobody is offering anything, just move on to the next phase.\</p>                                                                                                                                       | \<p>洽谈只开一扇短窗，船长们绕开集市直接易货。挂一份单子，比如拿富余的麻布换你缺的丝绸，港湾里谁都能一点接下。\</p>\n\<p>洽谈落在轮里的哪一步，由你的航程定，不随轮次变：{MODES.classic.badge}排在开市之后，{MODES.ocean_gambit.badge}排在订单之后，船长栏一直标着是哪种。哪种都好，它都是纠坏手气最省事的办法。手里全是茶叶没有丝绸，订单板上却挂着一张香囊单？港湾里多半有人正好反过来。\</p>\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 几条规矩：不能拿一样货换它本身；两边的数量都得是整数，至少各 1；挂出的数量不能超过你手头的。挂出那一刻，这些货就寄存起来，直到有人接下或你取消。\n\</div>\n\<p style="font-size:13px;color:var(--muted-foreground);margin-top:8px">没人非得易货。板上没你想要的，或者没人挂东西，直接走下一阶段。\</p>                                                                                                                                                                                                                                                                                                                                                                            |
-| \<p>Trade orders appear and you match your cargo to them. Each one shows the goods needed, the reward, and the shipping fee. Your take is whatever is left after fees and tax.\</p>\n\<p>You can fill as many orders as your cargo allows while Orders is open.\</p>\n\<div style="background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 📌 \<strong>Finished goods\</strong> (${PRODUCTS_TIER0.join(", ")}) pay two to three times more than raw materials. The catch is they need artisans, and the artisans deliver at Resolve. That is covered next.\n\</div>\n${mandates.length ?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | \<p>订单上板了，拿货去对。每条都写明要什么货、给多少报酬、收多少运费。运费和税扣完，剩下的都归你。\</p>\n\<p>订单开着的时候，货够就交，能交几条交几条。\</p>\n\<div style="background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 📌 \<strong>成品\</strong> ({PRODUCTS_TIER0.join(", ")})的报酬是原材料的两三倍。可它得靠工匠，工匠要到结算才交货。下一页就讲这个。\n\</div>\n{mandates.length ?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| \<p>Trade orders appear and you match your cargo to them. Each one shows the goods needed, the reward, and the shipping fee. Your take is whatever is left after fees and tax.\</p>\n\<p>You can fill as many orders as your cargo allows while Orders is open.\</p>\n\<div style="background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 📌 \<strong>Finished goods\</strong> (${PRODUCTS_TIER0.join(", ")}) pay two to three times more than raw materials. The catch is they need artisans, and the artisans deliver at Resolve. That is covered next.\n\</div>\n${mandates.length ?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | \<p>订单上板了，拿货去对。每条都写明要什么货、给多少报酬、收多少运费。运费和税扣完，剩下的都归你。\</p>\n\<p>订单开着的时候，货够就交，能交几条交几条。\</p>\n\<div style="background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 📌 \<strong>成品\</strong> ({PRODUCTS_TIER0.join("、")})的报酬是原材料的两三倍。可它得靠工匠，工匠要到结算才交货。下一页就讲这个。\n\</div>\n{mandates.length ?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | \<p>Artisans turn raw materials into high value finished goods and collect wages at every Resolve. That part is simple. What catches most new captains is this:\</p>\n\<div style="background:color-mix(in oklch, var(--alarm) 18%, transparent);border:1px solid var(--alarm);color:var(--foreground);border-radius:6px;padding:12px;margin:12px 0;text-align:center;font-size:14px;font-weight:bold;line-height:1.7">\n Assign a task this round.\<br>Wages come due at Resolve either way.\n\</div>\n\<p style="font-size:13px;color:var(--muted-foreground);line-height:1.6">Weavers (${wageOf("weaver")}g), Master Weavers (${wageOf("master")}g), and Sachet Makers (${wageOf("sachet_maker")}g) all charge wages \<strong>every round\</strong>, even when idle, so the bill comes round whether they worked or not. Only hire once you have enough gold to cover at least two rounds of wages alongside your other bills.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | \<p>工匠把原材料做成高价成品，每个结算都领工钱。这部分很简单。让新船长栽跟头的是这一点：\</p>\n\<div style="background:color-mix(in oklch, var(--alarm) 18%, transparent);border:1px solid var(--alarm);color:var(--foreground);border-radius:6px;padding:12px;margin:12px 0;text-align:center;font-size:14px;font-weight:bold;line-height:1.7">\n 本轮派活。\<br>工钱到结算照付不误。\n\</div>\n\<p style="font-size:13px;color:var(--muted-foreground);line-height:1.6">织女（{wageOf("weaver")}g）、纺织大师（{wageOf("master")}g）、香囊师（{wageOf("sachet_maker")}g）的工钱\<strong>每轮\</strong>都付，闲着照付，干不干活账单都来。手里的金币能盖住至少两轮工钱、还顾得开别的开销，再雇人。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | : ""}\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 💡 ${ESCORT_SHARE_RULE} Often worth it once your funds are already thin.\n\</div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | : ""}\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 💡 {ESCORT_SHARE_RULE}手头紧的时候，这笔往往划算。\n\</div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | \<p>Once the pirates are dealt with, two bills come due:\</p>\n\<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">\n \<div style="background:color-mix(in oklch, var(--w-ship) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)">\n \<div style="font-size:22px;margin-bottom:4px">🔧\</div>\n \<strong>Ship Maintenance\</strong>\<br>\n \<span style="font-size:12px;color:var(--muted-foreground)">15 to 22 Gold each round, set by the waters you sail\</span>\n \</div>\n \<div style="background:color-mix(in oklch, var(--w-market) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)">\n \<div style="font-size:22px;margin-bottom:4px">👥\</div>\n \<strong>Artisan Wages\</strong>\<br>\n \<span style="font-size:12px;color:var(--muted-foreground)">${ARTISAN_WAGE_MIN} to ${ARTISAN_WAGE_MAX} Gold per person per round\</span>\n \</div>\n\</div>\n\<p style="font-size:13px;color:var(--muted-foreground)">The \<strong>Dues\</strong> tab of your captain's rail shows exactly what is owed. Check it before spending anything.\</p>\n\<p style="font-size:13px;color:var(--muted-foreground)">Coming up short isn't the end on its own. Right there on the settlement screen, you can ask another captain in the harbor for a loan, and they can send it to you on the spot if they've got the Gold to spare. Just repay it before the voyage's last round ends, or it comes out of your funds automatically and goes straight to them.\</p> | \<p>海盗的事了结之后，还有两笔账单：\</p>\n\<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0">\n \<div style="background:color-mix(in oklch, var(--w-ship) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)">\n \<div style="font-size:22px;margin-bottom:4px">🔧\</div>\n \<strong>船只维护费\</strong>\<br>\n \<span style="font-size:12px;color:var(--muted-foreground)">每轮15到22金币，由你走的水域决定\</span>\n \</div>\n \<div style="background:color-mix(in oklch, var(--w-market) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)">\n \<div style="font-size:22px;margin-bottom:4px">👥\</div>\n \<strong>工匠工钱\</strong>\<br>\n \<span style="font-size:12px;color:var(--muted-foreground)">每人每轮{ARTISAN_WAGE_MIN}到{ARTISAN_WAGE_MAX}金币\</span>\n \</div>\n\</div>\n\<p style="font-size:13px;color:var(--muted-foreground)">船长栏里的\<strong>港务费\</strong>页签写着确切欠多少。花钱之前先看一眼。\</p>\n\<p style="font-size:13px;color:var(--muted-foreground)">钱不够，本身不是终点。就在结算界面上，你可以向港湾里的其他船长借一笔；对方手头宽裕，当场就能转给你。在航程最后一轮结束前还上就行，还不清，会自动从你的金币里扣出来，交到他手上。\</p> |
-| \<p>Keep these points in mind as you play:\</p>\n\<ul style="padding-left:18px;line-height:2.1;font-size:14px">\n \<li>Start with raw material orders. Fast money, no complications.\</li>\n \<li>Always keep at least \<strong>30 Gold above\</strong> what Resolve will cost you.\</li>\n \<li>Hire artisans only when you can cover \<strong>two full rounds of wages\</strong>.\</li>\n \<li>Dusk ship upgrades compound quickly. Do not skip them.\</li>\n \<li>Caught short by pirates or a bad round? Ask the harbor for a loan before you assume the voyage is over.\</li>\n \<li>Every voyage's final Reputation becomes Renown on your account, forever, win or lose. Check your Captain's Legacy any time from the Lobby.\</li>\n \<li>\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+S\</kbd> saves your run · \<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">F1\</kbd> opens the full guide.\</li>\n\</ul>\n\<div style="background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px">\n \<strong style="font-size:15px">Good winds and good margins, Captain. ⚓\</strong>\n\</div>                                                                                                                                                                                | \<p>玩的时候记住这几点：\</p>\n\<ul style="padding-left:18px;line-height:2.1;font-size:14px">\n \<li>先从原材料订单做起。回钱快，不复杂。\</li>\n \<li>手里的金币，始终比结算要收的\<strong>多出至少30金币\</strong>。\</li>\n \<li>盖得住\<strong>整整两轮工钱\</strong>再雇工匠。\</li>\n \<li>暮色的船只升级会滚雪球，别跳过。\</li>\n \<li>被海盗或一轮背运打个措手不及？别急着认输，先向港湾借一笔。\</li>\n \<li>不管输赢，航程结束时的声誉都会永远变成账号上的声望。在大厅随时能看你的船长传承。\</li>\n \<li>\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+S\</kbd> 保存进度 · \<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">F1\</kbd> 打开完整指南。\</li>\n\</ul>\n\<div style="background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px">\n \<strong style="font-size:15px">顺风又厚利，船长。⚓\</strong>\n\</div>                                                                                                                                                                    |
+| \<p>Keep these points in mind as you play:\</p>\n\<ul style="padding-left:18px;line-height:2.1;font-size:14px">\n \<li>Start with raw material orders. Fast money, no complications.\</li>\n \<li>Always keep at least \<strong>30 Gold above\</strong> what Resolve will cost you.\</li>\n \<li>Hire artisans only when you can cover \<strong>two full rounds of wages\</strong>.\</li>\n \<li>Dusk ship upgrades compound quickly. Do not skip them.\</li>\n \<li>Caught short by pirates or a bad round? When other captains are aboard, ask the harbor for a loan before you assume the voyage is over.\</li>\n \<li>Every voyage's final Reputation becomes Renown on your account, forever, win or lose. Check your Captain's Legacy any time from the Lobby.\</li>\n \<li>\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+S\</kbd> saves your voyage &nbsp;·&nbsp; \<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">F1\</kbd> opens the full guide.\</li>\n\</ul>\n\<div style="background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px">\n \<strong style="font-size:15px">Good winds and good margins, Captain. ⚓\</strong>\n\</div>                                                                                                                                 | \<p>玩的时候记住这几点：\</p>\n\<ul style="padding-left:18px;line-height:2.1;font-size:14px">\n \<li>先从原材料订单做起。回钱快，不复杂。\</li>\n \<li>手里的金币，始终比结算要收的\<strong>多出至少30金币\</strong>。\</li>\n \<li>盖得住\<strong>整整两轮工钱\</strong>再雇工匠。\</li>\n \<li>暮色的船只升级会滚雪球，别跳过。\</li>\n \<li>被海盗或一轮背运打个措手不及？有其他船长在船上时，别急着认输，先向港湾借一笔。\</li>\n \<li>不管输赢，航程结束时的声誉都会永远变成账号上的声望。在大厅随时能看你的船长传承。\</li>\n \<li>\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+S\</kbd> 保存本航程 &nbsp;·&nbsp; \<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">F1\</kbd> 打开完整指南。\</li>\n\</ul>\n\<div style="background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px">\n \<strong style="font-size:15px">顺风又厚利，船长。⚓\</strong>\n\</div>                                                                                                                                  |
+| ⚓ ${APP_NAME}: Rules                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | ⚓ {APP_NAME}：规则                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| 🌊 These Waters: ${cfg.icon} ${cfg.name}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 🌊 这片水域：{cfg.icon} {cfg.name}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 🧭 This Voyage: ${play.badge}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 🧭 本航程：{play.badge}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 🎲 How ${play.badge} Differs From ${MODES.classic.badge}:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 🎲 {play.badge}和{MODES.classic.badge}哪里不同：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 🚢 Objective:\nSail one voyage of ${rounds} rounds, and finish it with the highest Reputation in the harbor.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 🚢 目标：\n走完这趟{rounds}轮的航程，收尾时拥有港湾里最高的声誉。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ⚖️ If Your Books Fail:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | ⚖️ 账目撑不住时：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| 📦 Goods System:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 📦 货物体系：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Raw Materials: ${priceRangeLine(RESOURCES_TIER0)}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 原材料：{priceRangeLine(RESOURCES_TIER0)}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Finished Goods: ${priceRangeLine(PRODUCTS_TIER0)}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 成品：{priceRangeLine(PRODUCTS_TIER0)}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 👥 Worker System:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 👥 工匠体系：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Linen or Cotton Clothes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 麻衣或布衣                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| Linen, Cotton or Brocade                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | 麻衣、布衣或绫罗绸缎                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Sachets                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 香囊                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 🧾 Tax System:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | 🧾 税费体系：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| • VAT: ${Math.round(VAT_RATE * 100)}% on finished product profit margin                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | • 增值税：成品利润的 {Math.round(VAT_RATE * 100)}%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| • Income Tax: ${Math.round(INCOME_TAX_RATE * 100)}% on your net profit for the round, charged at Resolve after everything else is paid                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | • 所得税：对本轮净利润征 {Math.round(INCOME_TAX_RATE * 100)}% 的税，在结算时、其余账付清之后收                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 🔮 Broker's Whisper:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 🔮 掮客密语：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| • Market: Click "Broker's Rumor Board" to open the window                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | • 集市：点掮客密语板，窗口就开                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| • Spend ${INTEL_COST} Gold to buy a "rumor" about Orders demand                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | • 花 {INTEL_COST} 金币，买一条关于订单需求的密语                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| • Revealed intel guarantees matching orders will appear                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | • 买到的情报保证引出对得上的订单                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| • A rumor is always true and always delivered, on every tier                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | • 密语句句为真、条条送达，哪个难度都一样                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| • Here a broker may still be corrupt: you get the true rumor, but your position leaks and this round's raid risk rises, and the log tells you when                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | • 在这片水域，掮客可能是黑的：密语照真照送，可你的位置会走漏，本轮的劫掠风险跟着上涨，日志会写明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 🤝 Parley (Bartering):                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 🤝 洽谈（易货）：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| • Trade directly with the other captains in your harbor while the Parley is open, whether it falls before or after Orders on your voyage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | • 洽谈开着的时候，绕开集市，直接和港湾里的其他船长易货，不管它排在你航程里订单的前面还是后面                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| • Post what you have and what you want for it; anyone can accept it with one click                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | • 挂出你有的、写明你想要的；谁都能一点接下                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • An offer can't be an item for itself, and both amounts must be whole numbers of at least 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | • 不能拿一样货换它本身；两边的数量都得是整数，至少各 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| • You can never offer more than you currently own, it's set aside the moment you post, and returned to you if you cancel or nobody takes it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | • 挂出的数量不能超过你手头有的；挂出那一刻就寄存起来，你取消或没人接，就原样归还                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| • Want to make sure a specific captain gets your offer, not whoever clicks fastest? Pick their name under "With" when you post: only the two of you will ever see it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | • 想让报价稳稳落进某位船长手里，而不是谁点得快谁得？挂单时在给谁一栏点他的名字：这份报价只有你们俩看得到                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 🔧 Ship Modules:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 🔧 船只模块：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| • Dusk: Upgrade your ship to unlock Module Slots                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | • 暮色：升级船只，解锁模块槽位                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| • Draft powerful modules to create unique synergies                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | • 抽选强力模块，凑出独一份的组合                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| • Swap modules to adapt to your current voyage!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | • 换模块，随这趟航程随时调整！                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 🏴‍☠️ Pirates and Escorts:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 🏴‍☠️ 海盗与护航：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| • Resolve: ${raidCopy(cfg)} Pirates take every Gold coin you carry.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | • 结算时：{raidCopy(cfg)}海盗会拿走你身上的每一个金币。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| • Hire an escort for ${escortPct(cfg)} of current Gold to sail safe                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | • 花当前金币的 {escortPct(cfg)} 雇一艘护航，稳稳驶过                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| • Decide before the pirate roll happens that round                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | • 要做决定，得赶在那轮海盗掷点之前                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 📜 Imperial Mandates:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 📜 皇命采办：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| • On round${mandates.length === 1 ? "" : "s"} ${mandates.join(", ")} the Emperor commissions one large order at a fixed reward                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | • 第 {mandates.join("、")} 轮上，皇帝下旨采办一大笔订单，报酬固定                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| • A mandate is the only order exempt from VAT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | • 皇命是唯一免增值税的订单                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • Every captain in the harbor is dealt the same mandate, so it is a race                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | • 港湾里每位船长拿到的皇命都一样，抢的就是速度                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 📣 Word on the Docks:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 📣 码头风闻：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| • Whichever captain is first in the harbor to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders total this voyage wins ${WORD_ON_THE_DOCKS_REWARD} Gold on the spot                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | • 本航程里，港湾中头一个交满 {WORD_ON_THE_DOCKS_THRESHOLD} 笔贸易订单的船长，当场赢得 {WORD_ON_THE_DOCKS_REWARD} 金币                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| • It's a race against the rest of the harbor, not a scheduled event: it can land on any round, for any captain                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | • 这是和港湾其余人的赛跑，不是排好的日程：哪一轮、落在哪位船长头上都有可能                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • Announced to the whole harbor the moment it's won, same as any other harbor wide milestone                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | • 赢下的那一刻全港湾通报，和港湾里其他大事件一个待遇                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 🌊 Tidewatch Alerts:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 🌊 观潮预警：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| • Once everyone in the harbor's own Reputation adds up past ${TIDEWATCH_SURGE_THRESHOLD}, the harbor takes notice of a bustling crew                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | • 港湾里所有人的声誉加起来越过 {TIDEWATCH_SURGE_THRESHOLD}，港湾就瞧见这支船队忙起来了                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| • From the next Port Purchase onward, every captain's board gets one extra cargo lot, for the rest of the voyage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | • 从下一次港口采购起，本航程余下的每一轮，每位船长的板上都多一件货物                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| • This never changes your voyage length or which tier's goods you see, only how busy the market gets                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | • 这不会改航程的长短，也不改你见到哪一档的货，只是让集市更热闹                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ⚓ Ventures:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ⚓ 合股：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| • Found on the Dues tab of your captain's rail: any captain can post a venture, a Gold target and a deadline round                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | • 在船长栏的港务费页签里：任何船长都能发起一份合股，写清目标金币和截止轮次                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • Anyone in the harbor, including the poster, can chip in Gold toward that target at any time before the deadline                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | • 港湾里任何人，发起人自己也算，都能在截止前随时往里投金币                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • Reach the target in time and it fills: every contributor is paid back ${Math.round((CONVOY_VENTURE_PAYOUT_MULTIPLIER - 1) * 100)}% more Gold than they put in, split in exact proportion to their share                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | • 按期凑够就成立：每位出资人拿回比本金多 {Math.round((CONVOY_VENTURE_PAYOUT_MULTIPLIER - 1) * 100)}% 的金币，按出资比例分毫不差地分                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| • Miss the deadline and it fails: every contributor only gets back ${Math.round(CONVOY_VENTURE_FAILURE_REFUND_RATE * 100)}% of their own stake, the rest is lost                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | • 过了截止还没凑够就失败：每位出资人只拿回本金的 {Math.round(CONVOY_VENTURE_FAILURE_REFUND_RATE * 100)}%，其余的就没了                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| • Contributing is a real wager on the rest of the harbor coming through, not a free favor                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | • 出资是拿真金赌港湾的其余人靠得住，不是白送的人情                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| • Your whole harbor only ever gets one filled venture per voyage: the moment any venture fills, every other open venture is canceled and fully refunded, and posting a new one is disabled until the next voyage                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | • 整个港湾每趟航程只成立一份合股：任何一份一成立，其余还开着的全部取消、全额退还，本航程也不能再发起新的                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| • A deadline can never land on your voyage's final round: it always leaves at least one full round afterward to actually spend whatever you're paid                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | • 截止轮次绝不会落在航程的最后一轮：后面总留足至少一整轮，让你真能把拿到的金币花出去                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| • No single captain can ever fund more than ${Math.round(CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE * 100)}% of a venture's target alone: it always needs at least one other captain to fund the rest before it can fill                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | • 任何一位船长单独出资都不得超过目标金额的 {Math.round(CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE * 100)}%：想成立，总得另有船长补齐剩下的                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 🆘 Financial Aid:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 🆘 资金援助：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| • Can't cover this round's wages or maintenance? When other captains are aboard, ask the harbor for a loan, right on the settlement screen                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | • 这轮的工钱或维护费付不出来？船上有别的船长时，就在结算界面向港湾借一笔                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| • Any captain with enough Gold can lend it to you on the spot; it's in your hands immediately                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | • 金币够的船长当场就能借给你，钱立刻到你手上                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| • Repay it any time before the voyage's last round ends, or it's taken from your funds automatically and handed to your lender                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | • 航程最后一轮结束前随时还上；还不清，会自动从你的金币里扣出来，交到借你的人手上                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| • Still short when the voyage finishes? That unpaid loan is what bankrupts you, not the round it was borrowed in                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | • 航程走完还欠着？让你破产的是那笔没还的借款，不是借它的那一轮                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| • Lending Gold raises your own reputation, scaled to how much you lent                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | • 借出金币会抬高你自己的声誉，借得越多涨得越多                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| 🛡️ Backing:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | 🛡️ 作保：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| • Every outstanding loan in your harbor is visible on the settlement screen, to everyone, not just the lender and borrower                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | • 港湾里每一笔没还清的借款都摆在结算界面上，所有人可见，不只是借贷两家                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| • A third captain can back one: pledge some of their own Gold as a safety net for the lender, escrowed the instant they pledge it                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | • 第三位船长可以作保：押上自己的金币，给借出方兜底，押出的那一刻就寄存起来                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • Only spent if the loan actually defaults, and only up to whatever was pledged; the lender still eats any shortfall past that                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | • 只有借款真的违约才会动用，而且动用不超过押数；超出押数的窟窿，仍由借出方自己扛                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| • Never called on when the loan is repaid in full? The whole pledge comes back, plus a small Reputation bonus for the risk paying off                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | • 借款全额还清、保金没被动过？押数原样奉还，还附带一小笔声誉奖励，赏这份风险没白担                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| • One backer per loan; you can't back a loan you're the lender or borrower on yourself                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | • 每笔借款只认一位保人；自己借的、自己放的，都不能自己保                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Captain's Legacy:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 船长传承：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • Every voyage's final Reputation becomes Renown XP on your account the moment the voyage ends, win or lose                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | • 不管输赢，航程一结束，最终声誉立刻变成账号上的声望经验                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| • Renown is permanent: it survives a restart and carries into every future voyage, in any harbor, unlike Gold, cargo, and ship level                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | • 声望是永久的：重开也带得走，往后每一趟航程、哪个港湾都能带上，金币、货物和船只等级做不到                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • Whoever ends a voyage with the highest Reputation among everyone who reached the endgame screen is crowned Sea Master                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | • 走到终局画面的所有船长里，最终声誉最高的那位加冕沧海之主                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| • Check your current Renown level, title, and Sea Master crowns any time from the Lobby                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | • 当前的声望等级、称号和沧海之主的冠数，在大厅随时能看                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| 🌊 The Round:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 🌊 一轮怎么走：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ⌨️ Shortcuts:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | ⌨️ 快捷键：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ⚓ Bon Voyage and Good Luck!                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ⚓ 一路顺风，好运相随！                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| 🧭 ${play.badge}: what is different                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 🧭 {play.badge}：有什么不同                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ${item}(${range[0]} to ${range[1]}💰)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | {item}（{range[0]}到{range[1]}💰）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
-**`src/lib/game/glossary.ts`** (40)
+**`src/lib/game/glossary.ts`** (41)
 
-| English                                                                                                                                                                                                                                                                                                                                                                                                                                 | Chinese                                                                                                                                                                                                                                                           |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| \<p>Before the bills below come due each round, ${raidCopy(cfg).toLowerCase()} Pirates find your ship and take every coin you're carrying.\</p>\n\<p>You get one choice before that roll happens: hire an escort for ${escortPct(cfg)} of your current Gold and sail through guaranteed safe, or set sail anyway and keep the Gold if the pirates don't show.\</p>\n${cfg.brokerCorruption ?                                            | \<p>每轮账单到期之前，{raidCopy(cfg).toLowerCase()}海盗会找上你的船，把你带的钱搜刮一空。\</p>\n\<p>掷这一下之前，你还有得选：花现有金币的 {escortPct(cfg)}雇一艘护航，保证平安过关；或者照常起航碰运气，海盗不来，那笔金币就省下。\</p>\n{cfg.brokerCorruption ? |
-| The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the charter sets as a share of your Gold: ${Object.values( DIFFICULTIES, ) .map((c) =>                                                                                                                                                                                                                         | 港湾的护航，任何船长都能在结算时雇用：保你免受本轮海盗劫掠，费用按章程定，取现有金币的一个比例：{Object.values( DIFFICULTIES, ) .map((c) =>                                                                                                                       |
-| ) .join(", ")}. Once hired, the round's pirates are no longer a risk.                                                                                                                                                                                                                                                                                                                                                                   | ) .join(", ")}。雇下之后，本轮的海盗就不再是威胁。                                                                                                                                                                                                                |
-| A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one leg of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off ${Math.round( CONVOY_RAID_COVERAGE * 100, )}% of a raid in that leg, and the rest comes out of the seller's own Gold. ${ESCORT_OFFER_DEATH}                                                           | 暗潮航程里洽谈场上的镖行买卖：镖行船长把一段航段的护卫卖给另一位船长，价格两人自己谈。买家在成交时付清费用，卖家的炮火挡下该航段 {Math.round( CONVOY_RAID_COVERAGE * 100, )}% 的劫掠，剩下的从卖家自己的金币里出。{ESCORT_OFFER_DEATH}                            |
-| , ) .join( ", ", )}. Hire an escort beforehand to guarantee safe passage instead of risking it.                                                                                                                                                                                                                                                                                                                                         | , ) .join( ", ", )}。想稳当过关，提前雇一艘护航，不用冒这个险。                                                                                                                                                                                                   |
-| A cheap raw material, bought at port. Weavers turn it into Linen Clothes, or combine it with Silk for Cotton Clothes.                                                                                                                                                                                                                                                                                                                   | 在港口就能买到的便宜原材料。织女拿它做麻衣，或配上丝绸做布衣。                                                                                                                                                                                                    |
-| A pricier raw material. Goes into Cotton Clothes, Brocade, and Sachets. Most of the high value recipes need it.                                                                                                                                                                                                                                                                                                                         | 贵一档的原材料，用来做布衣、绫罗绸缎和香囊。高价值配方大多少不了它。                                                                                                                                                                                              |
-| A raw material used only in Sachets, alongside Silk.                                                                                                                                                                                                                                                                                                                                                                                    | 只和丝绸搭配、专用于香囊的原材料。                                                                                                                                                                                                                                |
-| A Weaver's product: 2 Hemp in, one item out. The cheapest finished good to produce.                                                                                                                                                                                                                                                                                                                                                     | 织女的成品：2麻布进，1件出。是成本最低的成品。                                                                                                                                                                                                                    |
-| A Weaver's product: 2 Hemp + 1 Silk in. Worth more than Linen Clothes, costs more to make.                                                                                                                                                                                                                                                                                                                                              | 织女的成品：2麻布加1丝绸。比麻衣值钱，成本也高。                                                                                                                                                                                                                  |
-| A Master Weaver's product: 3 Silk in. One of the two highest value finished goods.                                                                                                                                                                                                                                                                                                                                                      | 纺织大师的成品：3丝绸。最值钱的两种成品之一。                                                                                                                                                                                                                     |
-| A Sachet Maker's product: 1 Silk + 2 Tea in. The most valuable finished good, and the only one that needs Tea.                                                                                                                                                                                                                                                                                                                          | 香囊师的成品：1丝绸加2茶叶。成品里最值钱的，也是唯一吃茶叶的。                                                                                                                                                                                                    |
-| Makes Linen Clothes or Cotton Clothes. Costs a wage every round, paid at Resolve, whether or not they're working.                                                                                                                                                                                                                                                                                                                       | 做麻衣和布衣。工钱每轮照付，结算时结清，干不干活都一样。                                                                                                                                                                                                          |
-| Makes Linen Clothes, Cotton Clothes, or Brocade. Pricier than a Weaver, and the only one who can make Brocade.                                                                                                                                                                                                                                                                                                                          | 做麻衣、布衣和绫罗绸缎。身价比织女高，也是唯一会做绫罗绸缎的。                                                                                                                                                                                                    |
-| Makes Sachets. The most expensive artisan to hire, but Sachets pay the best.                                                                                                                                                                                                                                                                                                                                                            | 制作香囊。雇价最高的工匠，但香囊的报酬也最高。                                                                                                                                                                                                                    |
-| Your score for the voyage, roughly your accumulated trading profit. Highest reputation on the voyage's final round wins.                                                                                                                                                                                                                                                                                                                | 你在本航程的积分，大致就是累积的贸易利润。最后一轮结束时声誉最高的人获胜。                                                                                                                                                                                        |
-| Your standing across every harbor, kept on the account rather than in one voyage: the Reputation you bank becomes Renown XP when a voyage ends. ${RENOWN_BONUS_LINE}. The title beside your level is the ladder's own name for the rung you have reached.                                                                                                                                                                               | 你在所有港湾之间的地位，记在账号上，不随某次航程走：航程结束时，你攒下的声誉会变成声望经验。{RENOWN_BONUS_LINE}。等级旁的称号，就是这条阶梯给这一级的名字。                                                                                                       |
-| Your spendable funds. Hit zero with bills still due and the voyage ends in bankruptcy.                                                                                                                                                                                                                                                                                                                                                  | 你手头可用的金币。账单还没付完就见底，航程以破产收场。                                                                                                                                                                                                            |
-| A ${Math.round(VAT_RATE * 100)}% tax on the profit margin of finished good sales (selling price minus material cost minus wage). Raw material sales aren't taxed this way.                                                                                                                                                                                                                                                              | 对成品的利润（售价减原料成本再减工钱）征 {Math.round(VAT_RATE * 100)}% 的税。卖原材料不在此列。                                                                                                                                                                   |
-| A ${Math.round(INCOME_TAX_RATE * 100)}% tax on your net profit for the round, charged at Resolve after everything else is paid.                                                                                                                                                                                                                                                                                                         | 对本轮净利润征 {Math.round(INCOME_TAX_RATE * 100)}% 的税，在结算时、其余账付清之后收。                                                                                                                                                                            |
-| The shipping fee for completing a trade order, based on how many items you're moving. Reduced by your ship level and certain boons or modules.                                                                                                                                                                                                                                                                                          | 交一条订单要付的运费，按件数算。船只等级，以及某些机缘和模块，能把它压低。                                                                                                                                                                                        |
-| A fixed per round upkeep fee for your ship, due at Resolve regardless of how the round went.                                                                                                                                                                                                                                                                                                                                            | 每轮固定的船只维护，不论这轮走得如何，结算时都要交。                                                                                                                                                                                                              |
-| Raises your module slots and gives a flat discount on freight costs. Upgraded from the Shipyard at Dusk.                                                                                                                                                                                                                                                                                                                                | 多给一个模块槽位，运费也定额往下压。在暮色的船坞升级。                                                                                                                                                                                                            |
-| What your hired artisans cost per round, paid at Resolve whether they produced anything or not.                                                                                                                                                                                                                                                                                                                                         | 雇来的工匠每轮的开销，结算时付，产出与否都得付。                                                                                                                                                                                                                  |
-| A one round bonus you draft at the start of each round, at Dawn. It's picked personally, so your three choices differ from everyone else's.                                                                                                                                                                                                                                                                                             | 每轮开局、破晓时抽的机缘，只保一轮。三张牌单发给你，和别人的都不重样。                                                                                                                                                                                            |
-| A permanent ship upgrade, drafted from the Shipyard once you have a free slot. Stays equipped until you swap it out.                                                                                                                                                                                                                                                                                                                    | 永久的船只升级，有空余槽位时在船坞抽取。装上就一直在，直到你把它换掉。                                                                                                                                                                                            |
-| Trade directly with another captain instead of through the market, on the Captain's Exchange during the Parley or from the harbor chat once you reach Renown Level ${FLEXIBLE_BARTER_UNLOCK_LEVEL}. Post what you have for what you want; the offered amount is set aside the moment you post it, and comes back to you if it's canceled, if nobody takes it, or if a flexible offer of yours is taken and this one is retired with it. | 绕开集市，直接和另一位船长易货：洽谈时的船长行市，或声望到 {FLEXIBLE_BARTER_UNLOCK_LEVEL}级后的港湾聊天。挂出你有的、写明你想要的；挂出的那一刻数量就寄存起来，被取消、没人接，或者你的另一份灵活挂单成交、把它一并带走，都会原样回到你手上。                     |
-| Pirate Attack                                                                                                                                                                                                                                                                                                                                                                                                                           | 海盗劫掠                                                                                                                                                                                                                                                          |
-| Financial Aid                                                                                                                                                                                                                                                                                                                                                                                                                           | 资金援助                                                                                                                                                                                                                                                          |
-| A loan from another captain when you can't cover this round's wages or maintenance on your own. The lender's Gold transfers to you immediately; you owe it back before the voyage ends, or it's deducted automatically and handed to them at the voyage's final round.                                                                                                                                                                  | 自己盖不住本轮的工钱或维护费时，向另一位船长借的一笔款。对方的金币立刻到账；在航程结束前还清，还不清，最后一轮会自动从你的金币里扣下来，交到他手上。                                                                                                              |
-| The round's opening phase: the boon draft deals three cards and you keep one, and it bends the rules for the round ahead. On a voyage that keeps a larder, this is also when the crew eats a ration a head.                                                                                                                                                                                                                             | 一轮的开场：发三张机缘，你留一张，接下来的规矩会偏向你一点。带粮舱的航程，也是船员每人吃一份口粮的时候。                                                                                                                                                          |
-| The round's trading floor. Captains post barter offers and take each other's here, and the table's votes (a manifest audit, a maroon) are called here too.                                                                                                                                                                                                                                                                              | 一轮的交易场。船长们在这里挂出易货报价、彼此接手；桌上的表决（舱单稽查、放逐）也从这里发起。                                                                                                                                                                      |
-| The round's reckoning. Production lands first, then pirates may strike, and then the wages, maintenance and taxes come due. The Dues tab is the list of what this phase will ask for.                                                                                                                                                                                                                                                   | 一轮的结算：先落产出，再是海盗可能来犯，然后工钱、维护费和税一起到期。港务费页签列的，就是这一步会上门的账。                                                                                                                                                      |
-| The round's last phase and the shipyard's seat: upgrade the hull, or draft and rig a module.                                                                                                                                                                                                                                                                                                                                            | 一轮的最后一步，轮到船坞：升级船体，或者抽取并装上一件模块。                                                                                                                                                                                                      |
-| What this captain owes at the round end: the crew's wages and the ship's upkeep in one total, with any outstanding loans listed underneath. This tab keeps the running count.                                                                                                                                                                                                                                                           | 这位船长轮末欠的账：船员工钱和船只维护合成一个总数，下面列着未还的借款。这个页签一直记着数。                                                                                                                                                                      |
-| The cargo hold: the goods stowed aboard, one slot per unit of cargo, plus the crew that works them. This tab lists it all.                                                                                                                                                                                                                                                                                                              | 货舱：船上装着的货物，一件货占一个仓位，还有干活的船员。这个页签把它们都列出来。                                                                                                                                                                                  |
-| The pantry half of the hold: the foods aboard, measured in slots. The Larder counts the meals inside them.                                                                                                                                                                                                                                                                                                                              | 货舱里伙房那半边：存着的食物，按仓位算。粮舱数的就是里面的餐数。                                                                                                                                                                                                  |
-| The meals aboard for the crew, one ration a head eaten at each Dawn. Run it dry and the crew works hungry, and a long stretch without rations costs a hand.                                                                                                                                                                                                                                                                             | 船上给船员备的餐，每个破晓每人吃一份。吃空了，船员就饿着干活；连着太久断粮，要折损一名人手。                                                                                                                                                                      |
-| The broker's cut on a Broker's Favor order: a share of the reward, paid when the order fills. The card prints the cut before you fill it.                                                                                                                                                                                                                                                                                               | 掮客在人情订单里抽的那份：报酬的一部分，订单成交时付。接单前，牌面就写明抽多少。                                                                                                                                                                                  |
-| Gold or goods held aside the moment an offer, a pledge or a barter is posted, until the deal settles. Held goods cannot be spent or traded meanwhile, and they come back whole if the deal is canceled or expires.                                                                                                                                                                                                                      | 挂单、作保或易货一出手就寄存起来的金币或货，直到交易落定。寄存期间不能花用、不能转手；交易取消或过期，原样归还。                                                                                                                                                  |
+| English                                                                                                                                                                                                                                                                                                                                                                                                                                 | Chinese                                                                                                                                                                                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| \<p>Before the bills below come due each round, the pirates roll for your ship. ${raidCopy(cfg)} A raid takes every coin you're carrying.\</p>\n\<p>You get one choice before that roll happens: hire an escort for ${escortPct(cfg)} of your current Gold and sail through guaranteed safe, or set sail anyway and keep the Gold if the pirates don't show.\</p>\n${cfg.brokerCorruption ?                                             | \<p>每轮账单到期之前，海盗会先为你的船掷上一把。{raidCopy(cfg)}一场劫掠下来，你带的钱会被搜刮一空。\</p>\n\<p>掷这一下之前，你还有得选：花现有金币的 {escortPct(cfg)}雇一艘护航，保证平安过关；或者照常起航碰运气，海盗不来，那笔金币就省下。\</p>\n{cfg.brokerCorruption ? |
+| The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the charter sets as a share of your Gold: ${Object.values( DIFFICULTIES, ) .map((c) =>                                                                                                                                                                                                                         | 港湾的护航，任何船长都能在结算时雇用：保你免受本轮海盗劫掠，费用按章程定，取现有金币的一个比例：{Object.values( DIFFICULTIES, ) .map((c) =>                                                                                                                                 |
+| ) .join(", ")}. Once hired, the round's pirates are no longer a risk.                                                                                                                                                                                                                                                                                                                                                                   | ) .join("、")}。雇下之后，本轮的海盗就不再是威胁。                                                                                                                                                                                                                          |
+| A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one leg of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off ${Math.round( CONVOY_RAID_COVERAGE * 100, )}% of a raid in that leg, and the rest comes out of the seller's own Gold. ${ESCORT_OFFER_DEATH}                                                           | 暗潮航程里洽谈场上的镖行买卖：镖行船长把一段航段的护卫卖给另一位船长，价格两人自己谈。买家在成交时付清费用，卖家的炮火挡下该航段 {Math.round( CONVOY_RAID_COVERAGE * 100, )}% 的劫掠，剩下的从卖家自己的金币里出。{ESCORT_OFFER_DEATH}                                      |
+| A roll at Resolve, before wages and maintenance come due, that can take every Gold coin you're carrying. The charter sets the odds: ${Object.values( DIFFICULTIES, ) .map((c) =>                                                                                                                                                                                                                                                        | 结算时掷上一把，赶在工钱和维护费到期之前，你身上带的每一枚金币都可能被搜刮一空。章程定下概率：{Object.values( DIFFICULTIES, ) .map((c) =>                                                                                                                                   |
+| , ) .join( ", ", )}. Hire an escort beforehand to guarantee safe passage instead of risking it.                                                                                                                                                                                                                                                                                                                                         | , ) .join( ", ", )}。想稳当过关，提前雇一艘护航，不用冒这个险。                                                                                                                                                                                                             |
+| A cheap raw material, bought at port. Weavers turn it into Linen Clothes, or combine it with Silk for Cotton Clothes.                                                                                                                                                                                                                                                                                                                   | 在港口就能买到的便宜原材料。织女拿它做麻衣，或配上丝绸做布衣。                                                                                                                                                                                                              |
+| A pricier raw material. Goes into Cotton Clothes, Brocade, and Sachets. Most of the high value recipes need it.                                                                                                                                                                                                                                                                                                                         | 贵一档的原材料，用来做布衣、绫罗绸缎和香囊。高价值配方大多少不了它。                                                                                                                                                                                                        |
+| A raw material used only in Sachets, alongside Silk.                                                                                                                                                                                                                                                                                                                                                                                    | 只和丝绸搭配、专用于香囊的原材料。                                                                                                                                                                                                                                          |
+| A Weaver's product: 2 Hemp in, one item out. The cheapest finished good to produce.                                                                                                                                                                                                                                                                                                                                                     | 织女的成品：2麻布进，1件出。是成本最低的成品。                                                                                                                                                                                                                              |
+| A Weaver's product: 2 Hemp + 1 Silk in. Worth more than Linen Clothes, costs more to make.                                                                                                                                                                                                                                                                                                                                              | 织女的成品：2麻布加1丝绸。比麻衣值钱，成本也高。                                                                                                                                                                                                                            |
+| A Master Weaver's product: 3 Silk in. One of the two highest value finished goods.                                                                                                                                                                                                                                                                                                                                                      | 纺织大师的成品：3丝绸。最值钱的两种成品之一。                                                                                                                                                                                                                               |
+| A Sachet Maker's product: 1 Silk + 2 Tea in. The most valuable finished good, and the only one that needs Tea.                                                                                                                                                                                                                                                                                                                          | 香囊师的成品：1丝绸加2茶叶。成品里最值钱的，也是唯一吃茶叶的。                                                                                                                                                                                                              |
+| Makes Linen Clothes or Cotton Clothes. Costs a wage every round, paid at Resolve, whether or not they're working.                                                                                                                                                                                                                                                                                                                       | 做麻衣和布衣。工钱每轮照付，结算时结清，干不干活都一样。                                                                                                                                                                                                                    |
+| Makes Linen Clothes, Cotton Clothes, or Brocade. Pricier than a Weaver, and the only one who can make Brocade.                                                                                                                                                                                                                                                                                                                          | 做麻衣、布衣和绫罗绸缎。身价比织女高，也是唯一会做绫罗绸缎的。                                                                                                                                                                                                              |
+| Makes Sachets. The most expensive artisan to hire, but Sachets pay the best.                                                                                                                                                                                                                                                                                                                                                            | 制作香囊。雇价最高的工匠，但香囊的报酬也最高。                                                                                                                                                                                                                              |
+| Your score for the voyage, roughly your accumulated trading profit. Highest reputation on the voyage's final round wins.                                                                                                                                                                                                                                                                                                                | 你在本航程的积分，大致就是累积的贸易利润。最后一轮结束时声誉最高的人获胜。                                                                                                                                                                                                  |
+| Your standing across every harbor, kept on the account rather than in one voyage: the Reputation you bank becomes Renown XP when a voyage ends. ${RENOWN_BONUS_LINE}. The title beside your level is the ladder's own name for the rung you have reached.                                                                                                                                                                               | 你在所有港湾之间的地位，记在账号上，不随某次航程走：航程结束时，你攒下的声誉会变成声望经验。{RENOWN_BONUS_LINE}。等级旁的称号，就是这条阶梯给这一级的名字。                                                                                                                 |
+| Your spendable funds. Hit zero with bills still due and the voyage ends in bankruptcy.                                                                                                                                                                                                                                                                                                                                                  | 你手头可用的金币。账单还没付完就见底，航程以破产收场。                                                                                                                                                                                                                      |
+| A ${Math.round(VAT_RATE * 100)}% tax on the profit margin of finished good sales (selling price minus material cost minus wage). Raw material sales aren't taxed this way.                                                                                                                                                                                                                                                              | 对成品的利润（售价减原料成本再减工钱）征 {Math.round(VAT_RATE * 100)}% 的税。卖原材料不在此列。                                                                                                                                                                             |
+| A ${Math.round(INCOME_TAX_RATE * 100)}% tax on your net profit for the round, charged at Resolve after everything else is paid.                                                                                                                                                                                                                                                                                                         | 对本轮净利润征 {Math.round(INCOME_TAX_RATE * 100)}% 的税，在结算时、其余账付清之后收。                                                                                                                                                                                      |
+| The shipping fee for completing a trade order, based on how many items you're moving. Reduced by your ship level and certain boons or modules.                                                                                                                                                                                                                                                                                          | 交一条订单要付的运费，按件数算。船只等级，以及某些机缘和模块，能把它压低。                                                                                                                                                                                                  |
+| A fixed per round upkeep fee for your ship, due at Resolve regardless of how the round went.                                                                                                                                                                                                                                                                                                                                            | 每轮固定的船只维护，不论这轮走得如何，结算时都要交。                                                                                                                                                                                                                        |
+| Raises your module slots and gives a flat discount on freight costs. Upgraded from the Shipyard at Dusk.                                                                                                                                                                                                                                                                                                                                | 多给一个模块槽位，运费也定额往下压。在暮色的船坞升级。                                                                                                                                                                                                                      |
+| What your hired artisans cost per round, paid at Resolve whether they produced anything or not.                                                                                                                                                                                                                                                                                                                                         | 雇来的工匠每轮的开销，结算时付，产出与否都得付。                                                                                                                                                                                                                            |
+| A one round bonus you draft at the start of each round, at Dawn. It's picked personally, so your three choices differ from everyone else's.                                                                                                                                                                                                                                                                                             | 每轮开局、破晓时抽的机缘，只保一轮。三张牌单发给你，和别人的都不重样。                                                                                                                                                                                                      |
+| A permanent ship upgrade, drafted from the Shipyard once you have a free slot. Stays equipped until you swap it out.                                                                                                                                                                                                                                                                                                                    | 永久的船只升级，有空余槽位时在船坞抽取。装上就一直在，直到你把它换掉。                                                                                                                                                                                                      |
+| Trade directly with another captain instead of through the market, on the Captain's Exchange during the Parley or from the harbor chat once you reach Renown Level ${FLEXIBLE_BARTER_UNLOCK_LEVEL}. Post what you have for what you want; the offered amount is set aside the moment you post it, and comes back to you if it's canceled, if nobody takes it, or if a flexible offer of yours is taken and this one is retired with it. | 绕开集市，直接和另一位船长易货：洽谈时的船长行市，或声望到 {FLEXIBLE_BARTER_UNLOCK_LEVEL}级后的港湾聊天。挂出你有的、写明你想要的；挂出的那一刻数量就寄存起来，被取消、没人接，或者你的另一份灵活挂单成交、把它一并带走，都会原样回到你手上。                               |
+| Pirate Attack                                                                                                                                                                                                                                                                                                                                                                                                                           | 海盗劫掠                                                                                                                                                                                                                                                                    |
+| Financial Aid                                                                                                                                                                                                                                                                                                                                                                                                                           | 资金援助                                                                                                                                                                                                                                                                    |
+| A loan from another captain when you can't cover this round's wages or maintenance on your own. The lender's Gold transfers to you immediately; you owe it back before the voyage ends, or it's deducted automatically and handed to them at the voyage's final round.                                                                                                                                                                  | 自己盖不住本轮的工钱或维护费时，向另一位船长借的一笔款。对方的金币立刻到账；在航程结束前还清，还不清，最后一轮会自动从你的金币里扣下来，交到他手上。                                                                                                                        |
+| The round's opening phase: the boon draft deals three cards and you keep one, and it bends the rules for the round ahead. On a voyage that keeps a larder, this is also when the crew eats a ration a head.                                                                                                                                                                                                                             | 一轮的开场：发三张机缘，你留一张，接下来的规矩会偏向你一点。带粮舱的航程，也是船员每人吃一份口粮的时候。                                                                                                                                                                    |
+| The round's trading floor. Captains post barter offers and take each other's here, and the table's votes (a manifest audit, a maroon) are called here too.                                                                                                                                                                                                                                                                              | 一轮的交易场。船长们在这里挂出易货报价、彼此接手；桌上的表决（舱单稽查、放逐）也从这里发起。                                                                                                                                                                                |
+| The round's reckoning. Production lands first, then pirates may strike, and then the wages, maintenance and taxes come due. The Dues tab is the list of what this phase will ask for.                                                                                                                                                                                                                                                   | 一轮的结算：先落产出，再是海盗可能来犯，然后工钱、维护费和税一起到期。港务费页签列的，就是这一步会上门的账。                                                                                                                                                                |
+| The round's last phase and the shipyard's seat: upgrade the hull, or draft and rig a module.                                                                                                                                                                                                                                                                                                                                            | 一轮的最后一步，轮到船坞：升级船体，或者抽取并装上一件模块。                                                                                                                                                                                                                |
+| What this captain owes at the round end: the crew's wages and the ship's upkeep in one total, with any outstanding loans listed underneath. This tab keeps the running count.                                                                                                                                                                                                                                                           | 这位船长轮末欠的账：船员工钱和船只维护合成一个总数，下面列着未还的借款。这个页签一直记着数。                                                                                                                                                                                |
+| The cargo hold: the goods stowed aboard, one slot per unit of cargo, plus the crew that works them. This tab lists it all.                                                                                                                                                                                                                                                                                                              | 货舱：船上装着的货物，一件货占一个仓位，还有干活的船员。这个页签把它们都列出来。                                                                                                                                                                                            |
+| The pantry half of the hold: the foods aboard, measured in slots. The Larder counts the meals inside them.                                                                                                                                                                                                                                                                                                                              | 货舱里伙房那半边：存着的食物，按仓位算。粮舱数的就是里面的餐数。                                                                                                                                                                                                            |
+| The meals aboard for the crew, one ration a head eaten at each Dawn. Run it dry and the crew works hungry, and a long stretch without rations costs a hand.                                                                                                                                                                                                                                                                             | 船上给船员备的餐，每个破晓每人吃一份。吃空了，船员就饿着干活；连着太久断粮，要折损一名人手。                                                                                                                                                                                |
+| The broker's cut on a Broker's Favor order: a share of the reward, paid when the order fills. The card prints the cut before you fill it.                                                                                                                                                                                                                                                                                               | 掮客在人情订单里抽的那份：报酬的一部分，订单成交时付。接单前，牌面就写明抽多少。                                                                                                                                                                                            |
+| Gold or goods held aside the moment an offer, a pledge or a barter is posted, until the deal settles. Held goods cannot be spent or traded meanwhile, and they come back whole if the deal is canceled or expires.                                                                                                                                                                                                                      | 挂单、作保或易货一出手就寄存起来的金币或货，直到交易落定。寄存期间不能花用、不能转手；交易取消或过期，原样归还。                                                                                                                                                            |
 
 **`src/lib/game/status-copy.ts`** (24)
 
@@ -610,7 +709,7 @@ The reference shelf: glossary entries, price tooltips, and what the harbor says 
 | Fill the larder                                                                                                                                                             | 把粮舱补满                                                                                                        |
 | Idle                                                                                                                                                                        | 待工                                                                                                              |
 | no task is set for this leg                                                                                                                                                 | 本航段没有派活                                                                                                    |
-| Assign a task to put them to work                                                                                                                                           | 派一件活，他们就能开工。                                                                                          |
+| Assign a task to put them to work                                                                                                                                           | 派一件活，他们就能开工                                                                                            |
 | 🥶 ${FROZEN_CREW.state}: the crew ${FROZEN_CREW.cause}. Back next leg. ${FROZEN_CREW.remedy}.                                                                               | 🥶 {FROZEN_CREW.state}：船员{FROZEN_CREW.cause}。下个航段就回来。{FROZEN_CREW.remedy}。                           |
 | ❌ The only free hands are frozen out this leg: the crew ${FROZEN_CREW.cause}, and they are back next leg. ${FROZEN_CREW.remedy}.                                           | ❌ 仅有的空闲人手本航段冻停了：船员{FROZEN_CREW.cause}，下个航段就回来。{FROZEN_CREW.remedy}。                    |
 | 🥶 ${name} is frozen out this leg: the crew ${FROZEN_CREW.cause}, and the work on ${task} waits for next leg. ${FROZEN_CREW.remedy}.                                        | 🥶 {name}本航段冻停了：船员{FROZEN_CREW.cause}，{task}的活要等下一个航段。{FROZEN_CREW.remedy}。                  |
@@ -627,11 +726,11 @@ The reference shelf: glossary entries, price tooltips, and what the harbor says 
 | The larder is empty: ${HUNGRY_CREW.cause}, so every artisan produces less, a quarter of the hold is closed, and ${hungryRule()} ${HUNGRY_CREW.remedy} before the next Dawn. | 粮舱空了：{HUNGRY_CREW.cause}，每位工匠产出更少，四分之一货舱封闭；{hungryRule()}下次破晓前{HUNGRY_CREW.remedy}。 |
 | ⚠️ The crew is on short rations, so every artisan works the leg at a slower pace, and ${hungryRule()} ${HUNGRY_CREW.remedy} at the next Market.                             | ⚠️ 船员吃着减半口粮，每位工匠本航段干活更慢；{hungryRule()}下次开市时{HUNGRY_CREW.remedy}。                       |
 
-### How to Play (58)
+### How to Play (63)
 
 The walkthrough modal, page by page, and the keyboard help.
 
-**`src/components/portmasters/HowToPlayModal.tsx`** (28)
+**`src/components/portmasters/HowToPlayModal.tsx`** (33)
 
 | English                                                                                                                                                                                                                                                                                                                                                                                            | Chinese                                                                                                                                                                                                                |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -644,13 +743,16 @@ The walkthrough modal, page by page, and the keyboard help.
 | Each round opens with a boon draft. Pick one of ${CARDS_PER_OFFER} boons that bend the rules for the coming round: cheaper purchases, faster production, a tax shelter, or an emergency loan of ${EMERGENCY_LOAN_GOLD} Gold.                                                                                                                                                                       | 每轮开局先抽机缘。从{CARDS_PER_OFFER}张里挑一张，这一轮的规矩就偏向你：采购更便宜、生产更快、避一笔税，或是一笔{EMERGENCY_LOAN_GOLD}金币的紧急钱庄。                                                                   |
 | You can swap your boon choices once per round for ${BOON_SWAP_COST} Gold if none of the three fit your strategy.                                                                                                                                                                                                                                                                                   | 三张都不合你的打法，每轮还能花{BOON_SWAP_COST}金币把机缘换一次。                                                                                                                                                       |
 | Market is the port. Buy raw materials like Hemp, Silk, and Tea from the port merchant. Prices vary per captain and per round. You can also pay ${INTEL_COST} Gold for a Broker's Rumor that guarantees a matching order appears when Orders opens.                                                                                                                                                 | 开市就在港口。向港口商人采购麻布、丝绸、茶叶这些原材料。价格每位船长各不同，每轮也在变。还可以花{INTEL_COST}金币买一条掮客密语，保证订单一开就有对得上的单子出现。                                                     |
-| The harbor remembers what everyone bought. A good the room leans into gets pricier next round, while one nobody touches softens.                                                                                                                                                                                                                                                                   | 港湾记得每个人买过什么。大家都在买的货下一轮更贵，无人问津的会便宜下来。                                                                                                                                               |
+| The harbor remembers what everyone bought. A good the harbor leans into gets pricier next round, while one nobody touches softens.                                                                                                                                                                                                                                                                 | 港湾记得每个人买过什么。大家都在买的货下一轮更贵，无人问津的会便宜下来。                                                                                                                                               |
 | At the Parley you can trade goods and Gold directly with the other captains, whether your voyage runs it before the orders or after them. Post an offer of what you have and what you want, or accept an offer someone else posted. Offered goods are escrowed the moment you post.                                                                                                                | 在洽谈，你可以和其他船长直接易货、换金币，不论航程把洽谈排在订单前还是后。挂出你有的、写明你想要的，或者接下别人挂的。货一挂出就寄存，直到成交或取消。                                                                 |
-| You can target a specific captain with a Direct Barter Offer if you want to trade with only them. The Markets station of the Parley holds the escort market, the module market and the bazaar window.                                                                                                                                                                                              | 只想和某一位船长做买卖，可以发一份定向易货给他。洽谈的集市站里，开着护航市场、模块市场和香市窗口。                                                                                                                     |
+| You can target a specific captain with a Direct Barter Offer if you want to trade with only them. The Markets station of the Parley holds ${held}.                                                                                                                                                                                                                                                 | 只想和某一位船长做买卖，可以发一份定向易货给他。洽谈的集市站里，开着{held}。                                                                                                                                           |
+| the escort market                                                                                                                                                                                                                                                                                                                                                                                  | 护航市场                                                                                                                                                                                                               |
+| the module market                                                                                                                                                                                                                                                                                                                                                                                  | 模块市场                                                                                                                                                                                                               |
+| the bazaar window                                                                                                                                                                                                                                                                                                                                                                                  | 香市窗口                                                                                                                                                                                                               |
 | Orders deals the trade manifest. Each entry asks for a set of goods and pays Gold and Reputation. Finished product orders pay more but require artisans to craft them first. The Emperor may also issue a Mandate, a high value order identical for every captain.                                                                                                                                 | 订单阶段发舱单。每条写明要什么货，付你金币和声誉。成品订单给得更多，先得让工匠做出来。皇帝还可能下皇命：一张高价值订单，每位船长收到的都一样。                                                                         |
 | Raw material orders are the safe early play. Finished product orders are where the real Reputation lives.                                                                                                                                                                                                                                                                                          | 原材料订单是前期的稳妥之选，大笔声誉都在成品订单里。                                                                                                                                                                   |
 | Resolve is where the round's bills land. First, pirates may find you and take every Gold coin on hand. Hire an escort to sail safe, or risk it. Then pay wages and ship maintenance, and check the Dues tab of your captain's rail before you spend anything.                                                                                                                                      | 结算就是本轮账单到期的时候。海盗可能先找上门，把你在手的金币卷走：雇护航求平安，或者赌一把。接着是工钱和船只维护费。花钱之前，先看一眼船长栏里的港务费页签。                                                           |
-| Ask the harbor for a loan before assuming the voyage is over. Any captain can lend, and a third captain can back the loan as a safety net.                                                                                                                                                                                                                                                         | 别急着断定航程结束，先向港湾借一笔。任何船长都能放款，第三位船长还能为这笔借款作保，兜一道底。                                                                                                                         |
+| When other captains are aboard, ask the harbor for a loan before assuming the voyage is over. Any captain can lend, and a third captain can back the loan as a safety net.                                                                                                                                                                                                                         | 有其他船长在船上时，别急着断定航程结束，先向港湾借一笔。任何船长都能放款，第三位船长还能为这笔借款作保，兜一道底。                                                                                                     |
 | Dusk is the shipyard. Upgrade your ship (opens a new module slot and reduces transport costs) or draft and rig a module. Modules are permanent ship upgrades: a Smuggler's Hold, a Broker's Network, a Salvage Crane, and more.                                                                                                                                                                    | 暮色一到，船坞开门。升级船只（多开一个模块槽位，运费也更低），或者抽一个模块装上。模块是永久的船只升级：走私暗舱、掮客人脉、打捞起重机，还有更多。                                                                     |
 | Do not skip the Shipyard. The transport discount from a higher ship level pays for itself within two rounds.                                                                                                                                                                                                                                                                                       | 别跳过船坞。船只等级升上去，省下的运费两轮就回本。                                                                                                                                                                     |
 | Build Your Legacy                                                                                                                                                                                                                                                                                                                                                                                  | 打造你的船长传承                                                                                                                                                                                                       |
@@ -663,6 +765,8 @@ The walkthrough modal, page by page, and the keyboard help.
 | A dealing voyage opens with a card deal rather than a market. Three cards land face down, and at each beat you keep one and pass the rest on: what you hold at the end is your path for the voyage, and one change of papers is allowed: at a port, for a fee in Gold that grows with your Renown. Your path decides your hold, how far your Renown can climb, and which trade orders lock to you. | 发牌航程以发牌开局，而不是开市。三张牌背面朝上落下，一路留一张、传走其余：最后留在手上的，就是你这趟的商道。商道可以换一次：在港口花一笔金币，价格随声望涨。商道定下你的货舱、声望能爬多高，以及哪些订单只认你这条道。 |
 | Weigh the numbers under each name rather than the crest. The five paths trade different holds, Renown ceilings and locked order pools, and the one you keep sails with you to the end.                                                                                                                                                                                                             | 看名字下面的数字，而不是徽记。五条商道的货舱、声望上限和专属订单各不相同；留下哪条，它陪你走到航程尽头。                                                                                                               |
 | ${((at + 1) / pages.length) * 100}%                                                                                                                                                                                                                                                                                                                                                                | {((at + 1) / pages.length) * 100}%                                                                                                                                                                                     |
+| You can target a specific captain with a Direct Barter Offer if you want to trade with only them.                                                                                                                                                                                                                                                                                                  | 只想和某一位船长做买卖，可以发一份定向易货给他。                                                                                                                                                                       |
+| Step {step} of {total}: {title}                                                                                                                                                                                                                                                                                                                                                                    | 第{step}步，共{total}步：{title}                                                                                                                                                                                       |
 
 **`src/components/portmasters/KeyboardShortcutHelp.tsx`** (6)
 
@@ -719,7 +823,7 @@ The walkthrough modal, page by page, and the keyboard help.
 | VAT: ${Math.round(VAT_RATE * 100)}% of finished goods profit margin                                 | 增值税：成品利润的{Math.round(VAT_RATE * 100)}%          |
 | Hire an escort, or ask the harbor for a loan                                                        | 雇一艘护航，或者向港湾借一笔                             |
 
-### Ventures and modes (33)
+### Ventures and modes (34)
 
 The venture lines and the game mode descriptions: what a harbor Venture reads like, and what each mode changes.
 
@@ -751,32 +855,33 @@ The venture lines and the game mode descriptions: what a harbor Venture reads li
 | ⚓ Venture missed its deadline. Partial refund: ${amount} Gold                                                           | ⚓ 一笔合股的期限到了，没凑齐。部分退款：{amount}金币                             |
 | ⚓ Venture canceled: another venture in the harbor already claimed this voyage's one chance. Full refund: ${amount} Gold | ⚓ 一笔合股被取消：港湾里另一笔合股先占了本航程唯一的机会。全额退款：{amount}金币 |
 
-**`src/lib/game/mode.ts`** (20)
+**`src/lib/game/mode.ts`** (21)
 
-| English                                                                                                                                                                                                                                                                                                                              | Chinese                                                                                                                                                                                     |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🧭 Dawn: Draft a Boon → 📦 Market: Buy at Ports → 🤝 Parley: Barter → 📜 Orders: Fill Trade Orders → 💸 Resolve: Pirates, Wages & Maintenance → 🚢 Dusk: Upgrade Ship                                                                                                                                                                | 🧭 破晓：抽机缘 → 📦 开市：港口采购 → 🤝 洽谈：易货 → 📜 订单：交付贸易订单 → 💸 结算：海盗、工钱与维护费 → 🚢 暮色：升级船只                                                               |
-| Fall short on the bills and the voyage is over for that captain: the bankruptcy screen is the last of it, and the standings are read without them.                                                                                                                                                                                   | 账单付不出来，这位船长的航程就到头了：破产画面是最后一站，排名不再把他算在内。                                                                                                              |
-| Three boons are dealt to you alone each round: cheaper buying, fuller workshops, a shelter from the tax, or a loan when the purse runs thin.                                                                                                                                                                                         | 每轮只发给你一个人的三张机缘：买得更便宜、工坊出得更多、躲开一笔税，或钱袋见底时的一笔借款。                                                                                                |
-| The one you take bends this round and no other, so read the rest of the round before you choose.                                                                                                                                                                                                                                     | 留下的那一张只作用本轮，所以先把本轮剩下的安排看完再选。                                                                                                                                    |
-| Load the hold at the port market and set each artisan a task. Prices shift every round, every captain is quoted their own, and wages fall due working or idle.                                                                                                                                                                       | 在集市装满货舱，给每位工匠派一件活。价格每轮都在变，每位船长拿到的报价都不一样，工钱干不干活都照付。                                                                                        |
-| What the artisans make lands at settlement, so their work answers the next manifest rather than the one you are about to fill.                                                                                                                                                                                                       | 工匠做出来的货到结算才落舱，所以他们赶的是下一张舱单，不是你手上正要交的这张。                                                                                                              |
-| The manifest deals and you commit: goods for Gold and Reputation, and nothing on the sheet can be revised once the fleet starts talking.                                                                                                                                                                                             | 舱单一发，你就落定：货换金币和声誉；等船队开始议价，单子上的字一个也改不了。                                                                                                                |
-| The fleet cannot see what you committed, which cuts both ways: your round stays hidden from them, and theirs from you.                                                                                                                                                                                                               | 船队看不到你交了什么，反过来也一样：你的这一轮对他们保密，他们的对你也保密。                                                                                                                |
-| The Captain's Exchange opens. Post what you can spare and name your price, or take what another captain has already set on the table.                                                                                                                                                                                                | 船长行市开了。挂出你富余的东西、标上你的价，或者接下别的船长已经摆上桌的。                                                                                                                  |
-| A majority of the fleet can open one captain's manifest from this table, and calling it spends the rest of the table's trading.                                                                                                                                                                                                      | 船队多数可以从这张桌上翻开一位船长的舱单；发起表决，这一场交易剩下的时间就没了。                                                                                                            |
-| Pirates roll for every coin aboard. An escort buys the safe passage for a cut of what you carry, so the fee is cheapest exactly when you have the least to protect.                                                                                                                                                                  | 海盗盯上船上的每一枚钱。护航按你随身金币的比例抽成，替你买下平安通行；所以你身上金币越少，这笔钱反倒越便宜。                                                                                |
-| Then the wages and the ship's maintenance come due, and what survives the bills is what you take to the yard.                                                                                                                                                                                                                        | 然后工钱和船只维护到期，扛过账单剩下多少，你就带多少去船坞。                                                                                                                                |
-| Spend what survived: a level of hull carries another module slot and cuts the cost of every haul, and a drafted module is bolted on for good.                                                                                                                                                                                        | 花掉留下来的金币：船体升一级多一个模块槽位，还砍低每一趟的运费；抽到的模块装上就永久生效。                                                                                                  |
-| What you spend here is what the next round's port cannot be bought with.                                                                                                                                                                                                                                                             | 在这里花掉的，下一轮开市就买不回货了。                                                                                                                                                      |
-| The round closes at the yard and opens again at the ports, with whatever this one left in the hold.                                                                                                                                                                                                                                  | 一轮在船坞合上，又在港口打开，带着这一轮留在货舱里的东西。                                                                                                                                  |
-| No captain leaves the table here. Fall short on the bills and the harbor marks it against you for the rest of the voyage, and you sail on with your card, your vote and your say at the table.                                                                                                                                       | 没有船长在这里离席。账单付不出，港湾会在剩下的航程里一直记着这笔账；你带着牌、票和桌上的发言权，继续往前走。                                                                                |
-| The manifest closes before the table opens: Orders runs ahead of Parley, so you commit to your sheet first and nothing on it can be revised once the fleet starts talking.                                                                                                                                                           | 舱单先行，桌面后开：订单排在洽谈之前，所以你先对单子落定，船队一开口议价，单子上的内容就不能再改。                                                                                          |
-| Every voyage here runs ${GAMBIT_LEGS} rounds, whatever tier you sail. That is the length the harbor's two votes are tuned to.                                                                                                                                                                                                        | 这里的航程不论难度，都走 {GAMBIT_LEGS}轮。港湾的两次表决就是照这个长度调的。                                                                                                                |
-| Every captain is dealt a private card when the voyage leaves the dock, and no one else can see it: most are Honest Captains sailing the fleet's public objective, while a table of four or more hides a Pirate in the fleet and a table of six or more may hide a Broker beside them. Every card turns face up when the voyage ends. | 航程离港时，每位船长都发到一张别人看不到的私牌：多数是诚信船长，跟着船队的公开目标走；四人以上的桌上，船队里藏着一个海盗，六人以上还可能多藏一个掮客。航程结束时，所有牌都翻开。            |
-| From round ${AUDIT_FROM_ROUND}, a simple majority of the fleet can open one captain's manifest at a Parley. The room is shown ${AUDIT_REVEAL_COUNT} of that captain's last ${AUDIT_WINDOW} fills, and calling the vote spends the rest of that Parley's trading.                                                                     | 从第 {AUDIT_FROM_ROUND}轮起，船队过半数可以在洽谈时翻开一位船长的舱单。港湾会看到那位船长最近 {AUDIT_WINDOW}笔交货中的 {AUDIT_REVEAL_COUNT}笔；发起这次表决，那场洽谈剩下的交易时间就没了。 |
+| English                                                                                                                                                                                                                                                                                                                              | Chinese                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🧭 Dawn: Draft a Boon → 📦 Market: Buy at Ports → 🤝 Parley: Barter → 📜 Orders: Fill Trade Orders → 💸 Resolve: Pirates, Wages & Maintenance → 🚢 Dusk: Upgrade Ship                                                                                                                                                                | 🧭 破晓：抽机缘 → 📦 开市：港口采购 → 🤝 洽谈：易货 → 📜 订单：交付贸易订单 → 💸 结算：海盗、工钱与维护费 → 🚢 暮色：升级船只                                                                            |
+| Fall short on the bills and the voyage is over for that captain: the bankruptcy screen is the last of it, and the standings are read without them.                                                                                                                                                                                   | 账单付不出来，这位船长的航程就到头了：破产画面是最后一站，排名不再把他算在内。                                                                                                                           |
+| Three boons are dealt to you alone each round: cheaper buying, fuller workshops, a shelter from the tax, or a loan when the purse runs thin.                                                                                                                                                                                         | 每轮只发给你一个人的三张机缘：买得更便宜、工坊出得更多、躲开一笔税，或钱袋见底时的一笔借款。                                                                                                             |
+| The one you take bends this round and no other, so read the rest of the round before you choose.                                                                                                                                                                                                                                     | 留下的那一张只作用本轮，所以先把本轮剩下的安排看完再选。                                                                                                                                                 |
+| Load the hold at the port market and set each artisan a task. Prices shift every round, every captain is quoted their own, and wages fall due working or idle.                                                                                                                                                                       | 在集市装满货舱，给每位工匠派一件活。价格每轮都在变，每位船长拿到的报价都不一样，工钱干不干活都照付。                                                                                                     |
+| What the artisans make lands at settlement, so their work answers the next manifest rather than the one you are about to fill.                                                                                                                                                                                                       | 工匠做出来的货到结算才落舱，所以他们赶的是下一张舱单，不是你手上正要交的这张。                                                                                                                           |
+| The manifest deals and you commit: goods for Gold and Reputation, and nothing on the sheet can be revised once the fleet starts talking.                                                                                                                                                                                             | 舱单一发，你就落定：货换金币和声誉；等船队开始议价，单子上的字一个也改不了。                                                                                                                             |
+| The fleet cannot see what you committed, which cuts both ways: your round stays hidden from them, and theirs from you.                                                                                                                                                                                                               | 船队看不到你交了什么，反过来也一样：你的这一轮对他们保密，他们的对你也保密。                                                                                                                             |
+| The Captain's Exchange opens. Post what you can spare and name your price, or take what another captain has already set on the table.                                                                                                                                                                                                | 船长行市开了。挂出你富余的东西、标上你的价，或者接下别的船长已经摆上桌的。                                                                                                                               |
+| A majority of the fleet can open one captain's manifest from this table, and calling it spends the rest of the table's trading.                                                                                                                                                                                                      | 船队多数可以从这张桌上翻开一位船长的舱单；发起表决，这一场交易剩下的时间就没了。                                                                                                                         |
+| Pirates roll for every coin aboard. An escort buys the safe passage for a cut of what you carry, so the fee is cheapest exactly when you have the least to protect.                                                                                                                                                                  | 海盗盯上船上的每一枚钱。护航按你随身金币的比例抽成，替你买下平安通行；所以你身上金币越少，这笔钱反倒越便宜。                                                                                             |
+| Then the wages and the ship's maintenance come due, and what survives the bills is what you take to the yard.                                                                                                                                                                                                                        | 然后工钱和船只维护到期，扛过账单剩下多少，你就带多少去船坞。                                                                                                                                             |
+| Spend what survived: a level of hull carries another module slot and cuts the cost of every haul, and a drafted module is bolted on for good.                                                                                                                                                                                        | 花掉留下来的金币：船体升一级多一个模块槽位，还砍低每一趟的运费；抽到的模块装上就永久生效。                                                                                                               |
+| What you spend here is what the next round's port cannot be bought with.                                                                                                                                                                                                                                                             | 在这里花掉的，下一轮开市就买不回货了。                                                                                                                                                                   |
+| The round closes at the yard and opens again at the ports, with whatever this one left in the hold.                                                                                                                                                                                                                                  | 一轮在船坞合上，又在港口打开，带着这一轮留在货舱里的东西。                                                                                                                                               |
+| No captain leaves the table here. Fall short on the bills and the harbor marks it against you for the rest of the voyage, and you sail on with your card, your vote and your say at the table.                                                                                                                                       | 没有船长在这里离席。账单付不出，港湾会在剩下的航程里一直记着这笔账；你带着牌、票和桌上的发言权，继续往前走。                                                                                             |
+| The manifest closes before the table opens: Orders runs ahead of Parley, so you commit to your sheet first and nothing on it can be revised once the fleet starts talking.                                                                                                                                                           | 舱单先行，桌面后开：订单排在洽谈之前，所以你先对单子落定，船队一开口议价，单子上的内容就不能再改。                                                                                                       |
+| Every voyage here runs 12 rounds, whatever tier you sail. That is the length the harbor's two votes are tuned to.                                                                                                                                                                                                                    | 这里的航程不论难度，都走12轮。港湾的两次表决就是照这个长度调的。                                                                                                                                         |
+| Every captain is dealt a private card when the voyage leaves the dock, and no one else can see it: most are Honest Captains sailing the fleet's public objective, while a table of four or more hides a Pirate in the fleet and a table of six or more may hide a Broker beside them. Every card turns face up when the voyage ends. | 航程离港时，每位船长都发到一张别人看不到的私牌：多数是诚信船长，跟着船队的公开目标走；四人以上的桌上，船队里藏着一个海盗，六人以上还可能多藏一个掮客。航程结束时，所有牌都翻开。                         |
+| From round 5, a simple majority of the fleet can open one captain's manifest at a Parley. The room is shown 2 of that captain's last 5 fills, and calling the vote spends the rest of that Parley's trading.                                                                                                                         | 从第5轮起，船队过半数可以在洽谈时翻开一位船长的舱单。港湾会看到那位船长最近5笔交货中的2笔；发起这次表决，那场洽谈剩下的交易时间就没了。                                                                  |
+| From round 9, two thirds of the captains still sailing can vote one captain ashore, once a voyage. The ship and its hold go to the harbor, half that captain's Gold stays aboard, and they take up the Harbormaster's hand: once a round, they name a port and lean every price there 10 percent either way.                         | 从第9轮起，仍在航程中的船长凑够三分之二，就能投票把一位船长放逐上岸，每趟航程一次。船和舱里的货归港湾，他一半的金币留在船上；此后他接过港务长之手：每轮一次，点一座港口，把那儿的物价往任意一边拨动10%。 |
 
-### The engine speaks (307)
+### The engine speaks (370)
 
 The engine's own voice: phase headers, the market and its pricing, orders, workers, boons, refits, pirates, the chronicle and the voyage log.
 
@@ -812,20 +917,30 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | Age of the Broker                                                                                       | 掮客之年                                                |
 | The Broker's Favor commission cap is raised to 250 Gold, so a single favor can pay out more than usual. | 掮客的人情进账上限提到250金币，一次人情比平时给得更多。 |
 
-**`src/lib/game/engine/aid.ts`** (2)
+**`src/lib/game/engine/aid.ts`** (9)
 
-| English                                                                                                   | Chinese                                                  |
-| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| 🤝 No Reputation this time: you have already earned this voyage's full ${cap} for helping other captains. | 🤝 这次没有声誉：本航程帮其他船长的{cap}点，你已经拿满。 |
-| \n📋=== Settling Outstanding Loans ===                                                                    | \n📋=== 结清未偿借款 ===                                 |
+| English                                                                                                          | Chinese                                                                       |
+| ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| 🤝 No Reputation this time: you have already earned this voyage's full ${cap} for helping other captains.        | 🤝 这次没有声誉：本航程帮其他船长的{cap}点，你已经拿满。                      |
+| \n📋=== Settling Outstanding Loans ===                                                                           | \n📋=== 结清未偿借款 ===                                                      |
+| 🆘 {loan.fromName} lent you {loan.amount} Gold. Repay it before the voyage ends, or it's deducted automatically. | 🆘 {loan.fromName}借给你{loan.amount}金币。航程结束前还清，不然会被自动扣还。 |
+| 🤝 Lent {loan.borrowerName} {loan.amount} Gold. Reputation +{repGain} for helping a fellow captain.              | 🤝 借给{loan.borrowerName}{loan.amount}金币。帮了同席船长，声誉 +{repGain}。  |
+| 🤝 Lent {loan.borrowerName} {loan.amount} Gold.                                                                  | 🤝 借给{loan.borrowerName}{loan.amount}金币。                                 |
+| 💰 Repaid {debt.counterpartyName}: {debt.amount} Gold                                                            | 💰 已还{debt.counterpartyName}：{debt.amount}金币                             |
+| 💰 {fromName} repaid you {amount} Gold                                                                           | 💰 {fromName}还给你{amount}金币                                               |
+| ⚠️ Could not fully repay {debt.counterpartyName}: paid {paid} of {debt.amount} Gold owed                         | ⚠️ 没能还清{debt.counterpartyName}：欠{debt.amount}金币，只付了{paid}         |
+| 💰 Settled outstanding loan to {debt.counterpartyName}: {paid} Gold                                              | 💰 已结清欠{debt.counterpartyName}的借款：{paid}金币                          |
 
-**`src/lib/game/engine/backingState.ts`** (3)
+**`src/lib/game/engine/backingState.ts`** (6)
 
-| English                                                                                                                          | Chinese                                                                                  |
-| -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| ❌ Need ${amount} Gold to back that loan, have ${state.money}                                                                    | ❌ 为这笔借款作保要{amount}金币，现有{state.money}                                       |
-| 🛡️ Pledged ${amount} Gold to back a fellow captain's loan                                                                        | 🛡️ 质押{amount}金币，为同席船长的借款作保                                                |
-| ⚖️ Age of the Lender: a pledge that comes home whole pays ${Math.round((multiplier - 1) * 100)}% more while it holds the harbor. | ⚖️ 债主之年：时代执掌港湾期间，质押完好收回，多付{Math.round((multiplier - 1) * 100)}%。 |
+| English                                                                                                                           | Chinese                                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| ❌ Need ${amount} Gold to back that loan, have ${state.money}                                                                     | ❌ 为这笔借款作保要{amount}金币，现有{state.money}                                       |
+| 🛡️ Pledged ${amount} Gold to back a fellow captain's loan                                                                         | 🛡️ 质押{amount}金币，为同席船长的借款作保                                                |
+| ⚖️ Age of the Lender: a pledge that comes home whole pays ${Math.round((multiplier - 1) * 100)}% more while it holds the harbor.  | ⚖️ 债主之年：时代执掌港湾期间，质押完好收回，多付{Math.round((multiplier - 1) * 100)}%。 |
+| 🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold. Reputation +{repGain} for the risk paying off. | 🛡️ 你的作保没有被动用，质押全额退回：{refundAmount}金币。风险有了回报，声誉 +{repGain}。 |
+| 🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold.                                                | 🛡️ 你的作保没有被动用，质押全额退回：{refundAmount}金币。                                |
+| 🛡️ Your backing partially covered a captain's shortfall: {calledAmount} Gold spent, {refundAmount} Gold returned.                 | 🛡️ 你的作保补上了一位船长缺口的一部分：花去{calledAmount}金币，退回{refundAmount}金币。  |
 
 **`src/lib/game/engine/barge.ts`** (5)
 
@@ -837,19 +952,26 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | ❌ The barge charges ${price} Gold a ration, and the purse cannot cover one.                                                           | ❌ 驳船一份口粮要{price}金币，钱袋连一份也付不起。                         |
 | ⛵ The barge takes ${cost} Gold for ${wanted} ${wanted === 1 ? "ration" : "rations"} of grain. ${left - wanted} left for you this leg. | ⛵ 驳船收{cost}金币，卖你{wanted}份米粮。本航段还给你剩{left - wanted}份。 |
 
-**`src/lib/game/engine/barter.ts`** (7)
+**`src/lib/game/engine/barter.ts`** (14)
 
-| English                                                            | Chinese                                   |
-| ------------------------------------------------------------------ | ----------------------------------------- |
-| ⚖️ Age of the Trader: +${gain} Reputation for the completed trade. | ⚖️ 商贾之年：这笔易货成交，声誉 +{gain}。 |
-| ❌ Can't barter an item for itself                                 | ❌ 不能拿同一种货换它自己。               |
-| ❌ Barter amounts must be whole numbers of at least 1              | ❌ 易货数量得是整数，至少1。              |
-| swept when the voyage moved on                                     | 航段推进时清出                            |
-| refused by the room                                                | 被众人拒收                                |
-| returned as the voyage loaded                                      | 随航程载入退回                            |
-| ⏭️ Bartering ended                                                 | ⏭️ 易货结束                               |
+| English                                                                               | Chinese                                                                         |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| ⚖️ Age of the Trader: +${gain} Reputation for the completed trade.                    | ⚖️ 商贾之年：这笔易货成交，声誉 +{gain}。                                       |
+| ❌ Can't barter an item for itself                                                    | ❌ 不能拿同一种货换它自己。                                                     |
+| ❌ Barter amounts must be whole numbers of at least 1                                 | ❌ 易货数量得是整数，至少1。                                                    |
+| swept when the voyage moved on                                                        | 航段推进时清出                                                                  |
+| refused by the room                                                                   | 被众人拒收                                                                      |
+| returned as the voyage loaded                                                         | 随航程载入退回                                                                  |
+| ⏭️ Bartering ended                                                                    | ⏭️ 易货结束                                                                     |
+| ❌ Can't offer {offerAmount} {offerItem}, only have {owned}                           | ❌ 拿不出{offerAmount}件{offerItem}，手上只有{owned}件                          |
+| 🤝 Posted a barter offer: {offerAmount} {offerItem} for {requestAmount} {requestItem} | 🤝 挂出易货报价：{offerAmount}份{offerItem}，想换{requestAmount}份{requestItem} |
+| withdrawn                                                                             | 由本人撤回                                                                      |
+| ↩️ Barter offer {cause}, {offerAmount} {offerItem} returned                           | ↩️ 易货报价{cause}，退回{offerAmount}份{offerItem}                              |
+| ❌ Can't pay {requestAmount} {requestItem}, only have {owned}                         | ❌ 付不出{requestAmount}件{requestItem}，手上只有{owned}件                      |
+| 🤝 Traded {requestAmount} {requestItem} for {offerAmount} {offerItem}                 | 🤝 用{requestAmount}件{requestItem}换到{offerAmount}件{offerItem}               |
+| 🤝 Barter offer accepted, received {requestAmount} {requestItem}                      | 🤝 接下易货报价，收到{requestAmount}件{requestItem}                             |
 
-**`src/lib/game/engine/bazaar.ts`** (8)
+**`src/lib/game/engine/bazaar.ts`** (12)
 
 | English                                                                                                                                                  | Chinese                                                                                      |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -861,8 +983,12 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | The port of leg ${leg} drew ${row.good} and priced it against your rumor.                                                                                | 第{leg}航段的港口抽到了{row.good}，按你的风声给它定了价。                                    |
 | The port of leg ${leg} drew no ${row.good}, so your rumor moved no price you could buy.                                                                  | 第{leg}航段的港口没有抽到{row.good}，你的风声没有拨动任何你能买到的价格。                    |
 | ${row.good}: every price ${percent} percent ${way} at the next port                                                                                      | {row.good}：下一港的每个价格{way} {percent}%                                                 |
+| {good}: every price {percent} percent higher at the next port                                                                                            | {good}：下一个港口所有价格上浮{percent}%                                                     |
+| {good}: every price {percent} percent lower at the next port                                                                                             | {good}：下一个港口所有价格下调{percent}%                                                     |
+| higher                                                                                                                                                   | 涨                                                                                           |
+| lower                                                                                                                                                    | 跌                                                                                           |
 
-**`src/lib/game/engine/boons.ts`** (14)
+**`src/lib/game/engine/boons.ts`** (17)
 
 | English                                                                                                                                                                               | Chinese                                                                                                                                   |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
@@ -880,24 +1006,30 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | ❌ The yard has nothing new to deal this hull: every module it could offer is either aboard or already on the table. Take one of these, sell one at the table, or come back next leg. | ❌ 船坞没有新货能给这艘船体了：它拿得出来的模块，要么已经在船上，要么已经摆在桌上。从这些里挑一个，或者到桌上卖掉一个，要么下个航段再来。 |
 | 🔄 Swapped Module Choices for a fresh batch                                                                                                                                           | 🔄 换了一批新的模块                                                                                                                       |
 | ❌ That seat is no longer on your hull, so there is nothing there to replace. Back to Draft and take the card again: the yard fits it to the hull as it stands.                       | ❌ 那个槽位已经不在你的船体上，那里没有可切换的东西。回到抽取，重新拿一次牌：船坞会按船体现在的样子装上它。                               |
+| 🎉 Ship Upgraded to Level {state.shipLevel}! +1 Module Slot, +{SHIP_DISCOUNT_PER_LEVEL} Discount                                                                                      | 🎉 船升级到{state.shipLevel}级！模块槽位 +1，折扣 +{SHIP_DISCOUNT_PER_LEVEL}                                                              |
+| 🔄 Swapped {oldCardName} for {newCardName}!                                                                                                                                           | 🔄 把{oldCardName}换成了{newCardName}！                                                                                                   |
+| ✅ Installed {cardName}!                                                                                                                                                              | ✅ 装上了{cardName}！                                                                                                                     |
 
-**`src/lib/game/engine/chronicle.ts`** (4)
+**`src/lib/game/engine/chronicle.ts`** (5)
 
-| English                                | Chinese                      |
-| -------------------------------------- | ---------------------------- |
-| the Monsoon Season                     | 季风时节                     |
-| The voyage ran ${input.rounds} rounds. | 本航程走了{input.rounds}轮。 |
-| borrowed once                          | 借入过一次                   |
-| ${joined}.                             | {joined}。                   |
+| English                                                                               | Chinese                                                           |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| the Monsoon Season                                                                    | 季风时节                                                          |
+| The voyage ran ${input.rounds} rounds.                                                | 本航程走了{input.rounds}轮。                                      |
+| borrowed once                                                                         | 借入过一次                                                        |
+| ${joined}.                                                                            | {joined}。                                                        |
+| The books ran out mid voyage, and {input.displayName} sailed the rest of it bankrupt. | 航程走到一半，账上见了底，{input.displayName}破产跑完了剩下的路。 |
 
-**`src/lib/game/engine/contracts.ts`** (2)
+**`src/lib/game/engine/contracts.ts`** (4)
 
-| English                                                                     | Chinese                                                  |
-| --------------------------------------------------------------------------- | -------------------------------------------------------- |
-| 🛡️ Raiders meant for ${who} met your guns: your hold lost ${ate} Gold.      | 🛡️ 冲{who}去的海盗撞上了你的炮口：货舱损失{ate}金币。    |
-| 🛡️ Raiders meant for ${who} met your guns and found your hold already bare. | 🛡️ 冲{who}去的海盗撞上了你的炮口，只见你的货舱早已空了。 |
+| English                                                                                  | Chinese                                                            |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 🛡️ Raiders meant for ${who} met your guns: your hold lost ${ate} Gold.                   | 🛡️ 冲{who}去的海盗撞上了你的炮口：货舱损失{ate}金币。              |
+| 🛡️ Raiders meant for ${who} met your guns and found your hold already bare.              | 🛡️ 冲{who}去的海盗撞上了你的炮口，只见你的货舱早已空了。           |
+| 🤝 Escort contract: paid {paid} Gold to {contract.sellerName} for one leg of protection. | 🤝 护航契约：花{paid}金币，向{contract.sellerName}买一航段的保护。 |
+| 🤝 Escort contract: {buyerName} paid {contract.fee} Gold for one leg of protection.      | 🤝 护航契约：{buyerName}花{contract.fee}金币，买下一航段的保护。   |
 
-**`src/lib/game/engine/draft.ts`** (7)
+**`src/lib/game/engine/draft.ts`** (8)
 
 | English                                                                      | Chinese                                                |
 | ---------------------------------------------------------------------------- | ------------------------------------------------------ |
@@ -908,51 +1040,67 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | You hold no path to set aside.                                               | 你手上没有可以搁下的商道。                             |
 | You already hold that path.                                                  | 你已经握着那条商道了。                                 |
 | ❌ Need ${fee} Gold to change your papers.                                   | ❌ 切换文书要{fee}金币。                               |
+| 🧭 You took up the {pathName} path.                                          | 🧭 你走上了{pathName}之道。                            |
 
-**`src/lib/game/engine/lifecycle.ts`** (12)
+**`src/lib/game/engine/lifecycle.ts`** (20)
 
-| English                                                      | Chinese                                 |
-| ------------------------------------------------------------ | --------------------------------------- |
-| 🏛️ No profit, no income tax due                              | 🏛️ 没有盈利，不用缴所得税               |
-| ⏭️ Trading skipped                                           | ⏭️ 跳过交易                             |
-| \n👥=== Processing Worker Production ===                     | \n👥=== 结算工匠产出 ===                |
-| \n💰=== Paying Worker Wages ===                              | \n💰=== 支付工匠工钱 ===                |
-| ⏭️ Skipped Shipyard Actions                                  | ⏭️ 跳过船坞操作                         |
-| 🎮 ${APP_NAME} · Game Over!                                  | 🎮 {APP_NAME} · 游戏结束！              |
-| 💰 Final Funds: ${state.money} Gold                          | 💰 最终资金：{state.money}金币          |
-| 🏆 Final Reputation: ${state.score}                          | 🏆 最终声誉：{state.score}              |
-| 📈 Rank: ${rating}                                           | 📈 评级：{rating}                       |
-| ⚓ Welcome to ${APP_NAME}!                                   | ⚓ 欢迎来到{APP_NAME}！                 |
-| 🚢 Sail across ports, build your business empire!            | 🚢 扬帆走遍各个港口，开创你的商业帝国！ |
-| 👥 Hire artisans to craft valuable goods for higher profits! | 👥 雇工匠，做出贵重货物，赚更高的利润！ |
+| English                                                      | Chinese                                     |
+| ------------------------------------------------------------ | ------------------------------------------- |
+| 🏛️ No profit, no income tax due                              | 🏛️ 没有盈利，不用缴所得税                   |
+| ⏭️ Trading skipped                                           | ⏭️ 跳过交易                                 |
+| \n👥=== Processing Worker Production ===                     | \n👥=== 结算工匠产出 ===                    |
+| \n💰=== Paying Worker Wages ===                              | \n💰=== 支付工匠工钱 ===                    |
+| ⏭️ Skipped Shipyard Actions                                  | ⏭️ 跳过船坞操作                             |
+| 🎮 ${APP_NAME} · Game Over!                                  | 🎮 {APP_NAME} · 游戏结束！                  |
+| 💰 Final Funds: ${state.money} Gold                          | 💰 最终资金：{state.money}金币              |
+| 🏆 Final Reputation: ${state.score}                          | 🏆 最终声誉：{state.score}                  |
+| 📈 Rank: ${rating}                                           | 📈 评级：{rating}                           |
+| ⚓ Welcome to ${APP_NAME}!                                   | ⚓ 欢迎来到{APP_NAME}！                     |
+| 🚢 Sail across ports, build your business empire!            | 🚢 扬帆走遍各个港口，开创你的商业帝国！     |
+| 👥 Hire artisans to craft valuable goods for higher profits! | 👥 雇工匠，做出贵重货物，赚更高的利润！     |
+| 💰 Revenue this round: {state.roundRevenue} Gold             | 💰 本轮收入：{state.roundRevenue}金币       |
+| 💸 Total Cost this round: {totalCost} Gold                   | 💸 本轮总支出：{totalCost}金币              |
+| 👥 Wages: {state.workerWages} Gold                           | 👥 工钱：{state.workerWages}金币            |
+| 📈 Pretax Profit: {preTax} Gold                              | 📈 税前利润：{preTax}金币                   |
+| 🏛️ Income Tax Paid ({rate}%): {tax} Gold                     | 🏛️ 所得税已缴（{rate}%）：{tax}金币         |
+| 🧾 VAT Paid this round: {state.vatPaid} Gold                 | 🧾 本轮增值税已缴：{state.vatPaid}金币      |
+| \n🔄=== Preparing for Round {state.currentRound} ===         | \n🔄=== 第{state.currentRound}轮 · 准备 === |
+| ✅ Trading ended, completed {state.orderCount} trades        | ✅ 交易结束，完成{state.orderCount}笔       |
 
-**`src/lib/game/engine/market.ts`** (10)
+**`src/lib/game/engine/market.ts`** (15)
 
-| English                                                                                                                                                     | Chinese                                                                               |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| ${m}×${a}                                                                                                                                                   | {m}×{a}                                                                               |
-| 🌊 Tidewatch Alert: the harbor takes notice of a bustling crew! One more cargo lot joins the Port Purchase board, every round, for the rest of this voyage. | 🌊 观潮预警：港湾瞧见船队忙起来了！本航程余下的每一轮，港口采购板上都会多出一件货物。 |
-| ❌ Insufficient funds! Need ${cost} Gold, Have ${state.money} Gold                                                                                          | ❌ 资金不足！要{cost}金币，现有{state.money}金币                                      |
-| ❌ No room in the hold for that lot: it takes ${units} ${units === 1 ? "slot" : "slots"} and ${room} ${room === 1 ? "is" : "are"} free.                     | ❌ 货舱放不下这件货：它要占{units}个仓位，空着{room}个。                              |
-| 🛒 Bought Product at ${card.port}, Total ${cost} Gold                                                                                                       | 🛒 在{card.port}买下成品，合计{cost}金币                                              |
-| 💡 Tip: VAT applies when selling finished products                                                                                                          | 💡 提示：卖出成品要缴增值税                                                           |
-| ${ICONS[r.type]}${r.type}×${r.quantity}(${r.price} Gold/item)                                                                                               | {ICONS[r.type]}{r.type}×{r.quantity}（{r.price}金币/件）                              |
-| 🛒 Bought at ${card.port}: ${txt}, Total ${cost} Gold                                                                                                       | 🛒 在{card.port}买下：{txt}，合计{cost}金币                                           |
-| 💰 Current Funds: ${state.money} Gold                                                                                                                       | 💰 当前资金：{state.money}金币                                                        |
-| ⏭️ Purchasing skipped                                                                                                                                       | ⏭️ 跳过采购                                                                           |
+| English                                                                                                                                                     | Chinese                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| ${m}×${a}                                                                                                                                                   | {m}×{a}                                                                                                     |
+| 🌊 Tidewatch Alert: the harbor takes notice of a bustling crew! One more cargo lot joins the Port Purchase board, every round, for the rest of this voyage. | 🌊 观潮预警：港湾瞧见船队忙起来了！本航程余下的每一轮，港口采购板上都会多出一件货物。                       |
+| ❌ Insufficient funds! Need ${cost} Gold, Have ${state.money} Gold                                                                                          | ❌ 资金不足！要{cost}金币，现有{state.money}金币                                                            |
+| ❌ No room in the hold for that lot: it takes ${units} ${units === 1 ? "slot" : "slots"} and ${room} ${room === 1 ? "is" : "are"} free.                     | ❌ 货舱放不下这件货：它要占{units}个仓位，空着{room}个。                                                    |
+| 🛒 Bought Product at ${card.port}, Total ${cost} Gold                                                                                                       | 🛒 在{card.port}买下成品，合计{cost}金币                                                                    |
+| 💡 Tip: VAT applies when selling finished products                                                                                                          | 💡 提示：卖出成品要缴增值税                                                                                 |
+| ${ICONS[r.type]}${r.type}×${r.quantity}(${r.price} Gold/item)                                                                                               | {ICONS[r.type]}{r.type}×{r.quantity}（{r.price}金币/件）                                                    |
+| 🛒 Bought at ${card.port}: ${txt}, Total ${cost} Gold                                                                                                       | 🛒 在{card.port}买下：{txt}，合计{cost}金币                                                                 |
+| 💰 Current Funds: ${state.money} Gold                                                                                                                       | 💰 当前资金：{state.money}金币                                                                              |
+| ⏭️ Purchasing skipped                                                                                                                                       | ⏭️ 跳过采购                                                                                                 |
+| 🛒 Bought Product at {card.port}: {icon}{type}×{quantity} (@{price} Gold/item, Mat Cost {matCost} Gold), Total {cost} Gold                                  | 🛒 在{card.port}买下成品：{icon}{type}×{quantity}（@{price}金币/件，材料成本{matCost}金币），合计{cost}金币 |
+| ✨ Boon Discount Applied! Saved {saved} Gold                                                                                                                | ✨ 机缘折扣生效！省下{saved}金币                                                                            |
+| 📊 Purchased {state.purchaseCount} cargo batches                                                                                                            | 📊 采购了{state.purchaseCount}批货物                                                                        |
+| 🗺️ The Silk Road Charter opens! The harbor grows busier: {tierPurchaseCount} cargo lots and as many buyers from this voyage on.                             | 🗺️ 丝路特许状开启！港湾更热闹了：从本航程起，货物多出{tierPurchaseCount}件，买家也一样多。                  |
+| ✅ Purchasing ended, bought {state.purchaseCount} batches                                                                                                   | ✅ 采购结束，共买下{state.purchaseCount}批                                                                  |
 
-**`src/lib/game/engine/milestones.ts`** (1)
+**`src/lib/game/engine/milestones.ts`** (2)
 
 | English                                 | Chinese                               |
 | --------------------------------------- | ------------------------------------- |
 | \n${moment.icon}=== ${moment.title} === | \n{moment.icon}=== {moment.title} === |
+| {icon} Milestone boon: {lead}           | {icon} 里程碑机缘：{lead}             |
 
-**`src/lib/game/engine/modules.ts`** (2)
+**`src/lib/game/engine/modules.ts`** (3)
 
-| English                                | Chinese                   |
-| -------------------------------------- | ------------------------- |
-| 🔧 ${name} is bolted to the hull.      | 🔧 {name}已铆在船体上。   |
-| ❌ The yard has no ${name} to bolt on. | ❌ 船坞没有可装的{name}。 |
+| English                                                             | Chinese                                                       |
+| ------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 🔧 ${name} is bolted to the hull.                                   | 🔧 {name}已铆在船体上。                                       |
+| ❌ The yard has no ${name} to bolt on.                              | ❌ 船坞没有可装的{name}。                                     |
+| 🤝 Module trade: paid {paid} Gold to {trade.sellerName} for {name}. | 🤝 模块交易：花{paid}金币，向{trade.sellerName}买下了{name}。 |
 
 **`src/lib/game/engine/objectives.ts`** (4)
 
@@ -963,15 +1111,17 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | ${ICONS[r.type]}${r.type}×${r.take}                                                                                | {ICONS[r.type]}{r.type}×{r.take}                                        |
 | 📜 Fleet Commission: delivered ${parts.join(" + ")} for ${paid} Gold. The Emperor's commission is exempt from VAT. | 📜 船队公议：交付{parts.join("、")}，得{paid}金币。皇命采办免缴增值税。 |
 
-**`src/lib/game/engine/opportunist.ts`** (3)
+**`src/lib/game/engine/opportunist.ts`** (5)
 
-| English                                              | Chinese                                 |
-| ---------------------------------------------------- | --------------------------------------- |
-| 🎭 Free Captain                                      | 🎭 自由船长                             |
-| 🎭 Borrow                                            | 🎭 借用                                 |
-| 🎭 Your borrow is spent, and the order stays locked. | 🎭 你的借用已经用完，这份订单仍然锁定。 |
+| English                                                                               | Chinese                                                      |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| 🎭 Free Captain                                                                       | 🎭 自由船长                                                  |
+| 🎭 Borrow                                                                             | 🎭 借用                                                      |
+| 🎭 Your borrow is spent, and the order stays locked.                                  | 🎭 你的借用已经用完，这份订单仍然锁定。                      |
+| {lead}: {payout} Gold instead of {reward}. One order filled without joining the path. | {lead}：拿{payout}金币，而不是{reward}。不入商道也完成一单。 |
+| 🎭 Borrows left this voyage: {left} of {allowance}.                                   | 🎭 本航程还能借用{left}/{allowance}次。                      |
 
-**`src/lib/game/engine/orders.ts`** (15)
+**`src/lib/game/engine/orders.ts`** (20)
 
 | English                                                                                                                                     | Chinese                                                                                                     |
 | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -990,6 +1140,11 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | ❌ Need ${cost} Gold for a rumor                                                                                                            | ❌ 买一条密语要{cost}金币                                                                                   |
 | 🗣️ Broker's Whisper: 'Word from ${port}: High demand for ${item}!'                                                                          | 🗣️ 掮客密语：'{port}有消息：急需{item}！'                                                                   |
 | 📜 Imperial Mandate at ${mandate.port}: ${need} for ${mandate.reward} Gold. The Emperor's commission is exempt from VAT.                    | 📜 {mandate.port}的皇命采办：要{need}，得{mandate.reward}金币。皇命采办免缴增值税。                         |
+| 🧾 Product Sales VAT: {totalVat} Gold                                                                                                       | 🧾 成品销售增值税：{totalVat}金币                                                                           |
+| {lead}: +{pct}% Reward!                                                                                                                     | {lead}：+{pct}%奖励！                                                                                       |
+| {lead}: Refunded {transport} Gold transport!                                                                                                | {lead}：退回运费{transport}金币！                                                                           |
+| {lead}: One extra order appeared.                                                                                                           | {lead}：多出1份订单。                                                                                       |
+| 📦 Completed Order at {order.demandPort}: {txt}                                                                                             | 📦 在{order.demandPort}完成订单：{txt}                                                                      |
 
 **`src/lib/game/engine/partialSight.ts`** (2)
 
@@ -998,16 +1153,17 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | a few   | 少量    |
 | a haul  | 大量    |
 
-**`src/lib/game/engine/pirates.ts`** (4)
+**`src/lib/game/engine/pirates.ts`** (5)
 
-| English                                                                  | Chinese                                     |
-| ------------------------------------------------------------------------ | ------------------------------------------- |
-| 🏴‍☠️ Pirates raided your hold! Lost all ${lost} Gold.                      | 🏴‍☠️ 海盗劫掠了你的货舱！{lost}金币全部损失。 |
-| 🌊 Clear seas. No pirates sighted this round.                            | 🌊 海面平静。本轮没有发现海盗。             |
-| ❌ Too late, this round's waters are already resolved                    | ❌ 太迟了，本轮的海面已经结算               |
-| 🛡️ Hired an escort for ${cost} Gold. Safe passage guaranteed this round. | 🛡️ 花{cost}金币雇了护航。本轮航路安全无虞。 |
+| English                                                                                   | Chinese                                                                   |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| 🏴‍☠️ Pirates raided your hold! Lost all ${lost} Gold.                                       | 🏴‍☠️ 海盗劫掠了你的货舱！{lost}金币全部损失。                               |
+| 🌊 Clear seas. No pirates sighted this round.                                             | 🌊 海面平静。本轮没有发现海盗。                                           |
+| ❌ Too late, this round's waters are already resolved                                     | ❌ 太迟了，本轮的海面已经结算                                             |
+| 🛡️ Hired an escort for ${cost} Gold. Safe passage guaranteed this round.                  | 🛡️ 花{cost}金币雇了护航。本轮航路安全无虞。                               |
+| 🏴‍☠️ Pirates raided your hold! Lost all {lost} Gold, and {lead} recovered {salvaged} of it. | 🏴‍☠️ 海盗劫掠了你的货舱！{lost}金币全没了，{lead}又替你追回{salvaged}金币。 |
 
-**`src/lib/game/engine/pricing.ts`** (6)
+**`src/lib/game/engine/pricing.ts`** (14)
 
 | English                                                                                                                 | Chinese                                                                                                  |
 | ----------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
@@ -1017,8 +1173,16 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | ${recipe.worker_type === "weaver" ? "Weaver" : recipe.worker_type === "master" ? "Master Weaver" : "Sachet Maker"} wage | {recipe.worker_type === "weaver" ? "织女" : recipe.worker_type === "master" ? "纺织大师" : "香囊师"}工钱 |
 | ${Math.round(VAT_RATE * 100)}% VAT on the margin                                                                        | 按差价计增值税{Math.round(VAT_RATE * 100)}%                                                              |
 | Floor at 0 Gold                                                                                                         | 下限0金币                                                                                                |
+| {boonName} (down {down}g)                                                                                               | {boonName}（降{down}金币）                                                                               |
+| {boonName} on woven goods                                                                                               | {boonName}（织物货物）                                                                                   |
+| {boonName} (down {perLot}g per lot)                                                                                     | {boonName}（每件降{perLot}金币）                                                                         |
+| {cardName} module                                                                                                       | {cardName}模块                                                                                           |
+| {cardName} module (woven freight waived)                                                                                | {cardName}模块（织物运费全免）                                                                           |
+| {boonName} (down {pct}%)                                                                                                | {boonName}（降{pct}%）                                                                                   |
+| {cardName} module (down 50%)                                                                                            | {cardName}模块（降50%）                                                                                  |
+| {cardName} module (down {perUnit}g per unit)                                                                            | {cardName}模块（每单位降{perUnit}金币）                                                                  |
 
-**`src/lib/game/engine/refits.ts`** (14)
+**`src/lib/game/engine/refits.ts`** (16)
 
 | English                                                                                                        | Chinese                                                                                      |
 | -------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -1036,6 +1200,8 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | ❌ A mend costs ${MEND_GOLD_PER_POINT} Gold and the purse is short.                                            | ❌ 缝补一次要{MEND_GOLD_PER_POINT}金币，钱袋不够。                                           |
 | ${ICONS.Rags} The harbor tailor takes ${MEND_GOLD_PER_POINT} Gold for ${back} point of the ${good}.            | {ICONS.Rags} 港湾的裁缝收{MEND_GOLD_PER_POINT}金币，补回{good}的{back}点。                   |
 | ❌ There is no worn ${contract.good} left to work on.                                                          | ❌ 没有还需要缝补的破旧{contract.good}了。                                                   |
+| 🤝 Refit: paid {paid} Gold to {seller} for the {good} to be put right.                                         | 🤝 整补：付{paid}金币给{seller}，把{good}整好。                                              |
+| 🤝 Refit: {buyer} paid {fee} Gold for the {good} to be put right.                                              | 🤝 整补：{buyer}付了{fee}金币，把{good}整好。                                                |
 
 **`src/lib/game/engine/seats.ts`** (4)
 
@@ -1053,7 +1219,7 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | 🪧 Standing orders at the port board: bought ${bought.length} cargo ${ bought.length === 1 ? "lot" : "lots" } you had priced. | 🪧 港口采购板上的常备订单：买下了{bought.length}件你定过价的货物。 |
 | 🪧 Standing orders at the trade board: filled ${filled} ${ filled === 1 ? "order" : "orders" } the hold could cover.          | 🪧 订单板上的常备订单：交付了{filled}份货舱供得上的订单。          |
 
-**`src/lib/game/engine/workers.ts`** (21)
+**`src/lib/game/engine/workers.ts`** (22)
 
 | English                                                                                                   | Chinese                                                                            |
 | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -1078,6 +1244,7 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | 💸 Paid Ship Maintenance Fee: ${cost} Gold                                                                | 💸 已付船只维护费：{cost}金币                                                      |
 | ⚠️ Forced payment of ${paid} Gold (Needed ${cost} Gold)                                                   | ⚠️ 被迫支付{paid}金币（要{cost}金币）                                              |
 | ⚠️ Funds depleted: the maintenance fee goes unpaid.                                                       | ⚠️ 资金耗尽：维护费交不上。                                                        |
+| 📋 Assigned: Produce {icon}{task} (Req: {materials})                                                      | 📋 已派活：产出{icon}{task}（需 {materials}）                                      |
 
 **`src/lib/game/foods.ts`** (3)
 
@@ -1119,7 +1286,7 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | Two thirds                                           | 三分之二                               |
 | ${shift.port}: every price ${percent} percent ${way} | {shift.port}：每个价格{way} {percent}% |
 
-**`src/lib/game/merits.ts`** (5)
+**`src/lib/game/merits.ts`** (6)
 
 | English                                                                          | Chinese                                                                |
 | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
@@ -1128,6 +1295,7 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | Get crowned Sea Master on a ${monsoon.name} voyage.                              | 在{monsoon.name}的航程中加冕沧海之主。                                 |
 | Eye of the Storm                                                                 | 风暴之眼                                                               |
 | Finish a ${monsoon.name} voyage with ${EYE_OF_THE_STORM_REPUTATION}+ Reputation. | 走完一次{monsoon.name}的航程，声誉达到{EYE_OF_THE_STORM_REPUTATION}+。 |
+| End a single voyage with {minScore}+ Reputation.                                 | 单趟航程拿下{minScore}+声誉。                                          |
 
 **`src/server/realtime/admin.ts`** (15)
 
@@ -1352,7 +1520,7 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | You've already backed this venture as much as any single captain can. It needs another captain to fund the rest. | 你对这份合股的出资已经到单人上限。余下的要等另一位船长出资。                       |
 | That venture is already fully funded.                                                                            | 那份合股已经募足了。                                                               |
 
-### The room, first sweep (299)
+### The room, first sweep (349)
 
 The room at play: the harbor frame, the market, orders, parley, escort contracts, the audit and the vote.
 
@@ -1418,17 +1586,18 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Save failed                                                                                                                             | 保存失败                                                                      |
 | Could not reach the Harbormaster.                                                                                                       | 联系不上港务长。                                                              |
 | This seat is not left by pressing Next Phase                                                                                            | 按下一阶段，退不出这个席位                                                    |
-| Room code copied                                                                                                                        | 港湾口令已复制                                                                |
+| Harbor code copied                                                                                                                      | 港湾口令已复制                                                                |
 | Harbor chat                                                                                                                             | 港湾聊天                                                                      |
 | Direct messages                                                                                                                         | 私聊                                                                          |
 
-**`src/components/portmasters/game/AudienceSelect.tsx`** (1)
+**`src/components/portmasters/game/AudienceSelect.tsx`** (2)
 
 | English                 | Chinese         |
 | ----------------------- | --------------- |
 | 🌊 Anyone in the harbor | 🌊 港湾里所有人 |
+| 🔒 {name} only          | 🔒 仅{name}     |
 
-**`src/components/portmasters/game/AuditPanel.tsx`** (11)
+**`src/components/portmasters/game/AuditPanel.tsx`** (13)
 
 | English                                                                                                                                                                                                                                                                                                                                                                                                                         | Chinese                                                                                                                                                                                                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1443,8 +1612,10 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | an empty larder, with no crew aboard to go hungry.                                                                                                                                                                                                                                                                                                                                                                              | 粮舱空空，船上没有船员会挨饿。                                                                                                                                                                                                                                 |
 | rations aboard, eaten one a head each leg.                                                                                                                                                                                                                                                                                                                                                                                      | 船上有口粮，每航段每人吃一份。                                                                                                                                                                                                                                 |
 | ${ reveal.flagged ? "The harbor's own checks could not reconcile this manifest, so its lines are withheld." : "A random sample of this captain's most recent order fulfillments, opened by a vote of the harbor. Their card, their Gold and the rest of their hold were not opened." } Opened by a majority in leg ${reveal.round}, which closed that leg's trading; the finding stays on the table for the rest of the voyage. | { reveal.flagged ? "港湾自己的核验对不上这份舱单，内容就不公开。" : "港湾投票开出的抽样，取自这位船长最近交付的订单。他的手牌、金币和货舱里其余的东西都没有打开。" }第{reveal.round}航段过半数票开启，那一段的交易就此结束；这条结论在本航程余下期间留在桌上。 |
+| {name}'s manifest                                                                                                                                                                                                                                                                                                                                                                                                               | {name}的舱单                                                                                                                                                                                                                                                   |
+| Larder {value}                                                                                                                                                                                                                                                                                                                                                                                                                  | 粮舱 {value}                                                                                                                                                                                                                                                   |
 
-**`src/components/portmasters/game/BarterTrade.tsx`** (13)
+**`src/components/portmasters/game/BarterTrade.tsx`** (14)
 
 | English                                                                                                                    | Chinese                                                          |
 | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
@@ -1461,24 +1632,29 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Item to request                                                                                                            | 索要的货物                                                       |
 | Direct this offer to a specific captain                                                                                    | 把这份报价发给指定船长                                           |
 | Every flexible trade this voyage allows you has been taken. You can still use the Captain's Exchange and accept any offer. | 本航程给你的灵活易货已经用光。船长行市还开着，报价你照样可以接。 |
+| Offered to {name} alone.                                                                                                   | 只报给{name}一人。                                               |
 
-**`src/components/portmasters/game/BazaarRumors.tsx`** (13)
+**`src/components/portmasters/game/BazaarRumors.tsx`** (17)
 
-| English                                                                                                                                                                  | Chinese                                                                                              |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| Speak for                                                                                                                                                                | 为                                                                                                   |
-| leaning                                                                                                                                                                  | 押                                                                                                   |
-| 📈 Higher                                                                                                                                                                | 📈 看涨                                                                                              |
-| 📉 Lower                                                                                                                                                                 | 📉 看跌                                                                                              |
-| Spoken.                                                                                                                                                                  | 已发声。                                                                                             |
-| ${SELLER_PATH.crest} ${SELLER_PATH.name} Bazaar                                                                                                                          | {SELLER_PATH.crest} {SELLER_PATH.name}香市                                                           |
-| Good the rumor is about                                                                                                                                                  | 风声说的是哪件货                                                                                     |
-| No commodity on this route is traded yet, so there is nothing to say.                                                                                                    | 这条航路上还没有货物成交，没什么可说的。                                                             |
-| Nobody has spoken at the bazaar yet this voyage.                                                                                                                         | 本航程还没有人在香市开口。                                                                           |
-| Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through. | 本航段和上一段都没人开口。板上只留这两段，再早的不留。更早的行拨动过的集市，全桌早就定价、交易过了。 |
-| Spoken in this leg. The next port prices this good against it, and the table reads which way you leaned the moment it does.                                              | 本航段已发声。下一港给这件货定价，就对着它来；价一落定，全桌都看得出你押的是哪一边。                 |
-| Spoken in this leg. The direction belongs to the speaker until the next port prices it, so nobody at this table can tell a call from a lie yet.                          | 本航段已发声。下一港定价之前，方向只有开口的人自己知道，所以全桌此刻分不清这句是真话还是谎话。       |
-| The market of this leg was priced against it, so the direction is public now.${ outcome ?                                                                                | 本航段的集市就是对着它定的价，方向如今人人都看得见。{ outcome ?                                      |
+| English                                                                                                                                                                                                                                | Chinese                                                                                                                                                             |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Speak for                                                                                                                                                                                                                              | 为                                                                                                                                                                  |
+| leaning                                                                                                                                                                                                                                | 押                                                                                                                                                                  |
+| 📈 Higher                                                                                                                                                                                                                              | 📈 看涨                                                                                                                                                             |
+| 📉 Lower                                                                                                                                                                                                                               | 📉 看跌                                                                                                                                                             |
+| Spoken.                                                                                                                                                                                                                                | 已发声。                                                                                                                                                            |
+| ${SELLER_PATH.crest} ${SELLER_PATH.name} Bazaar                                                                                                                                                                                        | {SELLER_PATH.crest} {SELLER_PATH.name}香市                                                                                                                          |
+| Good the rumor is about                                                                                                                                                                                                                | 风声说的是哪件货                                                                                                                                                    |
+| No commodity on this route is traded yet, so there is nothing to say.                                                                                                                                                                  | 这条航路上还没有货物成交，没什么可说的。                                                                                                                            |
+| Nobody has spoken at the bazaar yet this voyage.                                                                                                                                                                                       | 本航程还没有人在香市开口。                                                                                                                                          |
+| Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through.                                                               | 本航段和上一段都没人开口。板上只留这两段，再早的不留。更早的行拨动过的集市，全桌早就定价、交易过了。                                                                |
+| Spoken in this leg. The next port prices this good against it, and the table reads which way you leaned the moment it does.                                                                                                            | 本航段已发声。下一港给这件货定价，就对着它来；价一落定，全桌都看得出你押的是哪一边。                                                                                |
+| Spoken in this leg. The direction belongs to the speaker until the next port prices it, so nobody at this table can tell a call from a lie yet.                                                                                        | 本航段已发声。下一港定价之前，方向只有开口的人自己知道，所以全桌此刻分不清这句是真话还是谎话。                                                                      |
+| The market of this leg was priced against it, so the direction is public now.${ outcome ?                                                                                                                                              | 本航段的集市就是对着它定的价，方向如今人人都看得见。{ outcome ?                                                                                                     |
+| Publish                                                                                                                                                                                                                                | 发布                                                                                                                                                                |
+| Your rumor is on the board and the harbor has your name and {good}. Only you know which way it leans: {direction}. The table reads it the moment the port of leg {landsOn} prices it. The bazaar is quiet for you until leg {nextLeg}. | 你的风声已挂上板，港湾看到了你的名字和{good}。只有你知道它偏向哪边：{direction}。第{landsOn}航段的港口一给它定价，全桌就会读到。香市要到第{nextLeg}航段才重新听你。 |
+| The port of leg {landsOn} prices it. Speaking now quiets the bazaar for you until leg {quietUntil}.                                                                                                                                    | 第{landsOn}航段的港口会为它定价。现在开口，香市要到第{quietUntil}航段才重新听你。                                                                                   |
+| Bazaar · waiting                                                                                                                                                                                                                       | 香市 · 静候                                                                                                                                                         |
 
 **`src/components/portmasters/game/CloseFooter.tsx`** (1)
 
@@ -1486,7 +1662,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | ------- | ------- |
 | Close   | 关闭    |
 
-**`src/components/portmasters/game/EscortContracts.tsx`** (28)
+**`src/components/portmasters/game/EscortContracts.tsx`** (31)
 
 | English                                                                                                                                                                                                                                                          | Chinese                                                                                                                                       |
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1518,6 +1694,9 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | You are covering ${other} for ${fee} this leg                                                                                                                                                                                                                    | 本航段你替{other}护卫，价格{fee}                                                                                                              |
 | Your guns answered a raid meant for ${other}                                                                                                                                                                                                                     | 本该落在{other}头上的劫掠，由你的炮口接下                                                                                                     |
 | ${other} turned down your offer of ${fee}                                                                                                                                                                                                                        | {other}拒绝了你{fee}的报价                                                                                                                    |
+| Offer Protection                                                                                                                                                                                                                                                 | 挂出护航                                                                                                                                      |
+| ⏳ {sellerName} offers you one leg of cover for {fee} Gold. You are the one who answers: taking it pays the fee at the handshake, and turning it down leaves the row for them to read.                                                                           | ⏳ {sellerName}放出一段航段的护航给你，要价{fee}金币。答话的人是你：接下就在握手时付费，回绝了，这一行就留给他们自己看。                      |
+| {sellerName} sells one leg of cover for {fee}                                                                                                                                                                                                                    | {sellerName}出售一段航段的护航，价格{fee}                                                                                                     |
 
 **`src/components/portmasters/game/GameControlPanel.tsx`** (21)
 
@@ -1545,14 +1724,16 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Write what your seat should do when the clock plays it | 写下席位在计时替你出牌时该怎么做 |
 | Restart the voyage for everyone in the harbor          | 为港湾内所有人重开航程           |
 
-**`src/components/portmasters/game/GameLogPanel.tsx`** (2)
+**`src/components/portmasters/game/GameLogPanel.tsx`** (4)
 
 | English                                                       | Chinese                                    |
 | ------------------------------------------------------------- | ------------------------------------------ |
 | 📜 Ledger                                                     | 📜 账簿                                    |
 | The ledger is empty. Set sail to begin recording your voyage. | 账簿还是空的。一起航，你的航程就开始记了。 |
+| {count} entry                                                 | {count}条记录                              |
+| {count} entries                                               | {count}条记录                              |
 
-**`src/components/portmasters/game/GameModals.tsx`** (19)
+**`src/components/portmasters/game/GameModals.tsx`** (22)
 
 | English                                                                                                                                                                                          | Chinese                                                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -1575,6 +1756,9 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | ${APP_NAME} rules and shortcuts                                                                                                                                                                  | {APP_NAME} 规则与快捷键                                                                                                      |
 | Trade Strategy Advice                                                                                                                                                                            | 交易策略建议                                                                                                                 |
 | Close Board                                                                                                                                                                                      | 关闭面板                                                                                                                     |
+| 🔮 Buy Rumor ({intelCost}💰)                                                                                                                                                                     | 🔮 买传闻（{intelCost}💰）                                                                                                   |
+| • 🗣️ '{port} wants {item}'                                                                                                                                                                       | • 🗣️{port}想要{item}                                                                                                         |
+| Tutorial step {step} of {total}                                                                                                                                                                  | 教程第{step}步，共{total}步                                                                                                  |
 
 **`src/components/portmasters/game/GameStatusPanel.tsx`** (3)
 
@@ -1584,7 +1768,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Ledger           | 账簿     |
 | attention needed | 需要注意 |
 
-**`src/components/portmasters/game/HarborTopBar.tsx`** (10)
+**`src/components/portmasters/game/HarborTopBar.tsx`** (13)
 
 | English                                                     | Chinese                              |
 | ----------------------------------------------------------- | ------------------------------------ |
@@ -1598,8 +1782,11 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Turn on harbor sounds and UI feedback                       | 开启港湾音效与界面提示音             |
 | Mute harbor sounds                                          | 静音港湾音效                         |
 | Turn on harbor sounds                                       | 开启港湾音效                         |
+| Turn off the colorblind safe palette                        | 关闭色盲友好配色                     |
+| Use the colorblind safe palette                             | 启用色盲友好配色                     |
+| Notifications, {unreadCount} unread                         | 通知，{unreadCount} 条未读           |
 
-**`src/components/portmasters/game/MaroonPanel.tsx`** (16)
+**`src/components/portmasters/game/MaroonPanel.tsx`** (19)
 
 | English                                                                                                                                                                                                                                                                                       | Chinese                                                                                                                                                                             |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1619,8 +1806,11 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | in force                                                                                                                                                                                                                                                                                      | 已生效                                                                                                                                                                              |
 | Called in leg ${shift.round}. Every price at that port this leg was drawn against it.                                                                                                                                                                                                         | 第{shift.round}航段发起。本航段那个港的每个价格，都是对着它定的。                                                                                                                   |
 | Called in leg ${shift.round}. The market that opens next leg is the one that answers it, and a later call in this leg replaces it.                                                                                                                                                            | 第{shift.round}航段发起。下一航段开市的集市就是它的回音；本航段里后押的一次会取代它。                                                                                               |
+| {name} put ashore                                                                                                                                                                                                                                                                             | {name}被放逐上岸                                                                                                                                                                    |
+| called                                                                                                                                                                                                                                                                                        | 已下达                                                                                                                                                                              |
+| Your call stands for leg {leg}:                                                                                                                                                                                                                                                               | 你的定价从第{leg}航段起生效：                                                                                                                                                       |
 
-**`src/components/portmasters/game/ModuleMarket.tsx`** (12)
+**`src/components/portmasters/game/ModuleMarket.tsx`** (16)
 
 | English                                                                                                                                                                                      | Chinese                                                                                                                    |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -1636,16 +1826,22 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | ${trade.fee} Gold                                                                                                                                                                            | {trade.fee}金币                                                                                                            |
 | You are selling ${name} for ${fee}                                                                                                                                                           | 你在卖{name}，价格{fee}                                                                                                    |
 | You sold ${name} to ${other} for ${fee}                                                                                                                                                      | 你把{name}卖给了{other}，价格{fee}                                                                                         |
+| Offer the Module                                                                                                                                                                             | 挂出模块                                                                                                                   |
+| {sellerName} sells {name} for {fee}                                                                                                                                                          | {sellerName}出售{name}，价格{fee}                                                                                          |
+| {sellerName} sold you {name} for {fee}                                                                                                                                                       | {sellerName}把{name}卖给了你，价格{fee}                                                                                    |
+| {sellerName} sold {name} to {other} for {fee}                                                                                                                                                | {sellerName}把{name}卖给了{other}，价格{fee}                                                                               |
 
-**`src/components/portmasters/game/ObjectivePanel.tsx`** (3)
+**`src/components/portmasters/game/ObjectivePanel.tsx`** (5)
 
 | English                                                                                   | Chinese                                      |
 | ----------------------------------------------------------------------------------------- | -------------------------------------------- |
 | Fleet Commission                                                                          | 船队公议                                     |
 | The commission is met, and nothing more is owed.                                          | 公议已达成，不必再交。                       |
 | The Emperor pays for what you hand over, and the commission is read when the voyage ends. | 皇帝按你交上的货付钱，公议在航程结束时结算。 |
+| {gold} Gold still on the table                                                            | 桌上还压着{gold}金币                         |
+| Deliver {deliverable}                                                                     | 交付 {deliverable}                           |
 
-**`src/components/portmasters/game/OpenBoons.tsx`** (5)
+**`src/components/portmasters/game/OpenBoons.tsx`** (6)
 
 | English                                                                                      | Chinese                                                        |
 | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -1654,8 +1850,9 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | a moment                                                                                     | 某个时刻                                                       |
 | the dawn draw                                                                                | 破晓抽取                                                       |
 | (you)                                                                                        | （你）                                                         |
+| , leg {leg}                                                                                  | ，第{leg}航段                                                  |
 
-**`src/components/portmasters/game/PlayerDetailModal.tsx`** (21)
+**`src/components/portmasters/game/PlayerDetailModal.tsx`** (29)
 
 | English                                               | Chinese                            |
 | ----------------------------------------------------- | ---------------------------------- |
@@ -1680,6 +1877,14 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Unavailable                                           | 不可用                             |
 | Not available right now, they may have stepped away.  | 现在看不了，对方可能走开了一会儿。 |
 | Cargo, artisans, equipped modules and the recent log. | 货物、工匠、已装模块和最近记录。   |
+| {icon} {name} ({count})                               | {icon} {name}（{count}）           |
+| Weavers                                               | 织女                               |
+| Masters                                               | 纺织大师                           |
+| Makers                                                | 香囊师                             |
+| Coppersmiths                                          | 铜匠                               |
+| Potters                                               | 陶匠                               |
+| Perfumers                                             | 调香师                             |
+| Jewelers                                              | 珠匠                               |
 
 **`src/components/portmasters/game/PrivateCard.tsx`** (5)
 
@@ -1691,12 +1896,13 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | How you win     | 你的取胜之道 |
 | Profit so far   | 目前盈利     |
 
-**`src/components/portmasters/game/PrivateOffer.tsx`** (2)
+**`src/components/portmasters/game/PrivateOffer.tsx`** (3)
 
-| English          | Chinese        |
-| ---------------- | -------------- |
-| Gold, offered to | 金币，交给     |
-| Fee in Gold      | 以金币计的费用 |
+| English                                                                                                | Chinese                                                          |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
+| Gold, offered to                                                                                       | 金币，交给                                                       |
+| Fee in Gold                                                                                            | 以金币计的费用                                                   |
+| Only {name} will see this offer, so nobody else can take it first. It still has to be taken {deadline} | 这份报价只有{name}看得到，别人抢不走。接下它有个期限：{deadline} |
 
 **`src/components/portmasters/game/ReadyBar.tsx`** (2)
 
@@ -1705,7 +1911,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | This leg ends when the clock does, whether or not every captain has readied. | 计时一停，本航段就结束，不管是不是每位船长都点了就绪。       |
 | ${m?.displayName ?? "Captain"} ${isReady ? "ready" : "still deciding"}       | {m?.displayName ?? "船长"} {isReady ? "已就绪" : "仍在考虑"} |
 
-**`src/components/portmasters/game/RefitBench.tsx`** (24)
+**`src/components/portmasters/game/RefitBench.tsx`** (34)
 
 | English                                                                                                                                                                       | Chinese                                                                                                            |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -1733,6 +1939,16 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | You are offering to put a ${row.good} right for ${fee}                                                                                                                        | 你开价修补{row.good}，价格{fee}                                                                                    |
 | You put ${who === "you" ? "your" :                                                                                                                                            | 你把{who === "you" ? "自己" :                                                                                      |
 | } ${row.good} right for ${fee}                                                                                                                                                | }的{row.good}修补好了，费用{fee}                                                                                   |
+| ${row.sellerName} offers to put a ${row.good} right for ${fee}                                                                                                                | {row.sellerName}开价修补{row.good}，价格{fee}                                                                      |
+| ${row.sellerName} put {possessive} ${row.good} right for ${fee}                                                                                                               | {row.sellerName}把{possessive}的{row.good}修补好了，费用{fee}                                                      |
+| Offer a Refit                                                                                                                                                                 | 挂出缝补                                                                                                           |
+| · in the hold: {held}                                                                                                                                                         | · 舱里还有：{held}                                                                                                 |
+| Buy a Rag ({value}💰)                                                                                                                                                         | 买一块碎布（{value}💰）                                                                                            |
+| Reweave {rags} Rags into {good}                                                                                                                                               | 把{rags}块碎布重织成{good}                                                                                         |
+| will put {points} back for {gold} Gold, once a leg.                                                                                                                           | 会用{gold}金币把{points}补回来，每航段一次。                                                                       |
+| Mend {worn} ({left} of {durability}, {gold}💰)                                                                                                                                | 补{worn}（{left}/{durability}，{gold}💰）                                                                          |
+| Mend {worn} ({left}, {gold}💰)                                                                                                                                                | 补{worn}（{left}，{gold}💰）                                                                                       |
+| Buy a Rag ({RAG_SCRAP_VALUE}💰)                                                                                                                                               | 买一块碎布（{RAG_SCRAP_VALUE}💰）                                                                                  |
 
 **`src/components/portmasters/game/RevealPanel.tsx`** (19)
 
@@ -1758,16 +1974,16 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | The fleet handed over what its captains reported each leg, and the Emperor read the board when the voyage ended.     | 船队每航段交出的，是船长们申报的数量；航程结束时，皇帝照着板上的数字来核。       |
 | The fleet handed over nothing it reported.                                                                           | 船队申报了，交出来的却是零。                                                     |
 
-**`src/components/portmasters/game/StandingOrdersModal.tsx`** (14)
+**`src/components/portmasters/game/StandingOrdersModal.tsx`** (15)
 
 | English                                                                                                                                                                                                                                                                                                                     | Chinese                                                                                                                                                              |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Instructions your seat follows when the room&apos;s clock plays it while you are not standing at it.                                                                                                                                                                                                                        | 你不在席位边上时，港湾的计时替你出牌，你的席位就照着这里写的走。                                                                                                     |
+| Instructions your seat follows when the harbor&apos;s clock plays it while you are not standing at it.                                                                                                                                                                                                                      | 你不在席位边上时，港湾的计时替你出牌，你的席位就照着这里写的走。                                                                                                     |
 | Three seats are deliberately not here. Parley is a conversation with a captain, which is not something a form can answer. The module draft is rolled fresh every round, so there is no honest way to name one ahead of it. And the Broker&apos;s Favor is a decision rather than a default, so it is left for you to spend. | 这里故意空着三件事。洽谈是你和船长的一番对话，一张表格答不了。模块抽取每轮重新掷，事前写下名字并不诚实。掮客的人情是一次决定，不是默认，留给你自己花。               |
 | Kept with this voyage, and the table does not see it.                                                                                                                                                                                                                                                                       | 只随本航程保存，全桌看不到。                                                                                                                                         |
 | Dearest you will pay for ${good}                                                                                                                                                                                                                                                                                            | 你为{good}肯出的最高价                                                                                                                                               |
 | Follow these orders                                                                                                                                                                                                                                                                                                         | 照这些指示走                                                                                                                                                         |
-| When the room's clock runs a phase out and you have not acted, your seat is played by what is written here instead of by the engine's own defaults. Turn this off and every seat goes back to being played the way it was before this panel existed. Nothing written below is lost either way.                              | 港湾的计时把阶段走完，你还没出手，你的席位就照这里写的来，不照引擎自己的默认来。关掉它，所有席位就回到这个面板出现之前的执行方式。开关怎么拨，下面写的东西都不会丢。 |
+| When the harbor's clock runs a phase out and you have not acted, your seat is played by what is written here instead of by the engine's own defaults. Turn this off and every seat goes back to being played the way it was before this panel existed. Nothing written below is lost either way.                            | 港湾的计时把阶段走完，你还没出手，你的席位就照这里写的来，不照引擎自己的默认来。关掉它，所有席位就回到这个面板出现之前的执行方式。开关怎么拨，下面写的东西都不会丢。 |
 | Which boon to take when the draft is settled for you. A boon that is not on your board that round is passed over, so a name written here is never a promise the draft cannot keep.                                                                                                                                          | 抽取替你定下时取哪一份机缘。那一轮不在你板上的机缘直接跳过；写在这里的名字，绝不会是抽取兑现不了的承诺。                                                             |
 | Each good you mark is bought from the purchase board whenever every good on that card is at or under the price you set, in the order the board is laid out. Anything dearer is left on the board.                                                                                                                           | 你勾中的货，只要同一张牌上的货都不高于你设的价，就按板上的顺序买进。贵过头的留在板上。                                                                               |
 | The trade board, filled the way a captain would fill it: only what the hold can actually cover, in the order the orders are laid out, and left alone when the hold cannot cover it. Nothing is bought to complete an order, so one your hold cannot pay for in goods is skipped rather than chased.                         | 订单板照船长自己的做法来交付：只动货舱真拿得出的货，按订单排的先后，货舱拿不出就不碰。不会为了交一份订单去买货；货舱拿不出货来付的那一份，跳过，不去追。             |
@@ -1776,6 +1992,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Upgrade the hull when you can afford it                                                                                                                                                                                                                                                                                     | 付得起时升级船体                                                                                                                                                     |
 | First offer on the board                                                                                                                                                                                                                                                                                                    | 板上最先摆下的一份                                                                                                                                                   |
 | Whatever the draft laid down first, which is what an absent captain is given today.                                                                                                                                                                                                                                         | 抽取最先摆下的那一份，今天缺位的船长拿到的就是这个。                                                                                                                 |
+| Standing orders                                                                                                                                                                                                                                                                                                             | 常备订单                                                                                                                                                             |
 
 **`src/components/portmasters/game/VoteSeatPicker.tsx`** (2)
 
@@ -1784,7 +2001,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Choose a captain | 选一位船长     |
 | Your name is in  | 你的名字已投出 |
 
-**`src/components/portmasters/game/VoteTallyRows.tsx`** (5)
+**`src/components/portmasters/game/VoteTallyRows.tsx`** (6)
 
 | English                                                                                                                 | Chinese                                                                      |
 | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
@@ -1793,6 +2010,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | } to carry it.                                                                                                          | }才能通过。                                                                  |
 | Your name is not in yet. Pick a captain and press the button.                                                           | 你的名字还没投。选一位船长，按下按钮。                                       |
 | Every captain still sailing has named someone, so nothing more can land this leg. A later leg can call this vote again. | 仍在航的船长都投过了，本航段不会再有票落下来。之后的航段还能再发起这次表决。 |
+| {namesNeeded} {carryWord} it.                                                                                           | {namesNeeded}才能通过。                                                      |
 
 **`src/components/portmasters/game/VoyageLogPanel.tsx`** (5)
 
@@ -1810,33 +2028,35 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | ------- | ------- |
 | Ship    | 船只    |
 
-### The room, second sweep (288)
+### The room, second sweep (364)
 
 The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy and the endgame screens.
 
-**`src/components/portmasters/game/phases/Bankruptcy.tsx`** (17)
+**`src/components/portmasters/game/phases/Bankruptcy.tsx`** (19)
 
-| English                                                                                              | Chinese                                                          |
-| ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Ship Fleet Bankrupt!                                                                                 | 船队破产！                                                       |
-| Rounds Completed:                                                                                    | 已完成轮数：                                                     |
-| Final Funds:                                                                                         | 最终资金：                                                       |
-| Final Reputation:                                                                                    | 最终声誉：                                                       |
-| Ship Level:                                                                                          | 船只等级：                                                       |
-| Taxes Paid:                                                                                          | 已缴税款：                                                       |
-| 🤝 Silent Partner                                                                                    | 🤝 幕后合伙人                                                    |
-| Gold you lent before the wreck is still out there, and it lands the moment each captain repays it.   | 你翻船之前借出去的金币还在外面，哪位船长一还，它当场就到手。     |
-| Send repayment to                                                                                    | 还款转给                                                         |
-| myself (default)                                                                                     | 我自己（默认）                                                   |
-| Spectator Mode: Live Harbor Standings                                                                | 观战模式：港湾实时排名                                           |
-| Your voyage has ended, but the rest of the harbor is still sailing. Watch their progress live below. | 你的航程已经结束，港湾的其他人还在海上。在下面实时看他们的进展。 |
-| 🔄 Restart Voyage                                                                                    | 🔄 重开航程                                                      |
-| ⚓ Sail Again                                                                                        | ⚓ 再次启航                                                      |
-| Click any captain in the Harbor Roster to peek at their cargo and workers                            | 点港湾名册里的任意船长，就能瞧一眼他们的货物和工匠。             |
-| Funds depleted, unable to pay essential operational costs                                            | 资金见底，付不出必需的营运开销                                   |
-| Insufficient funds to cover maintenance and wages                                                    | 资金不足，付不起维护费和工钱                                     |
+| English                                                                                                                                       | Chinese                                                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Ship Fleet Bankrupt!                                                                                                                          | 船队破产！                                                                                 |
+| Rounds Completed:                                                                                                                             | 已完成轮数：                                                                               |
+| Final Funds:                                                                                                                                  | 最终资金：                                                                                 |
+| Final Reputation:                                                                                                                             | 最终声誉：                                                                                 |
+| Ship Level:                                                                                                                                   | 船只等级：                                                                                 |
+| Taxes Paid:                                                                                                                                   | 已缴税款：                                                                                 |
+| 🤝 Silent Partner                                                                                                                             | 🤝 幕后合伙人                                                                              |
+| Gold you lent before the wreck is still out there, and it lands the moment each captain repays it.                                            | 你翻船之前借出去的金币还在外面，哪位船长一还，它当场就到手。                               |
+| Send repayment to                                                                                                                             | 还款转给                                                                                   |
+| myself (default)                                                                                                                              | 我自己（默认）                                                                             |
+| Spectator Mode: Live Harbor Standings                                                                                                         | 观战模式：港湾实时排名                                                                     |
+| Your voyage has ended, but the rest of the harbor is still sailing. Watch their progress live below.                                          | 你的航程已经结束，港湾的其他人还在海上。在下面实时看他们的进展。                           |
+| 🔄 Restart Voyage                                                                                                                             | 🔄 重开航程                                                                                |
+| ⚓ Sail Again                                                                                                                                 | ⚓ 再次启航                                                                                |
+| Click any captain in the Harbor Roster to peek at their cargo and workers                                                                     | 点港湾名册里的任意船长，就能瞧一眼他们的货物和工匠。                                       |
+| Funds depleted, unable to pay essential operational costs                                                                                     | 资金见底，付不出必需的营运开销                                                             |
+| Insufficient funds to cover maintenance and wages                                                                                             | 资金不足，付不起维护费和工钱                                                               |
+| Your voyage has ended, and the rest of the harbor has finished too.                                                                           | 你的航程已经结束，港湾的其他人也走完了。                                                   |
+| Your voyage has ended, and the rest of the harbor has finished too. Wait for the host to restart the voyage, or set out for a new harbor now. | 你的航程已经结束，港湾的其他人也走完了。等房主重开这趟航程；等不及，就现在启程去别的港湾。 |
 
-**`src/components/portmasters/game/phases/BenchCycle.tsx`** (11)
+**`src/components/portmasters/game/phases/BenchCycle.tsx`** (12)
 
 | English                                | Chinese                   |
 | -------------------------------------- | ------------------------- |
@@ -1851,6 +2071,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Shipyard and modules                   | 船坞与模块                |
 | 📋 Now                                 | 📋 当前                   |
 | ${face.icon} ${face.label}             | {face.icon} {face.label}  |
+| Trade orders                           | 交付订单                  |
 
 **`src/components/portmasters/game/phases/BenchInventory.tsx`** (3)
 
@@ -1860,12 +2081,14 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Raw Materials:       | 原材料：    |
 | Finished Goods:      | 成品：      |
 
-**`src/components/portmasters/game/phases/BenchPayroll.tsx`** (2)
+**`src/components/portmasters/game/phases/BenchPayroll.tsx`** (4)
 
-| English            | Chinese         |
-| ------------------ | --------------- |
-| 💸 Total Wages Due | 💸 应付工钱合计 |
-| Wage Efficiency    | 工钱效率        |
+| English                              | Chinese                           |
+| ------------------------------------ | --------------------------------- |
+| 💸 Total Wages Due                   | 💸 应付工钱合计                   |
+| Wage Efficiency                      | 工钱效率                          |
+| {efficiency}x return                 | {efficiency}倍回报                |
+| ({produced}g value / {wages}g wages) | （产值{produced}g／工钱{wages}g） |
 
 **`src/components/portmasters/game/phases/BoonDraft.tsx`** (8)
 
@@ -1886,7 +2109,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | --------------- | -------- |
 | Sail Under This | 以此扬帆 |
 
-**`src/components/portmasters/game/phases/Endgame.tsx`** (4)
+**`src/components/portmasters/game/phases/Endgame.tsx`** (5)
 
 | English                                     | Chinese             |
 | ------------------------------------------- | ------------------- |
@@ -1894,6 +2117,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Waiting for the host to restart the voyage… | 等待港主重开航程... |
 | 💥 Bankrupt: Defaulted on a Loan            | 💥 破产：借款违约   |
 | ${r.icon} ${r.label}                        | {r.icon} {r.label}  |
+| 📈 Merchant Rank:                           | 📈 商人评级：       |
 
 **`src/components/portmasters/game/phases/EndgameCrewSummary.tsx`** (7)
 
@@ -1907,7 +2131,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Items Made                       | 制成件数                          |
 | ${loss.name} (leg ${loss.round}) | {loss.name}（第{loss.round}航段） |
 
-**`src/components/portmasters/game/phases/EndgameResults.tsx`** (5)
+**`src/components/portmasters/game/phases/EndgameResults.tsx`** (7)
 
 | English                                                                                   | Chinese                                                      |
 | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -1916,8 +2140,10 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Highest Reputation in this harbor&apos;s voyage.                                          | 本港湾航程中声誉最高的人。                                   |
 | 🤝 Broker&apos;s Favor Unlocked!                                                          | 🤝 掮客的人情已解锁！                                        |
 | · Renown level up!                                                                        | · 声望升级！                                                 |
+| Captain's Merit:                                                                          | 船长功勋：                                                   |
+| {reputation} Rep.                                                                         | {reputation}声誉                                             |
 
-**`src/components/portmasters/game/phases/EndgameSummaries.tsx`** (14)
+**`src/components/portmasters/game/phases/EndgameSummaries.tsx`** (15)
 
 | English                                       | Chinese                        |
 | --------------------------------------------- | ------------------------------ |
@@ -1935,6 +2161,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Boon Gold                                     | 机缘金币                       |
 | Purchases & Transport                         | 采购与运输                     |
 | Income Tax                                    | 所得税                         |
+| +{rep} Rep                                    | +{rep}声誉                     |
 
 **`src/components/portmasters/game/phases/Market.tsx`** (1)
 
@@ -1962,29 +2189,35 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | ✅ Install                                                                                                                                            | ✅ 安装                                                                                        |
 | 🔄 Swap                                                                                                                                               | 🔄 切换                                                                                        |
 
-**`src/components/portmasters/game/phases/ModuleSwap.tsx`** (3)
+**`src/components/portmasters/game/phases/ModuleSwap.tsx`** (4)
 
-| English                     | Chinese             |
-| --------------------------- | ------------------- |
-| 🔄 Select Module to Replace | 🔄 选择要切换的模块 |
-| 🗑️ Replace                  | 🗑️ 切换             |
-| ⬅️ Back to Draft            | ⬅️ 回到抽取         |
+| English                     | Chinese                     |
+| --------------------------- | --------------------------- |
+| 🔄 Select Module to Replace | 🔄 选择要切换的模块         |
+| 🗑️ Replace                  | 🗑️ 切换                     |
+| ⬅️ Back to Draft            | ⬅️ 回到抽取                 |
+| New: {icon} {name}: {desc}  | 新增：{icon} {name}：{desc} |
 
-**`src/components/portmasters/game/phases/ModuleSynergy.tsx`** (4)
+**`src/components/portmasters/game/phases/ModuleSynergy.tsx`** (5)
 
-| English                                                    | Chinese                            |
-| ---------------------------------------------------------- | ---------------------------------- |
-| Module Synergy Analysis                                    | 模块组合分析                       |
-| Active Bonuses                                             | 生效加成                           |
-| Module Interactions                                        | 模块联动                           |
-| No special interactions detected between equipped modules. | 已装的模块之间，看不出有特别联动。 |
+| English                                                                                                                                                       | Chinese                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Module Synergy Analysis                                                                                                                                       | 模块组合分析                                                                                 |
+| Active Bonuses                                                                                                                                                | 生效加成                                                                                     |
+| Module Interactions                                                                                                                                           | 模块联动                                                                                     |
+| No special interactions detected between equipped modules.                                                                                                    | 已装的模块之间，看不出有特别联动。                                                           |
+| Freight Mastery: {bulkHauler} reduces transport per item and {silkMonopoly} can zero it out on any order carrying woven goods. Shipping costs almost nothing. | 运费精通：{bulkHauler}压低每件运费，{silkMonopoly}能把带织物的订单运费清零。运费几乎不花钱。 |
 
-**`src/components/portmasters/game/phases/OrderPlanner.tsx`** (2)
+**`src/components/portmasters/game/phases/OrderPlanner.tsx`** (6)
 
-| English             | Chinese          |
-| ------------------- | ---------------- |
-| Fulfillment Plan    | 交付计划         |
-| if all ready filled | 若备齐的全部交付 |
+| English             | Chinese                |
+| ------------------- | ---------------------- |
+| Fulfillment Plan    | 交付计划               |
+| if all ready filled | 若备齐的全部交付       |
+| {readyCount} ready  | {readyCount}单已备齐   |
+| {closeCount} close  | {closeCount}单就快备齐 |
+| Order #{id} needs:  | 订单 #{id} 需要：      |
+| {net}g              | {net}金币              |
 
 **`src/components/portmasters/game/phases/Orders.tsx`** (3)
 
@@ -1994,7 +2227,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | (look for the 🔮 badge below). | （留意下面 🔮 的标记）。 |
 | ✅ Complete Trades, Continue   | ✅ 完成贸易，继续        |
 
-**`src/components/portmasters/game/phases/OrdersBoard.tsx`** (9)
+**`src/components/portmasters/game/phases/OrdersBoard.tsx`** (15)
 
 | English                                                                                | Chinese                                                     |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -2007,8 +2240,14 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | · Raw Material Demand                                                                  | · 求购原材料                                                |
 | ✅ Completed                                                                           | ✅ 已交付                                                   |
 | 🎭 Borrow this order                                                                   | 🎭 借用这份订单                                             |
+| {path.name} order                                                                      | {path.name}订单                                             |
+| 🤝 Trade (Net {netProfit}💰)                                                           | 🤝 交易（净利{netProfit}💰）                                |
+| Inv: {count}                                                                           | 存货：{count}                                               |
+| ⚓ Freight: {gold} Gold                                                                | ⚓ 运费：{gold}金币                                         |
+| 💰 Reward: {reward} Gold 📊 Net: {net} Gold                                            | 💰 报酬：{reward}金币 📊 净利：{net}金币                    |
+| 🤝 Broker's cut ({pct}%): {gold} Gold                                                  | 🤝 掮客抽成（{pct}%）：{gold}金币                           |
 
-**`src/components/portmasters/game/phases/OrdersFavor.tsx`** (10)
+**`src/components/portmasters/game/phases/OrdersFavor.tsx`** (11)
 
 | English                                                                                                                                                | Chinese                                                                                          |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
@@ -2022,24 +2261,27 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | A bigger ask pays out more, but the Broker&apos;s cut grows with it too, so a single favor can never swing the whole voyage.                           | 要得越多进账越多，但掮客的抽成也跟着涨，所以一次人情翻不了整条航程的盘。                         |
 | Call in the Favor                                                                                                                                      | 动用这条人情                                                                                     |
 | How much ${favorItem} to sell                                                                                                                          | 要卖多少 {favorItem}                                                                             |
+| {name} ({count})                                                                                                                                       | {name}（{count}）                                                                                |
 
-**`src/components/portmasters/game/phases/Parley.tsx`** (13)
+**`src/components/portmasters/game/phases/Parley.tsx`** (15)
 
-| English                                               | Chinese                                    |
-| ----------------------------------------------------- | ------------------------------------------ |
-| 📋 Open Offers                                        | 📋 挂出的报价                              |
-| No offers on the board yet. Be the first.             | 板上还没有报价。做第一个。                 |
-| 📤 Post an Offer                                      | 📤 挂出报价                                |
-| With                                                  | 给                                         |
-| Harbor Business                                       | 港湾公事                                   |
-| Exchange                                              | 行市                                       |
-| Markets                                               | 集市                                       |
-| ${label} is open.                                     | {label}已开。                              |
-| The audit vote                                        | 舱单稽查投票                               |
-| The maroon vote                                       | 放逐投票                                   |
-| No vote is open. The fleet's picks are on the record. | 眼下没有开着的投票。船队的取舍都记在案上。 |
-| No vote is open yet.                                  | 投票还没开始。                             |
-| ✅ Done Bartering, Continue                           | ✅ 易货完毕，继续                          |
+| English                                                                        | Chinese                                      |
+| ------------------------------------------------------------------------------ | -------------------------------------------- |
+| 📋 Open Offers                                                                 | 📋 挂出的报价                                |
+| No offers on the board yet. Be the first.                                      | 板上还没有报价。做第一个。                   |
+| 📤 Post an Offer                                                               | 📤 挂出报价                                  |
+| With                                                                           | 给                                           |
+| Harbor Business                                                                | 港湾公事                                     |
+| Exchange                                                                       | 行市                                         |
+| Markets                                                                        | 集市                                         |
+| ${label} is open.                                                              | {label}已开。                                |
+| The audit vote                                                                 | 舱单稽查投票                                 |
+| The maroon vote                                                                | 放逐投票                                     |
+| No vote is open. The fleet's picks are on the record.                          | 眼下没有开着的投票。船队的取舍都记在案上。   |
+| No vote is open yet.                                                           | 投票还没开始。                               |
+| ✅ Done Bartering, Continue                                                    | ✅ 易货完毕，继续                            |
+| Two votes are open.                                                            | 两项表决都开着。                             |
+| Only {name} will see this offer. A safeguard so nobody else can take it first. | 这份报价只有{name}看得到，免得别人抢先接下。 |
 
 **`src/components/portmasters/game/phases/PathDraft.tsx`** (11)
 
@@ -2073,7 +2315,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Waiting for the rest of the crew | 等待其余船员 |
 | Not ready yet                    | 暂不就绪     |
 
-**`src/components/portmasters/game/phases/PirateAttack.tsx`** (9)
+**`src/components/portmasters/game/phases/PirateAttack.tsx`** (10)
 
 | English                                                                                                                                                                                                                   | Chinese                                                                                                                                          |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -2086,12 +2328,13 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Before this round's bills come due, your ship has to clear open water. Pirates that find you this round meet a shield you already paid for, so there is nothing here left to buy and nothing in your hold that is theirs. | 在本轮账单到期之前，你的船得先过一段开阔水面。本轮找上你的海盗，撞上的是你早已付过钱的那面盾，所以这里没剩什么可买，海盗也拿不走你货舱里的东西。 |
 | Sail On                                                                                                                                                                                                                   | 继续航行                                                                                                                                         |
 | Set Sail Anyway                                                                                                                                                                                                           | 照样启航                                                                                                                                         |
+| Hire Escort ({fee} Gold)                                                                                                                                                                                                  | 雇护航（{fee}金币）                                                                                                                              |
 
 **`src/components/portmasters/game/phases/Purchase.tsx`** (8)
 
 | English                                                                                  | Chinese                                                              |
 | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Port Merchant Exchange                                                                   | 港口商行                                                             |
+| Port Board                                                                               | 港口采购板                                                           |
 | 🔮 Broker's Rumor Board                                                                  | 🔮 掮客密语板                                                        |
 | ✅ Board Done, to the Artisan Bench                                                      | ✅ 板看完了，去匠作台                                                |
 | Market Readings                                                                          | 集市行情                                                             |
@@ -2100,15 +2343,23 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | What the board is worth: usual prices, the best of the six, and how deep each good runs. | 这块板值多少：平日的价格、六张里最划算的那张，还有每件货的货源厚薄。 |
 | A Loom captain's work: a garment put right in one leg, at a fee the two of you agree.    | 织造船长的手艺：一个航段内把一件衣物整好，价格由你们两人商定。       |
 
-**`src/components/portmasters/game/phases/PurchaseBoard.tsx`** (5)
+**`src/components/portmasters/game/phases/PurchaseBoard.tsx`** (13)
 
-| English      | Chinese |
-| ------------ | ------- |
-| Product      | 成品    |
-| Raw Material | 原材料  |
-| ✅ Purchased | ✅ 已购 |
-| Deal         | 划算    |
-| Pricey       | 偏贵    |
+| English                              | Chinese                              |
+| ------------------------------------ | ------------------------------------ |
+| Product                              | 成品                                 |
+| Raw Material                         | 原材料                               |
+| ✅ Purchased                         | ✅ 已购                              |
+| Deal                                 | 划算                                 |
+| Pricey                               | 偏贵                                 |
+| 🛒 Buy ({cost}💰)                    | 🛒 买下（{cost}💰）                  |
+| Need {gold} more Gold.               | 还差{gold}金币。                     |
+| Unit: {price}💰                      | 单价：{price}💰                      |
+| : {low} to {high} typical            | ：通常 {low} 到 {high}               |
+| % price                              | % 价格                               |
+| 📦 Mat Cost: {gold} Gold ({details}) | 📦 材料成本：{gold}金币（{details}） |
+| 💰 Total: {gold} Gold                | 💰 合计：{gold}金币                  |
+| (Was {gold})                         | （原价{gold}）                       |
 
 **`src/components/portmasters/game/phases/PurchaseInsights.tsx`** (12)
 
@@ -2136,7 +2387,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Good                                              | 货物                                         |
 | R${i + 1}: ${price} Gold (range ${min} to ${max}) | 第{i + 1}轮：{price}金币（区间{min}到{max}） |
 
-**`src/components/portmasters/game/phases/PurchaseProvisions.tsx`** (13)
+**`src/components/portmasters/game/phases/PurchaseProvisions.tsx`** (24)
 
 | English                                                                                    | Chinese                                                |
 | ------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
@@ -2153,19 +2404,34 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | The three foods the crew eats, and what each keeps.                                        | 船员吃的三样口粮，各能存多久。                         |
 | The barge has nothing left for you this leg.                                               | 补给驳船这一航段没剩什么给你了。                       |
 | The barge has nothing left for you this leg, and it is a fresh lot tomorrow.               | 补给驳船这一航段没剩什么给你了，明天会来一批新的。     |
+| {count} meal{pluralS} a slot                                                               | 每格{count}餐                                          |
+| {density}, turns after {legs} leg{pluralS}                                                 | {density}，{legs}航段后变质                            |
+| Buy 1 Leg ({legCost}💰)                                                                    | 买1航段（{legCost}💰）                                 |
+| Buy Rations                                                                                | 买口粮                                                 |
+| Fill ({legs} Legs, {gold}💰)                                                               | 补满（{legs}航段，{gold}💰）                           |
+| at {bargePort}                                                                             | （{bargePort}）                                        |
+| Buy 1 Ration ({bargePrice}💰)                                                              | 买1份口粮（{bargePrice}💰）                            |
+| Take the Lot ({lot}, {gold}💰)                                                             | 整批拿下（{lot}份，{gold}💰）                          |
+| Take the Lot                                                                               | 整批拿下                                               |
+| Fill                                                                                       | 补满                                                   |
+| {bargeLeft} ration{pluralS} {beWord} left for you this leg.                                | 本航段留给你{bargeLeft}份口粮。                        |
 
-**`src/components/portmasters/game/phases/SettlementAid.tsx`** (6)
+**`src/components/portmasters/game/phases/SettlementAid.tsx`** (10)
 
-| English                                | Chinese              |
-| -------------------------------------- | -------------------- |
-| Short on Gold? Ask the Harbor for Help | 金币不够？向港湾求助 |
-| Request                                | 申请                 |
-| Gold from another captain              | 金币，向别的船长借   |
-| 🆘 Request Help                        | 🆘 求助              |
-| 🆘 Captains Asking for Help            | 🆘 正在求助的船长    |
-| Loan amount to request                 | 申请借款的数额       |
+| English                                                                                                                                                                           | Chinese                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Short on Gold? Ask the Harbor for Help                                                                                                                                            | 金币不够？向港湾求助                                                                                             |
+| Request                                                                                                                                                                           | 申请                                                                                                             |
+| Gold from another captain                                                                                                                                                         | 金币，向别的船长借                                                                                               |
+| 🆘 Request Help                                                                                                                                                                   | 🆘 求助                                                                                                          |
+| 🆘 Captains Asking for Help                                                                                                                                                       | 🆘 正在求助的船长                                                                                                |
+| Loan amount to request                                                                                                                                                            | 申请借款的数额                                                                                                   |
+| Short on Gold?                                                                                                                                                                    | 金币不够？                                                                                                       |
+| No other captain is aboard, so there is no one to lend. The bills must be settled alone: Force Payment below covers what the purse holds, and the shortfall is the risk it names. | 船上没有别的船长，没人能放款。账单只能独自结清：下面的强制付款会先掏空钱袋里有的，剩下的缺口，就是它点明的风险。 |
+| {fromName} needs {amount} Gold                                                                                                                                                    | {fromName}需要{amount}金币                                                                                       |
+| 🤝 Lend {amount} Gold                                                                                                                                                             | 🤝 借出{amount}金币                                                                                              |
 
-**`src/components/portmasters/game/phases/SettlementBacking.tsx`** (6)
+**`src/components/portmasters/game/phases/SettlementBacking.tsx`** (7)
 
 | English                                                                                                                                   | Chinese                                                                                              |
 | ----------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -2175,24 +2441,30 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | escrowed                                                                                                                                  | 现已寄存                                                                                             |
 | now, only spent if the loan actually defaults, up to what you pledged. Never called on? It all comes back, plus a small Reputation bonus. | ，只有借款真的违约才会动用，最多到你作保的数目。要是一次都没动用？全数退回，还多一份小小的声誉加成。 |
 | Gold to pledge backing ${l.lenderName}'s loan to ${l.borrowerName}                                                                        | 为{l.lenderName}借给{l.borrowerName}的这笔借款作保的金币数                                           |
+| 🛡️ Back {pledge} Gold                                                                                                                     | 🛡️ 作保{pledge}金币                                                                                  |
 
-**`src/components/portmasters/game/phases/SettlementBills.tsx`** (11)
+**`src/components/portmasters/game/phases/SettlementBills.tsx`** (16)
 
-| English                                                  | Chinese                     |
-| -------------------------------------------------------- | --------------------------- |
-| 💸 Resolve: Round Settlement                             | 💸 结算：本轮清账           |
-| ⏳ Bills Due This Round                                  | ⏳ 本轮应付账单             |
-| 💹 Balance Summary                                       | 💹 账目汇总                 |
-| 🔧 Ship Maintenance Fee                                  | 🔧 船只维护费               |
-| 💸 Total Due                                             | 💸 应付合计                 |
-| Current Funds                                            | 当前资金                    |
-| After Settlement                                         | 结算之后                    |
-| Round Revenue                                            | 本轮进账                    |
-| 🛡️ Escort hired, you sailed through safely this round.   | 🛡️ 雇了护航，本轮平安驶过。 |
-| 🌊 You sailed without an escort this round.              | 🌊 本轮没有雇护航就出海了。 |
-| ${b.sponsored} ${b.sponsored === 1 ? b.label : b.plural} | {b.sponsored} {b.label}     |
+| English                                                     | Chinese                                          |
+| ----------------------------------------------------------- | ------------------------------------------------ |
+| 💸 Resolve: Round Settlement                                | 💸 结算：本轮清账                                |
+| ⏳ Bills Due This Round                                     | ⏳ 本轮应付账单                                  |
+| 💹 Balance Summary                                          | 💹 账目汇总                                      |
+| 🔧 Ship Maintenance Fee                                     | 🔧 船只维护费                                    |
+| 💸 Total Due                                                | 💸 应付合计                                      |
+| Current Funds                                               | 当前资金                                         |
+| After Settlement                                            | 结算之后                                         |
+| Round Revenue                                               | 本轮进账                                         |
+| 🛡️ Escort hired, you sailed through safely this round.      | 🛡️ 雇了护航，本轮平安驶过。                      |
+| 🌊 You sailed without an escort this round.                 | 🌊 本轮没有雇护航就出海了。                      |
+| ${b.sponsored} ${b.sponsored === 1 ? b.label : b.plural}    | {b.sponsored} {b.label}                          |
+| 💸 Settle Bills: {totalDue} Gold                            | 💸 结清账单：{totalDue}金币                      |
+| Force Payment and Risk Bankruptcy ({money}/{totalDue} Gold) | 强制付款，承担破产风险（{money}/{totalDue}金币） |
+| 👥 Worker Wages ({count} worker{pluralS})                   | 👥 工匠工钱（{count}人）                         |
+| ↳ 🪷 Jade Pavilion covers the wage for {items} this round   | ↳ 🪷 本轮{items}的工钱由玉阁代付                 |
+| ↳ Base {base}g + {card} penalty {penalty}g                  | ↳ 基础{base}g + {card}罚金{penalty}g             |
 
-**`src/components/portmasters/game/phases/Shipyard.tsx`** (8)
+**`src/components/portmasters/game/phases/Shipyard.tsx`** (11)
 
 | English                                             | Chinese                                |
 | --------------------------------------------------- | -------------------------------------- |
@@ -2204,8 +2476,11 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | ↩️ Not ready yet                                    | ↩️ 暂不就绪                            |
 | 🔄 Draft & Swap Module (Slots Full)                 | 🔄 抽取并切换模块（槽位已满）          |
 | 🔧 Draft & Install Module                           | 🔧 抽取并安装模块                      |
+| 🔌 Module Slots: {n} / {m}                          | 🔌 模块槽位：{n} / {m}                 |
+| ⚡ Hull Power: {n} / {m}                            | ⚡ 船体承重：{n} / {m}                 |
+| {n} installed, power {p} of {CAP}.                  | {n}件已装，承重{p}/{CAP}。             |
 
-**`src/components/portmasters/game/phases/WardrobePanel.tsx`** (9)
+**`src/components/portmasters/game/phases/WardrobePanel.tsx`** (11)
 
 | English                                                                                                                                                           | Chinese                                                                                            |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -2218,25 +2493,35 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | ❄️ Cold                                                                                                                                                           | ❄️ 寒冷                                                                                            |
 | ⚠️ The crew is short of warm clothes. The cold takes the newest hand, who is out of action for the next leg.                                                      | ⚠️ 船员御寒衣物不够。寒冷会冻倒最新来的那个人手，下一航段上不了工。                                |
 | The crew is dressed for the cold this leg. The rest stay in the hold until a leg asks for more.                                                                   | 这一航段船员穿够了御寒衣物。其余的留在货舱，等哪一航段要得更多再拿出来。                           |
+| mild                                                                                                                                                              | 温和                                                                                               |
+| / {COLD_LEG_WARMTH} asked                                                                                                                                         | ／需{COLD_LEG_WARMTH}                                                                              |
 
-**`src/components/portmasters/game/phases/WorkerList.tsx`** (2)
+**`src/components/portmasters/game/phases/WorkerList.tsx`** (7)
 
-| English                  | Chinese           |
-| ------------------------ | ----------------- |
-| 👥 Worker Status & Tasks | 👥 工匠状态与任务 |
-| ${ICONS[m]}${m}×${a}     | {ICONS[m]}{m}×{a} |
+| English                      | Chinese                |
+| ---------------------------- | ---------------------- |
+| 👥 Worker Status & Tasks     | 👥 工匠状态与任务      |
+| ${ICONS[m]}${m}×${a}         | {ICONS[m]}{m}×{a}      |
+| Working on: {task}           | 正在做：{task}         |
+| Working on: {task} (Skilled) | 正在做：{task}（熟练） |
+| {name}{pluralS}: {count}     | {name}：{count}        |
+| ({cost}💰)                   | （{cost}💰）           |
+| Make {task} (Need {mats})    | 制作{task}（需{mats}） |
 
-**`src/components/portmasters/game/phases/WorkerMgmt.tsx`** (5)
+**`src/components/portmasters/game/phases/WorkerMgmt.tsx`** (8)
 
-| English                      | Chinese           |
-| ---------------------------- | ----------------- |
-| 👥 Artisan Bench             | 👥 匠作台         |
-| 🔨 Hire Workers              | 🔨 雇佣工匠       |
-| ${a} ${m}                    | {a} {m}           |
-| ${t}(${mats})                | {t}（{mats}）     |
-| ✅ Complete Market, Continue | ✅ 集市结束，继续 |
+| English                              | Chinese                           |
+| ------------------------------------ | --------------------------------- |
+| 👥 Artisan Bench                     | 👥 匠作台                         |
+| 🔨 Hire Workers                      | 🔨 雇佣工匠                       |
+| ${a} ${m}                            | {a} {m}                           |
+| ${t}(${mats})                        | {t}（{mats}）                     |
+| ✅ Complete Market, Continue         | ✅ 集市结束，继续                 |
+| Hire {label} ({cost}💰/round)        | 雇佣{label}（{cost}💰/轮）        |
+| {cost} Gold/round                    | {cost}金币/轮                     |
+| {icon} Hire {label} ({cost}💰/round) | {icon} 雇佣{label}（{cost}💰/轮） |
 
-**`src/components/portmasters/game/status/CargoHold.tsx`** (9)
+**`src/components/portmasters/game/status/CargoHold.tsx`** (13)
 
 | English                                                                                                                                         | Chinese                                                                                                         |
 | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -2249,8 +2534,12 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Raw Materials: ${rawCount} (${rawPct}%)                                                                                                         | 原材料：{rawCount}（{rawPct}%）                                                                                 |
 | Finished Goods: ${productCount} (${productPct}%)                                                                                                | 成品：{productCount}（{productPct}%）                                                                           |
 | ${skilled} of ${count} trained: each produces 2 per round, working at ${Math.round(SHORT_RATIONS_YIELD * 100)}% pace while the crew goes hungry | {count}人中有{skilled}人熟练：每人每轮产出2件，船员挨饿时干活的速度只有{Math.round(SHORT_RATIONS_YIELD * 100)}% |
+| {count} item                                                                                                                                    | {count}件                                                                                                       |
+| {count} items                                                                                                                                   | {count}件                                                                                                       |
+| Raw {count}                                                                                                                                     | 原料 {count}                                                                                                    |
+| Products {count}                                                                                                                                | 成品 {count}                                                                                                    |
 
-**`src/components/portmasters/game/status/ConvoyVentures.tsx`** (12)
+**`src/components/portmasters/game/status/ConvoyVentures.tsx`** (15)
 
 | English                                                                                                                                  | Chinese                                                                          |
 | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -2266,8 +2555,11 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | No ventures open. This voyage's one chance has already been used.                                                                        | 眼下没有在筹的合股。本航程唯一的一次机会已经用掉。                               |
 | No ventures open right now. Post one, or wait for another captain to.                                                                    | 眼下没有在筹的合股。你可以发一个，或者等别的船长发。                             |
 | Your venture                                                                                                                             | 你的合股                                                                         |
+| Fills by Round {round}.                                                                                                                  | 第{round}轮前凑满。                                                              |
+| {total} of {targetGold} Gold funded                                                                                                      | 已筹{total}/{targetGold}金币                                                     |
+| By Round {round}                                                                                                                         | 第{round}轮前                                                                    |
 
-**`src/components/portmasters/game/status/DuesTab.tsx`** (10)
+**`src/components/portmasters/game/status/DuesTab.tsx`** (11)
 
 | English                                        | Chinese                           |
 | ---------------------------------------------- | --------------------------------- |
@@ -2281,6 +2573,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Owed by                                        | 欠你的                            |
 | ↳ ${r.list.length}× ${r.label}                 | ↳ {r.list.length}× {r.label}      |
 | ${r.due} Gold                                  | {r.due}金币                       |
+| ({count} workers)                              | （{count}人）                     |
 
 **`src/components/portmasters/game/status/PathChip.tsx`** (5)
 
@@ -2292,7 +2585,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | No path yet. A path is dealt when the voyage sails.                                    | 还没有商道。航程出海时会发商道。                                         |
 | No path yet. The deal ran before you came aboard, so you sail this voyage without one. | 还没有商道。发牌在你上船之前就结束了，所以本航程你就这样出海，没有商道。 |
 
-**`src/components/portmasters/game/status/ShipTab.tsx`** (5)
+**`src/components/portmasters/game/status/ShipTab.tsx`** (6)
 
 | English                                                                 | Chinese                                      |
 | ----------------------------------------------------------------------- | -------------------------------------------- |
@@ -2301,6 +2594,7 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | Modules                                                                 | 模块                                         |
 | module slot                                                             | 个模块槽位                                   |
 | module slots                                                            | 个模块槽位                                   |
+| max(5, n×2 minus {discount})                                            | max(5, n×2 减 {discount})                    |
 
 **`src/components/portmasters/game/status/StatGrid.tsx`** (5)
 
@@ -2312,33 +2606,41 @@ The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy
 | ${score}  | {score}  |
 | ${larder} | {larder} |
 
-### The lobby and the profile (232)
+### The lobby and the profile (273)
 
 The lobby, the roster, the profile, the settings and the chat.
 
-**`src/components/portmasters/ActionSuggester.tsx`** (19)
+**`src/components/portmasters/ActionSuggester.tsx`** (27)
 
-| English                                                                                                                                                                                                | Chinese                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Suggest                                                                                                                                                                                                | 建议                                                                                                                                           |
-| Got it                                                                                                                                                                                                 | 知道了                                                                                                                                         |
-| Show the recommended action for this phase                                                                                                                                                             | 看看本阶段推荐怎么做                                                                                                                           |
-| Show action suggestion                                                                                                                                                                                 | 查看行动建议                                                                                                                                   |
-| Close suggestion                                                                                                                                                                                       | 关闭建议                                                                                                                                       |
-| Consider ${first.name}                                                                                                                                                                                 | 可考虑{first.name}                                                                                                                             |
-| 👩‍🔧                                                                                                                                                                                                     | 👩‍🔧                                                                                                                                             |
-| Only one round remains. Hiring now wastes Gold on wages with no production return. Focus on filling orders with what you already have.                                                                 | 只剩最后一轮。这会儿雇工，工钱照付，产出却回不了本。手上的货，先拿去交付订单吧。                                                               |
-| Assign task: ${product}                                                                                                                                                                                | 安排上工：{product}                                                                                                                            |
-| Your ${type} is idle and you have the materials to make ${product}. Assign the task now so production lands at this round's Resolve. Materials: ${Object.entries( recipe.materials, ) .map(([m, q]) => | 你的{type}闲着，原材料也够，能做{product}。现在就安排上工，本轮结算时产出就到手。原材料：{Object.entries( recipe.materials, ) .map(([m, q]) => |
-| Buy materials for ${product}                                                                                                                                                                           | 为{product}采购原材料                                                                                                                          |
-| Your ${type} is idle but you lack materials for ${product}. You need: ${Object.entries( recipe.materials, ) .map(([m, q]) =>                                                                           | 你的{type}闲着，做{product}的原材料却不够。还缺：{Object.entries( recipe.materials, ) .map(([m, q]) =>                                         |
-| ) .join(", ")}. Buy these next round.                                                                                                                                                                  | ) .join(", ")}。下一轮再买这些。                                                                                                               |
-| Your hold carries no goods to trade this Parley. Post a Gold offer for the good you still need, or ready up so the fleet can move on.                                                                  | 这轮洽谈，你货舱里没有能出手的货。可以为你还缺的货挂一份金币报价，或者直接点就绪，让船队接着走。                                               |
-| You are holding ${count} ${top}. Post what your voyage can spare and name the good you are still short of, then ready up once the table is done with you.                                              | 你手上有{count}件{top}。这程能匀出多少就挂多少，写明你还缺哪件货，等桌上的人跟你谈完，再点就绪。                                               |
-| Almost ready for order #${close.id}                                                                                                                                                                    | 订单#{close.id}就快备齐了                                                                                                                      |
-| You are only missing ${missing?.type} (have ${game.inventory[missing?.type ?? ""] \|\| 0}, need ${missing?.required}). Try bartering for it, or wait to buy it next round.                             | 你只缺{missing?.type}（现有{game.inventory[missing?.type ?? ""] \|\| 0}，需要{missing?.required}）。可以和船长易货，或者等下一轮再买。         |
-| Upgrade to Ship Level 1                                                                                                                                                                                | 升级船只到1级                                                                                                                                  |
-| Ship upgrade costs ${cost} Gold but you only have ${game.money}. Save the Gold for the Resolve bills and continue the voyage.                                                                          | 船只升级要{cost}金币，你手上只有{game.money}。金币留着结算付账，航程先接着走。                                                                 |
+| English                                                                                                                                                                                                | Chinese                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Suggest                                                                                                                                                                                                | 建议                                                                                                                                             |
+| Got it                                                                                                                                                                                                 | 知道了                                                                                                                                           |
+| Show the recommended action for this phase                                                                                                                                                             | 看看本阶段推荐怎么做                                                                                                                             |
+| Show action suggestion                                                                                                                                                                                 | 查看行动建议                                                                                                                                     |
+| Close suggestion                                                                                                                                                                                       | 关闭建议                                                                                                                                         |
+| Consider ${first.name}                                                                                                                                                                                 | 可考虑{first.name}                                                                                                                               |
+| 👩‍🔧                                                                                                                                                                                                     | 👩‍🔧                                                                                                                                               |
+| Only one round remains. Hiring now wastes Gold on wages with no production return. Focus on filling orders with what you already have.                                                                 | 只剩最后一轮。这会儿雇工，工钱照付，产出却回不了本。手上的货，先拿去交付订单吧。                                                                 |
+| Assign task: ${product}                                                                                                                                                                                | 安排上工：{product}                                                                                                                              |
+| Your ${type} is idle and you have the materials to make ${product}. Assign the task now so production lands at this round's Resolve. Materials: ${Object.entries( recipe.materials, ) .map(([m, q]) => | 你的{type}闲着，原材料也够，能做{product}。现在就安排上工，本轮结算时产出就到手。原材料：{Object.entries( recipe.materials, ) .map(([m, q]) =>   |
+| Buy materials for ${product}                                                                                                                                                                           | 为{product}采购原材料                                                                                                                            |
+| Your ${type} is idle but you lack materials for ${product}. You need: ${Object.entries( recipe.materials, ) .map(([m, q]) =>                                                                           | 你的{type}闲着，做{product}的原材料却不够。还缺：{Object.entries( recipe.materials, ) .map(([m, q]) =>                                           |
+| ) .join(", ")}. Buy these next round.                                                                                                                                                                  | ) .join("、")}。下一轮再买这些。                                                                                                                 |
+| Your hold carries no goods to trade this Parley. Post a Gold offer for the good you still need, or ready up so the fleet can move on.                                                                  | 这轮洽谈，你货舱里没有能出手的货。可以为你还缺的货挂一份金币报价，或者直接点就绪，让船队接着走。                                                 |
+| You are holding ${count} ${top}. Post what your voyage can spare and name the good you are still short of, then ready up once the table is done with you.                                              | 你手上有{count}件{top}。这程能匀出多少就挂多少，写明你还缺哪件货，等桌上的人跟你谈完，再点就绪。                                                 |
+| Almost ready for order #${close.id}                                                                                                                                                                    | 订单#{close.id}就快备齐了                                                                                                                        |
+| You are only missing ${missing?.type} (have ${game.inventory[missing?.type ?? ""] \|\| 0}, need ${missing?.required}). Try bartering for it now; a fresh order board is dealt each round.              | 你只缺{missing?.type}（现有{game.inventory[missing?.type ?? ""] \|\| 0}，需要{missing?.required}）。现在就找船长易货；订单板每轮都会重新发一份。 |
+| Upgrade to Ship Level 1                                                                                                                                                                                | 升级船只到1级                                                                                                                                    |
+| Ship upgrade costs ${cost} Gold but you only have ${game.money}. Save the Gold for the Resolve bills and continue the voyage.                                                                          | 船只升级要{cost}金币，你手上只有{game.money}。金币留着结算付账，航程先接着走。                                                                   |
+| Take the {name}                                                                                                                                                                                        | 取走{name}                                                                                                                                       |
+| You have {gold} Gold. The {name} gives {amount} Gold immediately, which should cover wages and maintenance this round. Without it, you risk bankruptcy at Resolve.                                     | 你手头有{gold}金币。{name}立刻给{amount}金币，本轮工钱和维护费应该就有着落了。没有它，结算时就要冒破产的风险。                                   |
+| Pick {name}                                                                                                                                                                                            | 选{name}                                                                                                                                         |
+| Grab the {name}                                                                                                                                                                                        | 拿下{name}                                                                                                                                       |
+| You have {score} Reputation. With high earnings expected, the {name} cuts income tax from {taxRatePct}% to {shelterRatePct}%, saving Gold at round end.                                                | 你有{score}声誉。预期收益高的话，{name}能把所得税从{taxRatePct}%降到{shelterRatePct}%，轮末省下一笔金币。                                        |
+| Buy {name}                                                                                                                                                                                             | 买下{name}                                                                                                                                       |
+| A Weaver needs {weaverWage} Gold per round in wages. With {gold} Gold, you can only cover {wageRounds} rounds. Wait until you have at least {hireBar} Gold before hiring.                              | 织女每轮的工钱是{weaverWage}金币。你手里{gold}金币，只够付{wageRounds}轮。先别雇，等攒到{hireBar}金币再说。                                      |
+| Trade order #{id}                                                                                                                                                                                      | 贸易订单#{id}                                                                                                                                    |
 
 **`src/components/portmasters/AdminConsole.tsx`** (2)
 
@@ -2347,7 +2649,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | Sign out | 退出登录 |
 | Online   | 在线     |
 
-**`src/components/portmasters/AgeBanner.tsx`** (9)
+**`src/components/portmasters/AgeBanner.tsx`** (12)
 
 | English                                                                                                                                                                                                                                                                                                                                      | Chinese                                                                                                                                                                                                    |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -2360,6 +2662,9 @@ The lobby, the roster, the profile, the settings and the chat.
 | under an hour remaining                                                                                                                                                                                                                                                                                                                      | 还剩不到一小时                                                                                                                                                                                             |
 | ${hours} ${hours === 1 ? "hour" : "hours"} remaining                                                                                                                                                                                                                                                                                         | 还剩{hours}小时                                                                                                                                                                                            |
 | ${Math.round(ms / 86_400_000)} days remaining                                                                                                                                                                                                                                                                                                | 还剩{Math.round(ms / 86_400_000)}天                                                                                                                                                                        |
+| Lender                                                                                                                                                                                                                                                                                                                                       | 债主                                                                                                                                                                                                       |
+| Trader                                                                                                                                                                                                                                                                                                                                       | 商贾                                                                                                                                                                                                       |
+| Age details: {name}                                                                                                                                                                                                                                                                                                                          | 时代详情：{name}                                                                                                                                                                                           |
 
 **`src/components/portmasters/AuthScreen.tsx`** (6)
 
@@ -2372,25 +2677,27 @@ The lobby, the roster, the profile, the settings and the chat.
 | Set Sail                                                                                                | 起航                                                               |
 | Hoist the Colors                                                                                        | 扬旗                                                               |
 
-**`src/components/portmasters/CaptainLegacyCard.tsx`** (4)
+**`src/components/portmasters/CaptainLegacyCard.tsx`** (5)
 
-| English                    | Chinese             |
-| -------------------------- | ------------------- |
-| Not yet earned             | 尚未获得            |
-| Best Rep.                  | 最佳声誉            |
-| Head to head with          | 与                  |
-| 🤝 Broker's Favor unlocked | 🤝 掮客的人情已解锁 |
+| English                    | Chinese                |
+| -------------------------- | ---------------------- |
+| Not yet earned             | 尚未获得               |
+| Best Rep.                  | 最佳声誉               |
+| Head to head with          | 与                     |
+| 🤝 Broker's Favor unlocked | 🤝 掮客的人情已解锁    |
+| Renown {level} · {title}   | 声望 {level} · {title} |
 
-**`src/components/portmasters/CaptainProfileModal.tsx`** (4)
+**`src/components/portmasters/CaptainProfileModal.tsx`** (5)
 
-| English       | Chinese  |
-| ------------- | -------- |
-| Close profile | 关闭资料 |
-| Statistics    | 统计     |
-| Chronicles    | 航程实录 |
-| Rivals        | 对手     |
+| English          | Chinese      |
+| ---------------- | ------------ |
+| Close profile    | 关闭资料     |
+| Statistics       | 统计         |
+| Chronicles       | 航程实录     |
+| Rivals           | 对手         |
+| {name}'s profile | {name}的资料 |
 
-**`src/components/portmasters/CredentialCard.tsx`** (5)
+**`src/components/portmasters/CredentialCard.tsx`** (6)
 
 | English               | Chinese      |
 | --------------------- | ------------ |
@@ -2399,18 +2706,20 @@ The lobby, the roster, the profile, the settings and the chat.
 | your captain name     | 你的船长名   |
 | choose a captain name | 取一个船长名 |
 | Something went wrong  | 出了点问题   |
+| password              | 密码         |
 
-**`src/components/portmasters/DifficultyAdvisor.tsx`** (7)
+**`src/components/portmasters/DifficultyAdvisor.tsx`** (8)
 
-| English                                                                                                                                | Chinese                                                                          |
-| -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| x                                                                                                                                      | x                                                                                |
-| Dismiss advice                                                                                                                         | 忽略建议                                                                         |
-| ${rounds.slice(0, -1).join(", ")}, and ${rounds[rounds.length - 1]}                                                                    | {rounds.slice(0, -1).join("、")}和{rounds[rounds.length - 1]}                    |
-| Monsoon Season is very tough for a new captain. Consider Open Waters or Fair Winds until you reach Renown Level ${OPEN_WATERS_RENOWN}. | 季风时节，新船长很难熬。声望等级到{OPEN_WATERS_RENOWN}之前，先跑开阔水域或顺风。 |
-| Open Waters introduces mandates and charter goods. Try a few Fair Winds voyages first to learn the core loop.                          | 开阔水域才有皇命采办和特许货物。先跑几程顺风，把基本玩法摸熟。                   |
-| Heads up                                                                                                                               | 注意                                                                             |
-| Consider ${advice.recommended.replace(/_/g, " ")}                                                                                      | 可考虑{advice.recommended.replace(/_/g, " ")}                                    |
+| English                                                                                                                                                                     | Chinese                                                                                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| x                                                                                                                                                                           | x                                                                                                                              |
+| Dismiss advice                                                                                                                                                              | 忽略建议                                                                                                                       |
+| ${rounds.slice(0, -1).join(", ")}, and ${rounds[rounds.length - 1]}                                                                                                         | {rounds.slice(0, -1).join("、")}和{rounds[rounds.length - 1]}                                                                  |
+| Monsoon Season is very tough for a new captain. Consider Open Waters or Fair Winds until you reach Renown Level ${OPEN_WATERS_RENOWN}.                                      | 季风时节，新船长很难熬。声望等级到{OPEN_WATERS_RENOWN}之前，先跑开阔水域或顺风。                                               |
+| Open Waters introduces mandates and charter goods. Try a few Fair Winds voyages first to learn the core loop.                                                               | 开阔水域才有皇命采办和特许货物。先跑几程顺风，把基本玩法摸熟。                                                                 |
+| Heads up                                                                                                                                                                    | 注意                                                                                                                           |
+| Consider ${advice.recommended.replace(/_/g, " ")}                                                                                                                           | 可考虑{advice.recommended.replace(/_/g, " ")}                                                                                  |
+| You have the experience and the streak for the {name}. {rounds} rounds, {multiplier}x Renown, and two difficulty scoped Merits await: Storm Sovereign and Eye of the Storm. | 你有阅历，也有连续不破产的记录，{name}撑得起。{rounds}轮，{multiplier}倍声望，还有两项难度专属功勋等着你：风暴之主和风暴之眼。 |
 
 **`src/components/portmasters/FleetTicker.tsx`** (3)
 
@@ -2420,7 +2729,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | You                                | 你           |
 | loading…                           | 加载中...    |
 
-**`src/components/portmasters/HouseLeaderboard.tsx`** (5)
+**`src/components/portmasters/HouseLeaderboard.tsx`** (6)
 
 | English                     | Chinese                      |
 | --------------------------- | ---------------------------- |
@@ -2429,8 +2738,9 @@ The lobby, the roster, the profile, the settings and the chat.
 | Total Crowns                | 沧海之冠总数                 |
 | Total Voyages               | 航程总数                     |
 | Top Score                   | 最高积分                     |
+| {crowns} crowns             | {crowns}顶沧海之冠           |
 
-**`src/components/portmasters/LeaderboardModal.tsx`** (6)
+**`src/components/portmasters/LeaderboardModal.tsx`** (8)
 
 | English                                  | Chinese                |
 | ---------------------------------------- | ---------------------- |
@@ -2440,6 +2750,8 @@ The lobby, the roster, the profile, the settings and the chat.
 | Close leaderboard                        | 关闭排行榜             |
 | Crowns                                   | 沧海之冠               |
 | Best Rep                                 | 最佳声誉               |
+| {renownXP} XP                            | {renownXP}经验         |
+| Renown {level}                           | 声望 {level}           |
 
 **`src/components/portmasters/Lobby.tsx`** (59)
 
@@ -2458,8 +2770,8 @@ The lobby, the roster, the profile, the settings and the chat.
 | Guide                                                                                                                                                                                                              | 指南                                                                                                                                     |
 | Join by code                                                                                                                                                                                                       | 用港湾口令加入                                                                                                                           |
 | Join                                                                                                                                                                                                               | 加入                                                                                                                                     |
-| Name a room, pick its waters, and open it to the fleet.                                                                                                                                                            | 给港湾起个名字，选好水域，向船队开放。                                                                                                   |
-| Room name                                                                                                                                                                                                          | 港湾名                                                                                                                                   |
+| Name a harbor, pick its waters, and open it to the fleet.                                                                                                                                                          | 给港湾起个名字，选好水域，向船队开放。                                                                                                   |
+| Harbor name                                                                                                                                                                                                        | 港湾名                                                                                                                                   |
 | Create                                                                                                                                                                                                             | 创建                                                                                                                                     |
 | Unlock phrase                                                                                                                                                                                                      | 解锁暗语                                                                                                                                 |
 | A captain&apos;s tenth completed voyage hands them this phrase, and the guide keeps a copy for whoever goes looking. Anyone who has it can open the table, and every seat at that table sails the voyage it opens. | 船长完成第十次航程，就能拿到这句暗语；指南也为上门来查的人留了一份。暗语在手，谁都能开这张桌子；坐上桌的每个席位，都驶进它开的那次航程。 |
@@ -2494,7 +2806,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | Quick Start matched a harbor, but it could not be reached.                                                                                                                                                         | 快速开局配到了港湾，却连不上。                                                                                                           |
 | Quick Start is unavailable right now.                                                                                                                                                                              | 快速开局暂时用不了。                                                                                                                     |
 | Failed to create room                                                                                                                                                                                              | 创建港湾失败                                                                                                                             |
-| Room codes are 6 characters.                                                                                                                                                                                       | 港湾口令是6个字符。                                                                                                                      |
+| Harbor codes are 6 characters.                                                                                                                                                                                     | 港湾口令是6个字符。                                                                                                                      |
 | Failed to join room                                                                                                                                                                                                | 加入港湾失败                                                                                                                             |
 | Failed to enter room                                                                                                                                                                                               | 进入港湾失败                                                                                                                             |
 | Could not load chronicles                                                                                                                                                                                          | 航程实录加载不了                                                                                                                         |
@@ -2525,7 +2837,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | ------------------------------------------------------- | ---------------------------------------- |
 | ${collapsed ? "Expand" : "Collapse"} the ${title} panel | {collapsed ? "展开" : "收起"}{title}面板 |
 
-**`src/components/portmasters/SettingsModal.tsx`** (18)
+**`src/components/portmasters/SettingsModal.tsx`** (21)
 
 | English                                                              | Chinese                                           |
 | -------------------------------------------------------------------- | ------------------------------------------------- |
@@ -2538,26 +2850,31 @@ The lobby, the roster, the profile, the settings and the chat.
 | Light                                                                | 浅色                                              |
 | Dark                                                                 | 深色                                              |
 | Auto                                                                 | 自动                                              |
+| Language                                                             | 语言                                              |
+| English                                                              | 英文                                              |
+| Chinese                                                              | 中文                                              |
 | Visual                                                               | 显示                                              |
 | Colorblind safe palette                                              | 色盲友好配色                                      |
 | Use Okabe Ito anchored colors for all goods                          | 所有货物都使用 Okabe Ito 配色                     |
 | Notifications                                                        | 通知                                              |
 | Messages from the other captains in the harbor                       | 港湾里其他船长发来的消息                          |
 | The race to ${WORD_ON_THE_DOCKS_THRESHOLD} completed orders          | 抢先交满{WORD_ON_THE_DOCKS_THRESHOLD}笔订单的竞赛 |
-| Tidewatch Surge                                                      | 观潮涌动                                          |
+| Tidewatch Alerts                                                     | 观潮预警                                          |
 | The harbor crossing ${TIDEWATCH_SURGE_THRESHOLD} combined Reputation | 港湾声誉合计突破{TIDEWATCH_SURGE_THRESHOLD}       |
 | Shortcuts                                                            | 快捷键                                            |
 
-**`src/components/portmasters/chat/Composer.tsx`** (6)
+**`src/components/portmasters/chat/Composer.tsx`** (8)
 
-| English                                                          | Chinese                                                  |
-| ---------------------------------------------------------------- | -------------------------------------------------------- |
-| The host has muted you in room chat for the rest of this voyage. | 本航程余下的时间，港主已经把你禁言，港湾聊天里说不了话。 |
-| Offer a trade                                                    | 发起交易                                                 |
-| Dismiss trade error                                              | 关闭交易错误                                             |
-| Search messages                                                  | 搜索消息                                                 |
-| Message the harbor…                                              | 给港湾发消息...                                          |
-| Message the lobby…                                               | 给大厅发消息...                                          |
+| English                                                                | Chinese                                                  |
+| ---------------------------------------------------------------------- | -------------------------------------------------------- |
+| The host has muted you in the harbor chat for the rest of this voyage. | 本航程余下的时间，港主已经把你禁言，港湾聊天里说不了话。 |
+| Offer a trade                                                          | 发起交易                                                 |
+| Dismiss trade error                                                    | 关闭交易错误                                             |
+| Search messages                                                        | 搜索消息                                                 |
+| Message the harbor                                                     | 给港湾发消息                                             |
+| Message the lobby                                                      | 给大厅发消息                                             |
+| Message ${otherName ?? "this captain"}                                 | 给{otherName ?? "这位船长"}发消息                        |
+| Send message                                                           | 发送消息                                                 |
 
 **`src/components/portmasters/chat/DmTab.tsx`** (3)
 
@@ -2585,7 +2902,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | ------- | ------- |
 | muted   | 已禁言  |
 
-**`src/components/portmasters/lobby/HarborBoard.tsx`** (7)
+**`src/components/portmasters/lobby/HarborBoard.tsx`** (8)
 
 | English                                                                                                                        | Chinese                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
@@ -2596,6 +2913,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | ⛵ Sailing                                                                                                                     | ⛵ 航行中                                                                      |
 | This voyage has already set sail                                                                                               | 本航程已经起航                                                                 |
 | Locked                                                                                                                         | 锁定                                                                           |
+| Enter                                                                                                                          | 进入                                                                           |
 
 **`src/components/portmasters/lobby/HarborRail.tsx`** (6)
 
@@ -2608,7 +2926,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | In a harbor                                                         | 在港湾                                   |
 | In the lobby                                                        | 在大厅                                   |
 
-**`src/components/portmasters/lobby/LobbyDialogs.tsx`** (13)
+**`src/components/portmasters/lobby/LobbyDialogs.tsx`** (16)
 
 | English                                                                                                                                   | Chinese                                                                          |
 | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
@@ -2625,6 +2943,9 @@ The lobby, the roster, the profile, the settings and the chat.
 | Claiming…                                                                                                                                 | 领取中...                                                                        |
 | Checked in today · back tomorrow                                                                                                          | 今日已签到 · 明天再来                                                            |
 | Pledge                                                                                                                                    | 加入                                                                             |
+| Day {day}                                                                                                                                 | 第{day}天                                                                        |
+| XP                                                                                                                                        | 经验                                                                             |
+| Claim Day {day}: +{xp} Renown XP                                                                                                          | 领取第{day}天：+{xp} 声望经验                                                    |
 
 **`src/components/portmasters/lobby/VoyageCards.tsx`** (4)
 
@@ -2634,6 +2955,12 @@ The lobby, the roster, the profile, the settings and the chat.
 | 🔒 Sealed            | 🔒 封锁      |
 | Still being built.   | 仍在建造中。 |
 | Opens with a phrase. | 凭暗语开启。 |
+
+**`src/components/portmasters/lobby/WatersScale.tsx`** (1)
+
+| English         | Chinese    |
+| --------------- | ---------- |
+| {rounds} rounds | {rounds}轮 |
 
 **`src/components/portmasters/profile/ChronicleDetail.tsx`** (5)
 
@@ -2652,17 +2979,20 @@ The lobby, the roster, the profile, the settings and the chat.
 | loans given | 笔借出  |
 | loans taken | 笔借入  |
 
-**`src/components/portmasters/profile/ChronicleRow.tsx`** (1)
+**`src/components/portmasters/profile/ChronicleRow.tsx`** (4)
 
-| English | Chinese |
-| ------- | ------- |
-| Crowned | 加冕    |
+| English     | Chinese  |
+| ----------- | -------- |
+| Crowned     | 加冕     |
+| fair winds  | 顺风     |
+| open waters | 开阔水域 |
+| monsoon     | 季风时节 |
 
 **`src/components/portmasters/profile/ChroniclesTab.tsx`** (1)
 
-| English                                                                             | Chinese                                                      |
-| ----------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| No chronicles saved yet. Opt in to save a chronicle at the end of your next voyage. | 还没有保存的航程实录。下个航程跑到头，选保存，就能留下一份。 |
+| English                                                                     | Chinese                                          |
+| --------------------------------------------------------------------------- | ------------------------------------------------ |
+| No chronicles saved yet. A chronicle is written when your voyage concludes. | 还没有保存的航程实录。航程结束时，就会写下一份。 |
 
 **`src/components/portmasters/profile/DifficultyBreakdown.tsx`** (1)
 
@@ -2676,17 +3006,21 @@ The lobby, the roster, the profile, the settings and the chat.
 | ---------------------------------------------------- | ---------------------------------- |
 | No merits earned yet. Complete voyages to earn them. | 还没有拿到功勋。跑完航程就能挣到。 |
 
-**`src/components/portmasters/profile/RenownProgression.tsx`** (1)
+**`src/components/portmasters/profile/RenownProgression.tsx`** (2)
 
 | English            | Chinese  |
 | ------------------ | -------- |
 | Renown Progression | 声望进度 |
+| Level {n}          | 等级 {n} |
 
-**`src/components/portmasters/profile/RivalRow.tsx`** (1)
+**`src/components/portmasters/profile/RivalRow.tsx`** (4)
 
-| English | Chinese |
-| ------- | ------- |
-| Leading | 领先    |
+| English          | Chinese       |
+| ---------------- | ------------- |
+| Leading          | 领先          |
+| {count} meeting  | 交手{count}次 |
+| {count} meetings | 交手{count}次 |
+| {ties} ties      | {ties}次平手  |
 
 **`src/components/portmasters/profile/RivalsTab.tsx`** (1)
 
@@ -2718,7 +3052,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | Peak Reputation      | 最高声誉     |
 | Largest Trade        | 最大单笔交易 |
 
-**`src/components/portmasters/roster/PeekButton.tsx`** (6)
+**`src/components/portmasters/roster/PeekButton.tsx`** (9)
 
 | English                             | Chinese                        |
 | ----------------------------------- | ------------------------------ |
@@ -2728,14 +3062,18 @@ The lobby, the roster, the profile, the settings and the chat.
 | Partial sight peek at ${targetName} | 局部视野查看{targetName}       |
 | Asking the harbor…                  | 正在询问港湾...                |
 | No snapshot yet. Tap the eye again. | 还没有快照。再点一下那只眼睛。 |
+| none                                | 没有                           |
+| some                                | 一些                           |
+| plenty                              | 很多                           |
 
-**`src/components/portmasters/roster/RosterHeader.tsx`** (1)
+**`src/components/portmasters/roster/RosterHeader.tsx`** (2)
 
-| English       | Chinese  |
-| ------------- | -------- |
-| Harbor Roster | 港湾名册 |
+| English                  | Chinese       |
+| ------------------------ | ------------- |
+| Harbor Roster            | 港湾名册      |
+| {count} captain{pluralS} | {count}位船长 |
 
-**`src/components/portmasters/roster/RosterRow.tsx`** (5)
+**`src/components/portmasters/roster/RosterRow.tsx`** (7)
 
 | English                                    | Chinese                      |
 | ------------------------------------------ | ---------------------------- |
@@ -2744,6 +3082,8 @@ The lobby, the roster, the profile, the settings and the chat.
 | Unmute this captain                        | 解除这位船长的禁言           |
 | Mute this captain                          | 禁言这位船长                 |
 | You have reported this captain this voyage | 本次航程你已经举报过这位船长 |
+| Unmute {name}                              | 解除{name}的禁言             |
+| Mute {name}                                | 禁言{name}                   |
 
 **`src/server/realtime/wiring/chat.ts`** (3)
 
@@ -2753,7 +3093,7 @@ The lobby, the roster, the profile, the settings and the chat.
 | You can't report yourself.                             | 你不能举报自己。           |
 | That report could not be filed. Try again in a moment. | 举报没能提交。请稍后再试。 |
 
-### Auth, saves and the odds and ends (69)
+### Auth, saves and the odds and ends (75)
 
 Sign in, saves, rooms, victory and the small print the app answers with.
 
@@ -2798,17 +3138,18 @@ Sign in, saves, rooms, victory and the small print the app answers with.
 | That phrase does not open this voyage. Check the words and try again.            | 这句暗语开不了本航程。核对一下字句，再试一次。         |
 | This voyage is sealed. It opens with a phrase, and the harbor was not given one. | 本航程是封着的，要用暗语才开得起来，可开辟时没填暗语。 |
 
-**`src/components/portmasters/ChatPanel.tsx`** (7)
+**`src/components/portmasters/ChatPanel.tsx`** (8)
 
-| English                                                   | Chinese                                    |
-| --------------------------------------------------------- | ------------------------------------------ |
-| Search messages…                                          | 搜索消息...                                |
-| Close search                                              | 关闭搜索                                   |
-| You're muted                                              | 你被禁言了                                 |
-| The host has muted you in room chat this voyage.          | 本航程中，港主在港湾聊天里把你禁言了。     |
-| Nothing on the harbor square yet. Say hello to the fleet. | 港湾广场上还什么都没有。跟船队打个招呼吧。 |
-| No messages yet. Break the ice with your fellow captains. | 还没有消息。先跟同席船长们搭一句话吧。     |
-| No messages yet between you two.                          | 你们俩还没有消息。                         |
+| English                                                                | Chinese                                                  |
+| ---------------------------------------------------------------------- | -------------------------------------------------------- |
+| Search messages…                                                       | 搜索消息...                                              |
+| Close search                                                           | 关闭搜索                                                 |
+| You're muted                                                           | 你被禁言了                                               |
+| The host has muted you in the harbor chat for the rest of this voyage. | 本航程余下的时间，港主已经把你禁言，港湾聊天里说不了话。 |
+| Nothing on the harbor square yet. Say hello to the fleet.              | 港湾广场上还什么都没有。跟船队打个招呼吧。               |
+| No messages yet. Break the ice with your fellow captains.              | 还没有消息。先跟同席船长们搭一句话吧。                   |
+| No messages yet between you two.                                       | 你们俩还没有消息。                                       |
+| {count} found                                                          | 找到{count}条                                            |
 
 **`src/components/portmasters/Sparkline.tsx`** (1)
 
@@ -2829,7 +3170,7 @@ Sign in, saves, rooms, victory and the small print the app answers with.
 | ${pcts[0]}%                | {pcts[0]}%             |
 | ${pcts[0]}% to ${pcts[1]}% | {pcts[0]}%至{pcts[1]}% |
 
-**`src/lib/game/objectives.ts`** (12)
+**`src/lib/game/objectives.ts`** (14)
 
 | English                                                                        | Chinese                                          |
 | ------------------------------------------------------------------------------ | ------------------------------------------------ |
@@ -2845,6 +3186,8 @@ Sign in, saves, rooms, victory and the small print the app answers with.
 | Brocade for the reception, and the raw stuff to keep the looms turning.        | 待客的绫罗绸缎，还有让织机转不停的原材料。       |
 | The Full Manifest                                                              | 满载舱单                                         |
 | Nothing finished, nothing fancy. The founding three, and a great deal of them. | 不要成品，不要稀罕货。就是最初那三样，而且要多。 |
+| 4 or fewer                                                                     | 最多4                                            |
+| 6 or more                                                                      | 至少6                                            |
 
 **`src/lib/game/phases.ts`** (1)
 
@@ -2876,11 +3219,12 @@ Sign in, saves, rooms, victory and the small print the app answers with.
 | ${facts.taker} pays ${facts.captain} ${facts.fee} Gold to put the ${facts.good} right. | {facts.taker}付给{facts.captain}{facts.fee}金币，把{facts.good}整补妥当。 |
 | ${facts.captain} publishes a rumor about ${facts.good} at the bazaar.                  | {facts.captain}在香市放出{facts.good}的风声。                             |
 
-**`src/lib/phase-clock.ts`** (1)
+**`src/lib/phase-clock.ts`** (2)
 
-| English             | Chinese    |
-| ------------------- | ---------- |
-| the tide is turning | 潮水转向了 |
+| English                  | Chinese                  |
+| ------------------------ | ------------------------ |
+| the tide is turning      | 潮水转向了               |
+| {minutes}:{seconds} left | 还剩 {minutes}:{seconds} |
 
 **`src/lib/rooms.ts`** (1)
 
@@ -2917,16 +3261,18 @@ Sign in, saves, rooms, victory and the small print the app answers with.
 | ⚓ Venture canceled                                                                                        | ⚓ 合股已取消                                                                |
 | Another venture in the harbor already claimed this voyage's one chance. Full refund: +${mine.amount} Gold. | 港湾里另一笔合股抢先占了本航程唯一的一次机会。全额退款：+{mine.amount}金币。 |
 
-**`src/lib/voteTally.ts`** (4)
+**`src/lib/voteTally.ts`** (6)
 
 | English                                                                       | Chinese                                                    |
 | ----------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| ${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}               | {names.slice(0, -1).join(", ")}和{names[names.length - 1]} |
+| ${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}               | {names.slice(0, -1).join("、")}和{names[names.length - 1]} |
 | ${count} names                                                                | {count}个名字                                              |
 | ${count} captains                                                             | {count}位船长                                              |
 | ${named} of ${roster} captains ${named === 1 ? "has" : "have"} named someone. | {roster}位船长里，已有{named}位指认了他人。                |
+| 1 name                                                                        | 1个名字                                                    |
+| 1 captain                                                                     | 1位船长                                                    |
 
-### The finishing sweep (431)
+### The finishing sweep (478)
 
 The finishing pass: the operator console and the balance dashboard, the gates instrument, and every line the earlier sweeps missed.
 
@@ -2965,7 +3311,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | You have ${game.money} Gold. Spending ${intelCost} Gold on a rumor guarantees a matching order in Orders, then buying the ${bestGoodName} at ${bestCard.resources[0]?.price} Gold per unit sets up a profitable trade.                                               | 你手上有{game.money}金币。花{intelCost}金币买一条掮客密语，订单阶段就保有一条对得上的订单；再按每件{bestCard.resources[0]?.price}金币买进{bestGoodName}，一笔好买卖就成了。 |
 | Best deal this round: ${bestGoodName} at ${bestCard.resources[0]?.price} Gold per unit from ${bestCard.port}. This is ${Math.round(bestScore * 100)}% of the typical price range, making it a good value.                                                            | 本轮最划算：来自{bestCard.port}的{bestGoodName}，每件{bestCard.resources[0]?.price}金币，约为常见价格的{Math.round(bestScore * 100)}%，值得入手。                           |
 
-**`src/components/portmasters/AdminConsole.tsx`** (46)
+**`src/components/portmasters/AdminConsole.tsx`** (48)
 
 | English                                                                                                                                                                                                                                    | Chinese                                                                                                                                        |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -3015,6 +3361,8 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | Type {bulkCount} to confirm                                                                                                                                                                                                                | 输入{bulkCount}确认                                                                                                                            |
 | There are no accounts to show.                                                                                                                                                                                                             | 暂无账户可显示。                                                                                                                               |
 | No accounts match this view.                                                                                                                                                                                                               | 当前视图下没有匹配的账户。                                                                                                                     |
+| Balance                                                                                                                                                                                                                                    | 平衡总览                                                                                                                                       |
+| Clear search and filters                                                                                                                                                                                                                   | 清除搜索和筛选                                                                                                                                 |
 
 **`src/components/portmasters/AdminGate.tsx`** (8)
 
@@ -3029,7 +3377,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | Create Operator                                                                                             | 创建操作员                                                   |
 | Registration needs the setup code the server was configured with. Accounts created here are administrators. | 注册要填服务器配置里的设置口令。在这里开的账户，都是管理员。 |
 
-**`src/components/portmasters/BalanceDashboard.tsx`** (33)
+**`src/components/portmasters/BalanceDashboard.tsx`** (36)
 
 | English                                                                                               | Chinese                                                              |
 | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -3066,6 +3414,9 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | {ratePercent(cell.rate)} of {cell.played}                                                             | {ratePercent(cell.rate)}，共{cell.played}程                          |
 | {sharePercent(stayed, marooned.length)} of {marooned.length}                                          | {sharePercent(stayed, marooned.length)}，共{marooned.length}人       |
 | {sharePercent(bankrupt, outcomes.length)} of {outcomes.length}                                        | {sharePercent(bankrupt, outcomes.length)}，共{outcomes.length}人     |
+| Launch gates                                                                                          | 放行门槛                                                             |
+| Run {voyages} of {required} recorded voyages                                                          | 目前有{voyages}/{required}程已记录航程                               |
+| Recorded at a sample rate of {samplePercent}%.                                                        | 按{samplePercent}%的采样率记录。                                     |
 
 **`src/components/portmasters/CaptainLegacyCard.tsx`** (5)
 
@@ -3085,12 +3436,13 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | ${fairWinds.name} is the right starting point. ${roundsFor("fair_winds")} rounds, gentle pirate odds, and no mandates. Learn the loop before taking on heavier waters.                                                  | {fairWinds.name}是最合适的起点。{roundsFor("fair_winds")}轮，海盗概率温和，也没有皇命。先把循环摸熟，再去挑更重的水域。                                            |
 | ${monsoon.name} has a ${pirateOddsLabel(monsoon)} pirate raid chance. Make sure you can survive a bankruptcy before risking it.                                                                                         | {monsoon.name}的劫掠概率是{pirateOddsLabel(monsoon)}。冒这个险之前，先确保自己扛得住一次破产。                                                                     |
 
-**`src/components/portmasters/GameRoom.tsx`** (2)
+**`src/components/portmasters/GameRoom.tsx`** (3)
 
 | English                                                                                           | Chinese                                                                  |
 | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | ${data.winnerName} was first to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage. | {data.winnerName}在本航程率先完成了{WORD_ON_THE_DOCKS_THRESHOLD}笔订单。 |
 | ${data.winnerName} was first to ${WORD_ON_THE_DOCKS_THRESHOLD} orders.                            | {data.winnerName}率先做满{WORD_ON_THE_DOCKS_THRESHOLD}笔订单。           |
+| R{round}                                                                                          | 第{round}轮                                                              |
 
 **`src/components/portmasters/HowToPlayModal.tsx`** (1)
 
@@ -3098,11 +3450,12 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | ----------------------------------------------------------------------------------------- | ------------------------------------------------ |
 | Hire artisans only when you can sustain at least two rounds of wages. ${play.failureRule} | 至少付得起两轮工钱，才雇工匠。{play.failureRule} |
 
-**`src/components/portmasters/Lobby.tsx`** (1)
+**`src/components/portmasters/Lobby.tsx`** (2)
 
 | English                                            | Chinese                                      |
 | -------------------------------------------------- | -------------------------------------------- |
 | Day ${res.day} claimed: +${res.xpGained} Renown XP | 第{res.day}天已领取：+{res.xpGained}声望经验 |
+| Lv {n}                                             | 等级{n}                                      |
 
 **`src/components/portmasters/SettingsModal.tsx`** (1)
 
@@ -3147,17 +3500,18 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | ${contract.sellerName} is covering ${who} for ${fee} this leg                                                                                                                                                                                                                                                                                                                                                               | {contract.sellerName}本航段以{fee}金币护卫{who}                                                                                                                                                                                                                         |
 | ${contract.sellerName}'s guns answered a raid meant for ${who}                                                                                                                                                                                                                                                                                                                                                              | {contract.sellerName}的炮口替{who}挡下了一场劫掠                                                                                                                                                                                                                        |
 | You turned down ${contract.sellerName}'s offer of ${fee}                                                                                                                                                                                                                                                                                                                                                                    | 你回绝了{contract.sellerName}的{fee}金币报价                                                                                                                                                                                                                            |
-| 🛡️ You are covering ${carrying.buyerName ?? "a captain"} this leg for ${carrying.fee} Gold, already paid to you. Your Gold answers the raid their hold does not.                                                                                                                                                                                                                                                            | 🛡️ 本航段你替{carrying.buyerName ?? "一位船长"}护卫，{carrying.fee}金币已先行付到你手上。轮到海盗找上门，应答的是这笔金币，不是他们的货舱。                                                                                                                             |
+| 🛡️ You are covering ${carrying.buyerName ?? "a captain"} this leg for ${carrying.fee} Gold, already paid to you. Your Gold answers the raid their hold does not.                                                                                                                                                                                                                                                            | 🛡️ 本航段你替{carrying.buyerName ?? "某位船长"}护卫，{carrying.fee}金币已先行付到你手上。轮到海盗找上门，应答的是这笔金币，不是他们的货舱。                                                                                                                             |
 | 🛡️ Your offer stands: ${one.fee} Gold for one leg of cover for ${one.buyerName ?? "a captain"}. It waits on them.                                                                                                                                                                                                                                                                                                           | 🛡️ 你的报价还挂着：{one.fee}金币，为{one.buyerName ?? "某位船长"}护一航段。就等他点头。                                                                                                                                                                                 |
 | 🚫 ${refused.buyerName ?? "A captain"} turned down your offer of ${refused.fee} Gold. Nothing is owed either way, and the row stays until the leg turns.                                                                                                                                                                                                                                                                    | 🚫 {refused.buyerName ?? "有一位船长"}回绝了你{refused.fee}金币的报价。两不相欠，这一行会留到本航段结束。                                                                                                                                                               |
 | One leg of protection, sold by a Convoy captain at a price the two of them agree. The buyer pays the fee at the handshake, and it is the seller's cannons that answer the raid: ${beatenOff} of it is beaten off, and the remaining ${eaten} is deducted from the seller's Gold. The cover lasts the leg it was sold for and no other, and a raid that never comes costs the seller nothing. ${ESCORT_OFFER_DEATH}          | 一段护卫，由镖行船长出售，价格两人自己谈。买家在握手时付清费用；海盗来时，应答的是卖家的炮火：挡下{beatenOff}，余下的{eaten}从卖家的金币里扣。护卫只管它卖出的那个航段，多一段都不管；海盗没来，卖家分文不损。{ESCORT_OFFER_DEATH}                                      |
 | You are the seller here, so the price is yours to name: the buyer pays it at the handshake, and your own Gold answers whatever your guns do not beat off, which is ${eaten} of a raid, down to the bottom of your hold. ${consentFeeRule()} An open offer is any captain's to take, while a named one waits on the captain you named, and one open offer plus one per captain named is the most this market holds from you. | 在这里你是卖家，价格由你开：买家在握手时付清；你的炮火没挡下的部分由你的金币顶上，也就是一次劫掠里的{eaten}，一直扣到货舱见底。{consentFeeRule()}公开报价人人可接，点名报价只等你点的那位船长；一份公开报价，加上每位被点名船长各一份，就是这个市场替你挂着的最多数量。 |
 
-**`src/components/portmasters/game/GameControlPanel.tsx`** (1)
+**`src/components/portmasters/game/GameControlPanel.tsx`** (2)
 
 | English                                                                      | Chinese                                                               |
 | ---------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | ⏳ ${readyLine(readyCount, requiredCount)} The phase turns when the rest do. | ⏳ {readyLine(readyCount, requiredCount)}其余人就绪后，阶段自会翻页。 |
+| R{round} · {label}                                                           | 第{round}轮 · {label}                                                 |
 
 **`src/components/portmasters/game/MaroonPanel.tsx`** (5)
 
@@ -3194,23 +3548,29 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Clothes lose a point of wear every leg and two on a cold one. A ${SELLER_PATH.name} captain can put ${REFIT_POINTS} points back in a single leg for whatever fee the two of you agree, and anyone can take ${TAILOR_WORK} from the harbor tailors for ${MEND_GOLD_PER_POINT} Gold. One open offer per captain you name, one refit taken on a leg, and an offer nobody takes before the Market closes is gone. | 衣物每个航段掉一点耐久，寒程掉两点。{SELLER_PATH.name}船长可以在一个航段里补回{REFIT_POINTS}点，价格两人自己谈；任何人都可以找港湾的裁缝做{TAILOR_WORK}，每点{MEND_GOLD_PER_POINT}金币。每位被你点名的船长各接一份点名报价，一个航段只能整补一次；开市关门前没人接的报价就此作废。 |
 
-**`src/components/portmasters/game/RevealPanel.tsx`** (2)
+**`src/components/portmasters/game/RevealPanel.tsx`** (6)
 
 | English                                       | Chinese                                     |
 | --------------------------------------------- | ------------------------------------------- |
 | ${total - visible} still to turn over         | 还有{total - visible}张没翻开               |
 | ${captain.peerTradeProfit} Gold in peer trade | 船长间贸易进账{captain.peerTradeProfit}金币 |
+| {rep} Rep                                     | {rep}声誉                                   |
+| {handed} items to the commission              | 向采办交付了{handed}件                      |
+| , leg by leg                                  | ，逐航段走来                                |
+| Leg {leg}                                     | 第{leg}航段                                 |
 
-**`src/components/portmasters/game/VoteTallyRows.tsx`** (6)
+**`src/components/portmasters/game/VoteTallyRows.tsx`** (8)
 
 | English                                                                                                                                     | Chinese                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| No name is in yet. ${nameCount(census.needed)} on one captain ${census.needed === 1 ? "carries" : "carry"} it.                              | 还没有人署名：要一位船长身上凑够{nameCount(census.needed)}个名字才能通过。                   |
-| ${leader.name} needs ${leader.short === 1 ? "1 more name" : \`${leader.short} more names\`} to carry it.                                    | {leader.name}还差{leader.short}个署名才能通过。                                              |
+| No name is in yet. ${nameCount(census.needed)} on one captain ${census.needed === 1 ? "carries" : "carry"} it.                              | 还没有人署名：一位船长身上凑够{namesNeeded}才能通过。                                        |
+| ${leader.name} needs ${leader.short === 1 ? "1 more name" : \`${leader.short} more names\`} to carry it.                                    | {leader.name}还差{namesShort}才能通过。                                                      |
 | Your name is in for ${captainName(members, myVote)}. Nothing else is asked of you this leg.                                                 | 你已把你的名字署给了{captainName(members, myVote)}。本航段不再要求你做什么。                 |
 | {leader.name} has every name the vote needs.                                                                                                | {leader.name}已经凑齐了票上要的所有署名。                                                    |
 | has ${nameCount(row.voters.length)}, from ${nameList(row.voters)}.                                                                          | 已有{nameCount(row.voters.length)}，来自{nameList(row.voters)}。                             |
 | ${captainCount(waiting.length)} ${waiting.length === 1 ? "has" : "have"} not named anyone: ${nameList(waiting)}. ${nextStep(census.needed)} | {captainCount(waiting.length)}还没有指认他人：{nameList(waiting)}。{nextStep(census.needed)} |
+| {namesNeeded} carries it.                                                                                                                   | {namesNeeded}，就能通过。                                                                    |
+| {namesNeeded} carry it.                                                                                                                     | {namesNeeded}，就能通过。                                                                    |
 
 **`src/components/portmasters/game/VoyageLogPanel.tsx`** (1)
 
@@ -3321,12 +3681,19 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | 🧥 Wear ${good} (${game.inventory[good]} in the hold, ${GARMENTS[good].warmth} warmth)                                                                                   | 🧥 穿上{good}（货舱有{game.inventory[good]}，暖意{GARMENTS[good].warmth}）                                |
 | A garment the sea has worn out becomes rags and is scrapped for ${RAG_SCRAP_VALUE} Gold. Frostbite costs the newest hand one leg of work rather than their place aboard. | 衣物被海磨破就成了碎布，拆掉换回{RAG_SCRAP_VALUE}金币。冻伤只让新来的人手歇一个航段的工，不会让他离开船。 |
 
-**`src/components/portmasters/game/phases/Welcome.tsx`** (2)
+**`src/components/portmasters/game/phases/Welcome.tsx`** (9)
 
-| English                                                                      | Chinese                                          |
-| ---------------------------------------------------------------------------- | ------------------------------------------------ |
-| ${raidPct}% chance of losing all Gold on hand                                | 有{raidPct}%的概率丢掉手头所有的金币             |
-| ⏳ Waiting for the host to start the voyage… (${harborIds.length} in harbor) | ⏳ 等待港主启航...（港湾里{harborIds.length}人） |
+| English                                                                                                 | Chinese                                                         |
+| ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| ${raidPct}% chance of losing all Gold on hand                                                           | 有{raidPct}%的概率丢掉手头所有的金币                            |
+| ⏳ Waiting for the host to start the voyage… (${harborIds.length} in harbor)                            | ⏳ 等待港主启航...（港湾里{harborIds.length}人）                |
+| {count} captain in the harbor                                                                           | {count}位船长在港湾里                                           |
+| {count} captain{pluralS} in the harbor                                                                  | {count}位船长在港湾里                                           |
+| 🌊 {rounds} rounds await, become the Sea Master!                                                        | 🌊 {rounds}轮航程在等你，去成为沧海之主！                       |
+| Your first seat is the {label}: three cards dealt face down, and the one you keep is the path you sail. | 你的第一个座位是{label}：三张牌扣着发下，留下哪张，就走哪条道。 |
+| 📦 {stock}                                                                                              | 📦 {stock}                                                      |
+| 💰 {gold} Gold starting funds                                                                           | 💰 {gold}金币启动资金                                           |
+| Income Tax: {incomeTaxPct}% income tax                                                                  | 所得税：{incomeTaxPct}%                                         |
 
 **`src/components/portmasters/game/phases/WorkerMgmt.tsx`** (1)
 
@@ -3366,9 +3733,9 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 
 **`src/components/portmasters/profile/VoyageTrends.tsx`** (1)
 
-| English                                                                                        | Chinese                                     |
-| ---------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| {chronicles.length} recent voyage {chronicles.length === 1 ? "" : "s"} shown, oldest to newest | 显示最近{chronicles.length}次航程，由旧到新 |
+| English                                                            | Chinese                                     |
+| ------------------------------------------------------------------ | ------------------------------------------- |
+| {chronicles.length} recent voyage{pluralS} shown, oldest to newest | 显示最近{chronicles.length}次航程，由旧到新 |
 
 **`src/components/portmasters/roster/PeekButton.tsx`** (1)
 
@@ -3376,7 +3743,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | Bands are read from {targetName}'s live snapshot. The Harbormaster only shares what your standing allows. | 各档数据读自{targetName}的实时快照。港务长只分享你的身份允许看到的部分。 |
 
-**`src/lib/game/constants/copy.ts`** (37)
+**`src/lib/game/constants/copy.ts`** (42)
 
 | English                                                                                                                                                                                                                                                                                       | Chinese                                                                                                                                                                                     |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -3398,6 +3765,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | This account is not an administrator.                                                                                                                                                                                                                                                         | 这个账户不是管理员。                                                                                                                                                                        |
 | This account is no longer an administrator.                                                                                                                                                                                                                                                   | 这个账户已不再是管理员。                                                                                                                                                                    |
 | There is a ${pct(first)} chance, rising to ${pct(second)} past the midpoint.                                                                                                                                                                                                                  | 有{pct(first)}的概率，过了中点升到{pct(second)}。                                                                                                                                           |
+| There is a ${pct(first)} chance.                                                                                                                                                                                                                                                              | 有{pct(first)}的概率。                                                                                                                                                                      |
 | 🏪 Market: Buying                                                                                                                                                                                                                                                                             | 🏪 开市：采购                                                                                                                                                                               |
 | 🤝 Parley: Bartering                                                                                                                                                                                                                                                                          | 🤝 洽谈：易货                                                                                                                                                                               |
 | 📜 On round${mandates.length === 1 ? "" : "s"} ${mandates.join(", ")} the Emperor commissions a \<strong>mandate\</strong>: one large order at a fixed reward, and the only order exempt from VAT. It often asks for more than a single hold carries, so plan to barter or borrow to fill it. | 📜 在第{mandates.join("、")}轮，皇帝会颁下一道\<strong>皇命\</strong>：一笔大额订单，报酬固定，而且是唯一免增值税的订单。它要的货常常一个货舱装不下，所以提前打算好，靠易货或借货把它填满。 |
@@ -3417,8 +3785,12 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | Resolve: Settlement                                                                                                                                                                                                                                                                           | 结算：清账                                                                                                                                                                                  |
 | 🚢 You are ready                                                                                                                                                                                                                                                                              | 🚢 可以出发了                                                                                                                                                                               |
 | • ${w?.label ?? id} (${w?.wage ?? 0} Gold/Round): Makes ${makes}                                                                                                                                                                                                                              | • {w?.label ?? id}（每轮{w?.wage ?? 0}金币）：产出{makes}                                                                                                                                   |
+| Only the host can restart the voyage.                                                                                                                                                                                                                                                         | 只有房主能重启航程。                                                                                                                                                                        |
+| You only have {owned} {item}.                                                                                                                                                                                                                                                                 | 你手上只有{owned}件{item}。                                                                                                                                                                 |
+| Restart voyage (host only)                                                                                                                                                                                                                                                                    | 重开航程（仅限房主）                                                                                                                                                                        |
+| {gold} Gold                                                                                                                                                                                                                                                                                   | {gold}金币                                                                                                                                                                                  |
 
-**`src/lib/game/constants/tags.ts`** (9)
+**`src/lib/game/constants/tags.ts`** (12)
 
 | English                                                                                                                                                                             | Chinese                                                                                            |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -3431,16 +3803,20 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | Cargo that arrives accounted for: bonded, inspected, or closed against the air.                                                                                                     | 到岸就有账可查的货：保税、受检，或者密封不与空气相通。                                             |
 | Trade done in the open and on the record, and the name it earns a captain.                                                                                                          | 摆在明面上、记在册子上的买卖，以及它给船长挣来的名声。                                             |
 | An obligation carried rather than paid: a loan, a due, or a claim on Gold that has not been earned yet.                                                                             | 背着还没还清的义务：一笔借款、一笔欠款，或者一份对还没到手的金币的索取。                           |
+| Cheap for its Gold and heavy for its slot: the trade that fills a hold rather than the trade that fills a purse.                                                                    | 按金币算便宜，按仓位算沉重：是填满货舱的买卖，不是填满钱袋的买卖。                                 |
+| Anything that asks for hands: the roster, its wages, and the work it turns out.                                                                                                     | 一切要人手的东西：名册、工钱，以及这些人手做出来的活。                                             |
+| Trade kept off the books, and the audit that goes looking for it.                                                                                                                   | 不进账本的买卖，以及专门来查它的稽查。                                                             |
 
-**`src/lib/game/constants/tips.ts`** (3)
+**`src/lib/game/constants/tips.ts`** (4)
 
-| English                                            | Chinese                                         |
-| -------------------------------------------------- | ----------------------------------------------- |
-| ⚓ Avoiding Bankruptcy Strategies:                 | ⚓ 避免破产的策略：                             |
-| ⚓ Staying Afloat in ${play.badge}:                | ⚓ 在{play.badge}里稳住船身：                   |
-| \n🛟 If the Bills Beat You:\n${play.failureRule}\n | \n🛟 账单要是先压垮了你：\n{play.failureRule}\n |
+| English                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Chinese                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ⚓ Avoiding Bankruptcy Strategies:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | ⚓ 避免破产的策略：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ⚓ Staying Afloat in ${play.badge}:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | ⚓ 在{play.badge}里稳住船身：                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| \n🛟 If the Bills Beat You:\n${play.failureRule}\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | \n🛟 账单要是先压垮了你：\n{play.failureRule}\n                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 💰 Financial Management:\n1. Always maintain reserve funds for expenses\n2. Maintenance + Wages are fixed round costs\n3. Calculate total expenditure before buying\n\n👥 Worker Management:\n1. Weaver Wage: {weaverWage} Gold / Round\n2. Master Wage: {masterWage} Gold / Round\n3. Maker Wage: {sachetWage} Gold / Round\n4. Hire only as needed\n\n🔮 Broker's Whisper Strategy:\n1. Buy rumors early if you have spare gold\n2. Hoard revealed items to guarantee Orders profits\n3. Balance intel purchases with other investments\n\n🛒 Buying Strategy:\n1. Reserve funds for maintenance+wages first\n2. Select high value for money goods\n3. Prioritize port specialties + revealed intel\n\n🔄 Bartering Strategy:\n1. Trade away surplus raw materials for the one you're actually short on\n2. A modest Gold offer can secure a needed item faster than waiting on the next round's market\n3. Cancel an offer that's sitting unclaimed if you'd rather keep the material yourself\n\n🤝 Trading Strategy:\n1. Prioritize highest profit orders\n2. Consider freight impact on margins\n3. Finished orders yield high profit but incur VAT\n\n⚠️ Risk Control:\n1. Calculate fixed round costs: Maintenance + Wages\n2. Keep funds consistently > fixed costs\n3. Avoid overexpansion cash flow issues\n\n🏴‍☠️ Pirates and Escorts:\n1. The escort fee scales with your own Gold, so it's relatively cheap exactly when you're poor and the stakes are also low\n2. Hire one when you're carrying enough Gold that losing it would actually hurt\n3. Sailing without one is a fair bet when you have little to lose anyway\n\n🆘 Borrowing and Lending:\n1. Repay a loan as soon as you can afford it, instead of waiting for it to be deducted automatically at Round {rounds}\n2. Lending Gold raises your own reputation, so helping a captain who can clearly repay you is rarely a bad trade\n3. Watch how much you've lent out across the voyage; it's still your Gold until it's actually repaid\n\n🛡️ Backing Strategy:\n1. Back a loan you'd have happily lent Gold on yourself; you're taking on the same risk without earning the lender's own full reputation rate\n2. Only pledge what you can afford to lose outright, the same rule as lending directly\n3. A loan to a captain who's clearly about to turn a profit is a safer backing bet than one taken late in the voyage with little runway left to repay it\n\n💾 Save game progress frequently with Ctrl+S! | 💰 财务管理：\n1. 手头永远留一笔应急资金\n2. 维护费和工钱是每轮的固定开销\n3. 出手采购前，先算清这一轮总共要花多少\n\n👥 用工管理：\n1. 织女工钱：每轮 {weaverWage} 金币\n2. 纺织大师工钱：每轮 {masterWage} 金币\n3. 香囊师工钱：每轮 {sachetWage} 金币\n4. 用工按需，别多雇\n\n🔮 掮客密语策略：\n1. 手头有余钱，就早点买密语\n2. 把点破的货捂紧，用来稳稳吃下订单利润\n3. 情报开销和其他投资要平衡\n\n🛒 采购策略：\n1. 先把维护费和工钱留出来\n2. 挑性价比高的货\n3. 优先港口特产，再配上点破的情报\n\n🔄 易货策略：\n1. 多余的原材料拿去换真正短缺的那一样\n2. 一笔不高的金币报价，往往比等下一轮市场更快拿到货\n3. 挂着没人接的报价，与其干等，不如撤回，自己留着材料\n\n🤝 交易策略：\n1. 优先做利润最高的订单\n2. 把运费对利润的影响算进去\n3. 成品订单利润高，但要缴增值税\n\n⚠️ 风险控制：\n1. 算清每轮固定开销：维护费加工钱\n2. 让手里的金币始终高过固定开销\n3. 别贪扩张，小心周转不开\n\n🏴‍☠️ 海盗与护航：\n1. 护航费随你手上的金币浮动，越是穷的时候越便宜，那时的损失本来也小\n2. 金币多到丢了会肉疼的时候，就该雇一趟护航\n3. 反正没什么可输的，不雇护航也赌得起\n\n🆘 借与贷：\n1. 能还就尽早还，别拖到第{rounds}轮被自动扣还\n2. 放贷长自己的声誉，借给明显还得上的船长，很少是笔亏本买卖\n3. 留意整个航程放出去多少：没还回来之前，那还是你的金币\n\n🛡️ 作保策略：\n1. 只给你自己乐意放贷的那类借款作保：担的是同样的风险，却拿不到债主那份完整的声誉\n2. 只押你可以干脆认赔的数目，和直接放贷一个道理\n3. 作保给一位眼看就要盈利的船长，比押给航程末尾、还款空间所剩无几的那类借款稳妥\n\n💾 用 Ctrl+S 勤存档！ |
 
-**`src/lib/game/dashboard.ts`** (73)
+**`src/lib/game/dashboard.ts`** (85)
 
 | English                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Chinese                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -3478,8 +3854,8 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | Offer units posted, filled, expired                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | 报价份数：挂出的、成交的、过期的                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | The staples                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | 常备货                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | Is anything becoming a staple?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 有货物正在变成常备货吗？                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| No gate yet: the card gates are Epic F's and the goods and Bourse gates are Epic G's, so four slots stand, and the charter gate has no path past its floor yet.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | 还没有门槛：卡牌门槛归史诗 F，货物和交易所门槛归史诗 G，所以这四个位置先空着；特许门槛也还没有一条商道越过它的下限。                                                                                                                                                                                                                                                                                                                                       |
-| The card gates are Epic F's and the goods and Bourse gates are Epic G's, so the four gates above are slots until those epics ship.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 卡牌门槛属于史诗 F，货物和交易所门槛属于史诗 G；那些史诗上线之前，上面四道门槛都还空着。                                                                                                                                                                                                                                                                                                                                                                   |
+| No gate yet: the card gates and the goods and Bourse gates have no source on the record, so four slots stand, and the charter gate has no path past its floor yet.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 还没有门槛：卡牌门槛、货物和交易所门槛在记录上还没有来源，所以这四个位置先空着；特许门槛也还没有一条商道越过它的下限。                                                                                                                                                                                                                                                                                                                                     |
+| The card gates and the goods and Bourse gates have no source on the record, so the four gates above stand as slots rather than readings.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 卡牌门槛、货物和交易所门槛在记录上还没有来源；上面那四道门槛都还空着，还不是读数。                                                                                                                                                                                                                                                                                                                                                                         |
 | The record keeps the count of goods a leg dealt and a hold closed with, never their names, so the share of goods traded the plan asks for has no source until an event carries the identity rather than the count.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | 记录只留下一个航段经手、收段时的货物件数，从不记它们的名字；计划要的货物交易占比没处可读，除非哪天有事件带上身份，而不只是计数。                                                                                                                                                                                                                                                                                                                           |
 | The two charter rows are the window's own takes, filed once per captain per voyage when the moment is answered at leg four. The split is read inside each path, because the plan's question is which of a path's two charters captains reach for, and a path is only judged once it holds the floor the card reader reads its own card statistics over; the value names the widest judged path, so the deviation it prints and the verdict over it are about the same path. The cover row is the plan's watch rather than a gate: a charter that only traitors take has stopped being cover, so the row reads how often the salvage charters were taken by each alignment, and it is left unjudged because the plan set no threshold on it. | 两行特许数据都是本窗口自己的选取，在第四航段回答的那一刻，按人、按航程各登记一次。分化在每条商道内部读，因为计划要问的是：一条商道上的两种特许，船长们会伸手去拿哪一种。一条商道要取够卡牌读数所依据的下限，才谈得上判定；显示的值取已判定商道中最宽的那条，所以印出的偏差和它上面的判定说的是同一条商道。护卫一行是计划的观察项，不是门槛：只有叛徒才拿的特许，已经不再是护卫，所以这一行数的是各阵营取打捞特许的频率。计划没有为它设阈值，也就不作判定。 |
 | {roleCard(cell.alignment).title}, {cell.band} seats                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | {roleCard(cell.alignment).title}，{cell.band}席                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -3517,6 +3893,18 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | Every gate this window can read sits inside it, {readable.length} of {gated.length}.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | 窗口里可读的每一道门槛都在区间内，{readable.length}/{gated.length}。                                                                                                                                                                                                                                                                                                                                                                                       |
 | {sharePercent(thinLegs, legReports.length)} over {legReports.length} captain legs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | {sharePercent(thinLegs, legReports.length)}，覆盖{legReports.length}个船长航段                                                                                                                                                                                                                                                                                                                                                                             |
 | ${stopped.length} of ${records.length}, stopping at leg ${Math.round(centre)} on the median                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | {stopped.length}/{records.length}，按中位数停在第{Math.round(centre)}航段                                                                                                                                                                                                                                                                                                                                                                                  |
+| {floor} to {ceiling}%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | {floor}到{ceiling}%                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| {outside.length} of {gated.length} gates sit outside theirs: {list}.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | {gated.length}道门槛中有{outside.length}道落在区间外：{list}。                                                                                                                                                                                                                                                                                                                                                                                             |
+| above 70%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 高于70%                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 12 to 28%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 12到28%                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 15 to 22%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 15到22%                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| above 60%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 高于60%                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 55 to 80%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 55到80%                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| above 90%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 高于90%                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| under 12%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 低于12%                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| above 66%                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | 高于66%                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| 62 to 74 min                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | 62到74分钟                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| not measurable                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | 测不出来                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
 **`src/lib/game/engine/aid.ts`** (2)
 
@@ -3597,7 +3985,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 
 | English                                                                                | Chinese                                                                       |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| 🔧 ${name} leaves your hull for ${trade.buyerName ?? "a captain"}.                     | 🔧 {name}从你的船体上卸下，转给了{trade.buyerName ?? "一位船长"}。            |
+| 🔧 ${name} leaves your hull for ${trade.buyerName ?? "a captain"}.                     | 🔧 {name}从你的船体上卸下，转给了{trade.buyerName ?? "某位船长"}。            |
 | 🤝 Module trade: ${trade.buyerName ?? "A captain"} paid ${trade.fee} Gold for ${name}. | 🤝 模块交易：{trade.buyerName ?? "有一位船长"}花{trade.fee}金币买下了{name}。 |
 
 **`src/lib/game/engine/orders.ts`** (6)
@@ -3633,7 +4021,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | ---------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | 🪧 Standing orders at the shipyard: upgraded the hull to level ${state.shipLevel}. | 🪧 船坞的常备订单：把船体升到了{state.shipLevel}级。 |
 
-**`src/lib/game/garments.ts`** (13)
+**`src/lib/game/garments.ts`** (14)
 
 | English                                                                                                                                 | Chinese                                                                                                          |
 | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -3650,6 +4038,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | 🌊 The ${garment.good} wears through to rags and is scrapped for ${RAG_SCRAP_VALUE} Gold.                                               | 🌊 {garment.good}磨成了碎布，拆掉换回{RAG_SCRAP_VALUE}金币。                                                     |
 | 🧵 Worn clothes lose ${step} point of wear to the sea.                                                                                  | 🧵 海风从穿着的衣服上耗去{step}点耐久。                                                                          |
 | 🥶 There is nobody aboard to take the cold.                                                                                             | 🥶 船上没有人能承受这份寒冷。                                                                                    |
+| ❄️ A cold leg, and the crew's {warmthGrade} of warmth is enough for the {COLD_LEG_WARMTH} it asks.                                      | ❄️ 寒程，船员的{warmthGrade}暖意够它要的{COLD_LEG_WARMTH}。                                                      |
 
 **`src/lib/game/gates.ts`** (26)
 
@@ -3695,17 +4084,19 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | "${kept.id}" is preserved and keeps ${keptLegs} legs while "${turning.id}" is perishable and keeps ${turningLegs}, so the tag and the keeping disagree. | “{kept.id}”是耐储货，能存{keptLegs}个航段；而“{turning.id}”是易腐货，只存{turningLegs}个，标签和保鲜期对不上。 |
 
-**`src/lib/game/voyage-log.ts`** (7)
+**`src/lib/game/voyage-log.ts`** (9)
 
-| English                                                                                             | Chinese                                                                                 |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| The harbor weighs anchor for the ${phaseFace(facts.phase).label}.                                   | 港湾起锚，进入{phaseFace(facts.phase).label}。                                          |
-| ${facts.captain}'s offer of ${facts.offerAmount} ${facts.offerItem} lapses with the leg.            | 本航段一结束，{facts.captain}挂出的{facts.offerAmount}份{facts.offerItem}报价就作废了。 |
-| The tide runs out on the ${phaseFace(facts.phase).label}.                                           | 潮水在{phaseFace(facts.phase).label}退去。                                              |
-| ${facts.captain} takes up the ${pathConfig(facts.path)!.name} path.                                 | {facts.captain}走上了{pathConfig(facts.path)!.name}之道。                               |
-| ${facts.captain} sets aside their old papers and takes up the ${pathConfig(facts.path)!.name} path. | {facts.captain}收起旧文书，改走{pathConfig(facts.path)!.name}之道。                     |
-| ${facts.captain} offers ${cardName(facts.module)} for ${facts.fee} Gold.                            | {facts.captain}挂出{cardName(facts.module)}，要价{facts.fee}金币。                      |
-| ${facts.taker} buys ${cardName(facts.module)} from ${facts.captain} for ${facts.fee} Gold.          | {facts.taker}以{facts.fee}金币从{facts.captain}手上买下{cardName(facts.module)}。       |
+| English                                                                                                                             | Chinese                                                                                                                      |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| The harbor weighs anchor for the ${phaseFace(facts.phase).label}.                                                                   | 港湾起锚，进入{phaseFace(facts.phase).label}。                                                                               |
+| ${facts.captain}'s offer of ${facts.offerAmount} ${facts.offerItem} lapses with the leg.                                            | 本航段一结束，{facts.captain}挂出的{facts.offerAmount}份{facts.offerItem}报价就作废了。                                      |
+| The tide runs out on the ${phaseFace(facts.phase).label}.                                                                           | 潮水在{phaseFace(facts.phase).label}退去。                                                                                   |
+| ${facts.captain} takes up the ${pathConfig(facts.path)!.name} path.                                                                 | {facts.captain}走上了{pathConfig(facts.path)!.name}之道。                                                                    |
+| ${facts.captain} sets aside their old papers and takes up the ${pathConfig(facts.path)!.name} path.                                 | {facts.captain}收起旧文书，改走{pathConfig(facts.path)!.name}之道。                                                          |
+| ${facts.captain} offers ${cardName(facts.module)} for ${facts.fee} Gold.                                                            | {facts.captain}挂出{cardName(facts.module)}，要价{facts.fee}金币。                                                           |
+| ${facts.taker} buys ${cardName(facts.module)} from ${facts.captain} for ${facts.fee} Gold.                                          | {facts.taker}以{facts.fee}金币从{facts.captain}手上买下{cardName(facts.module)}。                                            |
+| {facts.captain} posts {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}.                          | {facts.captain}挂出{facts.offerAmount}份{facts.offerItem}，想换{facts.requestAmount}份{facts.requestItem}。                  |
+| {facts.taker} fills {facts.captain}'s offer of {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}. | {facts.taker}接下{facts.captain}的报价：{facts.offerAmount}份{facts.offerItem}换{facts.requestAmount}份{facts.requestItem}。 |
 
 **`src/lib/use-phase-sync.ts`** (1)
 
@@ -3767,23 +4158,25 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | Word on the Docks: ${s.user.displayName} was first to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage, and pockets ${WORD_ON_THE_DOCKS_REWARD} Gold for it. | 码头风闻：{s.user.displayName}在本航程率先完成了{WORD_ON_THE_DOCKS_THRESHOLD}笔订单，把这{WORD_ON_THE_DOCKS_REWARD}金币装进了口袋。 |
 
-**`src/server/realtime/wiring/room-join.ts`** (2)
+**`src/server/realtime/wiring/room-join.ts`** (3)
 
 | English                                         | Chinese                                |
 | ----------------------------------------------- | -------------------------------------- |
 | ${s.user.displayName} set sail for another port | {s.user.displayName}起航去了另一个港口 |
 | ${s.user.displayName} entered the harbor        | {s.user.displayName}进了港湾           |
+| ${s.user.displayName} left the harbor           | {s.user.displayName}离开了港湾         |
 
-**`src/server/realtime/wiring/ventures.ts`** (2)
+**`src/server/realtime/wiring/ventures.ts`** (3)
 
-| English                                                                               | Chinese                                                               |
-| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Deadline must be between round ${minRound} and round ${maxRound}.                     | 截止轮次得在第{minRound}轮到第{maxRound}轮之间。                      |
-| ${input.displayName} sailed ${waters} and ran out of Gold before the voyage was done. | {input.displayName}在{waters}中跑了一程，中途金币耗尽，没能走完航程。 |
+| English                                                                                      | Chinese                                                                           |
+| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Deadline must be between round ${minRound} and round ${maxRound}.                            | 截止轮次得在第{minRound}轮到第{maxRound}轮之间。                                  |
+| ${input.displayName} sailed ${waters} and ran out of Gold before the voyage was done.        | {input.displayName}在{waters}中跑了一程，中途金币耗尽，没能走完航程。             |
+| ${s.user.displayName} posted a Venture: ${targetGold} Gold needed by Round ${deadlineRound}. | {s.user.displayName}挂出了一笔合股：{targetGold}金币，第{deadlineRound}轮前凑齐。 |
 
 ## The mapping file, complete
 
-One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoning; the block below is the artifact itself, every term one per line, English beside Chinese. It now closes with the `sentences` group: all 1,816 lines from the sentence tables, keyed by sweep and number, in the same order those tables read. It is kept in step with the tables at every revision, and when you approve the last row it lifts into the repo as the file.
+One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoning; the block below is the artifact itself, every term one per line, English beside Chinese. It now closes with the `sentences` group: all 2,193 lines from the sentence tables, keyed by sweep and number, in the same order those tables read. It is kept in step with the tables at every revision, and when you approve the last row it lifts into the repo as the file.
 
 ```json
 {
@@ -4262,8 +4655,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "card.emergency_loan.name": { "en": "Emergency Loan", "zh": "紧急钱庄" },
     "card.emergency_loan.desc": {
-      "en": "Gain {n} Gold immediately. No strings attached.",
-      "zh": "立即获得{n}金币，无需偿还。"
+      "en": "Gain 40 Gold immediately. No strings attached.",
+      "zh": "立即获得40金币，无需偿还。"
     },
     "card.tax_shelter.name": { "en": "Tax Shelter", "zh": "免税令" },
     "card.tax_shelter.desc": {
@@ -4472,7 +4865,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "card.weavers_charter.name": {
       "en": "The Weavers' Charter",
-      "zh": "织工特许"
+      "zh": "织女特许"
     },
     "card.weavers_charter.desc": {
       "en": "The looms never stop. Each weaver produces 1 extra item every round, for the rest of the voyage.",
@@ -4597,7 +4990,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
 
   "sentences": {
     "shell.001": {
-      "en": "${APP_NAME}: a multiplayer maritime trade game on the ancient Silk Road. Captains gather in a shared harbor, sail in lockstep, and the highest Reputation wins the Sea Master crown.",
+      "en": "${APP_NAME}: A multiplayer maritime trade game on the ancient Silk Road. Captains gather in a shared harbor, sail in lockstep, and the highest Reputation wins the Sea Master crown.",
       "zh": "{APP_NAME}：古丝路上的多人海上贸易游戏。船长们聚在同一个港湾，步调一致地航行，声誉最高者赢得沧海之冠。"
     },
     "shell.002": { "en": "Silk Road", "zh": "丝路" },
@@ -4624,6 +5017,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "That captain name is already registered",
       "zh": "这个船长名已经有人用了。"
     },
+    "shell.014": {
+      "en": "Too many attempts at once. Give it a moment, then try again.",
+      "zh": "尝试太频繁了。缓一缓，再试一次。"
+    },
     "shell.011": {
       "en": "${USERNAME_MIN} to ${USERNAME_MAX} chars, letters, numbers, underscore",
       "zh": "{USERNAME_MIN}到{USERNAME_MAX}个字符，字母、数字、下划线"
@@ -4635,6 +5032,24 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "shell.013": {
       "en": "at least ${PASSWORD_MIN} characters",
       "zh": "至少{PASSWORD_MIN}个字符"
+    },
+    "shell.015": {
+      "en": "This screen hit rough water",
+      "zh": "这个画面触了礁"
+    },
+    "shell.016": {
+      "en": "Something went wrong while drawing it. Your voyage is stored on the server, so nothing sailed on without you. Try again first; a reload settles what trying again does not.",
+      "zh": "绘制时出了岔子。你的航程存在服务器上，不会背着你继续开。先试试重试；重试不成的，刷新一下就能定下。"
+    },
+    "shell.017": { "en": "Try again", "zh": "再试一次" },
+    "shell.018": { "en": "Back to the harbor", "zh": "回到港湾" },
+    "shell.019": {
+      "en": "This harbor is not on the chart",
+      "zh": "图上没有这个港湾"
+    },
+    "shell.020": {
+      "en": "The page you were looking for does not exist. The address may have a typo, or it may point at a screen this build does not sail with.",
+      "zh": "你要找的页面不存在。地址可能打错了，也可能指向这一版还没有随航的界面。"
     },
     "guides.001": {
       "en": "<div style=\"background:color-mix(in oklch, var(--w-${leg.phase}) 12%, transparent);border-radius:6px;padding:10px;border-left:3px solid var(--w-${leg.phase});color:var(--foreground)\">\\n    <strong>${face.icon} ${face.label}</strong><br>\\n    <span style=\"font-size:13px\">${leg.body}</span><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">${leg.setsUp}</span>\\n  </div>",
@@ -4660,6 +5075,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "guides.008": { "en": "per item", "zh": "每件" },
     "guides.009": { "en": "per unit", "zh": "每单位" },
+    "guides.167": {
+      "en": "Typically {min} to {max} Gold {unit}",
+      "zh": "通常 {min} 到 {max} 金币{unit}"
+    },
     "guides.010": {
       "en": "<div style=\"background:color-mix(in oklch, var(--gain) 12%, transparent);border-radius:6px;padding:12px;border-left:3px solid var(--gain);color:var(--foreground);line-height:1.9\">${briefing.text}</div>",
       "zh": "<div style=\"background:color-mix(in oklch, var(--gain) 12%, transparent);border-radius:6px;padding:12px;border-left:3px solid var(--gain);color:var(--foreground);line-height:1.9\">${briefing.text}</div>"
@@ -4677,8 +5096,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "<p>{APP_NAME} 把你带上了古丝路：{rounds}轮的航程，有限的金币，还有一群商人，个个都想在每个港口比你多走一步。</p>\\n<p>你走的是<strong>{play.badge}</strong>：{play.tagline}</p>\\n<p>这片水域是<strong>{cfg.name}</strong>：{cfg.tagline}</p>\\n<p>规则好上手，只是前期手头紧，一连串坏判断很快就会滚成雪球。这里讲的是新船长最容易栽的几件事。</p>\\n<p style=\"color:var(--muted-foreground);font-size:13px\">两分钟读完，能省下好几次懊恼的重开。</p>"
     },
     "guides.014": {
-      "en": "<p>After ${rounds} rounds, the captain with the highest score wins the title of <strong>Sea Master</strong>. Score comes from trade profits and fulfilled orders.</p>\\n<p>${play.failureRule}</p>\\n<p>Starting gold is <strong>${cfg.startingGold}</strong>. That is enough to get going, but not enough to be careless with.</p>",
-      "zh": "<p>{rounds}轮之后，积分最高的船长赢得<strong>沧海之主</strong>的头衔。积分来自贸易利润和完成的订单。</p>\\n<p>{play.failureRule}</p>\\n<p>初始金币是<strong>{cfg.startingGold}</strong>。够起步，不够大手大脚。</p>"
+      "en": "<p>After ${rounds} rounds, the captain with the highest Reputation wins the title of <strong>Sea Master</strong>. Reputation comes from trade profits and fulfilled orders.</p>\\n<p>${play.failureRule}</p>\\n<p>Starting gold is <strong>${cfg.startingGold}</strong>. That is enough to get going, but not enough to be careless with.</p>",
+      "zh": "<p>{rounds}轮之后，声誉最高的船长赢得<strong>沧海之主</strong>的头衔。声誉来自贸易利润和完成的订单。</p>\\n<p>{play.failureRule}</p>\\n<p>初始金币是<strong>{cfg.startingGold}</strong>。够起步，不够大手大脚。</p>"
     },
     "guides.015": {
       "en": "<p>A round is one lap of the voyage, and this voyage runs ${rounds} of them. Each round walks the phases below in the order your voyage puts them:</p>\\n${roundStepHtml(mode)}\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\"><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+N</kbd> readies you for the next phase without clicking (the room sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.</p>",
@@ -4694,7 +5113,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "guides.018": {
       "en": "<p>Trade orders appear and you match your cargo to them. Each one shows the goods needed, the reward, and the shipping fee. Your take is whatever is left after fees and tax.</p>\\n<p>You can fill as many orders as your cargo allows while Orders is open.</p>\\n<div style=\"background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  📌 <strong>Finished goods</strong> (${PRODUCTS_TIER0.join(\", \")}) pay two to three times more than raw materials. The catch is they need artisans, and the artisans deliver at Resolve. That is covered next.\\n</div>\\n${mandates.length ?",
-      "zh": "<p>订单上板了，拿货去对。每条都写明要什么货、给多少报酬、收多少运费。运费和税扣完，剩下的都归你。</p>\\n<p>订单开着的时候，货够就交，能交几条交几条。</p>\\n<div style=\"background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  📌 <strong>成品</strong> ({PRODUCTS_TIER0.join(\", \")})的报酬是原材料的两三倍。可它得靠工匠，工匠要到结算才交货。下一页就讲这个。\\n</div>\\n{mandates.length ?"
+      "zh": "<p>订单上板了，拿货去对。每条都写明要什么货、给多少报酬、收多少运费。运费和税扣完，剩下的都归你。</p>\\n<p>订单开着的时候，货够就交，能交几条交几条。</p>\\n<div style=\"background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  📌 <strong>成品</strong> ({PRODUCTS_TIER0.join(\"、\")})的报酬是原材料的两三倍。可它得靠工匠，工匠要到结算才交货。下一页就讲这个。\\n</div>\\n{mandates.length ?"
     },
     "guides.019": {
       "en": "<p>Artisans turn raw materials into high value finished goods and collect wages at every Resolve. That part is simple. What catches most new captains is this:</p>\\n<div style=\"background:color-mix(in oklch, var(--alarm) 18%, transparent);border:1px solid var(--alarm);color:var(--foreground);border-radius:6px;padding:12px;margin:12px 0;text-align:center;font-size:14px;font-weight:bold;line-height:1.7\">\\n  Assign a task this round.<br>Wages come due at Resolve either way.\\n</div>\\n<p style=\"font-size:13px;color:var(--muted-foreground);line-height:1.6\">Weavers (${wageOf(\"weaver\")}g), Master Weavers (${wageOf(\"master\")}g), and Sachet Makers (${wageOf(\"sachet_maker\")}g) all charge wages <strong>every round</strong>, even when idle, so the bill comes round whether they worked or not. Only hire once you have enough gold to cover at least two rounds of wages alongside your other bills.</p>",
@@ -4709,12 +5128,271 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "<p>海盗的事了结之后，还有两笔账单：</p>\\n<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0\">\\n  <div style=\"background:color-mix(in oklch, var(--w-ship) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\\n    <div style=\"font-size:22px;margin-bottom:4px\">🔧</div>\\n    <strong>船只维护费</strong><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">每轮15到22金币，由你走的水域决定</span>\\n  </div>\\n  <div style=\"background:color-mix(in oklch, var(--w-market) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\\n    <div style=\"font-size:22px;margin-bottom:4px\">👥</div>\\n    <strong>工匠工钱</strong><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">每人每轮{ARTISAN_WAGE_MIN}到{ARTISAN_WAGE_MAX}金币</span>\\n  </div>\\n</div>\\n<p style=\"font-size:13px;color:var(--muted-foreground)\">船长栏里的<strong>港务费</strong>页签写着确切欠多少。花钱之前先看一眼。</p>\\n<p style=\"font-size:13px;color:var(--muted-foreground)\">钱不够，本身不是终点。就在结算界面上，你可以向港湾里的其他船长借一笔；对方手头宽裕，当场就能转给你。在航程最后一轮结束前还上就行，还不清，会自动从你的金币里扣出来，交到他手上。</p>"
     },
     "guides.022": {
-      "en": "<p>Keep these points in mind as you play:</p>\\n<ul style=\"padding-left:18px;line-height:2.1;font-size:14px\">\\n  <li>Start with raw material orders. Fast money, no complications.</li>\\n  <li>Always keep at least <strong>30 Gold above</strong> what Resolve will cost you.</li>\\n  <li>Hire artisans only when you can cover <strong>two full rounds of wages</strong>.</li>\\n  <li>Dusk ship upgrades compound quickly. Do not skip them.</li>\\n  <li>Caught short by pirates or a bad round? Ask the harbor for a loan before you assume the voyage is over.</li>\\n  <li>Every voyage's final Reputation becomes Renown on your account, forever, win or lose. Check your Captain's Legacy any time from the Lobby.</li>\\n  <li><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+S</kbd> saves your run  ·  <kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">F1</kbd> opens the full guide.</li>\\n</ul>\\n<div style=\"background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px\">\\n  <strong style=\"font-size:15px\">Good winds and good margins, Captain. ⚓</strong>\\n</div>",
-      "zh": "<p>玩的时候记住这几点：</p>\\n<ul style=\"padding-left:18px;line-height:2.1;font-size:14px\">\\n  <li>先从原材料订单做起。回钱快，不复杂。</li>\\n  <li>手里的金币，始终比结算要收的<strong>多出至少30金币</strong>。</li>\\n  <li>盖得住<strong>整整两轮工钱</strong>再雇工匠。</li>\\n  <li>暮色的船只升级会滚雪球，别跳过。</li>\\n  <li>被海盗或一轮背运打个措手不及？别急着认输，先向港湾借一笔。</li>\\n  <li>不管输赢，航程结束时的声誉都会永远变成账号上的声望。在大厅随时能看你的船长传承。</li>\\n  <li><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+S</kbd> 保存进度  ·  <kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">F1</kbd> 打开完整指南。</li>\\n</ul>\\n<div style=\"background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px\">\\n  <strong style=\"font-size:15px\">顺风又厚利，船长。⚓</strong>\\n</div>"
+      "en": "<p>Keep these points in mind as you play:</p>\\n<ul style=\"padding-left:18px;line-height:2.1;font-size:14px\">\\n  <li>Start with raw material orders. Fast money, no complications.</li>\\n  <li>Always keep at least <strong>30 Gold above</strong> what Resolve will cost you.</li>\\n  <li>Hire artisans only when you can cover <strong>two full rounds of wages</strong>.</li>\\n  <li>Dusk ship upgrades compound quickly. Do not skip them.</li>\\n  <li>Caught short by pirates or a bad round? When other captains are aboard, ask the harbor for a loan before you assume the voyage is over.</li>\\n  <li>Every voyage's final Reputation becomes Renown on your account, forever, win or lose. Check your Captain's Legacy any time from the Lobby.</li>\\n  <li><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+S</kbd> saves your voyage &nbsp;·&nbsp; <kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">F1</kbd> opens the full guide.</li>\\n</ul>\\n<div style=\"background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px\">\\n  <strong style=\"font-size:15px\">Good winds and good margins, Captain. ⚓</strong>\\n</div>",
+      "zh": "<p>玩的时候记住这几点：</p>\\n<ul style=\"padding-left:18px;line-height:2.1;font-size:14px\">\\n  <li>先从原材料订单做起。回钱快，不复杂。</li>\\n  <li>手里的金币，始终比结算要收的<strong>多出至少30金币</strong>。</li>\\n  <li>盖得住<strong>整整两轮工钱</strong>再雇工匠。</li>\\n  <li>暮色的船只升级会滚雪球，别跳过。</li>\\n  <li>被海盗或一轮背运打个措手不及？有其他船长在船上时，别急着认输，先向港湾借一笔。</li>\\n  <li>不管输赢，航程结束时的声誉都会永远变成账号上的声望。在大厅随时能看你的船长传承。</li>\\n  <li><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+S</kbd> 保存本航程 &nbsp;·&nbsp; <kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">F1</kbd> 打开完整指南。</li>\\n</ul>\\n<div style=\"background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px\">\\n  <strong style=\"font-size:15px\">顺风又厚利，船长。⚓</strong>\\n</div>"
+    },
+    "guides.088": {
+      "en": "⚓ ${APP_NAME}: Rules",
+      "zh": "⚓ {APP_NAME}：规则"
+    },
+    "guides.089": {
+      "en": "🌊 These Waters: ${cfg.icon} ${cfg.name}",
+      "zh": "🌊 这片水域：{cfg.icon} {cfg.name}"
+    },
+    "guides.090": {
+      "en": "🧭 This Voyage: ${play.badge}",
+      "zh": "🧭 本航程：{play.badge}"
+    },
+    "guides.091": {
+      "en": "🎲 How ${play.badge} Differs From ${MODES.classic.badge}:",
+      "zh": "🎲 {play.badge}和{MODES.classic.badge}哪里不同："
+    },
+    "guides.092": {
+      "en": "🚢 Objective:\\nSail one voyage of ${rounds} rounds, and finish it with the highest Reputation in the harbor.",
+      "zh": "🚢 目标：\\n走完这趟{rounds}轮的航程，收尾时拥有港湾里最高的声誉。"
+    },
+    "guides.093": { "en": "⚖️ If Your Books Fail:", "zh": "⚖️ 账目撑不住时：" },
+    "guides.094": { "en": "📦 Goods System:", "zh": "📦 货物体系：" },
+    "guides.095": {
+      "en": "Raw Materials: ${priceRangeLine(RESOURCES_TIER0)}",
+      "zh": "原材料：{priceRangeLine(RESOURCES_TIER0)}"
+    },
+    "guides.096": {
+      "en": "Finished Goods: ${priceRangeLine(PRODUCTS_TIER0)}",
+      "zh": "成品：{priceRangeLine(PRODUCTS_TIER0)}"
+    },
+    "guides.097": { "en": "👥 Worker System:", "zh": "👥 工匠体系：" },
+    "guides.098": { "en": "Linen or Cotton Clothes", "zh": "麻衣或布衣" },
+    "guides.099": {
+      "en": "Linen, Cotton or Brocade",
+      "zh": "麻衣、布衣或绫罗绸缎"
+    },
+    "guides.100": { "en": "Sachets", "zh": "香囊" },
+    "guides.101": { "en": "🧾 Tax System:", "zh": "🧾 税费体系：" },
+    "guides.102": {
+      "en": "• VAT: ${Math.round(VAT_RATE * 100)}% on finished product profit margin",
+      "zh": "• 增值税：成品利润的 {Math.round(VAT_RATE * 100)}%"
+    },
+    "guides.103": {
+      "en": "• Income Tax: ${Math.round(INCOME_TAX_RATE * 100)}% on your net profit for the round, charged at Resolve after everything else is paid",
+      "zh": "• 所得税：对本轮净利润征 {Math.round(INCOME_TAX_RATE * 100)}% 的税，在结算时、其余账付清之后收"
+    },
+    "guides.104": { "en": "🔮 Broker's Whisper:", "zh": "🔮 掮客密语：" },
+    "guides.105": {
+      "en": "• Market: Click \"Broker's Rumor Board\" to open the window",
+      "zh": "• 集市：点掮客密语板，窗口就开"
+    },
+    "guides.106": {
+      "en": "• Spend ${INTEL_COST} Gold to buy a \"rumor\" about Orders demand",
+      "zh": "• 花 {INTEL_COST} 金币，买一条关于订单需求的密语"
+    },
+    "guides.107": {
+      "en": "• Revealed intel guarantees matching orders will appear",
+      "zh": "• 买到的情报保证引出对得上的订单"
+    },
+    "guides.108": {
+      "en": "• A rumor is always true and always delivered, on every tier",
+      "zh": "• 密语句句为真、条条送达，哪个难度都一样"
+    },
+    "guides.109": {
+      "en": "• Here a broker may still be corrupt: you get the true rumor, but your position leaks and this round's raid risk rises, and the log tells you when",
+      "zh": "• 在这片水域，掮客可能是黑的：密语照真照送，可你的位置会走漏，本轮的劫掠风险跟着上涨，日志会写明"
+    },
+    "guides.110": { "en": "🤝 Parley (Bartering):", "zh": "🤝 洽谈（易货）：" },
+    "guides.111": {
+      "en": "• Trade directly with the other captains in your harbor while the Parley is open, whether it falls before or after Orders on your voyage",
+      "zh": "• 洽谈开着的时候，绕开集市，直接和港湾里的其他船长易货，不管它排在你航程里订单的前面还是后面"
+    },
+    "guides.112": {
+      "en": "• Post what you have and what you want for it; anyone can accept it with one click",
+      "zh": "• 挂出你有的、写明你想要的；谁都能一点接下"
+    },
+    "guides.113": {
+      "en": "• An offer can't be an item for itself, and both amounts must be whole numbers of at least 1",
+      "zh": "• 不能拿一样货换它本身；两边的数量都得是整数，至少各 1"
+    },
+    "guides.114": {
+      "en": "• You can never offer more than you currently own, it's set aside the moment you post, and returned to you if you cancel or nobody takes it",
+      "zh": "• 挂出的数量不能超过你手头有的；挂出那一刻就寄存起来，你取消或没人接，就原样归还"
+    },
+    "guides.115": {
+      "en": "• Want to make sure a specific captain gets your offer, not whoever clicks fastest? Pick their name under \"With\" when you post: only the two of you will ever see it",
+      "zh": "• 想让报价稳稳落进某位船长手里，而不是谁点得快谁得？挂单时在给谁一栏点他的名字：这份报价只有你们俩看得到"
+    },
+    "guides.116": { "en": "🔧 Ship Modules:", "zh": "🔧 船只模块：" },
+    "guides.117": {
+      "en": "• Dusk: Upgrade your ship to unlock Module Slots",
+      "zh": "• 暮色：升级船只，解锁模块槽位"
+    },
+    "guides.118": {
+      "en": "• Draft powerful modules to create unique synergies",
+      "zh": "• 抽选强力模块，凑出独一份的组合"
+    },
+    "guides.119": {
+      "en": "• Swap modules to adapt to your current voyage!",
+      "zh": "• 换模块，随这趟航程随时调整！"
+    },
+    "guides.120": { "en": "🏴‍☠️ Pirates and Escorts:", "zh": "🏴‍☠️ 海盗与护航：" },
+    "guides.121": {
+      "en": "• Resolve: ${raidCopy(cfg)} Pirates take every Gold coin you carry.",
+      "zh": "• 结算时：{raidCopy(cfg)}海盗会拿走你身上的每一个金币。"
+    },
+    "guides.122": {
+      "en": "• Hire an escort for ${escortPct(cfg)} of current Gold to sail safe",
+      "zh": "• 花当前金币的 {escortPct(cfg)} 雇一艘护航，稳稳驶过"
+    },
+    "guides.123": {
+      "en": "• Decide before the pirate roll happens that round",
+      "zh": "• 要做决定，得赶在那轮海盗掷点之前"
+    },
+    "guides.124": { "en": "📜 Imperial Mandates:", "zh": "📜 皇命采办：" },
+    "guides.125": {
+      "en": "• On round${mandates.length === 1 ? \"\" : \"s\"} ${mandates.join(\", \")} the Emperor commissions one large order at a fixed reward",
+      "zh": "• 第 {mandates.join(\"、\")} 轮上，皇帝下旨采办一大笔订单，报酬固定"
+    },
+    "guides.126": {
+      "en": "• A mandate is the only order exempt from VAT",
+      "zh": "• 皇命是唯一免增值税的订单"
+    },
+    "guides.127": {
+      "en": "• Every captain in the harbor is dealt the same mandate, so it is a race",
+      "zh": "• 港湾里每位船长拿到的皇命都一样，抢的就是速度"
+    },
+    "guides.128": { "en": "📣 Word on the Docks:", "zh": "📣 码头风闻：" },
+    "guides.129": {
+      "en": "• Whichever captain is first in the harbor to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders total this voyage wins ${WORD_ON_THE_DOCKS_REWARD} Gold on the spot",
+      "zh": "• 本航程里，港湾中头一个交满 {WORD_ON_THE_DOCKS_THRESHOLD} 笔贸易订单的船长，当场赢得 {WORD_ON_THE_DOCKS_REWARD} 金币"
+    },
+    "guides.130": {
+      "en": "• It's a race against the rest of the harbor, not a scheduled event: it can land on any round, for any captain",
+      "zh": "• 这是和港湾其余人的赛跑，不是排好的日程：哪一轮、落在哪位船长头上都有可能"
+    },
+    "guides.131": {
+      "en": "• Announced to the whole harbor the moment it's won, same as any other harbor wide milestone",
+      "zh": "• 赢下的那一刻全港湾通报，和港湾里其他大事件一个待遇"
+    },
+    "guides.132": { "en": "🌊 Tidewatch Alerts:", "zh": "🌊 观潮预警：" },
+    "guides.133": {
+      "en": "• Once everyone in the harbor's own Reputation adds up past ${TIDEWATCH_SURGE_THRESHOLD}, the harbor takes notice of a bustling crew",
+      "zh": "• 港湾里所有人的声誉加起来越过 {TIDEWATCH_SURGE_THRESHOLD}，港湾就瞧见这支船队忙起来了"
+    },
+    "guides.134": {
+      "en": "• From the next Port Purchase onward, every captain's board gets one extra cargo lot, for the rest of the voyage",
+      "zh": "• 从下一次港口采购起，本航程余下的每一轮，每位船长的板上都多一件货物"
+    },
+    "guides.135": {
+      "en": "• This never changes your voyage length or which tier's goods you see, only how busy the market gets",
+      "zh": "• 这不会改航程的长短，也不改你见到哪一档的货，只是让集市更热闹"
+    },
+    "guides.136": { "en": "⚓ Ventures:", "zh": "⚓ 合股：" },
+    "guides.137": {
+      "en": "• Found on the Dues tab of your captain's rail: any captain can post a venture, a Gold target and a deadline round",
+      "zh": "• 在船长栏的港务费页签里：任何船长都能发起一份合股，写清目标金币和截止轮次"
+    },
+    "guides.138": {
+      "en": "• Anyone in the harbor, including the poster, can chip in Gold toward that target at any time before the deadline",
+      "zh": "• 港湾里任何人，发起人自己也算，都能在截止前随时往里投金币"
+    },
+    "guides.139": {
+      "en": "• Reach the target in time and it fills: every contributor is paid back ${Math.round((CONVOY_VENTURE_PAYOUT_MULTIPLIER - 1) * 100)}% more Gold than they put in, split in exact proportion to their share",
+      "zh": "• 按期凑够就成立：每位出资人拿回比本金多 {Math.round((CONVOY_VENTURE_PAYOUT_MULTIPLIER - 1) * 100)}% 的金币，按出资比例分毫不差地分"
+    },
+    "guides.140": {
+      "en": "• Miss the deadline and it fails: every contributor only gets back ${Math.round(CONVOY_VENTURE_FAILURE_REFUND_RATE * 100)}% of their own stake, the rest is lost",
+      "zh": "• 过了截止还没凑够就失败：每位出资人只拿回本金的 {Math.round(CONVOY_VENTURE_FAILURE_REFUND_RATE * 100)}%，其余的就没了"
+    },
+    "guides.141": {
+      "en": "• Contributing is a real wager on the rest of the harbor coming through, not a free favor",
+      "zh": "• 出资是拿真金赌港湾的其余人靠得住，不是白送的人情"
+    },
+    "guides.142": {
+      "en": "• Your whole harbor only ever gets one filled venture per voyage: the moment any venture fills, every other open venture is canceled and fully refunded, and posting a new one is disabled until the next voyage",
+      "zh": "• 整个港湾每趟航程只成立一份合股：任何一份一成立，其余还开着的全部取消、全额退还，本航程也不能再发起新的"
+    },
+    "guides.143": {
+      "en": "• A deadline can never land on your voyage's final round: it always leaves at least one full round afterward to actually spend whatever you're paid",
+      "zh": "• 截止轮次绝不会落在航程的最后一轮：后面总留足至少一整轮，让你真能把拿到的金币花出去"
+    },
+    "guides.144": {
+      "en": "• No single captain can ever fund more than ${Math.round(CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE * 100)}% of a venture's target alone: it always needs at least one other captain to fund the rest before it can fill",
+      "zh": "• 任何一位船长单独出资都不得超过目标金额的 {Math.round(CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE * 100)}%：想成立，总得另有船长补齐剩下的"
+    },
+    "guides.145": { "en": "🆘 Financial Aid:", "zh": "🆘 资金援助：" },
+    "guides.146": {
+      "en": "• Can't cover this round's wages or maintenance? When other captains are aboard, ask the harbor for a loan, right on the settlement screen",
+      "zh": "• 这轮的工钱或维护费付不出来？船上有别的船长时，就在结算界面向港湾借一笔"
+    },
+    "guides.147": {
+      "en": "• Any captain with enough Gold can lend it to you on the spot; it's in your hands immediately",
+      "zh": "• 金币够的船长当场就能借给你，钱立刻到你手上"
+    },
+    "guides.148": {
+      "en": "• Repay it any time before the voyage's last round ends, or it's taken from your funds automatically and handed to your lender",
+      "zh": "• 航程最后一轮结束前随时还上；还不清，会自动从你的金币里扣出来，交到借你的人手上"
+    },
+    "guides.149": {
+      "en": "• Still short when the voyage finishes? That unpaid loan is what bankrupts you, not the round it was borrowed in",
+      "zh": "• 航程走完还欠着？让你破产的是那笔没还的借款，不是借它的那一轮"
+    },
+    "guides.150": {
+      "en": "• Lending Gold raises your own reputation, scaled to how much you lent",
+      "zh": "• 借出金币会抬高你自己的声誉，借得越多涨得越多"
+    },
+    "guides.151": { "en": "🛡️ Backing:", "zh": "🛡️ 作保：" },
+    "guides.152": {
+      "en": "• Every outstanding loan in your harbor is visible on the settlement screen, to everyone, not just the lender and borrower",
+      "zh": "• 港湾里每一笔没还清的借款都摆在结算界面上，所有人可见，不只是借贷两家"
+    },
+    "guides.153": {
+      "en": "• A third captain can back one: pledge some of their own Gold as a safety net for the lender, escrowed the instant they pledge it",
+      "zh": "• 第三位船长可以作保：押上自己的金币，给借出方兜底，押出的那一刻就寄存起来"
+    },
+    "guides.154": {
+      "en": "• Only spent if the loan actually defaults, and only up to whatever was pledged; the lender still eats any shortfall past that",
+      "zh": "• 只有借款真的违约才会动用，而且动用不超过押数；超出押数的窟窿，仍由借出方自己扛"
+    },
+    "guides.155": {
+      "en": "• Never called on when the loan is repaid in full? The whole pledge comes back, plus a small Reputation bonus for the risk paying off",
+      "zh": "• 借款全额还清、保金没被动过？押数原样奉还，还附带一小笔声誉奖励，赏这份风险没白担"
+    },
+    "guides.156": {
+      "en": "• One backer per loan; you can't back a loan you're the lender or borrower on yourself",
+      "zh": "• 每笔借款只认一位保人；自己借的、自己放的，都不能自己保"
+    },
+    "guides.157": { "en": "Captain's Legacy:", "zh": "船长传承：" },
+    "guides.158": {
+      "en": "• Every voyage's final Reputation becomes Renown XP on your account the moment the voyage ends, win or lose",
+      "zh": "• 不管输赢，航程一结束，最终声誉立刻变成账号上的声望经验"
+    },
+    "guides.159": {
+      "en": "• Renown is permanent: it survives a restart and carries into every future voyage, in any harbor, unlike Gold, cargo, and ship level",
+      "zh": "• 声望是永久的：重开也带得走，往后每一趟航程、哪个港湾都能带上，金币、货物和船只等级做不到"
+    },
+    "guides.160": {
+      "en": "• Whoever ends a voyage with the highest Reputation among everyone who reached the endgame screen is crowned Sea Master",
+      "zh": "• 走到终局画面的所有船长里，最终声誉最高的那位加冕沧海之主"
+    },
+    "guides.161": {
+      "en": "• Check your current Renown level, title, and Sea Master crowns any time from the Lobby",
+      "zh": "• 当前的声望等级、称号和沧海之主的冠数，在大厅随时能看"
+    },
+    "guides.162": { "en": "🌊 The Round:", "zh": "🌊 一轮怎么走：" },
+    "guides.163": { "en": "⌨️ Shortcuts:", "zh": "⌨️ 快捷键：" },
+    "guides.164": {
+      "en": "⚓ Bon Voyage and Good Luck!",
+      "zh": "⚓ 一路顺风，好运相随！"
+    },
+    "guides.165": {
+      "en": "🧭 ${play.badge}: what is different",
+      "zh": "🧭 {play.badge}：有什么不同"
+    },
+    "guides.166": {
+      "en": "${item}(${range[0]} to ${range[1]}💰)",
+      "zh": "{item}（{range[0]}到{range[1]}💰）"
     },
     "guides.023": {
-      "en": "<p>Before the bills below come due each round, ${raidCopy(cfg).toLowerCase()} Pirates find your ship and take every coin you're carrying.</p>\\n<p>You get one choice before that roll happens: hire an escort for ${escortPct(cfg)} of your current Gold and sail through guaranteed safe, or set sail anyway and keep the Gold if the pirates don't show.</p>\\n${cfg.brokerCorruption ?",
-      "zh": "<p>每轮账单到期之前，{raidCopy(cfg).toLowerCase()}海盗会找上你的船，把你带的钱搜刮一空。</p>\\n<p>掷这一下之前，你还有得选：花现有金币的 {escortPct(cfg)}雇一艘护航，保证平安过关；或者照常起航碰运气，海盗不来，那笔金币就省下。</p>\\n{cfg.brokerCorruption ?"
+      "en": "<p>Before the bills below come due each round, the pirates roll for your ship. ${raidCopy(cfg)} A raid takes every coin you're carrying.</p>\\n<p>You get one choice before that roll happens: hire an escort for ${escortPct(cfg)} of your current Gold and sail through guaranteed safe, or set sail anyway and keep the Gold if the pirates don't show.</p>\\n${cfg.brokerCorruption ?",
+      "zh": "<p>每轮账单到期之前，海盗会先为你的船掷上一把。{raidCopy(cfg)}一场劫掠下来，你带的钱会被搜刮一空。</p>\\n<p>掷这一下之前，你还有得选：花现有金币的 {escortPct(cfg)}雇一艘护航，保证平安过关；或者照常起航碰运气，海盗不来，那笔金币就省下。</p>\\n{cfg.brokerCorruption ?"
     },
     "guides.024": {
       "en": "The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the charter sets as a share of your Gold: ${Object.values( DIFFICULTIES, ) .map((c) =>",
@@ -4722,11 +5400,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "guides.025": {
       "en": ") .join(\", \")}. Once hired, the round's pirates are no longer a risk.",
-      "zh": ") .join(\", \")}。雇下之后，本轮的海盗就不再是威胁。"
+      "zh": ") .join(\"、\")}。雇下之后，本轮的海盗就不再是威胁。"
     },
     "guides.026": {
       "en": "A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one leg of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off ${Math.round( CONVOY_RAID_COVERAGE * 100, )}% of a raid in that leg, and the rest comes out of the seller's own Gold. ${ESCORT_OFFER_DEATH}",
       "zh": "暗潮航程里洽谈场上的镖行买卖：镖行船长把一段航段的护卫卖给另一位船长，价格两人自己谈。买家在成交时付清费用，卖家的炮火挡下该航段 {Math.round( CONVOY_RAID_COVERAGE * 100, )}% 的劫掠，剩下的从卖家自己的金币里出。{ESCORT_OFFER_DEATH}"
+    },
+    "guides.087": {
+      "en": "A roll at Resolve, before wages and maintenance come due, that can take every Gold coin you're carrying. The charter sets the odds: ${Object.values( DIFFICULTIES, ) .map((c) =>",
+      "zh": "结算时掷上一把，赶在工钱和维护费到期之前，你身上带的每一枚金币都可能被搜刮一空。章程定下概率：{Object.values( DIFFICULTIES, ) .map((c) =>"
     },
     "guides.027": {
       "en": ", ) .join( \", \", )}. Hire an escort beforehand to guarantee safe passage instead of risking it.",
@@ -4888,7 +5570,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "guides.071": {
       "en": "Assign a task to put them to work",
-      "zh": "派一件活，他们就能开工。"
+      "zh": "派一件活，他们就能开工"
     },
     "guides.072": {
       "en": "🥶 ${FROZEN_CREW.state}: the crew ${FROZEN_CREW.cause}. Back next leg. ${FROZEN_CREW.remedy}.",
@@ -4978,7 +5660,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "开市就在港口。向港口商人采购麻布、丝绸、茶叶这些原材料。价格每位船长各不同，每轮也在变。还可以花{INTEL_COST}金币买一条掮客密语，保证订单一开就有对得上的单子出现。"
     },
     "manual.010": {
-      "en": "The harbor remembers what everyone bought. A good the room leans into gets pricier next round, while one nobody touches softens.",
+      "en": "The harbor remembers what everyone bought. A good the harbor leans into gets pricier next round, while one nobody touches softens.",
       "zh": "港湾记得每个人买过什么。大家都在买的货下一轮更贵，无人问津的会便宜下来。"
     },
     "manual.011": {
@@ -4986,9 +5668,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "在洽谈，你可以和其他船长直接易货、换金币，不论航程把洽谈排在订单前还是后。挂出你有的、写明你想要的，或者接下别人挂的。货一挂出就寄存，直到成交或取消。"
     },
     "manual.012": {
-      "en": "You can target a specific captain with a Direct Barter Offer if you want to trade with only them. The Markets station of the Parley holds the escort market, the module market and the bazaar window.",
-      "zh": "只想和某一位船长做买卖，可以发一份定向易货给他。洽谈的集市站里，开着护航市场、模块市场和香市窗口。"
+      "en": "You can target a specific captain with a Direct Barter Offer if you want to trade with only them. The Markets station of the Parley holds ${held}.",
+      "zh": "只想和某一位船长做买卖，可以发一份定向易货给他。洽谈的集市站里，开着{held}。"
     },
+    "manual.059": { "en": "the escort market", "zh": "护航市场" },
+    "manual.060": { "en": "the module market", "zh": "模块市场" },
+    "manual.061": { "en": "the bazaar window", "zh": "香市窗口" },
     "manual.013": {
       "en": "Orders deals the trade manifest. Each entry asks for a set of goods and pays Gold and Reputation. Finished product orders pay more but require artisans to craft them first. The Emperor may also issue a Mandate, a high value order identical for every captain.",
       "zh": "订单阶段发舱单。每条写明要什么货，付你金币和声誉。成品订单给得更多，先得让工匠做出来。皇帝还可能下皇命：一张高价值订单，每位船长收到的都一样。"
@@ -5002,8 +5687,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "结算就是本轮账单到期的时候。海盗可能先找上门，把你在手的金币卷走：雇护航求平安，或者赌一把。接着是工钱和船只维护费。花钱之前，先看一眼船长栏里的港务费页签。"
     },
     "manual.016": {
-      "en": "Ask the harbor for a loan before assuming the voyage is over. Any captain can lend, and a third captain can back the loan as a safety net.",
-      "zh": "别急着断定航程结束，先向港湾借一笔。任何船长都能放款，第三位船长还能为这笔借款作保，兜一道底。"
+      "en": "When other captains are aboard, ask the harbor for a loan before assuming the voyage is over. Any captain can lend, and a third captain can back the loan as a safety net.",
+      "zh": "有其他船长在船上时，别急着断定航程结束，先向港湾借一笔。任何船长都能放款，第三位船长还能为这笔借款作保，兜一道底。"
     },
     "manual.017": {
       "en": "Dusk is the shipyard. Upgrade your ship (opens a new module slot and reduces transport costs) or draft and rig a module. Modules are permanent ship upgrades: a Smuggler's Hold, a Broker's Network, a Salvage Crane, and more.",
@@ -5049,6 +5734,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "manual.028": {
       "en": "${((at + 1) / pages.length) * 100}%",
       "zh": "{((at + 1) / pages.length) * 100}%"
+    },
+    "manual.062": {
+      "en": "You can target a specific captain with a Direct Barter Offer if you want to trade with only them.",
+      "zh": "只想和某一位船长做买卖，可以发一份定向易货给他。"
+    },
+    "manual.063": {
+      "en": "Step {step} of {total}: {title}",
+      "zh": "第{step}步，共{total}步：{title}"
     },
     "manual.029": { "en": "Keyboard Shortcuts", "zh": "键盘快捷键" },
     "manual.030": {
@@ -5243,16 +5936,20 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "舱单先行，桌面后开：订单排在洽谈之前，所以你先对单子落定，船队一开口议价，单子上的内容就不能再改。"
     },
     "descriptions.031": {
-      "en": "Every voyage here runs ${GAMBIT_LEGS} rounds, whatever tier you sail. That is the length the harbor's two votes are tuned to.",
-      "zh": "这里的航程不论难度，都走 {GAMBIT_LEGS}轮。港湾的两次表决就是照这个长度调的。"
+      "en": "Every voyage here runs 12 rounds, whatever tier you sail. That is the length the harbor's two votes are tuned to.",
+      "zh": "这里的航程不论难度，都走12轮。港湾的两次表决就是照这个长度调的。"
     },
     "descriptions.032": {
       "en": "Every captain is dealt a private card when the voyage leaves the dock, and no one else can see it: most are Honest Captains sailing the fleet's public objective, while a table of four or more hides a Pirate in the fleet and a table of six or more may hide a Broker beside them. Every card turns face up when the voyage ends.",
       "zh": "航程离港时，每位船长都发到一张别人看不到的私牌：多数是诚信船长，跟着船队的公开目标走；四人以上的桌上，船队里藏着一个海盗，六人以上还可能多藏一个掮客。航程结束时，所有牌都翻开。"
     },
     "descriptions.033": {
-      "en": "From round ${AUDIT_FROM_ROUND}, a simple majority of the fleet can open one captain's manifest at a Parley. The room is shown ${AUDIT_REVEAL_COUNT} of that captain's last ${AUDIT_WINDOW} fills, and calling the vote spends the rest of that Parley's trading.",
-      "zh": "从第 {AUDIT_FROM_ROUND}轮起，船队过半数可以在洽谈时翻开一位船长的舱单。港湾会看到那位船长最近 {AUDIT_WINDOW}笔交货中的 {AUDIT_REVEAL_COUNT}笔；发起这次表决，那场洽谈剩下的交易时间就没了。"
+      "en": "From round 5, a simple majority of the fleet can open one captain's manifest at a Parley. The room is shown 2 of that captain's last 5 fills, and calling the vote spends the rest of that Parley's trading.",
+      "zh": "从第5轮起，船队过半数可以在洽谈时翻开一位船长的舱单。港湾会看到那位船长最近5笔交货中的2笔；发起这次表决，那场洽谈剩下的交易时间就没了。"
+    },
+    "descriptions.034": {
+      "en": "From round 9, two thirds of the captains still sailing can vote one captain ashore, once a voyage. The ship and its hold go to the harbor, half that captain's Gold stays aboard, and they take up the Harbormaster's hand: once a round, they name a port and lean every price there 10 percent either way.",
+      "zh": "从第9轮起，仍在航程中的船长凑够三分之二，就能投票把一位船长放逐上岸，每趟航程一次。船和舱里的货归港湾，他一半的金币留在船上；此后他接过港务长之手：每轮一次，点一座港口，把那儿的物价往任意一边拨动10%。"
     },
     "engine.001": { "en": "a random pair", "zh": "随机两项" },
     "engine.002": {
@@ -5292,6 +5989,34 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "\\n📋=== Settling Outstanding Loans ===",
       "zh": "\\n📋=== 结清未偿借款 ==="
     },
+    "engine.311": {
+      "en": "🆘 {loan.fromName} lent you {loan.amount} Gold. Repay it before the voyage ends, or it's deducted automatically.",
+      "zh": "🆘 {loan.fromName}借给你{loan.amount}金币。航程结束前还清，不然会被自动扣还。"
+    },
+    "engine.312": {
+      "en": "🤝 Lent {loan.borrowerName} {loan.amount} Gold. Reputation +{repGain} for helping a fellow captain.",
+      "zh": "🤝 借给{loan.borrowerName}{loan.amount}金币。帮了同席船长，声誉 +{repGain}。"
+    },
+    "engine.313": {
+      "en": "🤝 Lent {loan.borrowerName} {loan.amount} Gold.",
+      "zh": "🤝 借给{loan.borrowerName}{loan.amount}金币。"
+    },
+    "engine.314": {
+      "en": "💰 Repaid {debt.counterpartyName}: {debt.amount} Gold",
+      "zh": "💰 已还{debt.counterpartyName}：{debt.amount}金币"
+    },
+    "engine.315": {
+      "en": "💰 {fromName} repaid you {amount} Gold",
+      "zh": "💰 {fromName}还给你{amount}金币"
+    },
+    "engine.316": {
+      "en": "⚠️ Could not fully repay {debt.counterpartyName}: paid {paid} of {debt.amount} Gold owed",
+      "zh": "⚠️ 没能还清{debt.counterpartyName}：欠{debt.amount}金币，只付了{paid}"
+    },
+    "engine.317": {
+      "en": "💰 Settled outstanding loan to {debt.counterpartyName}: {paid} Gold",
+      "zh": "💰 已结清欠{debt.counterpartyName}的借款：{paid}金币"
+    },
     "engine.015": {
       "en": "❌ Need ${amount} Gold to back that loan, have ${state.money}",
       "zh": "❌ 为这笔借款作保要{amount}金币，现有{state.money}"
@@ -5303,6 +6028,18 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.017": {
       "en": "⚖️ Age of the Lender: a pledge that comes home whole pays ${Math.round((multiplier - 1) * 100)}% more while it holds the harbor.",
       "zh": "⚖️ 债主之年：时代执掌港湾期间，质押完好收回，多付{Math.round((multiplier - 1) * 100)}%。"
+    },
+    "engine.318": {
+      "en": "🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold. Reputation +{repGain} for the risk paying off.",
+      "zh": "🛡️ 你的作保没有被动用，质押全额退回：{refundAmount}金币。风险有了回报，声誉 +{repGain}。"
+    },
+    "engine.319": {
+      "en": "🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold.",
+      "zh": "🛡️ 你的作保没有被动用，质押全额退回：{refundAmount}金币。"
+    },
+    "engine.320": {
+      "en": "🛡️ Your backing partially covered a captain's shortfall: {calledAmount} Gold spent, {refundAmount} Gold returned.",
+      "zh": "🛡️ 你的作保补上了一位船长缺口的一部分：花去{calledAmount}金币，退回{refundAmount}金币。"
     },
     "engine.018": {
       "en": "⚓ No crew aboard, so there is nothing to provision.",
@@ -5346,6 +6083,31 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "随航程载入退回"
     },
     "engine.029": { "en": "⏭️ Bartering ended", "zh": "⏭️ 易货结束" },
+    "engine.321": {
+      "en": "❌ Can't offer {offerAmount} {offerItem}, only have {owned}",
+      "zh": "❌ 拿不出{offerAmount}件{offerItem}，手上只有{owned}件"
+    },
+    "engine.322": {
+      "en": "🤝 Posted a barter offer: {offerAmount} {offerItem} for {requestAmount} {requestItem}",
+      "zh": "🤝 挂出易货报价：{offerAmount}份{offerItem}，想换{requestAmount}份{requestItem}"
+    },
+    "engine.323": { "en": "withdrawn", "zh": "由本人撤回" },
+    "engine.324": {
+      "en": "↩️ Barter offer {cause}, {offerAmount} {offerItem} returned",
+      "zh": "↩️ 易货报价{cause}，退回{offerAmount}份{offerItem}"
+    },
+    "engine.325": {
+      "en": "❌ Can't pay {requestAmount} {requestItem}, only have {owned}",
+      "zh": "❌ 付不出{requestAmount}件{requestItem}，手上只有{owned}件"
+    },
+    "engine.326": {
+      "en": "🤝 Traded {requestAmount} {requestItem} for {offerAmount} {offerItem}",
+      "zh": "🤝 用{requestAmount}件{requestItem}换到{offerAmount}件{offerItem}"
+    },
+    "engine.327": {
+      "en": "🤝 Barter offer accepted, received {requestAmount} {requestItem}",
+      "zh": "🤝 接下易货报价，收到{requestAmount}件{requestItem}"
+    },
     "engine.030": {
       "en": "A rumor is priced by the port one leg after the leg it was spoken in, and this is the last leg of the voyage, so a rumor spoken here would move nothing.",
       "zh": "风声要等开口后的那个航段，港口才给它定价。这是本航程最后一个航段，在这里开口，什么也拨不动。"
@@ -5378,6 +6140,16 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${row.good}: every price ${percent} percent ${way} at the next port",
       "zh": "{row.good}：下一港的每个价格{way} {percent}%"
     },
+    "engine.308": {
+      "en": "{good}: every price {percent} percent higher at the next port",
+      "zh": "{good}：下一个港口所有价格上浮{percent}%"
+    },
+    "engine.309": {
+      "en": "{good}: every price {percent} percent lower at the next port",
+      "zh": "{good}：下一个港口所有价格下调{percent}%"
+    },
+    "engine.328": { "en": "higher", "zh": "涨" },
+    "engine.329": { "en": "lower", "zh": "跌" },
     "engine.038": {
       "en": "💰 Boon applied: Gained ${card.effect.flags.instant_gold} Gold!",
       "zh": "💰 机缘生效：获得{card.effect.flags.instant_gold}金币！"
@@ -5434,6 +6206,18 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "❌ That seat is no longer on your hull, so there is nothing there to replace. Back to Draft and take the card again: the yard fits it to the hull as it stands.",
       "zh": "❌ 那个槽位已经不在你的船体上，那里没有可切换的东西。回到抽取，重新拿一次牌：船坞会按船体现在的样子装上它。"
     },
+    "engine.330": {
+      "en": "🎉 Ship Upgraded to Level {state.shipLevel}! +1 Module Slot, +{SHIP_DISCOUNT_PER_LEVEL} Discount",
+      "zh": "🎉 船升级到{state.shipLevel}级！模块槽位 +1，折扣 +{SHIP_DISCOUNT_PER_LEVEL}"
+    },
+    "engine.331": {
+      "en": "🔄 Swapped {oldCardName} for {newCardName}!",
+      "zh": "🔄 把{oldCardName}换成了{newCardName}！"
+    },
+    "engine.332": {
+      "en": "✅ Installed {cardName}!",
+      "zh": "✅ 装上了{cardName}！"
+    },
     "engine.052": { "en": "the Monsoon Season", "zh": "季风时节" },
     "engine.053": {
       "en": "The voyage ran ${input.rounds} rounds.",
@@ -5441,6 +6225,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "engine.054": { "en": "borrowed once", "zh": "借入过一次" },
     "engine.055": { "en": "${joined}.", "zh": "{joined}。" },
+    "engine.333": {
+      "en": "The books ran out mid voyage, and {input.displayName} sailed the rest of it bankrupt.",
+      "zh": "航程走到一半，账上见了底，{input.displayName}破产跑完了剩下的路。"
+    },
     "engine.056": {
       "en": "🛡️ Raiders meant for ${who} met your guns: your hold lost ${ate} Gold.",
       "zh": "🛡️ 冲{who}去的海盗撞上了你的炮口：货舱损失{ate}金币。"
@@ -5448,6 +6236,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.057": {
       "en": "🛡️ Raiders meant for ${who} met your guns and found your hold already bare.",
       "zh": "🛡️ 冲{who}去的海盗撞上了你的炮口，只见你的货舱早已空了。"
+    },
+    "engine.334": {
+      "en": "🤝 Escort contract: paid {paid} Gold to {contract.sellerName} for one leg of protection.",
+      "zh": "🤝 护航契约：花{paid}金币，向{contract.sellerName}买一航段的保护。"
+    },
+    "engine.335": {
+      "en": "🤝 Escort contract: {buyerName} paid {contract.fee} Gold for one leg of protection.",
+      "zh": "🤝 护航契约：{buyerName}花{contract.fee}金币，买下一航段的保护。"
     },
     "engine.058": {
       "en": "📜 Forfeited ${count} unfulfilled pathbound order${count === 1 ? \"\" : \"s\"}.",
@@ -5476,6 +6272,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.064": {
       "en": "❌ Need ${fee} Gold to change your papers.",
       "zh": "❌ 切换文书要{fee}金币。"
+    },
+    "engine.336": {
+      "en": "🧭 You took up the {pathName} path.",
+      "zh": "🧭 你走上了{pathName}之道。"
     },
     "engine.065": {
       "en": "🏛️ No profit, no income tax due",
@@ -5519,6 +6319,38 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "👥 Hire artisans to craft valuable goods for higher profits!",
       "zh": "👥 雇工匠，做出贵重货物，赚更高的利润！"
     },
+    "engine.337": {
+      "en": "💰 Revenue this round: {state.roundRevenue} Gold",
+      "zh": "💰 本轮收入：{state.roundRevenue}金币"
+    },
+    "engine.338": {
+      "en": "💸 Total Cost this round: {totalCost} Gold",
+      "zh": "💸 本轮总支出：{totalCost}金币"
+    },
+    "engine.339": {
+      "en": "   👥 Wages: {state.workerWages} Gold",
+      "zh": "   👥 工钱：{state.workerWages}金币"
+    },
+    "engine.340": {
+      "en": "📈 Pretax Profit: {preTax} Gold",
+      "zh": "📈 税前利润：{preTax}金币"
+    },
+    "engine.341": {
+      "en": "🏛️ Income Tax Paid ({rate}%): {tax} Gold",
+      "zh": "🏛️ 所得税已缴（{rate}%）：{tax}金币"
+    },
+    "engine.342": {
+      "en": "🧾 VAT Paid this round: {state.vatPaid} Gold",
+      "zh": "🧾 本轮增值税已缴：{state.vatPaid}金币"
+    },
+    "engine.343": {
+      "en": "\\n🔄=== Preparing for Round {state.currentRound} ===",
+      "zh": "\\n🔄=== 第{state.currentRound}轮 · 准备 ==="
+    },
+    "engine.344": {
+      "en": "✅ Trading ended, completed {state.orderCount} trades",
+      "zh": "✅ 交易结束，完成{state.orderCount}笔"
+    },
     "engine.077": { "en": "${m}×${a}", "zh": "{m}×{a}" },
     "engine.078": {
       "en": "🌊 Tidewatch Alert: the harbor takes notice of a bustling crew! One more cargo lot joins the Port Purchase board, every round, for the rest of this voyage.",
@@ -5553,9 +6385,33 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "💰 当前资金：{state.money}金币"
     },
     "engine.086": { "en": "⏭️ Purchasing skipped", "zh": "⏭️ 跳过采购" },
+    "engine.345": {
+      "en": "🛒 Bought Product at {card.port}: {icon}{type}×{quantity} (@{price} Gold/item, Mat Cost {matCost} Gold), Total {cost} Gold",
+      "zh": "🛒 在{card.port}买下成品：{icon}{type}×{quantity}（@{price}金币/件，材料成本{matCost}金币），合计{cost}金币"
+    },
+    "engine.346": {
+      "en": "   ✨ Boon Discount Applied! Saved {saved} Gold",
+      "zh": "   ✨ 机缘折扣生效！省下{saved}金币"
+    },
+    "engine.347": {
+      "en": "📊 Purchased {state.purchaseCount} cargo batches",
+      "zh": "📊 采购了{state.purchaseCount}批货物"
+    },
+    "engine.348": {
+      "en": "🗺️ The Silk Road Charter opens! The harbor grows busier: {tierPurchaseCount} cargo lots and as many buyers from this voyage on.",
+      "zh": "🗺️ 丝路特许状开启！港湾更热闹了：从本航程起，货物多出{tierPurchaseCount}件，买家也一样多。"
+    },
+    "engine.349": {
+      "en": "✅ Purchasing ended, bought {state.purchaseCount} batches",
+      "zh": "✅ 采购结束，共买下{state.purchaseCount}批"
+    },
     "engine.087": {
       "en": "\\n${moment.icon}=== ${moment.title} ===",
       "zh": "\\n{moment.icon}=== {moment.title} ==="
+    },
+    "engine.350": {
+      "en": "{icon} Milestone boon: {lead}",
+      "zh": "{icon} 里程碑机缘：{lead}"
     },
     "engine.088": {
       "en": "🔧 ${name} is bolted to the hull.",
@@ -5564,6 +6420,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.089": {
       "en": "❌ The yard has no ${name} to bolt on.",
       "zh": "❌ 船坞没有可装的{name}。"
+    },
+    "engine.351": {
+      "en": "🤝 Module trade: paid {paid} Gold to {trade.sellerName} for {name}.",
+      "zh": "🤝 模块交易：花{paid}金币，向{trade.sellerName}买下了{name}。"
     },
     "engine.090": {
       "en": "📜 The commission is already filled, and nothing was taken.",
@@ -5586,6 +6446,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.096": {
       "en": "🎭 Your borrow is spent, and the order stays locked.",
       "zh": "🎭 你的借用已经用完，这份订单仍然锁定。"
+    },
+    "engine.369": {
+      "en": "{lead}: {payout} Gold instead of {reward}. One order filled without joining the path.",
+      "zh": "{lead}：拿{payout}金币，而不是{reward}。不入商道也完成一单。"
+    },
+    "engine.370": {
+      "en": "🎭 Borrows left this voyage: {left} of {allowance}.",
+      "zh": "🎭 本航程还能借用{left}/{allowance}次。"
     },
     "engine.097": {
       "en": "❌ Inventory short! Need ${short.type}×${short.required}",
@@ -5647,6 +6515,26 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "📜 Imperial Mandate at ${mandate.port}: ${need} for ${mandate.reward} Gold. The Emperor's commission is exempt from VAT.",
       "zh": "📜 {mandate.port}的皇命采办：要{need}，得{mandate.reward}金币。皇命采办免缴增值税。"
     },
+    "engine.352": {
+      "en": "🧾 Product Sales VAT: {totalVat} Gold",
+      "zh": "🧾 成品销售增值税：{totalVat}金币"
+    },
+    "engine.353": {
+      "en": "{lead}: +{pct}% Reward!",
+      "zh": "{lead}：+{pct}%奖励！"
+    },
+    "engine.354": {
+      "en": "{lead}: Refunded {transport} Gold transport!",
+      "zh": "{lead}：退回运费{transport}金币！"
+    },
+    "engine.355": {
+      "en": "{lead}: One extra order appeared.",
+      "zh": "{lead}：多出1份订单。"
+    },
+    "engine.356": {
+      "en": "📦 Completed Order at {order.demandPort}: {txt}",
+      "zh": "📦 在{order.demandPort}完成订单：{txt}"
+    },
     "engine.112": { "en": "a few", "zh": "少量" },
     "engine.113": { "en": "a haul", "zh": "大量" },
     "engine.114": {
@@ -5665,6 +6553,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "🛡️ Hired an escort for ${cost} Gold. Safe passage guaranteed this round.",
       "zh": "🛡️ 花{cost}金币雇了护航。本轮航路安全无虞。"
     },
+    "engine.357": {
+      "en": "🏴‍☠️ Pirates raided your hold! Lost all {lost} Gold, and {lead} recovered {salvaged} of it.",
+      "zh": "🏴‍☠️ 海盗劫掠了你的货舱！{lost}金币全没了，{lead}又替你追回{salvaged}金币。"
+    },
     "engine.118": { "en": "Active boon", "zh": "生效的机缘" },
     "engine.119": { "en": "Minimum freight", "zh": "最低运费" },
     "engine.120": { "en": "Average material cost", "zh": "平均原料成本" },
@@ -5677,6 +6569,35 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "按差价计增值税{Math.round(VAT_RATE * 100)}%"
     },
     "engine.123": { "en": "Floor at 0 Gold", "zh": "下限0金币" },
+    "engine.358": {
+      "en": "{boonName} (down {down}g)",
+      "zh": "{boonName}（降{down}金币）"
+    },
+    "engine.359": {
+      "en": "{boonName} on woven goods",
+      "zh": "{boonName}（织物货物）"
+    },
+    "engine.360": {
+      "en": "{boonName} (down {perLot}g per lot)",
+      "zh": "{boonName}（每件降{perLot}金币）"
+    },
+    "engine.361": { "en": "{cardName} module", "zh": "{cardName}模块" },
+    "engine.362": {
+      "en": "{cardName} module (woven freight waived)",
+      "zh": "{cardName}模块（织物运费全免）"
+    },
+    "engine.363": {
+      "en": "{boonName} (down {pct}%)",
+      "zh": "{boonName}（降{pct}%）"
+    },
+    "engine.364": {
+      "en": "{cardName} module (down 50%)",
+      "zh": "{cardName}模块（降50%）"
+    },
+    "engine.365": {
+      "en": "{cardName} module (down {perUnit}g per unit)",
+      "zh": "{cardName}模块（每单位降{perUnit}金币）"
+    },
     "engine.124": {
       "en": "❌ Only a Loom captain buys rags off the harbor pile.",
       "zh": "❌ 只有织造船长才从港湾的碎布堆里买碎布。"
@@ -5732,6 +6653,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.137": {
       "en": "❌ There is no worn ${contract.good} left to work on.",
       "zh": "❌ 没有还需要缝补的破旧{contract.good}了。"
+    },
+    "engine.366": {
+      "en": "🤝 Refit: paid {paid} Gold to {seller} for the {good} to be put right.",
+      "zh": "🤝 整补：付{paid}金币给{seller}，把{good}整好。"
+    },
+    "engine.367": {
+      "en": "🤝 Refit: {buyer} paid {fee} Gold for the {good} to be put right.",
+      "zh": "🤝 整补：{buyer}付了{fee}金币，把{good}整好。"
     },
     "engine.138": {
       "en": "🏴 Bankrupt: the harbor marks it against this captain's name for the rest of the voyage.",
@@ -5841,6 +6770,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "⚠️ Funds depleted: the maintenance fee goes unpaid.",
       "zh": "⚠️ 资金耗尽：维护费交不上。"
     },
+    "engine.368": {
+      "en": "📋 Assigned: Produce {icon}{task} (Req: {materials})",
+      "zh": "📋 已派活：产出{icon}{task}（需 {materials}）"
+    },
     "engine.165": {
       "en": "${FOODS[food].icon} ${meals} ${meals === 1 ? \"ration\" : \"rations\"} of ${food} turned at sea. ${Math.max(0, state.larder - spoiled)} left in the larder.",
       "zh": "{FOODS[food].icon} {meals}份{food}在海上变质了。粮舱还剩{Math.max(0, state.larder - spoiled)}份。"
@@ -5919,6 +6852,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.189": {
       "en": "Finish a ${monsoon.name} voyage with ${EYE_OF_THE_STORM_REPUTATION}+ Reputation.",
       "zh": "走完一次{monsoon.name}的航程，声誉达到{EYE_OF_THE_STORM_REPUTATION}+。"
+    },
+    "engine.310": {
+      "en": "End a single voyage with {minScore}+ Reputation.",
+      "zh": "单趟航程拿下{minScore}+声誉。"
     },
     "engine.190": {
       "en": "This harbor was closed by the harbor operator.",
@@ -6436,10 +7373,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "This seat is not left by pressing Next Phase",
       "zh": "按下一阶段，退不出这个席位"
     },
-    "room-a.039": { "en": "Room code copied", "zh": "港湾口令已复制" },
+    "room-a.039": { "en": "Harbor code copied", "zh": "港湾口令已复制" },
     "room-a.040": { "en": "Harbor chat", "zh": "港湾聊天" },
     "room-a.041": { "en": "Direct messages", "zh": "私聊" },
     "room-a.042": { "en": "🌊 Anyone in the harbor", "zh": "🌊 港湾里所有人" },
+    "room-a.336": { "en": "🔒 {name} only", "zh": "🔒 仅{name}" },
     "room-a.043": {
       "en": "A majority of the captains still sailing can open one manifest. What comes back is a sample of what they filed. A carried vote ends this leg&apos;s trading, and the voyage carries on at the next leg. The count below names who is still to vote, and what the vote does when the names it needs land on one captain.",
       "zh": "仍在航的船长过半数，就能开一份舱单。开出来的是他们申报内容的抽样。表决过了，本航段的交易就到此为止，航程接着走下一航段。下面的计数写着还有谁没投，也写着所需的名字全落到同一位船长头上时，表决会起什么作用。"
@@ -6472,6 +7410,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${ reveal.flagged ? \"The harbor's own checks could not reconcile this manifest, so its lines are withheld.\" : \"A random sample of this captain's most recent order fulfillments, opened by a vote of the harbor. Their card, their Gold and the rest of their hold were not opened.\" } Opened by a majority in leg ${reveal.round}, which closed that leg's trading; the finding stays on the table for the rest of the voyage.",
       "zh": "{ reveal.flagged ? \"港湾自己的核验对不上这份舱单，内容就不公开。\" : \"港湾投票开出的抽样，取自这位船长最近交付的订单。他的手牌、金币和货舱里其余的东西都没有打开。\" }第{reveal.round}航段过半数票开启，那一段的交易就此结束；这条结论在本航程余下期间留在桌上。"
     },
+    "room-a.317": { "en": "{name}'s manifest", "zh": "{name}的舱单" },
+    "room-a.318": { "en": "Larder {value}", "zh": "粮舱 {value}" },
     "room-a.054": { "en": "for", "zh": "换取" },
     "room-a.055": { "en": "🤝 Trade", "zh": "🤝 交易" },
     "room-a.056": { "en": "🔒 Flexible bartering", "zh": "🔒 灵活易货" },
@@ -6493,6 +7433,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.066": {
       "en": "Every flexible trade this voyage allows you has been taken. You can still use the Captain's Exchange and accept any offer.",
       "zh": "本航程给你的灵活易货已经用光。船长行市还开着，报价你照样可以接。"
+    },
+    "room-a.327": {
+      "en": "Offered to {name} alone.",
+      "zh": "只报给{name}一人。"
     },
     "room-a.067": { "en": "Speak for", "zh": "为" },
     "room-a.068": { "en": "leaning", "zh": "押" },
@@ -6528,6 +7472,16 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "The market of this leg was priced against it, so the direction is public now.${ outcome ?",
       "zh": "本航段的集市就是对着它定的价，方向如今人人都看得见。{ outcome ?"
     },
+    "room-a.328": { "en": "Publish", "zh": "发布" },
+    "room-a.329": {
+      "en": "Your rumor is on the board and the harbor has your name and {good}. Only you know which way it leans: {direction}. The table reads it the moment the port of leg {landsOn} prices it. The bazaar is quiet for you until leg {nextLeg}.",
+      "zh": "你的风声已挂上板，港湾看到了你的名字和{good}。只有你知道它偏向哪边：{direction}。第{landsOn}航段的港口一给它定价，全桌就会读到。香市要到第{nextLeg}航段才重新听你。"
+    },
+    "room-a.330": {
+      "en": "The port of leg {landsOn} prices it. Speaking now quiets the bazaar for you until leg {quietUntil}.",
+      "zh": "第{landsOn}航段的港口会为它定价。现在开口，香市要到第{quietUntil}航段才重新听你。"
+    },
+    "room-a.331": { "en": "Bazaar · waiting", "zh": "香市 · 静候" },
     "room-a.080": { "en": "Close", "zh": "关闭" },
     "room-a.081": { "en": "Escort Market", "zh": "护航市场" },
     "room-a.082": { "en": "One leg of cover for", "zh": "一航段护卫，价格" },
@@ -6593,6 +7547,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${other} turned down your offer of ${fee}",
       "zh": "{other}拒绝了你{fee}的报价"
     },
+    "room-a.303": { "en": "Offer Protection", "zh": "挂出护航" },
+    "room-a.304": {
+      "en": "⏳ {sellerName} offers you one leg of cover for {fee} Gold. You are the one who answers: taking it pays the fee at the handshake, and turning it down leaves the row for them to read.",
+      "zh": "⏳ {sellerName}放出一段航段的护航给你，要价{fee}金币。答话的人是你：接下就在握手时付费，回绝了，这一行就留给他们自己看。"
+    },
+    "room-a.305": {
+      "en": "{sellerName} sells one leg of cover for {fee}",
+      "zh": "{sellerName}出售一段航段的护航，价格{fee}"
+    },
     "room-a.109": { "en": "Save", "zh": "保存" },
     "room-a.110": { "en": "Restart", "zh": "重开" },
     "room-a.111": { "en": "Open the harbor guide", "zh": "打开港湾指南" },
@@ -6631,6 +7594,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "The ledger is empty. Set sail to begin recording your voyage.",
       "zh": "账簿还是空的。一起航，你的航程就开始记了。"
     },
+    "room-a.325": { "en": "{count} entry", "zh": "{count}条记录" },
+    "room-a.326": { "en": "{count} entries", "zh": "{count}条记录" },
     "room-a.132": {
       "en": "Every ledger update, harbor message, and direct message this session",
       "zh": "本次会话中的每一笔账簿更新、港湾消息和私聊"
@@ -6674,6 +7639,18 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-a.149": { "en": "Trade Strategy Advice", "zh": "交易策略建议" },
     "room-a.150": { "en": "Close Board", "zh": "关闭面板" },
+    "room-a.321": {
+      "en": "🔮 Buy Rumor ({intelCost}💰)",
+      "zh": "🔮 买传闻（{intelCost}💰）"
+    },
+    "room-a.322": {
+      "en": "• 🗣️ '{port} wants {item}'",
+      "zh": "• 🗣️{port}想要{item}"
+    },
+    "room-a.323": {
+      "en": "Tutorial step {step} of {total}",
+      "zh": "教程第{step}步，共{total}步"
+    },
     "room-a.151": { "en": "Dues", "zh": "港务费" },
     "room-a.152": { "en": "Ledger", "zh": "账簿" },
     "room-a.153": { "en": "attention needed", "zh": "需要注意" },
@@ -6699,6 +7676,18 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-a.162": { "en": "Mute harbor sounds", "zh": "静音港湾音效" },
     "room-a.163": { "en": "Turn on harbor sounds", "zh": "开启港湾音效" },
+    "room-a.338": {
+      "en": "Turn off the colorblind safe palette",
+      "zh": "关闭色盲友好配色"
+    },
+    "room-a.339": {
+      "en": "Use the colorblind safe palette",
+      "zh": "启用色盲友好配色"
+    },
+    "room-a.340": {
+      "en": "Notifications, {unreadCount} unread",
+      "zh": "通知，{unreadCount} 条未读"
+    },
     "room-a.164": {
       "en": "🧭 The Harbormaster&apos;s Hand",
       "zh": "🧭 港务长之手"
@@ -6732,6 +7721,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.179": {
       "en": "Called in leg ${shift.round}. The market that opens next leg is the one that answers it, and a later call in this leg replaces it.",
       "zh": "第{shift.round}航段发起。下一航段开市的集市就是它的回音；本航段里后押的一次会取代它。"
+    },
+    "room-a.314": { "en": "{name} put ashore", "zh": "{name}被放逐上岸" },
+    "room-a.315": { "en": "called", "zh": "已下达" },
+    "room-a.316": {
+      "en": "Your call stands for leg {leg}:",
+      "zh": "你的定价从第{leg}航段起生效："
     },
     "room-a.180": {
       "en": "Every module on your hull is already on the board this leg. The market opens again next leg.",
@@ -6772,6 +7767,19 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "You sold ${name} to ${other} for ${fee}",
       "zh": "你把{name}卖给了{other}，价格{fee}"
     },
+    "room-a.332": { "en": "Offer the Module", "zh": "挂出模块" },
+    "room-a.333": {
+      "en": "{sellerName} sells {name} for {fee}",
+      "zh": "{sellerName}出售{name}，价格{fee}"
+    },
+    "room-a.334": {
+      "en": "{sellerName} sold you {name} for {fee}",
+      "zh": "{sellerName}把{name}卖给了你，价格{fee}"
+    },
+    "room-a.335": {
+      "en": "{sellerName} sold {name} to {other} for {fee}",
+      "zh": "{sellerName}把{name}卖给了{other}，价格{fee}"
+    },
     "room-a.192": { "en": "Fleet Commission", "zh": "船队公议" },
     "room-a.193": {
       "en": "The commission is met, and nothing more is owed.",
@@ -6781,6 +7789,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "The Emperor pays for what you hand over, and the commission is read when the voyage ends.",
       "zh": "皇帝按你交上的货付钱，公议在航程结束时结算。"
     },
+    "room-a.319": {
+      "en": "{gold} Gold still on the table",
+      "zh": "桌上还压着{gold}金币"
+    },
+    "room-a.320": { "en": "Deliver {deliverable}", "zh": "交付 {deliverable}" },
     "room-a.195": { "en": "🧭 Open Boons", "zh": "🧭 公开机缘" },
     "room-a.196": {
       "en": "Every compass draw is public: the three cards each captain was shown, and the one they kept.",
@@ -6789,6 +7802,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.197": { "en": "a moment", "zh": "某个时刻" },
     "room-a.198": { "en": "the dawn draw", "zh": "破晓抽取" },
     "room-a.199": { "en": "(you)", "zh": "（你）" },
+    "room-a.341": { "en": ", leg {leg}", "zh": "，第{leg}航段" },
     "room-a.200": { "en": "💥 Bankrupt, spectating", "zh": "💥 破产，观战中" },
     "room-a.201": { "en": "🏁 Voyage complete", "zh": "🏁 航程圆满" },
     "room-a.202": { "en": "Detailed voyage status", "zh": "航程状态详情" },
@@ -6819,6 +7833,17 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Cargo, artisans, equipped modules and the recent log.",
       "zh": "货物、工匠、已装模块和最近记录。"
     },
+    "room-a.313": {
+      "en": "{icon} {name} ({count})",
+      "zh": "{icon} {name}（{count}）"
+    },
+    "room-a.343": { "en": "Weavers", "zh": "织女" },
+    "room-a.344": { "en": "Masters", "zh": "纺织大师" },
+    "room-a.345": { "en": "Makers", "zh": "香囊师" },
+    "room-a.346": { "en": "Coppersmiths", "zh": "铜匠" },
+    "room-a.347": { "en": "Potters", "zh": "陶匠" },
+    "room-a.348": { "en": "Perfumers", "zh": "调香师" },
+    "room-a.349": { "en": "Jewelers", "zh": "珠匠" },
     "room-a.221": { "en": "Your card alone", "zh": "只有你可见" },
     "room-a.222": { "en": "Your own goal", "zh": "你自己的目标" },
     "room-a.223": { "en": "Not alone", "zh": "另有同伴" },
@@ -6826,6 +7851,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.225": { "en": "Profit so far", "zh": "目前盈利" },
     "room-a.226": { "en": "Gold, offered to", "zh": "金币，交给" },
     "room-a.227": { "en": "Fee in Gold", "zh": "以金币计的费用" },
+    "room-a.337": {
+      "en": "Only {name} will see this offer, so nobody else can take it first. It still has to be taken {deadline}",
+      "zh": "这份报价只有{name}看得到，别人抢不走。接下它有个期限：{deadline}"
+    },
     "room-a.228": {
       "en": "This leg ends when the clock does, whether or not every captain has readied.",
       "zh": "计时一停，本航段就结束，不管是不是每位船长都点了就绪。"
@@ -6909,6 +7938,40 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "} ${row.good} right for ${fee}",
       "zh": "}的{row.good}修补好了，费用{fee}"
     },
+    "room-a.300": {
+      "en": "${row.sellerName} offers to put a ${row.good} right for ${fee}",
+      "zh": "{row.sellerName}开价修补{row.good}，价格{fee}"
+    },
+    "room-a.301": {
+      "en": "${row.sellerName} put {possessive} ${row.good} right for ${fee}",
+      "zh": "{row.sellerName}把{possessive}的{row.good}修补好了，费用{fee}"
+    },
+    "room-a.306": { "en": "Offer a Refit", "zh": "挂出缝补" },
+    "room-a.307": { "en": "· in the hold: {held}", "zh": "· 舱里还有：{held}" },
+    "room-a.308": {
+      "en": "Buy a Rag ({value}💰)",
+      "zh": "买一块碎布（{value}💰）"
+    },
+    "room-a.309": {
+      "en": "Reweave {rags} Rags into {good}",
+      "zh": "把{rags}块碎布重织成{good}"
+    },
+    "room-a.310": {
+      "en": "will put {points} back for {gold} Gold, once a leg.",
+      "zh": "会用{gold}金币把{points}补回来，每航段一次。"
+    },
+    "room-a.311": {
+      "en": "Mend {worn} ({left} of {durability}, {gold}💰)",
+      "zh": "补{worn}（{left}/{durability}，{gold}💰）"
+    },
+    "room-a.312": {
+      "en": "Mend {worn} ({left}, {gold}💰)",
+      "zh": "补{worn}（{left}，{gold}💰）"
+    },
+    "room-a.350": {
+      "en": "Buy a Rag ({RAG_SCRAP_VALUE}💰)",
+      "zh": "买一块碎布（{RAG_SCRAP_VALUE}💰）"
+    },
     "room-a.254": { "en": "🃏 The Reveal", "zh": "🃏 摊牌" },
     "room-a.255": {
       "en": "Every card in this harbor, face up",
@@ -6953,7 +8016,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "船队申报了，交出来的却是零。"
     },
     "room-a.273": {
-      "en": "Instructions your seat follows when the room&apos;s clock plays it while you are not standing at it.",
+      "en": "Instructions your seat follows when the harbor&apos;s clock plays it while you are not standing at it.",
       "zh": "你不在席位边上时，港湾的计时替你出牌，你的席位就照着这里写的走。"
     },
     "room-a.274": {
@@ -6970,7 +8033,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-a.277": { "en": "Follow these orders", "zh": "照这些指示走" },
     "room-a.278": {
-      "en": "When the room's clock runs a phase out and you have not acted, your seat is played by what is written here instead of by the engine's own defaults. Turn this off and every seat goes back to being played the way it was before this panel existed. Nothing written below is lost either way.",
+      "en": "When the harbor's clock runs a phase out and you have not acted, your seat is played by what is written here instead of by the engine's own defaults. Turn this off and every seat goes back to being played the way it was before this panel existed. Nothing written below is lost either way.",
       "zh": "港湾的计时把阶段走完，你还没出手，你的席位就照这里写的来，不照引擎自己的默认来。关掉它，所有席位就回到这个面板出现之前的执行方式。开关怎么拨，下面写的东西都不会丢。"
     },
     "room-a.279": {
@@ -7005,6 +8068,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Whatever the draft laid down first, which is what an absent captain is given today.",
       "zh": "抽取最先摆下的那一份，今天缺位的船长拿到的就是这个。"
     },
+    "room-a.342": { "en": "Standing orders", "zh": "常备订单" },
     "room-a.287": { "en": "Choose a captain", "zh": "选一位船长" },
     "room-a.288": { "en": "Your name is in", "zh": "你的名字已投出" },
     "room-a.289": {
@@ -7023,6 +8087,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.293": {
       "en": "Every captain still sailing has named someone, so nothing more can land this leg. A later leg can call this vote again.",
       "zh": "仍在航的船长都投过了，本航段不会再有票落下来。之后的航段还能再发起这次表决。"
+    },
+    "room-a.351": {
+      "en": "{namesNeeded} {carryWord} it.",
+      "zh": "{namesNeeded}才能通过。"
     },
     "room-a.294": { "en": "The voyage log", "zh": "航程日志" },
     "room-a.295": { "en": "The harbor&apos;s log", "zh": "港湾日志" },
@@ -7071,6 +8139,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Insufficient funds to cover maintenance and wages",
       "zh": "资金不足，付不起维护费和工钱"
     },
+    "room-b.308": {
+      "en": "Your voyage has ended, and the rest of the harbor has finished too.",
+      "zh": "你的航程已经结束，港湾的其他人也走完了。"
+    },
+    "room-b.309": {
+      "en": "Your voyage has ended, and the rest of the harbor has finished too. Wait for the host to restart the voyage, or set out for a new harbor now.",
+      "zh": "你的航程已经结束，港湾的其他人也走完了。等房主重开这趟航程；等不及，就现在启程去别的港湾。"
+    },
     "room-b.018": {
       "en": "⏱️ Production Cycle: What Happens When",
       "zh": "⏱️ 生产周期：何时发生什么"
@@ -7094,11 +8170,17 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${face.icon} ${face.label}",
       "zh": "{face.icon} {face.label}"
     },
+    "room-b.310": { "en": "Trade orders", "zh": "交付订单" },
     "room-b.029": { "en": "📦 Current Inventory", "zh": "📦 当前库存" },
     "room-b.030": { "en": "Raw Materials:", "zh": "原材料：" },
     "room-b.031": { "en": "Finished Goods:", "zh": "成品：" },
     "room-b.032": { "en": "💸 Total Wages Due", "zh": "💸 应付工钱合计" },
     "room-b.033": { "en": "Wage Efficiency", "zh": "工钱效率" },
+    "room-b.304": { "en": "{efficiency}x return", "zh": "{efficiency}倍回报" },
+    "room-b.305": {
+      "en": "({produced}g value / {wages}g wages)",
+      "zh": "（产值{produced}g／工钱{wages}g）"
+    },
     "room-b.034": { "en": "🧭 Boon Locked In", "zh": "🧭 机缘已锁定" },
     "room-b.035": {
       "en": "The voyage begins once every captain has chosen.",
@@ -7133,6 +8215,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "💥 破产：借款违约"
     },
     "room-b.046": { "en": "${r.icon} ${r.label}", "zh": "{r.icon} {r.label}" },
+    "room-b.311": { "en": "📈 Merchant Rank: ", "zh": "📈 商人评级： " },
     "room-b.047": { "en": "Crew Summary", "zh": "船员汇总" },
     "room-b.048": { "en": "Total Wages Paid", "zh": "已付工钱合计" },
     "room-b.049": {
@@ -7160,6 +8243,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🤝 掮客的人情已解锁！"
     },
     "room-b.058": { "en": "· Renown level up!", "zh": "· 声望升级！" },
+    "room-b.312": { "en": "Captain's Merit: ", "zh": "船长功勋： " },
+    "room-b.374": { "en": "{reputation} Rep.", "zh": "{reputation}声誉" },
     "room-b.059": { "en": "Financial Summary", "zh": "财务汇总" },
     "room-b.060": { "en": "Net Cash Flow", "zh": "净现金流" },
     "room-b.061": { "en": "Peer Economy", "zh": "船长间往来" },
@@ -7177,6 +8262,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.070": { "en": "Boon Gold", "zh": "机缘金币" },
     "room-b.071": { "en": "Purchases & Transport", "zh": "采购与运输" },
     "room-b.072": { "en": "Income Tax", "zh": "所得税" },
+    "room-b.375": { "en": "+{rep} Rep", "zh": "+{rep}声誉" },
     "room-b.073": { "en": "Port Board", "zh": "港口采购板" },
     "room-b.074": { "en": "Take This Boon", "zh": "收下这份机缘" },
     "room-b.075": { "en": "🔧 Module Drafting", "zh": "🔧 抽取模块" },
@@ -7209,6 +8295,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-b.085": { "en": "🗑️ Replace", "zh": "🗑️ 切换" },
     "room-b.086": { "en": "⬅️ Back to Draft", "zh": "⬅️ 回到抽取" },
+    "room-b.313": {
+      "en": "New: {icon} {name}: {desc}",
+      "zh": "新增：{icon} {name}：{desc}"
+    },
     "room-b.087": { "en": "Module Synergy Analysis", "zh": "模块组合分析" },
     "room-b.088": { "en": "Active Bonuses", "zh": "生效加成" },
     "room-b.089": { "en": "Module Interactions", "zh": "模块联动" },
@@ -7216,8 +8306,19 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "No special interactions detected between equipped modules.",
       "zh": "已装的模块之间，看不出有特别联动。"
     },
+    "room-b.314": {
+      "en": "Freight Mastery: {bulkHauler} reduces transport per item and {silkMonopoly} can zero it out on any order carrying woven goods. Shipping costs almost nothing.",
+      "zh": "运费精通：{bulkHauler}压低每件运费，{silkMonopoly}能把带织物的订单运费清零。运费几乎不花钱。"
+    },
     "room-b.091": { "en": "Fulfillment Plan", "zh": "交付计划" },
     "room-b.092": { "en": "if all ready filled", "zh": "若备齐的全部交付" },
+    "room-b.315": { "en": "{readyCount} ready", "zh": "{readyCount}单已备齐" },
+    "room-b.316": {
+      "en": "{closeCount} close",
+      "zh": "{closeCount}单就快备齐"
+    },
+    "room-b.317": { "en": "Order #{id} needs:", "zh": "订单 #{id} 需要：" },
+    "room-b.318": { "en": "{net}g", "zh": "{net}金币" },
     "room-b.093": { "en": "Trade Manifest", "zh": "贸易舱单" },
     "room-b.094": {
       "en": "(look for the 🔮 badge below).",
@@ -7239,6 +8340,24 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.102": { "en": "· Raw Material Demand", "zh": "· 求购原材料" },
     "room-b.103": { "en": "✅ Completed", "zh": "✅ 已交付" },
     "room-b.104": { "en": "🎭 Borrow this order", "zh": "🎭 借用这份订单" },
+    "room-b.319": { "en": "{path.name} order", "zh": "{path.name}订单" },
+    "room-b.320": {
+      "en": "🤝 Trade (Net {netProfit}💰)",
+      "zh": "🤝 交易（净利{netProfit}💰）"
+    },
+    "room-b.321": { "en": "Inv: {count}", "zh": "存货：{count}" },
+    "room-b.322": {
+      "en": "⚓ Freight: {gold} Gold",
+      "zh": "⚓ 运费：{gold}金币"
+    },
+    "room-b.323": {
+      "en": "💰 Reward: {reward} Gold 📊 Net: {net} Gold",
+      "zh": "💰 报酬：{reward}金币 📊 净利：{net}金币"
+    },
+    "room-b.324": {
+      "en": "🤝 Broker's cut ({pct}%): {gold} Gold",
+      "zh": "🤝 掮客抽成（{pct}%）：{gold}金币"
+    },
     "room-b.105": { "en": "Broker&apos;s Favor", "zh": "掮客的人情" },
     "room-b.106": {
       "en": "(once per voyage): summon a guaranteed buyer for as much of a good as you choose from your hold. The bigger the ask, the bigger the Broker&apos;s cut.",
@@ -7267,6 +8386,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "How much ${favorItem} to sell",
       "zh": "要卖多少 {favorItem}"
     },
+    "room-b.325": { "en": "{name} ({count})", "zh": "{name}（{count}）" },
     "room-b.115": { "en": "📋 Open Offers", "zh": "📋 挂出的报价" },
     "room-b.116": {
       "en": "No offers on the board yet. Be the first.",
@@ -7288,6 +8408,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.127": {
       "en": "✅ Done Bartering, Continue",
       "zh": "✅ 易货完毕，继续"
+    },
+    "room-b.306": { "en": "Two votes are open.", "zh": "两项表决都开着。" },
+    "room-b.307": {
+      "en": "Only {name} will see this offer. A safeguard so nobody else can take it first.",
+      "zh": "这份报价只有{name}看得到，免得别人抢先接下。"
     },
     "room-b.128": {
       "en": "The cards are being cut. If a hand was dealt to you, it lands here.",
@@ -7354,7 +8479,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-b.152": { "en": "Sail On", "zh": "继续航行" },
     "room-b.153": { "en": "Set Sail Anyway", "zh": "照样启航" },
-    "room-b.154": { "en": "Port Merchant Exchange", "zh": "港口商行" },
+    "room-b.300": {
+      "en": "Hire Escort ({fee} Gold)",
+      "zh": "雇护航（{fee}金币）"
+    },
+    "room-b.154": { "en": "Port Board", "zh": "港口采购板" },
     "room-b.155": { "en": "🔮 Broker's Rumor Board", "zh": "🔮 掮客密语板" },
     "room-b.156": {
       "en": "✅ Board Done, to the Artisan Bench",
@@ -7379,6 +8508,23 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.164": { "en": "✅ Purchased", "zh": "✅ 已购" },
     "room-b.165": { "en": "Deal", "zh": "划算" },
     "room-b.166": { "en": "Pricey", "zh": "偏贵" },
+    "room-b.326": { "en": "🛒 Buy ({cost}💰)", "zh": "🛒 买下（{cost}💰）" },
+    "room-b.327": { "en": "Need {gold} more Gold.", "zh": "还差{gold}金币。" },
+    "room-b.328": { "en": "Unit: {price}💰", "zh": "单价：{price}💰" },
+    "room-b.329": {
+      "en": ": {low} to {high} typical",
+      "zh": "：通常 {low} 到 {high}"
+    },
+    "room-b.330": { "en": "% price", "zh": "% 价格" },
+    "room-b.331": {
+      "en": "📦 Mat Cost: {gold} Gold ({details})",
+      "zh": "📦 材料成本：{gold}金币（{details}）"
+    },
+    "room-b.332": {
+      "en": "💰 Total: {gold} Gold",
+      "zh": "💰 合计：{gold}金币"
+    },
+    "room-b.333": { "en": "(Was {gold})", "zh": "（原价{gold}）" },
     "room-b.167": { "en": "Best Deals This Round", "zh": "本轮最划算" },
     "room-b.168": { "en": "g", "zh": "金币" },
     "room-b.169": { "en": "Intel", "zh": "密语" },
@@ -7462,6 +8608,38 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "The barge has nothing left for you this leg, and it is a fresh lot tomorrow.",
       "zh": "补给驳船这一航段没剩什么给你了，明天会来一批新的。"
     },
+    "room-b.334": {
+      "en": "{count} meal{pluralS} a slot",
+      "zh": "每格{count}餐"
+    },
+    "room-b.335": {
+      "en": "{density}, turns after {legs} leg{pluralS}",
+      "zh": "{density}，{legs}航段后变质"
+    },
+    "room-b.336": {
+      "en": "Buy 1 Leg ({legCost}💰)",
+      "zh": "买1航段（{legCost}💰）"
+    },
+    "room-b.337": { "en": "Buy Rations", "zh": "买口粮" },
+    "room-b.338": {
+      "en": "Fill ({legs} Legs, {gold}💰)",
+      "zh": "补满（{legs}航段，{gold}💰）"
+    },
+    "room-b.339": { "en": " at {bargePort}", "zh": "（{bargePort}）" },
+    "room-b.340": {
+      "en": "Buy 1 Ration ({bargePrice}💰)",
+      "zh": "买1份口粮（{bargePrice}💰）"
+    },
+    "room-b.341": {
+      "en": "Take the Lot ({lot}, {gold}💰)",
+      "zh": "整批拿下（{lot}份，{gold}💰）"
+    },
+    "room-b.342": { "en": "Take the Lot", "zh": "整批拿下" },
+    "room-b.343": { "en": "Fill", "zh": "补满" },
+    "room-b.344": {
+      "en": "{bargeLeft} ration{pluralS} {beWord} left for you this leg.",
+      "zh": "本航段留给你{bargeLeft}份口粮。"
+    },
     "room-b.196": {
       "en": "Short on Gold? Ask the Harbor for Help",
       "zh": "金币不够？向港湾求助"
@@ -7477,6 +8655,19 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🆘 正在求助的船长"
     },
     "room-b.201": { "en": "Loan amount to request", "zh": "申请借款的数额" },
+    "room-b.345": { "en": "Short on Gold?", "zh": "金币不够？" },
+    "room-b.346": {
+      "en": "No other captain is aboard, so there is no one to lend. The bills must be settled alone: Force Payment below covers what the purse holds, and the shortfall is the risk it names.",
+      "zh": "船上没有别的船长，没人能放款。账单只能独自结清：下面的强制付款会先掏空钱袋里有的，剩下的缺口，就是它点明的风险。"
+    },
+    "room-b.347": {
+      "en": "{fromName} needs {amount} Gold",
+      "zh": "{fromName}需要{amount}金币"
+    },
+    "room-b.348": {
+      "en": "🤝 Lend {amount} Gold",
+      "zh": "🤝 借出{amount}金币"
+    },
     "room-b.202": {
       "en": "🛡️ Loans You Could Back",
       "zh": "🛡️ 你可以作保的借款"
@@ -7491,6 +8682,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.207": {
       "en": "Gold to pledge backing ${l.lenderName}'s loan to ${l.borrowerName}",
       "zh": "为{l.lenderName}借给{l.borrowerName}的这笔借款作保的金币数"
+    },
+    "room-b.349": {
+      "en": "🛡️ Back {pledge} Gold",
+      "zh": "🛡️ 作保{pledge}金币"
     },
     "room-b.208": {
       "en": "💸 Resolve: Round Settlement",
@@ -7515,6 +8710,26 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${b.sponsored} ${b.sponsored === 1 ? b.label : b.plural}",
       "zh": "{b.sponsored} {b.label}"
     },
+    "room-b.350": {
+      "en": "💸 Settle Bills: {totalDue} Gold",
+      "zh": "💸 结清账单：{totalDue}金币"
+    },
+    "room-b.351": {
+      "en": "Force Payment and Risk Bankruptcy ({money}/{totalDue} Gold)",
+      "zh": "强制付款，承担破产风险（{money}/{totalDue}金币）"
+    },
+    "room-b.352": {
+      "en": "👥 Worker Wages ({count} worker{pluralS})",
+      "zh": "👥 工匠工钱（{count}人）"
+    },
+    "room-b.353": {
+      "en": "↳ 🪷 Jade Pavilion covers the wage for {items} this round",
+      "zh": "↳ 🪷 本轮{items}的工钱由玉阁代付"
+    },
+    "room-b.354": {
+      "en": "↳ Base {base}g + {card} penalty {penalty}g",
+      "zh": "↳ 基础{base}g + {card}罚金{penalty}g"
+    },
     "room-b.219": {
       "en": "🚢 Shipyard & Module Rigging",
       "zh": "🚢 船坞与模块装配"
@@ -7537,6 +8752,18 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.226": {
       "en": "🔧 Draft & Install Module",
       "zh": "🔧 抽取并安装模块"
+    },
+    "room-b.355": {
+      "en": "🔌 Module Slots: {n} / {m}",
+      "zh": "🔌 模块槽位：{n} / {m}"
+    },
+    "room-b.356": {
+      "en": "⚡ Hull Power: {n} / {m}",
+      "zh": "⚡ 船体承重：{n} / {m}"
+    },
+    "room-b.357": {
+      "en": "{n} installed, power {p} of {CAP}.",
+      "zh": "{n}件已装，承重{p}/{CAP}。"
     },
     "room-b.227": { "en": "🧥 Wardrobe", "zh": "🧥 衣箱" },
     "room-b.228": {
@@ -7565,11 +8792,27 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "The crew is dressed for the cold this leg. The rest stay in the hold until a leg asks for more.",
       "zh": "这一航段船员穿够了御寒衣物。其余的留在货舱，等哪一航段要得更多再拿出来。"
     },
+    "room-b.358": { "en": "mild", "zh": "温和" },
+    "room-b.359": {
+      "en": "/ {COLD_LEG_WARMTH} asked",
+      "zh": "／需{COLD_LEG_WARMTH}"
+    },
     "room-b.236": {
       "en": "👥 Worker Status & Tasks",
       "zh": "👥 工匠状态与任务"
     },
     "room-b.237": { "en": "${ICONS[m]}${m}×${a}", "zh": "{ICONS[m]}{m}×{a}" },
+    "room-b.360": { "en": "Working on: {task}", "zh": "正在做：{task}" },
+    "room-b.361": {
+      "en": "Working on: {task} (Skilled)",
+      "zh": "正在做：{task}（熟练）"
+    },
+    "room-b.362": { "en": "{name}{pluralS}: {count}", "zh": "{name}：{count}" },
+    "room-b.363": { "en": " ({cost}💰)", "zh": "（{cost}💰）" },
+    "room-b.364": {
+      "en": "Make {task} (Need {mats})",
+      "zh": "制作{task}（需{mats}）"
+    },
     "room-b.238": { "en": "👥 Artisan Bench", "zh": "👥 匠作台" },
     "room-b.239": { "en": "🔨 Hire Workers", "zh": "🔨 雇佣工匠" },
     "room-b.240": { "en": "${a} ${m}", "zh": "{a} {m}" },
@@ -7577,6 +8820,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.242": {
       "en": "✅ Complete Market, Continue",
       "zh": "✅ 集市结束，继续"
+    },
+    "room-b.302": {
+      "en": "Hire {label} ({cost}💰/round)",
+      "zh": "雇佣{label}（{cost}💰/轮）"
+    },
+    "room-b.303": { "en": "{cost} Gold/round", "zh": "{cost}金币/轮" },
+    "room-b.365": {
+      "en": "{icon} Hire {label} ({cost}💰/round)",
+      "zh": "{icon} 雇佣{label}（{cost}💰/轮）"
     },
     "room-b.243": { "en": "Hold Value", "zh": "货舱价值" },
     "room-b.244": { "en": "━━ Raw Materials ━━", "zh": "━━ 原材料 ━━" },
@@ -7599,6 +8851,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${skilled} of ${count} trained: each produces 2 per round, working at ${Math.round(SHORT_RATIONS_YIELD * 100)}% pace while the crew goes hungry",
       "zh": "{count}人中有{skilled}人熟练：每人每轮产出2件，船员挨饿时干活的速度只有{Math.round(SHORT_RATIONS_YIELD * 100)}%"
     },
+    "room-b.366": { "en": "{count} item", "zh": "{count}件" },
+    "room-b.367": { "en": "{count} items", "zh": "{count}件" },
+    "room-b.368": { "en": "Raw {count}", "zh": "原料 {count}" },
+    "room-b.369": { "en": "Products {count}", "zh": "成品 {count}" },
     "room-b.252": { "en": "━━ Ventures ━━", "zh": "━━ 合股 ━━" },
     "room-b.253": {
       "en": "Too late in this voyage to post a new Venture: there is no round left that would leave time to spend the reward.",
@@ -7629,6 +8885,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "眼下没有在筹的合股。你可以发一个，或者等别的船长发。"
     },
     "room-b.263": { "en": "Your venture", "zh": "你的合股" },
+    "room-b.370": {
+      "en": "Fills by Round {round}.",
+      "zh": "第{round}轮前凑满。"
+    },
+    "room-b.371": {
+      "en": "{total} of {targetGold} Gold funded",
+      "zh": "已筹{total}/{targetGold}金币"
+    },
+    "room-b.372": { "en": "By Round {round}", "zh": "第{round}轮前" },
     "room-b.264": { "en": "🔧 Maintenance", "zh": "🔧 维护费" },
     "room-b.265": {
       "en": "✅ Funds sufficient for round end",
@@ -7651,6 +8916,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "↳ {r.list.length}× {r.label}"
     },
     "room-b.273": { "en": "${r.due} Gold", "zh": "{r.due}金币" },
+    "room-b.373": { "en": " ({count} workers)", "zh": "（{count}人）" },
     "room-b.274": { "en": "Your papers", "zh": "你的文书" },
     "room-b.275": {
       "en": "Your path is ${card.name}. Change your papers.",
@@ -7676,6 +8942,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.281": { "en": "Modules", "zh": "模块" },
     "room-b.282": { "en": "module slot", "zh": "个模块槽位" },
     "room-b.283": { "en": "module slots", "zh": "个模块槽位" },
+    "room-b.301": {
+      "en": "max(5, n×2 minus {discount})",
+      "zh": "max(5, n×2 减 {discount})"
+    },
     "room-b.284": { "en": "Funds", "zh": "资金" },
     "room-b.285": { "en": "Due", "zh": "应付" },
     "room-b.286": { "en": "${money}", "zh": "{money}" },
@@ -7713,7 +8983,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "lobby.013": {
       "en": ") .join(\", \")}. Buy these next round.",
-      "zh": ") .join(\", \")}。下一轮再买这些。"
+      "zh": ") .join(\"、\")}。下一轮再买这些。"
     },
     "lobby.014": {
       "en": "Your hold carries no goods to trade this Parley. Post a Gold offer for the good you still need, or ready up so the fleet can move on.",
@@ -7728,14 +8998,31 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "订单#{close.id}就快备齐了"
     },
     "lobby.017": {
-      "en": "You are only missing ${missing?.type} (have ${game.inventory[missing?.type ?? \"\"] || 0}, need ${missing?.required}). Try bartering for it, or wait to buy it next round.",
-      "zh": "你只缺{missing?.type}（现有{game.inventory[missing?.type ?? \"\"] || 0}，需要{missing?.required}）。可以和船长易货，或者等下一轮再买。"
+      "en": "You are only missing ${missing?.type} (have ${game.inventory[missing?.type ?? \"\"] || 0}, need ${missing?.required}). Try bartering for it now; a fresh order board is dealt each round.",
+      "zh": "你只缺{missing?.type}（现有{game.inventory[missing?.type ?? \"\"] || 0}，需要{missing?.required}）。现在就找船长易货；订单板每轮都会重新发一份。"
     },
     "lobby.018": { "en": "Upgrade to Ship Level 1", "zh": "升级船只到1级" },
     "lobby.019": {
       "en": "Ship upgrade costs ${cost} Gold but you only have ${game.money}. Save the Gold for the Resolve bills and continue the voyage.",
       "zh": "船只升级要{cost}金币，你手上只有{game.money}。金币留着结算付账，航程先接着走。"
     },
+    "lobby.256": { "en": "Take the {name}", "zh": "取走{name}" },
+    "lobby.257": {
+      "en": "You have {gold} Gold. The {name} gives {amount} Gold immediately, which should cover wages and maintenance this round. Without it, you risk bankruptcy at Resolve.",
+      "zh": "你手头有{gold}金币。{name}立刻给{amount}金币，本轮工钱和维护费应该就有着落了。没有它，结算时就要冒破产的风险。"
+    },
+    "lobby.258": { "en": "Pick {name}", "zh": "选{name}" },
+    "lobby.259": { "en": "Grab the {name}", "zh": "拿下{name}" },
+    "lobby.260": {
+      "en": "You have {score} Reputation. With high earnings expected, the {name} cuts income tax from {taxRatePct}% to {shelterRatePct}%, saving Gold at round end.",
+      "zh": "你有{score}声誉。预期收益高的话，{name}能把所得税从{taxRatePct}%降到{shelterRatePct}%，轮末省下一笔金币。"
+    },
+    "lobby.261": { "en": "Buy {name}", "zh": "买下{name}" },
+    "lobby.262": {
+      "en": "A Weaver needs {weaverWage} Gold per round in wages. With {gold} Gold, you can only cover {wageRounds} rounds. Wait until you have at least {hireBar} Gold before hiring.",
+      "zh": "织女每轮的工钱是{weaverWage}金币。你手里{gold}金币，只够付{wageRounds}轮。先别雇，等攒到{hireBar}金币再说。"
+    },
+    "lobby.263": { "en": "Trade order #{id}", "zh": "贸易订单#{id}" },
     "lobby.020": { "en": "Sign out", "zh": "退出登录" },
     "lobby.021": { "en": "Online", "zh": "在线" },
     "lobby.022": {
@@ -7765,6 +9052,9 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${Math.round(ms / 86_400_000)} days remaining",
       "zh": "还剩{Math.round(ms / 86_400_000)}天"
     },
+    "lobby.264": { "en": "Lender", "zh": "债主" },
+    "lobby.265": { "en": "Trader", "zh": "商贾" },
+    "lobby.266": { "en": "Age details: {name}", "zh": "时代详情：{name}" },
     "lobby.031": {
       "en": "Maritime trade on the ancient Silk Road",
       "zh": "古丝路上，海上通商"
@@ -7784,15 +9074,21 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "🤝 Broker's Favor unlocked",
       "zh": "🤝 掮客的人情已解锁"
     },
+    "lobby.267": {
+      "en": "Renown {level} · {title}",
+      "zh": "声望 {level} · {title}"
+    },
     "lobby.041": { "en": "Close profile", "zh": "关闭资料" },
     "lobby.042": { "en": "Statistics", "zh": "统计" },
     "lobby.043": { "en": "Chronicles", "zh": "航程实录" },
     "lobby.044": { "en": "Rivals", "zh": "对手" },
+    "lobby.268": { "en": "{name}'s profile", "zh": "{name}的资料" },
     "lobby.045": { "en": "Sign In", "zh": "登录" },
     "lobby.046": { "en": "Register", "zh": "注册" },
     "lobby.047": { "en": "your captain name", "zh": "你的船长名" },
     "lobby.048": { "en": "choose a captain name", "zh": "取一个船长名" },
     "lobby.049": { "en": "Something went wrong", "zh": "出了点问题" },
+    "lobby.269": { "en": "password", "zh": "密码" },
     "lobby.050": { "en": "x", "zh": "x" },
     "lobby.051": { "en": "Dismiss advice", "zh": "忽略建议" },
     "lobby.052": {
@@ -7812,6 +9108,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Consider ${advice.recommended.replace(/_/g, \" \")}",
       "zh": "可考虑{advice.recommended.replace(/_/g, \" \")}"
     },
+    "lobby.270": {
+      "en": "You have the experience and the streak for the {name}. {rounds} rounds, {multiplier}x Renown, and two difficulty scoped Merits await: Storm Sovereign and Eye of the Storm.",
+      "zh": "你有阅历，也有连续不破产的记录，{name}撑得起。{rounds}轮，{multiplier}倍声望，还有两项难度专属功勋等着你：风暴之主和风暴之眼。"
+    },
     "lobby.057": {
       "en": "Put ashore by a vote of the harbor",
       "zh": "港湾投票放逐"
@@ -7826,6 +9126,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.062": { "en": "Total Crowns", "zh": "沧海之冠总数" },
     "lobby.063": { "en": "Total Voyages", "zh": "航程总数" },
     "lobby.064": { "en": "Top Score", "zh": "最高积分" },
+    "lobby.271": { "en": "{crowns} crowns", "zh": "{crowns}顶沧海之冠" },
     "lobby.065": {
       "en": "Top captains across all voyages",
       "zh": "所有航程中的顶尖船长"
@@ -7841,6 +9142,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.068": { "en": "Close leaderboard", "zh": "关闭排行榜" },
     "lobby.069": { "en": "Crowns", "zh": "沧海之冠" },
     "lobby.070": { "en": "Best Rep", "zh": "最佳声誉" },
+    "lobby.272": { "en": "{renownXP} XP", "zh": "{renownXP}经验" },
+    "lobby.273": { "en": "Renown {level}", "zh": "声望 {level}" },
     "lobby.071": { "en": "Harbor Leaderboard", "zh": "港湾排行榜" },
     "lobby.072": { "en": "Houses", "zh": "世家" },
     "lobby.073": { "en": "Check In", "zh": "签到" },
@@ -7861,10 +9164,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.082": { "en": "Join by code", "zh": "用港湾口令加入" },
     "lobby.083": { "en": "Join", "zh": "加入" },
     "lobby.084": {
-      "en": "Name a room, pick its waters, and open it to the fleet.",
+      "en": "Name a harbor, pick its waters, and open it to the fleet.",
       "zh": "给港湾起个名字，选好水域，向船队开放。"
     },
-    "lobby.085": { "en": "Room name", "zh": "港湾名" },
+    "lobby.085": { "en": "Harbor name", "zh": "港湾名" },
     "lobby.086": { "en": "Create", "zh": "创建" },
     "lobby.087": { "en": "Unlock phrase", "zh": "解锁暗语" },
     "lobby.088": {
@@ -7936,7 +9239,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "lobby.119": { "en": "Failed to create room", "zh": "创建港湾失败" },
     "lobby.120": {
-      "en": "Room codes are 6 characters.",
+      "en": "Harbor codes are 6 characters.",
       "zh": "港湾口令是6个字符。"
     },
     "lobby.121": { "en": "Failed to join room", "zh": "加入港湾失败" },
@@ -7989,6 +9292,9 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.141": { "en": "Light", "zh": "浅色" },
     "lobby.142": { "en": "Dark", "zh": "深色" },
     "lobby.143": { "en": "Auto", "zh": "自动" },
+    "lobby.233": { "en": "Language", "zh": "语言" },
+    "lobby.234": { "en": "English", "zh": "英文" },
+    "lobby.235": { "en": "Chinese", "zh": "中文" },
     "lobby.144": { "en": "Visual", "zh": "显示" },
     "lobby.145": { "en": "Colorblind safe palette", "zh": "色盲友好配色" },
     "lobby.146": {
@@ -8004,21 +9310,26 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "The race to ${WORD_ON_THE_DOCKS_THRESHOLD} completed orders",
       "zh": "抢先交满{WORD_ON_THE_DOCKS_THRESHOLD}笔订单的竞赛"
     },
-    "lobby.150": { "en": "Tidewatch Surge", "zh": "观潮涌动" },
+    "lobby.150": { "en": "Tidewatch Alerts", "zh": "观潮预警" },
     "lobby.151": {
       "en": "The harbor crossing ${TIDEWATCH_SURGE_THRESHOLD} combined Reputation",
       "zh": "港湾声誉合计突破{TIDEWATCH_SURGE_THRESHOLD}"
     },
     "lobby.152": { "en": "Shortcuts", "zh": "快捷键" },
     "lobby.153": {
-      "en": "The host has muted you in room chat for the rest of this voyage.",
+      "en": "The host has muted you in the harbor chat for the rest of this voyage.",
       "zh": "本航程余下的时间，港主已经把你禁言，港湾聊天里说不了话。"
     },
     "lobby.154": { "en": "Offer a trade", "zh": "发起交易" },
     "lobby.155": { "en": "Dismiss trade error", "zh": "关闭交易错误" },
     "lobby.156": { "en": "Search messages", "zh": "搜索消息" },
-    "lobby.157": { "en": "Message the harbor…", "zh": "给港湾发消息..." },
-    "lobby.158": { "en": "Message the lobby…", "zh": "给大厅发消息..." },
+    "lobby.157": { "en": "Message the harbor", "zh": "给港湾发消息" },
+    "lobby.158": { "en": "Message the lobby", "zh": "给大厅发消息" },
+    "lobby.236": {
+      "en": "Message ${otherName ?? \"this captain\"}",
+      "zh": "给{otherName ?? \"这位船长\"}发消息"
+    },
+    "lobby.241": { "en": "Send message", "zh": "发送消息" },
     "lobby.159": { "en": "Switch", "zh": "切换" },
     "lobby.160": {
       "en": "Pick a captain to message privately",
@@ -8044,6 +9355,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "本航程已经起航"
     },
     "lobby.171": { "en": "Locked", "zh": "锁定" },
+    "lobby.240": { "en": "Enter", "zh": "进入" },
     "lobby.172": {
       "en": "Pick a captain from the list above to start a private conversation.",
       "zh": "从上面的名单里选一位船长，就能私下交谈。"
@@ -8087,10 +9399,17 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "今日已签到 · 明天再来"
     },
     "lobby.190": { "en": "Pledge", "zh": "加入" },
+    "lobby.237": { "en": "Day {day}", "zh": "第{day}天" },
+    "lobby.238": { "en": "XP", "zh": "经验" },
+    "lobby.239": {
+      "en": "Claim Day {day}: +{xp} Renown XP",
+      "zh": "领取第{day}天：+{xp} 声望经验"
+    },
     "lobby.191": { "en": "Experimental", "zh": "试验中" },
     "lobby.192": { "en": "🔒 Sealed", "zh": "🔒 封锁" },
     "lobby.193": { "en": "Still being built.", "zh": "仍在建造中。" },
     "lobby.194": { "en": "Opens with a phrase.", "zh": "凭暗语开启。" },
+    "lobby.255": { "en": "{rounds} rounds", "zh": "{rounds}轮" },
     "lobby.195": { "en": "Merchant Rating", "zh": "商人评级" },
     "lobby.196": { "en": "Peak Rep", "zh": "最高声誉" },
     "lobby.197": { "en": "Final Rep", "zh": "最终声誉" },
@@ -8099,9 +9418,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.200": { "en": "loans given", "zh": "笔借出" },
     "lobby.201": { "en": "loans taken", "zh": "笔借入" },
     "lobby.202": { "en": "Crowned", "zh": "加冕" },
+    "lobby.249": { "en": "fair winds", "zh": "顺风" },
+    "lobby.250": { "en": "open waters", "zh": "开阔水域" },
+    "lobby.251": { "en": "monsoon", "zh": "季风时节" },
     "lobby.203": {
-      "en": "No chronicles saved yet. Opt in to save a chronicle at the end of your next voyage.",
-      "zh": "还没有保存的航程实录。下个航程跑到头，选保存，就能留下一份。"
+      "en": "No chronicles saved yet. A chronicle is written when your voyage concludes.",
+      "zh": "还没有保存的航程实录。航程结束时，就会写下一份。"
     },
     "lobby.204": { "en": "By Difficulty", "zh": "按难度" },
     "lobby.205": {
@@ -8109,7 +9431,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "还没有拿到功勋。跑完航程就能挣到。"
     },
     "lobby.206": { "en": "Renown Progression", "zh": "声望进度" },
+    "lobby.242": { "en": "Level {n}", "zh": "等级 {n}" },
     "lobby.207": { "en": "Leading", "zh": "领先" },
+    "lobby.243": { "en": "{count} meeting", "zh": "交手{count}次" },
+    "lobby.244": { "en": "{count} meetings", "zh": "交手{count}次" },
+    "lobby.245": { "en": "{ties} ties", "zh": "{ties}次平手" },
     "lobby.208": {
       "en": "No rivals yet. Sail in the same harbor as another captain to build a rivalry.",
       "zh": "还没有对手。和另一位船长在同一个港湾航行，就会结成对手。"
@@ -8147,7 +9473,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "No snapshot yet. Tap the eye again.",
       "zh": "还没有快照。再点一下那只眼睛。"
     },
+    "lobby.252": { "en": "none", "zh": "没有" },
+    "lobby.253": { "en": "some", "zh": "一些" },
+    "lobby.254": { "en": "plenty", "zh": "很多" },
     "lobby.224": { "en": "Harbor Roster", "zh": "港湾名册" },
+    "lobby.246": { "en": "{count} captain{pluralS}", "zh": "{count}位船长" },
     "lobby.225": { "en": "Ashore", "zh": "已上岸" },
     "lobby.226": {
       "en": "Report ${member.displayName}",
@@ -8159,6 +9489,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "You have reported this captain this voyage",
       "zh": "本次航程你已经举报过这位船长"
     },
+    "lobby.247": { "en": "Unmute {name}", "zh": "解除{name}的禁言" },
+    "lobby.248": { "en": "Mute {name}", "zh": "禁言{name}" },
     "lobby.230": {
       "en": "Only the host can mute a captain.",
       "zh": "只有港主可以禁言船长。"
@@ -8210,8 +9542,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "misc.013": { "en": "Close search", "zh": "关闭搜索" },
     "misc.014": { "en": "You're muted", "zh": "你被禁言了" },
     "misc.015": {
-      "en": "The host has muted you in room chat this voyage.",
-      "zh": "本航程中，港主在港湾聊天里把你禁言了。"
+      "en": "The host has muted you in the harbor chat for the rest of this voyage.",
+      "zh": "本航程余下的时间，港主已经把你禁言，港湾聊天里说不了话。"
     },
     "misc.016": {
       "en": "Nothing on the harbor square yet. Say hello to the fleet.",
@@ -8225,6 +9557,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "No messages yet between you two.",
       "zh": "你们俩还没有消息。"
     },
+    "misc.075": { "en": "{count} found", "zh": "找到{count}条" },
     "misc.019": { "en": "N/A", "zh": "暂无" },
     "misc.020": {
       "en": "Gain ${EMERGENCY_LOAN_GOLD} Gold immediately. No strings attached.",
@@ -8265,6 +9598,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Nothing finished, nothing fancy. The founding three, and a great deal of them.",
       "zh": "不要成品，不要稀罕货。就是最初那三样，而且要多。"
     },
+    "misc.070": { "en": "4 or fewer", "zh": "最多4" },
+    "misc.071": { "en": "6 or more", "zh": "至少6" },
     "misc.035": { "en": "Settle", "zh": "结算" },
     "misc.036": {
       "en": "You win if the fleet fills its commission and your own goal above is met with it.",
@@ -8320,6 +9655,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{facts.captain}在香市放出{facts.good}的风声。"
     },
     "misc.050": { "en": "the tide is turning", "zh": "潮水转向了" },
+    "misc.072": {
+      "en": "{minutes}:{seconds} left",
+      "zh": "还剩 {minutes}:{seconds}"
+    },
     "misc.051": {
       "en": "This voyage has already set sail. Ask the host to open a new room.",
       "zh": "本航程已经起航。请港主另开一个港湾。"
@@ -8370,7 +9709,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "misc.066": {
       "en": "${names.slice(0, -1).join(\", \")} and ${names[names.length - 1]}",
-      "zh": "{names.slice(0, -1).join(\", \")}和{names[names.length - 1]}"
+      "zh": "{names.slice(0, -1).join(\"、\")}和{names[names.length - 1]}"
     },
     "misc.067": { "en": "${count} names", "zh": "{count}个名字" },
     "misc.068": { "en": "${count} captains", "zh": "{count}位船长" },
@@ -8378,6 +9717,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${named} of ${roster} captains ${named === 1 ? \"has\" : \"have\"} named someone.",
       "zh": "{roster}位船长里，已有{named}位指认了他人。"
     },
+    "misc.073": { "en": "1 name", "zh": "1个名字" },
+    "misc.074": { "en": "1 captain", "zh": "1位船长" },
     "residual.001": {
       "en": "Reading the balance...",
       "zh": "正在读取平衡数据..."
@@ -8529,6 +9870,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "No accounts match this view.",
       "zh": "当前视图下没有匹配的账户。"
     },
+    "residual.477": { "en": "Balance", "zh": "平衡总览" },
+    "residual.478": {
+      "en": "Clear search and filters",
+      "zh": "清除搜索和筛选"
+    },
     "residual.062": {
       "en": "from the server configuration",
       "zh": "来自服务器配置"
@@ -8618,6 +9964,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "{sharePercent(bankrupt, outcomes.length)} of {outcomes.length}",
       "zh": "{sharePercent(bankrupt, outcomes.length)}，共{outcomes.length}人"
     },
+    "residual.479": { "en": "Launch gates", "zh": "放行门槛" },
+    "residual.480": {
+      "en": "Run {voyages} of {required} recorded voyages",
+      "zh": "目前有{voyages}/{required}程已记录航程"
+    },
+    "residual.481": {
+      "en": "Recorded at a sample rate of {samplePercent}%.",
+      "zh": "按{samplePercent}%的采样率记录。"
+    },
     "residual.103": {
       "en": "🔒 Broker's Favor unlocks at Renown ${BROKERS_FAVOR_UNLOCK_LEVEL}, ${renownTitleForLevel(BROKERS_FAVOR_UNLOCK_LEVEL)} (${favorLevelsToGo} level${favorLevelsToGo === 1 ? \"\" : \"s\"} to go)",
       "zh": "🔒 掮客的人情在声望{BROKERS_FAVOR_UNLOCK_LEVEL}解锁，即{renownTitleForLevel(BROKERS_FAVOR_UNLOCK_LEVEL)}（还差{favorLevelsToGo}级）"
@@ -8658,6 +10013,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${data.winnerName} was first to ${WORD_ON_THE_DOCKS_THRESHOLD} orders.",
       "zh": "{data.winnerName}率先做满{WORD_ON_THE_DOCKS_THRESHOLD}笔订单。"
     },
+    "residual.436": { "en": "R{round}", "zh": "第{round}轮" },
     "residual.113": {
       "en": "Hire artisans only when you can sustain at least two rounds of wages. ${play.failureRule}",
       "zh": "至少付得起两轮工钱，才雇工匠。{play.failureRule}"
@@ -8666,6 +10022,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Day ${res.day} claimed: +${res.xpGained} Renown XP",
       "zh": "第{res.day}天已领取：+{res.xpGained}声望经验"
     },
+    "residual.449": { "en": "Lv {n}", "zh": "等级{n}" },
     "residual.115": {
       "en": "Press ? or F2 in a game room to see all keyboard shortcuts.",
       "zh": "在港湾里按 ? 或 F2，查看全部快捷键。"
@@ -8724,7 +10081,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "residual.129": {
       "en": "🛡️ You are covering ${carrying.buyerName ?? \"a captain\"} this leg for ${carrying.fee} Gold, already paid to you. Your Gold answers the raid their hold does not.",
-      "zh": "🛡️ 本航段你替{carrying.buyerName ?? \"一位船长\"}护卫，{carrying.fee}金币已先行付到你手上。轮到海盗找上门，应答的是这笔金币，不是他们的货舱。"
+      "zh": "🛡️ 本航段你替{carrying.buyerName ?? \"某位船长\"}护卫，{carrying.fee}金币已先行付到你手上。轮到海盗找上门，应答的是这笔金币，不是他们的货舱。"
     },
     "residual.130": {
       "en": "🛡️ Your offer stands: ${one.fee} Gold for one leg of cover for ${one.buyerName ?? \"a captain\"}. It waits on them.",
@@ -8745,6 +10102,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.134": {
       "en": "⏳ ${readyLine(readyCount, requiredCount)} The phase turns when the rest do.",
       "zh": "⏳ {readyLine(readyCount, requiredCount)}其余人就绪后，阶段自会翻页。"
+    },
+    "residual.438": {
+      "en": "R{round} · {label}",
+      "zh": "第{round}轮 · {label}"
     },
     "residual.135": {
       "en": "${nameCount(needed)} on one captain puts that captain ashore and spends the vote for the voyage.",
@@ -8794,13 +10155,20 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${captain.peerTradeProfit} Gold in peer trade",
       "zh": "船长间贸易进账{captain.peerTradeProfit}金币"
     },
+    "residual.464": { "en": "{rep} Rep", "zh": "{rep}声誉" },
+    "residual.465": {
+      "en": "{handed} items to the commission",
+      "zh": "向采办交付了{handed}件"
+    },
+    "residual.466": { "en": ", leg by leg", "zh": "，逐航段走来" },
+    "residual.467": { "en": "Leg {leg}", "zh": "第{leg}航段" },
     "residual.147": {
       "en": "No name is in yet. ${nameCount(census.needed)} on one captain ${census.needed === 1 ? \"carries\" : \"carry\"} it.",
-      "zh": "还没有人署名：要一位船长身上凑够{nameCount(census.needed)}个名字才能通过。"
+      "zh": "还没有人署名：一位船长身上凑够{namesNeeded}才能通过。"
     },
     "residual.148": {
       "en": "${leader.name} needs ${leader.short === 1 ? \"1 more name\" : `${leader.short} more names`} to carry it.",
-      "zh": "{leader.name}还差{leader.short}个署名才能通过。"
+      "zh": "{leader.name}还差{namesShort}才能通过。"
     },
     "residual.149": {
       "en": "Your name is in for ${captainName(members, myVote)}. Nothing else is asked of you this leg.",
@@ -8817,6 +10185,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.152": {
       "en": "${captainCount(waiting.length)} ${waiting.length === 1 ? \"has\" : \"have\"} not named anyone: ${nameList(waiting)}. ${nextStep(census.needed)}",
       "zh": "{captainCount(waiting.length)}还没有指认他人：{nameList(waiting)}。{nextStep(census.needed)}"
+    },
+    "residual.461": {
+      "en": "{namesNeeded} carries it.",
+      "zh": "{namesNeeded}，就能通过。"
+    },
+    "residual.462": {
+      "en": "{namesNeeded} carry it.",
+      "zh": "{namesNeeded}，就能通过。"
     },
     "residual.153": {
       "en": "${entries.length} ${entries.length === 1 ? \"line\" : \"lines\"} in the harbor, ${privateLog.length} ${privateLog.length === 1 ? \"line\" : \"lines\"} to you alone",
@@ -8962,6 +10338,31 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "⏳ Waiting for the host to start the voyage… (${harborIds.length} in harbor)",
       "zh": "⏳ 等待港主启航...（港湾里{harborIds.length}人）"
     },
+    "residual.439": {
+      "en": "{count} captain in the harbor",
+      "zh": "{count}位船长在港湾里"
+    },
+    "residual.440": {
+      "en": "{count} captain{pluralS} in the harbor",
+      "zh": "{count}位船长在港湾里"
+    },
+    "residual.441": {
+      "en": "🌊 {rounds} rounds await, become the Sea Master!",
+      "zh": "🌊 {rounds}轮航程在等你，去成为沧海之主！"
+    },
+    "residual.442": {
+      "en": "Your first seat is the {label}: three cards dealt face down, and the one you keep is the path you sail.",
+      "zh": "你的第一个座位是{label}：三张牌扣着发下，留下哪张，就走哪条道。"
+    },
+    "residual.443": { "en": "📦 {stock}", "zh": "📦 {stock}" },
+    "residual.444": {
+      "en": "💰 {gold} Gold starting funds",
+      "zh": "💰 {gold}金币启动资金"
+    },
+    "residual.445": {
+      "en": "Income Tax: {incomeTaxPct}% income tax",
+      "zh": "所得税：{incomeTaxPct}%"
+    },
     "residual.189": {
       "en": "💰 Current Funds: {game.money} Gold | 📦 See Inventory on the left",
       "zh": "💰 现有资金：{game.money}金币｜📦 存货见左侧"
@@ -8987,7 +10388,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "功勋（{meritIds.length}/9）"
     },
     "residual.195": {
-      "en": "{chronicles.length} recent voyage {chronicles.length === 1 ? \"\" : \"s\"} shown, oldest to newest",
+      "en": "{chronicles.length} recent voyage{pluralS} shown, oldest to newest",
       "zh": "显示最近{chronicles.length}次航程，由旧到新"
     },
     "residual.196": {
@@ -9066,6 +10467,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "There is a ${pct(first)} chance, rising to ${pct(second)} past the midpoint.",
       "zh": "有{pct(first)}的概率，过了中点升到{pct(second)}。"
     },
+    "residual.432": {
+      "en": "There is a ${pct(first)} chance.",
+      "zh": "有{pct(first)}的概率。"
+    },
     "residual.215": { "en": "🏪 Market: Buying", "zh": "🏪 开市：采购" },
     "residual.216": { "en": "🤝 Parley: Bartering", "zh": "🤝 洽谈：易货" },
     "residual.217": {
@@ -9112,6 +10517,19 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "• ${w?.label ?? id} (${w?.wage ?? 0} Gold/Round): Makes ${makes}",
       "zh": "• {w?.label ?? id}（每轮{w?.wage ?? 0}金币）：产出{makes}"
     },
+    "residual.437": {
+      "en": "Only the host can restart the voyage.",
+      "zh": "只有房主能重启航程。"
+    },
+    "residual.448": {
+      "en": "You only have {owned} {item}.",
+      "zh": "你手上只有{owned}件{item}。"
+    },
+    "residual.468": {
+      "en": "Restart voyage (host only)",
+      "zh": "重开航程（仅限房主）"
+    },
+    "residual.469": { "en": "{gold} Gold", "zh": "{gold}金币" },
     "residual.234": {
       "en": "The goods that answer a cold leg, and the cards that speak of one: read against the wardrobe's own table, which is where a garment's warmth already lives.",
       "zh": "应付寒程的货物，以及说到寒程的卡牌：对照衣箱自己的那张表来读，每件衣服的暖意本来就写在那里。"
@@ -9148,6 +10566,18 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "An obligation carried rather than paid: a loan, a due, or a claim on Gold that has not been earned yet.",
       "zh": "背着还没还清的义务：一笔借款、一笔欠款，或者一份对还没到手的金币的索取。"
     },
+    "residual.470": {
+      "en": "Cheap for its Gold and heavy for its slot: the trade that fills a hold rather than the trade that fills a purse.",
+      "zh": "按金币算便宜，按仓位算沉重：是填满货舱的买卖，不是填满钱袋的买卖。"
+    },
+    "residual.471": {
+      "en": "Anything that asks for hands: the roster, its wages, and the work it turns out.",
+      "zh": "一切要人手的东西：名册、工钱，以及这些人手做出来的活。"
+    },
+    "residual.472": {
+      "en": "Trade kept off the books, and the audit that goes looking for it.",
+      "zh": "不进账本的买卖，以及专门来查它的稽查。"
+    },
     "residual.243": {
       "en": "⚓ Avoiding Bankruptcy Strategies:",
       "zh": "⚓ 避免破产的策略："
@@ -9159,6 +10589,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.245": {
       "en": "\\n🛟 If the Bills Beat You:\\n${play.failureRule}\\n",
       "zh": "\\n🛟 账单要是先压垮了你：\\n{play.failureRule}\\n"
+    },
+    "residual.473": {
+      "en": "💰 Financial Management:\\n1. Always maintain reserve funds for expenses\\n2. Maintenance + Wages are fixed round costs\\n3. Calculate total expenditure before buying\\n\\n👥 Worker Management:\\n1. Weaver Wage: {weaverWage} Gold / Round\\n2. Master Wage: {masterWage} Gold / Round\\n3. Maker Wage: {sachetWage} Gold / Round\\n4. Hire only as needed\\n\\n🔮 Broker's Whisper Strategy:\\n1. Buy rumors early if you have spare gold\\n2. Hoard revealed items to guarantee Orders profits\\n3. Balance intel purchases with other investments\\n\\n🛒 Buying Strategy:\\n1. Reserve funds for maintenance+wages first\\n2. Select high value for money goods\\n3. Prioritize port specialties + revealed intel\\n\\n🔄 Bartering Strategy:\\n1. Trade away surplus raw materials for the one you're actually short on\\n2. A modest Gold offer can secure a needed item faster than waiting on the next round's market\\n3. Cancel an offer that's sitting unclaimed if you'd rather keep the material yourself\\n\\n🤝 Trading Strategy:\\n1. Prioritize highest profit orders\\n2. Consider freight impact on margins\\n3. Finished orders yield high profit but incur VAT\\n\\n⚠️ Risk Control:\\n1. Calculate fixed round costs: Maintenance + Wages\\n2. Keep funds consistently > fixed costs\\n3. Avoid overexpansion cash flow issues\\n\\n🏴‍☠️ Pirates and Escorts:\\n1. The escort fee scales with your own Gold, so it's relatively cheap exactly when you're poor and the stakes are also low\\n2. Hire one when you're carrying enough Gold that losing it would actually hurt\\n3. Sailing without one is a fair bet when you have little to lose anyway\\n\\n🆘 Borrowing and Lending:\\n1. Repay a loan as soon as you can afford it, instead of waiting for it to be deducted automatically at Round {rounds}\\n2. Lending Gold raises your own reputation, so helping a captain who can clearly repay you is rarely a bad trade\\n3. Watch how much you've lent out across the voyage; it's still your Gold until it's actually repaid\\n\\n🛡️ Backing Strategy:\\n1. Back a loan you'd have happily lent Gold on yourself; you're taking on the same risk without earning the lender's own full reputation rate\\n2. Only pledge what you can afford to lose outright, the same rule as lending directly\\n3. A loan to a captain who's clearly about to turn a profit is a safer backing bet than one taken late in the voyage with little runway left to repay it\\n\\n💾 Save game progress frequently with Ctrl+S!",
+      "zh": "💰 财务管理：\\n1. 手头永远留一笔应急资金\\n2. 维护费和工钱是每轮的固定开销\\n3. 出手采购前，先算清这一轮总共要花多少\\n\\n👥 用工管理：\\n1. 织女工钱：每轮 {weaverWage} 金币\\n2. 纺织大师工钱：每轮 {masterWage} 金币\\n3. 香囊师工钱：每轮 {sachetWage} 金币\\n4. 用工按需，别多雇\\n\\n🔮 掮客密语策略：\\n1. 手头有余钱，就早点买密语\\n2. 把点破的货捂紧，用来稳稳吃下订单利润\\n3. 情报开销和其他投资要平衡\\n\\n🛒 采购策略：\\n1. 先把维护费和工钱留出来\\n2. 挑性价比高的货\\n3. 优先港口特产，再配上点破的情报\\n\\n🔄 易货策略：\\n1. 多余的原材料拿去换真正短缺的那一样\\n2. 一笔不高的金币报价，往往比等下一轮市场更快拿到货\\n3. 挂着没人接的报价，与其干等，不如撤回，自己留着材料\\n\\n🤝 交易策略：\\n1. 优先做利润最高的订单\\n2. 把运费对利润的影响算进去\\n3. 成品订单利润高，但要缴增值税\\n\\n⚠️ 风险控制：\\n1. 算清每轮固定开销：维护费加工钱\\n2. 让手里的金币始终高过固定开销\\n3. 别贪扩张，小心周转不开\\n\\n🏴‍☠️ 海盗与护航：\\n1. 护航费随你手上的金币浮动，越是穷的时候越便宜，那时的损失本来也小\\n2. 金币多到丢了会肉疼的时候，就该雇一趟护航\\n3. 反正没什么可输的，不雇护航也赌得起\\n\\n🆘 借与贷：\\n1. 能还就尽早还，别拖到第{rounds}轮被自动扣还\\n2. 放贷长自己的声誉，借给明显还得上的船长，很少是笔亏本买卖\\n3. 留意整个航程放出去多少：没还回来之前，那还是你的金币\\n\\n🛡️ 作保策略：\\n1. 只给你自己乐意放贷的那类借款作保：担的是同样的风险，却拿不到债主那份完整的声誉\\n2. 只押你可以干脆认赔的数目，和直接放贷一个道理\\n3. 作保给一位眼看就要盈利的船长，比押给航程末尾、还款空间所剩无几的那类借款稳妥\\n\\n💾 用 Ctrl+S 勤存档！"
     },
     "residual.246": {
       "en": "Barge revenue share of all food spending",
@@ -9264,12 +10698,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "有货物正在变成常备货吗？"
     },
     "residual.280": {
-      "en": "No gate yet: the card gates are Epic F's and the goods and Bourse gates are Epic G's, so four slots stand, and the charter gate has no path past its floor yet.",
-      "zh": "还没有门槛：卡牌门槛归史诗 F，货物和交易所门槛归史诗 G，所以这四个位置先空着；特许门槛也还没有一条商道越过它的下限。"
+      "en": "No gate yet: the card gates and the goods and Bourse gates have no source on the record, so four slots stand, and the charter gate has no path past its floor yet.",
+      "zh": "还没有门槛：卡牌门槛、货物和交易所门槛在记录上还没有来源，所以这四个位置先空着；特许门槛也还没有一条商道越过它的下限。"
     },
     "residual.281": {
-      "en": "The card gates are Epic F's and the goods and Bourse gates are Epic G's, so the four gates above are slots until those epics ship.",
-      "zh": "卡牌门槛属于史诗 F，货物和交易所门槛属于史诗 G；那些史诗上线之前，上面四道门槛都还空着。"
+      "en": "The card gates and the goods and Bourse gates have no source on the record, so the four gates above stand as slots rather than readings.",
+      "zh": "卡牌门槛、货物和交易所门槛在记录上还没有来源；上面那四道门槛都还空着，还不是读数。"
     },
     "residual.282": {
       "en": "The record keeps the count of goods a leg dealt and a hold closed with, never their names, so the share of goods traded the plan asks for has no source until an event carries the identity rather than the count.",
@@ -9398,6 +10832,24 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${stopped.length} of ${records.length}, stopping at leg ${Math.round(centre)} on the median",
       "zh": "{stopped.length}/{records.length}，按中位数停在第{Math.round(centre)}航段"
     },
+    "residual.484": {
+      "en": "{floor} to {ceiling}%",
+      "zh": "{floor}到{ceiling}%"
+    },
+    "residual.485": {
+      "en": "{outside.length} of {gated.length} gates sit outside theirs: {list}.",
+      "zh": "{gated.length}道门槛中有{outside.length}道落在区间外：{list}。"
+    },
+    "residual.486": { "en": "above 70%", "zh": "高于70%" },
+    "residual.487": { "en": "12 to 28%", "zh": "12到28%" },
+    "residual.488": { "en": "15 to 22%", "zh": "15到22%" },
+    "residual.489": { "en": "above 60%", "zh": "高于60%" },
+    "residual.490": { "en": "55 to 80%", "zh": "55到80%" },
+    "residual.491": { "en": "above 90%", "zh": "高于90%" },
+    "residual.492": { "en": "under 12%", "zh": "低于12%" },
+    "residual.493": { "en": "above 66%", "zh": "高于66%" },
+    "residual.494": { "en": "62 to 74 min", "zh": "62到74分钟" },
+    "residual.495": { "en": "not measurable", "zh": "测不出来" },
     "residual.319": {
       "en": "❌ Need ${debt.amount} Gold to repay ${debt.counterpartyName}, have ${state.money}",
       "zh": "❌ 还{debt.counterpartyName}{debt.amount}金币，手上只有{state.money}"
@@ -9520,7 +10972,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "residual.349": {
       "en": "🔧 ${name} leaves your hull for ${trade.buyerName ?? \"a captain\"}.",
-      "zh": "🔧 {name}从你的船体上卸下，转给了{trade.buyerName ?? \"一位船长\"}。"
+      "zh": "🔧 {name}从你的船体上卸下，转给了{trade.buyerName ?? \"某位船长\"}。"
     },
     "residual.350": {
       "en": "🤝 Module trade: ${trade.buyerName ?? \"A captain\"} paid ${trade.fee} Gold for ${name}.",
@@ -9629,6 +11081,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.376": {
       "en": "🥶 There is nobody aboard to take the cold.",
       "zh": "🥶 船上没有人能承受这份寒冷。"
+    },
+    "residual.474": {
+      "en": "❄️ A cold leg, and the crew's {warmthGrade} of warmth is enough for the {COLD_LEG_WARMTH} it asks.",
+      "zh": "❄️ 寒程，船员的{warmthGrade}暖意够它要的{COLD_LEG_WARMTH}。"
     },
     "residual.377": {
       "en": "{gates.length - notInBand.length} of {gates.length} gates inside {gates.length - notInBand.length === 1 ? \"its band\" : \"their bands\"}",
@@ -9774,6 +11230,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${facts.taker} buys ${cardName(facts.module)} from ${facts.captain} for ${facts.fee} Gold.",
       "zh": "{facts.taker}以{facts.fee}金币从{facts.captain}手上买下{cardName(facts.module)}。"
     },
+    "residual.475": {
+      "en": "{facts.captain} posts {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}.",
+      "zh": "{facts.captain}挂出{facts.offerAmount}份{facts.offerItem}，想换{facts.requestAmount}份{facts.requestItem}。"
+    },
+    "residual.476": {
+      "en": "{facts.taker} fills {facts.captain}'s offer of {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}.",
+      "zh": "{facts.taker}接下{facts.captain}的报价：{facts.offerAmount}份{facts.offerItem}换{facts.requestAmount}份{facts.requestItem}。"
+    },
     "residual.413": {
       "en": "${readyCount} of ${requiredCount} captains ${readyCount === 1 ? \"has\" : \"have\"} readied.",
       "zh": "{requiredCount}位船长里已有{readyCount}位就绪。"
@@ -9842,6 +11306,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "${s.user.displayName} entered the harbor",
       "zh": "{s.user.displayName}进了港湾"
     },
+    "residual.482": {
+      "en": "${s.user.displayName} left the harbor",
+      "zh": "{s.user.displayName}离开了港湾"
+    },
     "residual.430": {
       "en": "Deadline must be between round ${minRound} and round ${maxRound}.",
       "zh": "截止轮次得在第{minRound}轮到第{maxRound}轮之间。"
@@ -9849,6 +11317,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.431": {
       "en": "${input.displayName} sailed ${waters} and ran out of Gold before the voyage was done.",
       "zh": "{input.displayName}在{waters}中跑了一程，中途金币耗尽，没能走完航程。"
+    },
+    "residual.483": {
+      "en": "${s.user.displayName} posted a Venture: ${targetGold} Gold needed by Round ${deadlineRound}.",
+      "zh": "{s.user.displayName}挂出了一笔合股：{targetGold}金币，第{deadlineRound}轮前凑齐。"
     }
   }
 }
@@ -9860,7 +11332,7 @@ The card records keep their inline strings, exactly as the plan describes, and a
 
 The rest of the tables can stand or fall row by row. What follows is the standing agenda, kept current as each panel lands. The sole reference throughout is the v1.4.0 Mandarin edition.
 
-**This round.** The register round sat where the second panel left off, on the four anchors that were waiting for a single ruling. Thirty-seven units went to five votes apiece on a Borda 19-16-10-4-1 ballot (a winner must lead the runner-up by three), with one record keeper for the splits; 308 agents in all. The register's law, written down before the votes were counted: the edition is the sole baseline, mechanism and common words follow it, and any word that departs from it needs a written reason, the half-second test, and your signature. It settled all four anchors, carried every family that rode on them, and took up each word-family the earlier panels had flagged; one name moved a second time, and one waits on your signature below. The sweeps are applied in this working copy and stand at your gavel. No lock lifted; where a locked leaf disagrees with a ruling, the disagreement is registered below.
+**This round.** The register round sat where the second panel left off, on the four anchors that were waiting for a single ruling. Thirty-seven units went to five votes apiece on a Borda 19-16-10-4-1 ballot (a winner must lead the runner-up by three), with one record keeper for the splits; 308 agents in all. The register's law, written down before the votes were counted: the edition is the sole baseline, mechanism and common words follow it, and any word that departs from it needs a written reason, the half-second test, and your signature. It settled all four anchors, carried every family that rode on them, and took up each word-family the earlier panels had flagged; one name moved a second time, and one carries your signature below. The sweeps are applied in this working copy and stand at your gavel. No lock lifted; where a locked leaf disagrees with a ruling, the disagreement is registered below.
 
 **The register ruling, settled.** The four anchors were called again, each on the edition's evidence, and all four came home.
 
@@ -9879,7 +11351,7 @@ The rest of the tables can stand or fall row by row. What follows is the standin
 - **The materials line**: the goods class reads 原材料 (原材料订单, 卖原材料), the cost phrases read 原料 (原料成本), and the bills read 材料 (材料费): the edition's own three-way split. One leaf carries two of them (原料成本 and 卖原材料 together) and lands as a unit.
 - **The smugglers desc**: 采购成本降低15%，所得税提高20%, the edition's own sentence (zh.js:110), replacing the tree's spaced 增加 20% phrasing; the companion tooltip now reads 采购成本 with it (see the second sweep below).
 - **The tax-evasion desc**: 所得税与增值税减半，每笔订单完成时有 15% 的概率被稽查，罚款 20 金币; the audit is named as the audit, and 罚款 is the edition's word (zh.js:125).
-- **The lift names**: the eighteen names were re-examined one by one and confirmed; one moved a second time, the merchant's charm, now 商贾魅力, the edition's own name for that card (zh.js:75). Two cards carry rewritten descs at the lift: the apprentice's 本轮雇工费用减半。 (ours, not the edition's sentence) and the workshop's above. The weaver's name is the exception, below.
+- **The lift names**: the eighteen names were re-examined one by one and confirmed; one moved a second time, the merchant's charm, now 商贾魅力, the edition's own name for that card (zh.js:75). Two cards carry rewritten descs at the lift: the apprentice's 本轮雇工费用减半。 (ours, not the edition's sentence) and the workshop's above. The weaver's name, signed below, makes nineteen.
 - **The tables themselves**: the pool table's Proposed and Why cells and the conversion table were brought level with this round's rulings. The pool's name column follows the tree at the lift, and the order and tax rows have left the conversion table, since nothing remains for the lift to change there.
 
 **The consistency pass.** After the register round, one more sweep asked a single question of the whole surface: does any concept answer to two Chinese names? It found the seams below and closed them, so the mapping now speaks one name per concept wherever it speaks; the pool's tree-now cells alone keep the tree's own words, because that column quotes what ships today.
@@ -9888,7 +11360,7 @@ The rest of the tables can stand or fall row by row. What follows is the standin
 - **The rumor family moved to the path's own word, 风声.** Seven sentences that said 传闻 now say 风声, so the path's name and its sentences speak once. The residual.123 echo (每位风声船长 ... 放出一件货的风声) stays as the brand echo.
 - **The purchase family finished at 密语.** The two broker descs landed at the edition's sentence (密语花费2金币，每次购买揭示2条。 for the network, and the interpreter's line rewritten to name the system); the empty state reads 掮客没有更多密语了, the revealed label reads 已揭示的密语, the panel header reads 密语, and the combo tooltip reads 密语网.
 - **One-offs.** 采买 reads 采购; 港口市场 reads 集市, the screen's own name; 每段航程 reads 每航程; the Good label reads 货物; 出价 reads 开价; the gates line drops 空位 and reads 都还空着; and the credit card reads 港湾信用, the doc's harbor word, with the tree's 港口信用 noted for the lift.
-- **The pool's record.** Four rows whose Proposed cell read "as is" while the frozen target had already moved now show their targets: Bulk Monopoly and Kiln Cellar carry the two bulk descs' move to 散货 (the bulk web), the Overdrive Engine carries the amendment that landed (the edition's own sentence, zh.js:144-145), and The Weavers' Charter carries its desc's 每位织女, its name still held for your signature.
+- **The pool's record.** Four rows whose Proposed cell read "as is" while the frozen target had already moved now show their targets: Bulk Monopoly and Kiln Cellar carry the two bulk descs' move to 散货 (the bulk web), the Overdrive Engine carries the amendment that landed (the edition's own sentence, zh.js:144-145), and The Weavers' Charter carries its desc's 每位织女, its name signed for the lift.
 - **Kept by design, rechecked:** the 声誉 and 声望 pair, the 港湾 and 港口 split, 御寒 against 暖意, the slot words 槽位, 仓位 and 席位 in their three senses, and the materials trio 原材料, 原料, 材料. The second sweep adds its own kept pairs: the market (集市 the port market's own name, 护航市场 and 模块市场 the two boards), the cold (寒程 the leg, 寒冷 the chill), and the deck titles 甲板水手 and 一等水手 against the working 人手.
 
 **The second sweep, one name per concept.** Four fresh readers walked the whole surface asking a single question: does any concept answer to two Chinese names? The seams below survived adjudication against the fence, the register record and the edition, and this pass closed them.
@@ -9914,6 +11386,14 @@ The rest of the tables can stand or fall row by row. What follows is the standin
 - **The broker's two ballots, named.** The broker bullet above ran two ballots' numbers together, the term ballot's twenty to fifteen beside the policy ballot's sixteen to nineteen; each now names its ballot, so the minority's three-point gap reads straight.
 - **Considered and left, with reasons.** 资金援助 stays as the Financial Aid guide's English-mirrored title; 集市密语拉满 stays, since the English word is intelligence and 密语 is the mapping's intelligence word; and the answer line's 开市的集市 keeps its echo, because the English's "opens" asks for 开市.
 
+**The wiring rows, ahead of the wiring.** Eleven strings the ten sweeps never reached now have their rows, so the wiring has a leaf to read for each. The pirate odds entry's head fills the gap above its tail (the pair fuses into one entry named `pirateLadder`); the refit bench's two sentences for another captain's row take room-a.300 and room-a.301; the three market names the barter page joins into `{held}` land at manual.059 through manual.061, with 护航市场 and 模块市场 as the record above already names them and the bazaar window as 香市窗口; the settings screen's language section and its pair take lobby.233 through lobby.235; the private message line, with its "this captain" fallback given its own extracted row, takes lobby.236; and the one-tier raid odds sentence takes residual.432. The tables, the section counts, this record and the mapping file all moved together in one pass; nothing here needs your eye.
+
+**The wiring wave's rows.** Twenty-seven rows gathered at the last sites the wiring pass could neither adopt nor leave in English: the two endgame figures, the buyer's and the seller's refit receipts, the worker assignment line, the balance dashboard's three launch gate captions, the chat search count, the admin bar's two stragglers, the Free Captain's two borrow lines, the two the realtime sweep reached last: the leave-the-harbor notice and the Venture posting line, and the balance dashboard's twelve last strings: the win rate spread, the gates outside their bands, the ten targets its gate column lists, and the one not-measurable mark. Two rows already in the pack take the `{pluralS}` form their sites need (the roster pill and the harbor headcount), which is a change of spelling rather than of meaning. Nothing here needs your eye.
+
+**The wiring rows, round three.** One hundred and sixty-four rows gathered while the room, the shell, the lobby and the engine were wired: the in-room strings the two room sweeps left unrowed, the engine's ledger lines and receipts, the two boundary screens that surfaced blocks of their own (`error.tsx` and `not-found.tsx`, the way `WatersScale.tsx` did last round), the manual's two frames, the lobby chrome, and the finishing sweep's tail: the tag meanings, the garments tick's good-news twin, the tips body, and the census line the vote tally composes. Six staged drafts retired as duplicates of rows the pack already carries (the three offer buttons, the two formula captions, and the Broker pill), two ternaries recast as `{pluralS}` rows, nine rows whose sources split their text across JSX, and one zh cell (`guides.071`) that shed a trailing stop its call sites supply. The tables, the fence, the counts and the totals moved together in one pass, and the battery holds the pairing; nothing here needs your eye.
+
+**The wiring rows, round two.** One hundred and seventy-five rows, one for every string the wiring pass surfaced as it went: the whole guide body off `copy.ts` (`guides.088` through `guides.167`), the lines the room, the lobby and the consoles filed as gaps while they wired, the two baked mode differences whose cells still carried tokens no call site fills (`descriptions.031` and `descriptions.033` now read their numerals plainly), and one file that surfaced a block of its own, `lobby/WatersScale.tsx`. Three staged drafts retired as duplicates of rows the pack already carried (`room-a.324`, `residual.463`, and the paths lock sentence that `paths.path.lock_line` already holds), five tokens renamed to the names their call sites fill, and one zh cell (`residual.147`) that read its own classifier now hands that job to the rowed fragment. The tables, the fence, the counts, the totals and the mapping file moved together in one pass, and the battery holds the pairing. The five split tails the earlier sweeps left in the fence (`guides.025`, `guides.027`, `room-a.253`, `room-a.291`, `lobby.013`) stay exactly as they stand: each is the second half of a source template the mapping file fuses back into one entry (`escortLadder`, `pirateLadder`, `possessive`, `namesShort`, `materialsList`), so no call site can read one alone and none of them belongs in the pack by itself. Nothing here needs your eye.
+
 **Landed by the earlier panels, still the record.**
 
 - **Modules**: 模组 becomes 模块 everywhere: the phase chip reads 抽取模块, the swap chip 切换模块, the swap short label 切换, and the buttons follow. The slot word itself is settled above.
@@ -9923,7 +11403,7 @@ The rest of the tables can stand or fall row by row. What follows is the standin
 - **Crew**: the weaver reads 织女 (the edition's roster word, zh.js:35-39, 405, 662) and the hire button follows (雇佣织女); the master reads 纺织大师; the sachet maker reads 香囊师.
 - **Ratings**: 丝路之王, 海上贸易大亨, 成功商人.
 - **Card names, nine**: 避税账本, 免税令, 顺风顺水, 紧急钱庄, 学徒传承, 走私暗舱, 工匠工坊, 打捞起重机, 散货索具. All nine were re-examined and confirmed this round; the lift list below carries them.
-- **The bulk web**: 大宗 becomes 散货 wherever the tag renders (the goods table, the hauler's name 散货索具, the two card descs that price it). The Bulk Charter keeps 大宗特许, and a panel has now voted the family: 大宗垄断 keeps too, and the weaver's name is determined as 织女特许, held for your signature below. If you want one word across the family, the weaver's name is the piece left to move.
+- **The bulk web**: 大宗 becomes 散货 wherever the tag renders (the goods table, the hauler's name 散货索具, the two card descs that price it). The Bulk Charter keeps 大宗特许, and a panel has now voted the family: 大宗垄断 keeps too, and the weaver's name is settled at 织女特许, signed below.
 - **The overdrive desc**: the proposal was rejected three to nothing, but all three dissents converged on the edition's own sentence (zh.js:144-145, whose numbers match the card exactly), so the amendment carried: 运费降低5金币。维护费增加10金币。
 - **Small strings**: 口粮单价 for the ration price, 荣登 for the first crown, a semicolon to a full stop in the Aroma signature, 报酬 in the mandate line, 每航程 and 40% in the free captain's signature, tightened percentages in the salvage, factor and weaver descs, and a stray space removed from the hull line's durability readout.
 
@@ -9964,11 +11444,11 @@ The rest of the tables can stand or fall row by row. What follows is the standin
 - **What deliberately has no Chinese.** 452 swept strings were judged no translate on the way in: code tokens, socket event names, developer diagnostics, and the card validator's messages, none of which a captain ever sees.
 - **Spacing.** The mapping's card values take the tight hand ({cost}金币, 2麻布, {rounds}轮), matching the edition; the card records already in the tree keep their spaced money (4 金币) until the wiring, and the tutorial pages keep theirs until the lift.
 - **Crew names.** All 67 transliterated above. Say if any should switch to Chinese names instead.
-- **At lift, the tree takes eighteen card names** in one pass: the five the pool already moves (商贾魅力, 关津减税, 商道精通, 掮客人脉, 管事), the first panel's four (船队旗帜, 织物垄断, 大宗特许, 常备护航), and the nine above. Each was re-examined this round and confirmed. The wiring itself (the whole sentence surface, the joiners, the spacing realignment) is the remaining lift work.
+- **At lift, the tree takes nineteen card names** in one pass: the five the pool already moves (商贾魅力, 关津减税, 商道精通, 掮客人脉, 管事), the first panel's four (船队旗帜, 织物垄断, 大宗特许, 常备护航), and the nine above, plus 织女特许 on your signature below. Each was re-examined this round and confirmed. The wiring itself (the whole sentence surface, the joiners, the spacing realignment) is the remaining lift work.
 
 **Awaiting your hand.**
 
 - **The sweeps and this record** stand at your sign; nothing is committed.
-- **织女特许, the weaver's card name: determined, held.** Signing updates the fence name and its desc, this list, and the verifier's kept and forbidden lists in one pass; not signing leaves 织工特许 as the mapping ships it and the rest of the family unmoved.
+- **织女特许, the weaver's card name: signed.** Your signature moved the fence name, this list, and the verifier's kept and forbidden lists in one pass; the tree takes the name with the lift.
 - **Held for the lift:** the emergency-loan sentence, so that {EMERGENCY_LOAN_GOLD}金币 lands on the coin rather than the 钱庄; three missing shipyard rows at the edition's twins (the slot count, the empty state, the upgrade line); the 匠人 whitelist entry; the 张 counting form for 货架; and the playtest watch on the 交一条订单 style glue.
   **Open observations:** with the consistency pass, 风声 speaks the whole rumor family and 密语 the whole purchase family; with the second sweep above, the two sentence-pass items it left open landed (the frozen tooltip reads 采购成本 and the haul rigging desc reads 费用增加); the residual.123 brand echo (每位风声船长 ... 放出一件货的风声) stays by design.

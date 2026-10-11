@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { t } from "@/lib/game/i18n";
 import { hungryMarkerLabel, hungryTooltip } from "@/lib/game/status-copy";
 import { cn } from "@/lib/utils";
 
@@ -50,16 +51,28 @@ export function StatGrid({
   return (
     <div>
       <div className="grid grid-cols-2 gap-1.5">
-        <Stat label="Funds" value={`${money}`} className="text-gold-ink" />
-        <Stat label="Reputation" value={`${score}`} className="text-favor" />
+        <Stat
+          label={t("Funds")}
+          value={t("{money}", { money })}
+          className="text-gold-ink"
+        />
+        <Stat
+          label={t("Reputation")}
+          value={t("{score}", { score })}
+          className="text-favor"
+        />
         {showObligations ? (
           <Stat
-            label="Due"
+            label={t("Due")}
             value={`${pendTotal}`}
             className={cn(safe ? "text-foreground" : "text-alarm")}
           />
         ) : (
-          <Stat label="Ship" value={`Lv ${shipLevel}`} className="text-sea" />
+          <Stat
+            label={t("Ship")}
+            value={t("Lv {n}", { n: shipLevel })}
+            className="text-sea"
+          />
         )}
         {/* [C1: the Larder and Short Rations] Drawn only when the layer
             is running, so a voyage with the switch off shows the same
@@ -86,7 +99,11 @@ export function StatGrid({
               </div>
             </button>
           ) : (
-            <Stat label="Larder" value={`${larder}`} className="text-larder" />
+            <Stat
+              label={t("Larder")}
+              value={t("{larder}", { larder })}
+              className="text-larder"
+            />
           ))}
       </div>
       {larderOn && shortRations && open && (

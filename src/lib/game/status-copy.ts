@@ -21,9 +21,17 @@
 // sentence may be phrased around a clause and never author one again. What
 // neither can hold is meaning: the clauses are guarded by their words,
 // not their sense, which is why the sweep's comment says so out loud.
+//
+// The family cells stay authored in English, because they are what the
+// validator and the sweep compare. The sentences are read through the
+// pack (./i18n) at the moment they are composed: each function below
+// hands t() the sentence and the family's own cells as token values, so
+// the language a captain reads is the process's, and the English the
+// suites pin is the same copy this module has always carried.
 
 import { CREW_LOSS_AFTER_HUNGRY_LEGS } from "./constants/crew";
 import { COLD_LEG_WARMTH } from "./constants/garments";
+import { t } from "./i18n";
 
 /** The three clauses every status family carries. */
 type StatusClause = "state" | "cause" | "remedy";
@@ -74,26 +82,58 @@ export const IDLE_HAND: StatusFamily = {
 /** The bench row and the peek modal, through one function: a hand seen
     from either surface reads the same reason and the same promise. */
 export function frozenBenchLine(): string {
-  return `🥶 ${FROZEN_CREW.state}: the crew ${FROZEN_CREW.cause}. Back next leg. ${FROZEN_CREW.remedy}.`;
+  return t(
+    "🥶 {FROZEN_CREW.state}: the crew {FROZEN_CREW.cause}. Back next leg. {FROZEN_CREW.remedy}.",
+    {
+      "FROZEN_CREW.state": t(FROZEN_CREW.state),
+      "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
+      "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
+    },
+  );
 }
 
 /** The assignment refusal: the line the engine logs when every free
     hand is standing the leg down for the cold. */
 export function frozenAssignRefusal(): string {
-  return `❌ The only free hands are frozen out this leg: the crew ${FROZEN_CREW.cause}, and they are back next leg. ${FROZEN_CREW.remedy}.`;
+  return t(
+    "❌ The only free hands are frozen out this leg: the crew {FROZEN_CREW.cause}, and they are back next leg. {FROZEN_CREW.remedy}.",
+    {
+      "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
+      "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
+    },
+  );
 }
 
 /** The per hand line in the voyage log, said for the hand whose work
-    waits rather than for the crew. */
+    waits rather than for the crew. The task is the worker record's own
+    word, so it is read here the same way the bench reads it. */
 export function frozenWorkLog(name: string, task: string): string {
-  return `🥶 ${name} is frozen out this leg: the crew ${FROZEN_CREW.cause}, and the work on ${task} waits for next leg. ${FROZEN_CREW.remedy}.`;
+  return t(
+    "🥶 {name} is frozen out this leg: the crew {FROZEN_CREW.cause}, and the work on {task} waits for next leg. {FROZEN_CREW.remedy}.",
+    {
+      name,
+      task: t(task),
+      "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
+      "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
+    },
+  );
 }
 
 /** The frostbite line: the one frozen sentence whose subject is the
     hand rather than the crew, so it names the bite itself as the state
-    and lets the cause and the way back carry the rest. */
+    and lets the cause and the way back carry the rest. The label is the
+    craft the crew record carries, read through the pack like the task
+    above. */
 export function frozenFrostbiteLog(name: string, label: string): string {
-  return `🥶 Frostbite: ${name} the ${label} ${FROZEN_CREW.cause}, and is out of action next leg. ${FROZEN_CREW.remedy}.`;
+  return t(
+    "🥶 Frostbite: {name} the {label} {FROZEN_CREW.cause}, and is out of action next leg. {FROZEN_CREW.remedy}.",
+    {
+      name,
+      label: t(label),
+      "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
+      "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
+    },
+  );
 }
 
 // ==== The cold leg chip, as the rail says it ====
@@ -112,10 +152,16 @@ export function frozenFrostbiteLog(name: string, label: string): string {
  * which keeps this module clear of the garments reader.
  */
 export function coldLegChipLine(warmth: string, shortWarmth: boolean): string {
-  const reading = `❄️ A cold leg: warmth ${warmth} of ${COLD_LEG_WARMTH}`;
+  const reading = t("❄️ A cold leg: warmth {warmth} of {COLD_LEG_WARMTH}", {
+    warmth,
+    COLD_LEG_WARMTH,
+  });
   return shortWarmth
-    ? `${reading}, so the cold will take a hand. ${FROZEN_CREW.remedy}.`
-    : `${reading}, and the crew is dressed for it.`;
+    ? t("{reading}, so the cold will take a hand. {FROZEN_CREW.remedy}.", {
+        reading,
+        "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
+      })
+    : t("{reading}, and the crew is dressed for it.", { reading });
 }
 
 // ==== Short rations, as its surfaces say it ====
@@ -129,40 +175,66 @@ const HUNGRY_RULE_TAIL =
 /** The rule on its own, for the surfaces that print it beside their own
     lead in: the tooltip, the provisions note, the engine's own line. */
 export function hungryRule(): string {
-  return `${CREW_LOSS_AFTER_HUNGRY_LEGS} ${HUNGRY_RULE_TAIL}`;
+  return t("{CREW_LOSS_AFTER_HUNGRY_LEGS} {HUNGRY_RULE_TAIL}", {
+    CREW_LOSS_AFTER_HUNGRY_LEGS,
+    HUNGRY_RULE_TAIL: t(HUNGRY_RULE_TAIL),
+  });
 }
 
 /** The tooltip the ticker marker, the roster pill and the rail's Larder
     cell all carry: the full sentence, for a pointer. */
 export function hungryTooltip(): string {
-  return `Going hungry: ${HUNGRY_CREW.cause}, every artisan working at a slower pace, a quarter of the hold closed, and ${hungryRule()} ${HUNGRY_CREW.remedy} at the next Market.`;
+  return t(
+    "Going hungry: {HUNGRY_CREW.cause}, every artisan working at a slower pace, a quarter of the hold closed, and {hungryEffect} {HUNGRY_CREW.remedy} at the next Market.",
+    {
+      "HUNGRY_CREW.cause": t(HUNGRY_CREW.cause),
+      hungryEffect: hungryRule(),
+      "HUNGRY_CREW.remedy": t(HUNGRY_CREW.remedy),
+    },
+  );
 }
 
 /** The provisions panel's note: the surface that refills the larder
     ends on its own verb, because a captain standing at the fix is told
     the fix rather than sent to the Market. */
 export function hungryProvisionsNote(): string {
-  return `The larder is empty: ${HUNGRY_CREW.cause}, so every artisan produces less, a quarter of the hold is closed, and ${hungryRule()} ${HUNGRY_CREW.remedy} before the next Dawn.`;
+  return t(
+    "The larder is empty: {HUNGRY_CREW.cause}, so every artisan produces less, a quarter of the hold is closed, and {hungryEffect} {HUNGRY_CREW.remedy} before the next Dawn.",
+    {
+      "HUNGRY_CREW.cause": t(HUNGRY_CREW.cause),
+      hungryEffect: hungryRule(),
+      "HUNGRY_CREW.remedy": t(HUNGRY_CREW.remedy),
+    },
+  );
 }
 
 /** The engine's production line, said once per hungry leg above the
     smaller numbers it explains. */
 export function hungryProductionNote(): string {
-  return `⚠️ The crew is on short rations, so every artisan works the leg at a slower pace, and ${hungryRule()} ${HUNGRY_CREW.remedy} at the next Market.`;
+  return t(
+    "⚠️ The crew is on short rations, so every artisan works the leg at a slower pace, and {hungryEffect} {HUNGRY_CREW.remedy} at the next Market.",
+    {
+      hungryEffect: hungryRule(),
+      "HUNGRY_CREW.remedy": t(HUNGRY_CREW.remedy),
+    },
+  );
 }
 
 /** The roster pill's visible line: the state and the way back together,
     because a hover title is invisible on touch and the remedy is the
     half of the sentence a fleet reading its own board can act on. */
 export function hungryPillLine(): string {
-  return `${HUNGRY_CREW.state}: ${HUNGRY_CREW.remedy}`;
+  return t("{HUNGRY_CREW.state}: {HUNGRY_CREW.remedy}", {
+    "HUNGRY_CREW.state": t(HUNGRY_CREW.state),
+    "HUNGRY_CREW.remedy": t(HUNGRY_CREW.remedy),
+  });
 }
 
 /** The marker's visible label on the ticker and the rail: the state
     alone, which is all a glance has room for, with the full sentence in
     the title beside it. */
 export function hungryMarkerLabel(): string {
-  return HUNGRY_CREW.state;
+  return t(HUNGRY_CREW.state);
 }
 
 // ==== An idle hand, as the bench and the peek modal say it ====
@@ -170,7 +242,17 @@ export function hungryMarkerLabel(): string {
 /** The bench row and the peek modal. The mark is kept where it was and
     explained by the legend beside the rows rather than in each one. */
 export function idleBenchLine(skilled: boolean): string {
-  return `${IDLE_HAND.state}${skilled ? " ⭐ Skilled" : ""}: ${IDLE_HAND.cause}, and the wage is still owed at Resolve. ${IDLE_HAND.remedy}.`;
+  return t(
+    "{IDLE_HAND.state}{skillMark}: {IDLE_HAND.cause}, and the wage is still owed at Resolve. {IDLE_HAND.remedy}.",
+    {
+      "IDLE_HAND.state": t(IDLE_HAND.state),
+      // The mark carries a leading space of its own, so the unskilled
+      // row's fill is the empty string rather than a mark without one.
+      skillMark: skilled ? t(" ⭐ Skilled") : "",
+      "IDLE_HAND.cause": t(IDLE_HAND.cause),
+      "IDLE_HAND.remedy": t(IDLE_HAND.remedy),
+    },
+  );
 }
 
 /** The star, defined once. A legend rather than a family: it is a

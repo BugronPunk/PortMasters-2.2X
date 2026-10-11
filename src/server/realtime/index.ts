@@ -27,6 +27,10 @@ import { Server, type Socket } from "socket.io";
 import { SOCKET_PATH } from "@/lib/realtime-endpoint";
 import { db } from "@/lib/db";
 import { authenticate } from "./auth";
+// The two cookies a connection arrives with: the session auth.ts
+// authenticates from, and the captain's language the socket is
+// remembered with below.
+import { readLocaleCookie } from "./cookies";
 import {
   rememberSocket,
   reconcileMembershipAfterBoot,
@@ -95,6 +99,7 @@ import { wireAid } from "./wiring/aid";
 import { wirePlayerDetail } from "./wiring/player-detail";
 import { wireChat } from "./wiring/chat";
 import { wirePresence } from "./wiring/presence";
+import { wireLocale } from "./wiring/locale";
 import { wireStartVoyage } from "./wiring/start-voyage";
 import { wireRestartVoyage } from "./wiring/restart-voyage";
 import { wireQuickStart } from "./wiring/quickstart";
@@ -262,6 +267,12 @@ export function attachRealtime(httpServer: HttpServer): Server {
       roomId: null,
       authed: false,
       mode: null,
+      // The captain's language, off the handshake the moment the socket
+      // is remembered rather than at authentication: the frames that
+      // read it (see tFor in @/lib/game/i18n) are captain facing the
+      // first time they are sent, and a connection that never
+      // authenticates has no captain to read for anyway.
+      locale: readLocaleCookie(socket.handshake?.headers?.cookie),
     });
 
     // [J2: the mute and the report] The socket's own frame budget, put in
@@ -331,6 +342,7 @@ export function attachRealtime(httpServer: HttpServer): Server {
     wirePlayerDetail(io, socket);
     wireChat(io, socket);
     wirePresence(socket);
+    wireLocale(socket);
     wireStartVoyage(io, socket);
     wireRestartVoyage(io, socket);
     wireQuickStart(io, socket);

@@ -14,6 +14,8 @@ import {
   Star,
 } from "lucide-react";
 import { api, type PublicUser } from "@/lib/api";
+import { HOUSES } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import type { CaptainLegacySummary } from "@/lib/game/legacy";
 import { Avatar, Pill } from "./shared";
 import { HOUSE_TINT, HOUSE_TINT_FALLBACK } from "./house-colors";
@@ -83,7 +85,7 @@ export function CaptainProfileModal({
     <AnimatePresence>
       {open && (
         <ModalOverlay
-          label={`${me.displayName}'s profile`}
+          label={t("{name}'s profile", { name: me.displayName })}
           onClose={() => onOpenChange(false)}
         >
           <ModalSheet maxW="max-w-3xl">
@@ -109,11 +111,11 @@ export function CaptainProfileModal({
                   {data.legacy && (
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5 sm:gap-2">
                       <Pill tone="gold">
-                        <Star className="h-3 w-3" /> Renown{" "}
+                        <Star className="h-3 w-3" /> {t("Renown")}{" "}
                         {data.legacy.renownLevel}
                       </Pill>
                       <Pill tone="sea">
-                        {renownTitleForLevel(data.legacy.renownLevel)}
+                        {t(renownTitleForLevel(data.legacy.renownLevel))}
                       </Pill>
                       {data.legacy.houseId && (
                         <Pill
@@ -124,7 +126,10 @@ export function CaptainProfileModal({
                           }
                         >
                           <Anchor className="h-3 w-3" />{" "}
-                          {data.legacy.houseId.replace(/_/g, " ")}
+                          {t(
+                            HOUSES.find((h) => h.id === data.legacy?.houseId)
+                              ?.name ?? "House",
+                          )}
                         </Pill>
                       )}
                     </div>
@@ -133,37 +138,43 @@ export function CaptainProfileModal({
                 <button
                   onClick={() => onOpenChange(false)}
                   className="pm-pressable shrink-0 rounded-full p-2 hover:bg-black/5 dark:hover:bg-white/10"
-                  aria-label="Close profile"
+                  aria-label={t("Close profile")}
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
             </div>
 
-            {/* Tab selector */}
+            {/* Tab selector. The three names are read here rather than in
+                the list, and the entry parameter is renamed because the
+                reader's own name is t. */}
             <div className="flex shrink-0 border-b border-border/40 px-4 sm:px-6">
               {[
-                { id: "stats" as const, label: "Statistics", icon: TrendingUp },
+                {
+                  id: "stats" as const,
+                  label: t("Statistics"),
+                  icon: TrendingUp,
+                },
                 {
                   id: "chronicles" as const,
-                  label: "Chronicles",
+                  label: t("Chronicles"),
                   icon: BookOpen,
                 },
-                { id: "rivals" as const, label: "Rivals", icon: Ship },
-              ].map((t) => (
+                { id: "rivals" as const, label: t("Rivals"), icon: Ship },
+              ].map((entry) => (
                 <button
-                  key={t.id}
-                  onClick={() => setTab(t.id)}
+                  key={entry.id}
+                  onClick={() => setTab(entry.id)}
                   className={cn(
                     "relative px-4 py-3 text-sm font-medium transition-colors",
-                    tab === t.id
+                    tab === entry.id
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground",
                   )}
                 >
-                  <t.icon className="mr-1.5 inline h-4 w-4" />
-                  {t.label}
-                  {tab === t.id && (
+                  <entry.icon className="mr-1.5 inline h-4 w-4" />
+                  {entry.label}
+                  {tab === entry.id && (
                     <motion.div
                       layoutId="profileTab"
                       className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-gradient-to-r from-celadon to-jade"

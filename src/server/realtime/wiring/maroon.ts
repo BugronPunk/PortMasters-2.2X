@@ -38,6 +38,7 @@ export function wireMaroon(io: Server, socket: Socket): void {
           s.userId,
           cp.round,
           targetUserId,
+          s.locale,
         );
         if (refused) socket.emit("maroon:error", { roomId, error: refused });
       })();
@@ -94,6 +95,7 @@ export function wireMaroon(io: Server, socket: Socket): void {
           cp.round,
           payload?.port,
           payload?.direction,
+          s.locale,
         );
         if (refused)
           socket.emit("maroon:shift:error", { roomId, error: refused });

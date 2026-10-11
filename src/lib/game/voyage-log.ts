@@ -26,6 +26,10 @@
 // =====================================================================
 
 import { cardName } from "./cards";
+// Every sentence below is read at the moment the line is built rather than
+// stored, so a line the log hands a screen follows the language that screen
+// prints in.
+import { t } from "./i18n";
 import { pathConfig, type PathId } from "./paths";
 import { phaseFace } from "./phases";
 import type { Phase } from "./types";
@@ -222,43 +226,137 @@ export const VOYAGE_LOG_CAP = 240;
 export function voyageLogLine(facts: VoyageLogFacts): string {
   switch (facts.kind) {
     case "voyage_started":
-      return "The voyage leaves the dock.";
+      return t("The voyage leaves the dock.");
     case "leg_advanced":
-      return `The harbor weighs anchor for the ${phaseFace(facts.phase).label}.`;
+      return t("The harbor weighs anchor for the {phaseName}.", {
+        phaseName: t(phaseFace(facts.phase).label),
+      });
     case "offer_posted":
-      return `${facts.captain} posts ${facts.offerAmount} ${facts.offerItem} for ${facts.requestAmount} ${facts.requestItem}.`;
+      return t(
+        "{facts.captain} posts {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}.",
+        {
+          "facts.captain": facts.captain,
+          "facts.offerAmount": facts.offerAmount,
+          "facts.offerItem": t(facts.offerItem),
+          "facts.requestAmount": facts.requestAmount,
+          "facts.requestItem": t(facts.requestItem),
+        },
+      );
     case "offer_filled":
-      return `${facts.taker} fills ${facts.captain}'s offer of ${facts.offerAmount} ${facts.offerItem} for ${facts.requestAmount} ${facts.requestItem}.`;
+      return t(
+        "{facts.taker} fills {facts.captain}'s offer of {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}.",
+        {
+          "facts.taker": facts.taker,
+          "facts.captain": facts.captain,
+          "facts.offerAmount": facts.offerAmount,
+          "facts.offerItem": t(facts.offerItem),
+          "facts.requestAmount": facts.requestAmount,
+          "facts.requestItem": t(facts.requestItem),
+        },
+      );
     case "offer_expired":
-      return `${facts.captain}'s offer of ${facts.offerAmount} ${facts.offerItem} lapses with the leg.`;
+      return t(
+        "{facts.captain}'s offer of {facts.offerAmount} {facts.offerItem} lapses with the leg.",
+        {
+          "facts.captain": facts.captain,
+          "facts.offerAmount": facts.offerAmount,
+          "facts.offerItem": t(facts.offerItem),
+        },
+      );
     case "leg_timed_out":
-      return `The tide runs out on the ${phaseFace(facts.phase).label}.`;
+      return t("The tide runs out on the {phaseName}.", {
+        phaseName: t(phaseFace(facts.phase).label),
+      });
     case "audit_carried":
-      return `The harbor audits ${facts.target}.`;
+      return t("The harbor audits {facts.target}.", {
+        "facts.target": facts.target,
+      });
     case "maroon_carried":
-      return `The harbor maroons ${facts.target}.`;
+      return t("The harbor maroons {facts.target}.", {
+        "facts.target": facts.target,
+      });
     case "captain_left":
-      return `${facts.captain} leaves the harbor.`;
+      return t("{facts.captain} leaves the harbor.", {
+        "facts.captain": facts.captain,
+      });
     case "contract_posted":
-      return `${facts.captain} offers one leg of protection for ${facts.fee} Gold.`;
+      return t(
+        "{facts.captain} offers one leg of protection for {facts.fee} Gold.",
+        {
+          "facts.captain": facts.captain,
+          "facts.fee": facts.fee,
+        },
+      );
     case "contract_agreed":
-      return `${facts.taker} buys a leg of protection from ${facts.captain} for ${facts.fee} Gold.`;
+      return t(
+        "{facts.taker} buys a leg of protection from {facts.captain} for {facts.fee} Gold.",
+        {
+          "facts.taker": facts.taker,
+          "facts.captain": facts.captain,
+          "facts.fee": facts.fee,
+        },
+      );
     case "contract_claimed":
-      return `Raiders bound for ${facts.taker} met ${facts.captain}'s guns.`;
+      return t("Raiders bound for {facts.taker} met {facts.captain}'s guns.", {
+        "facts.taker": facts.taker,
+        "facts.captain": facts.captain,
+      });
     case "refit_posted":
-      return `${facts.captain} offers to put a ${facts.good} right for ${facts.fee} Gold.`;
+      return t(
+        "{facts.captain} offers to put a {facts.good} right for {facts.fee} Gold.",
+        {
+          "facts.captain": facts.captain,
+          "facts.good": t(facts.good),
+          "facts.fee": facts.fee,
+        },
+      );
     case "refit_agreed":
-      return `${facts.taker} pays ${facts.captain} ${facts.fee} Gold to put the ${facts.good} right.`;
+      return t(
+        "{facts.taker} pays {facts.captain} {facts.fee} Gold to put the {facts.good} right.",
+        {
+          "facts.taker": facts.taker,
+          "facts.captain": facts.captain,
+          "facts.fee": facts.fee,
+          "facts.good": t(facts.good),
+        },
+      );
     case "module_posted":
-      return `${facts.captain} offers ${cardName(facts.module)} for ${facts.fee} Gold.`;
+      return t("{facts.captain} offers {moduleName} for {facts.fee} Gold.", {
+        "facts.captain": facts.captain,
+        moduleName: cardName(facts.module),
+        "facts.fee": facts.fee,
+      });
     case "module_sold":
-      return `${facts.taker} buys ${cardName(facts.module)} from ${facts.captain} for ${facts.fee} Gold.`;
+      return t(
+        "{facts.taker} buys {moduleName} from {facts.captain} for {facts.fee} Gold.",
+        {
+          "facts.taker": facts.taker,
+          moduleName: cardName(facts.module),
+          "facts.captain": facts.captain,
+          "facts.fee": facts.fee,
+        },
+      );
     case "rumor_published":
-      return `${facts.captain} publishes a rumor about ${facts.good} at the bazaar.`;
+      return t(
+        "{facts.captain} publishes a rumor about {facts.good} at the bazaar.",
+        {
+          "facts.captain": facts.captain,
+          "facts.good": t(facts.good),
+        },
+      );
     case "path_taken":
-      return `${facts.captain} takes up the ${pathConfig(facts.path)!.name} path.`;
+      return t("{facts.captain} takes up the {pathName} path.", {
+        "facts.captain": facts.captain,
+        pathName: t(pathConfig(facts.path)!.name),
+      });
     case "path_switched":
-      return `${facts.captain} sets aside their old papers and takes up the ${pathConfig(facts.path)!.name} path.`;
+      return t(
+        "{facts.captain} sets aside their old papers and takes up the {pathName} path.",
+        {
+          "facts.captain": facts.captain,
+          pathName: t(pathConfig(facts.path)!.name),
+        },
+      );
   }
   // Named rather than defaulted, so a kind added to the union above stops
   // the build here instead of printing an empty line in the middle of a

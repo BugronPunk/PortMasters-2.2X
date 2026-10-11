@@ -2,6 +2,7 @@
 
 import { answerMilestone } from "@/lib/game/engine";
 import { MILESTONE_MOMENTS } from "@/lib/game/constants/milestones";
+import { t } from "@/lib/game/i18n";
 import { milestoneChoices, milestonePending } from "@/lib/game/milestones";
 import { MomentOverlay } from "./MomentOverlay";
 import type { PhasePanelProps } from "./PhaseShared";
@@ -50,7 +51,10 @@ export function MilestoneDraft({
       // guard just found waiting.
       moment={(g) => MILESTONE_MOMENTS[g.milestoneOffers[0]]}
       choices={(g) => milestoneChoices(g, g.milestoneOffers[0])}
-      actionLabel="Take This Boon"
+      // The words on the button are this moment's own act, so they are
+      // read here, where the caller names them; the overlay prints what
+      // it is given.
+      actionLabel={t("Take This Boon")}
       answer={answerMilestone}
     />
   );

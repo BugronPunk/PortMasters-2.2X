@@ -5,8 +5,9 @@ import { GameStatusUpdate } from "@/types/realtime/status";
 import { motion } from "framer-motion";
 import type { Socket } from "socket.io-client";
 import type { PlayerDetailData } from "@/lib/use-player-detail";
-import { canSeeDetail } from "@/lib/game/engine";
+import { canSeeDetail, phaseLabel } from "@/lib/game/engine";
 import { hungryPillLine, hungryTooltip } from "@/lib/game/status-copy";
+import { t } from "@/lib/game/i18n";
 import { seatMarks } from "@/lib/seatMarks";
 import { cn } from "@/lib/utils";
 import { Avatar, OnlineDot, Pill } from "../shared";
@@ -128,12 +129,12 @@ export function RosterRow({
           {isHost && <Crown className="h-3.5 w-3.5 text-gold-ink shrink-0" />}
           {isMe && (
             <Pill tone="default" className="!py-0">
-              you
+              {t("you")}
             </Pill>
           )}
           {isMuted && (
             <Pill tone="alarm" className="!py-0">
-              <VolumeX className="h-2.5 w-2.5" /> muted
+              <VolumeX className="h-2.5 w-2.5" /> {t("muted")}
             </Pill>
           )}
         </div>
@@ -147,7 +148,15 @@ export function RosterRow({
             of fact: what this captain's voyage currently reads as. */}
         <div className="mt-0.5 flex min-w-0 items-center gap-1.5">
           <span className="truncate text-[10px] text-muted-foreground">
-            {status ? status.phaseLabel : "loading…"}
+            {/* The chip is derived from the frame's own phase and round
+                rather than printed as the frame's pre-composed label, so
+                each captain reads it in their own language. */}
+            {status
+              ? phaseLabel({
+                  phase: status.phase,
+                  currentRound: status.round,
+                })
+              : t("loading…")}
           </span>
           {!isBankrupt && (
             <>
@@ -165,7 +174,7 @@ export function RosterRow({
       <div className="flex items-center gap-1.5 shrink-0">
         {isBankrupt && (
           <Pill tone="alarm">
-            <SkullIcon className="h-3 w-3" /> Bankrupt
+            <SkullIcon className="h-3 w-3" /> {t("Bankrupt")}
           </Pill>
         )}
         {/* A marooned captain still has real books, so the gold and
@@ -173,7 +182,7 @@ export function RosterRow({
             happened to the ship, not to the purse. */}
         {isMarooned && (
           <Pill tone="alarm">
-            <Anchor className="h-3 w-3" /> Ashore
+            <Anchor className="h-3 w-3" /> {t("Ashore")}
           </Pill>
         )}
         {/* [C1: the Larder and Short Rations] The plan asks for
@@ -227,10 +236,10 @@ export function RosterRow({
             }}
             label={
               isMuted
-                ? `Unmute ${member.displayName}`
-                : `Mute ${member.displayName}`
+                ? t("Unmute {name}", { name: member.displayName })
+                : t("Mute {name}", { name: member.displayName })
             }
-            title={isMuted ? "Unmute this captain" : "Mute this captain"}
+            title={isMuted ? t("Unmute this captain") : t("Mute this captain")}
           >
             {isMuted ? (
               <Volume2 className="h-3.5 w-3.5" />
@@ -257,11 +266,15 @@ export function RosterRow({
                 targetUserId: member.id,
               });
             }}
-            label={`Report ${member.displayName}`}
+            label={t("Report {member.displayName}", {
+              "member.displayName": member.displayName,
+            })}
             title={
               reported
-                ? "You have reported this captain this voyage"
-                : `Report ${member.displayName}`
+                ? t("You have reported this captain this voyage")
+                : t("Report {member.displayName}", {
+                    "member.displayName": member.displayName,
+                  })
             }
             className="disabled:opacity-40 disabled:hover:bg-transparent"
           >

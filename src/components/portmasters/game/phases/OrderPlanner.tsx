@@ -7,6 +7,7 @@ import {
   explainVAT,
   lockedBehind,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { ClipboardList, CheckCircle2, Clock, Coins } from "lucide-react";
 import { ItemIcon } from "../../shared";
@@ -98,25 +99,25 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
       <div className="flex items-center gap-3 flex-wrap text-[11px]">
         <span className="flex items-center gap-1 font-semibold text-planner">
           <ClipboardList className="h-3.5 w-3.5" />
-          Fulfillment Plan
+          {t("Fulfillment Plan")}
         </span>
         {readyCount > 0 && (
           <span className="inline-flex items-center gap-1 rounded-full bg-gain/5 px-2 py-0.5 font-medium text-gain">
             <CheckCircle2 className="h-3 w-3" />
-            {readyCount} ready
+            {t("{readyCount} ready", { readyCount })}
           </span>
         )}
         {closeCount > 0 && (
           <span className="inline-flex items-center gap-1 rounded-full bg-warn/5 px-2 py-0.5 font-medium text-warn">
             <Clock className="h-3 w-3" />
-            {closeCount} close
+            {t("{closeCount} close", { closeCount })}
           </span>
         )}
         {totalPotential > 0 && (
           <span className="ml-auto inline-flex items-center gap-1 font-bold text-gain">
-            <Coins className="h-3 w-3" />+{totalPotential} Gold
+            <Coins className="h-3 w-3" />+{totalPotential} {t("Gold")}
             <span className="font-normal text-muted-foreground">
-              if all ready filled
+              {t("if all ready filled")}
             </span>
           </span>
         )}
@@ -128,12 +129,13 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
             <div key={p.id} className="flex items-center gap-2 text-[10px]">
               <Clock className="h-3 w-3 text-warn" />
               <span className="text-muted-foreground">
-                Order #{p.id} needs:
+                {t("Order #{id} needs:", { id: p.id })}
               </span>
               {p.missingGoods.map((m, i) => (
                 <span key={i} className="inline-flex items-center gap-0.5">
                   <ItemIcon item={m.item} className="h-3 w-3" />
-                  <span className="font-medium">{m.item}</span>
+                  {/* The good's name is data and reads at the print. */}
+                  <span className="font-medium">{t(m.item)}</span>
                   <span className="text-alarm">
                     {m.have}/{m.need}
                   </span>
@@ -143,7 +145,8 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
                 </span>
               ))}
               <span className="ml-auto text-gain font-medium">
-                +{p.netProfit}g
+                +{p.netProfit}
+                {t("g")}
               </span>
             </div>
           ))}

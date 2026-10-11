@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 
 /**
  * One header for the three panels that fold: the captain's rail, the
@@ -55,7 +56,10 @@ export function PanelHeader({
             railLevel && "hidden lg:inline-flex",
           )}
           aria-expanded={!collapsed}
-          aria-label={`${collapsed ? "Expand" : "Collapse"} the ${title} panel`}
+          aria-label={t("{toggleWord} the {title} panel", {
+            toggleWord: collapsed ? t("Expand") : t("Collapse"),
+            title,
+          })}
           onClick={onToggle}
         >
           <ChevronDown

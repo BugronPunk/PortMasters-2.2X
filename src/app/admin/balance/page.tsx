@@ -24,6 +24,8 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { t } from "@/lib/game/i18n";
+import { useLanguage } from "@/lib/use-language-preference";
 import { AdminGate } from "@/components/portmasters/AdminGate";
 import { BalanceDashboard } from "@/components/portmasters/BalanceDashboard";
 import { PageSplash } from "@/components/ui/page-splash";
@@ -31,6 +33,10 @@ import { PageSplash } from "@/components/ui/page-splash";
 type Status = "loading" | "gate" | "dashboard";
 
 export default function AdminBalancePage() {
+  // This route renders outside the harbor room, so it subscribes to the
+  // captain's language at its own root: a flip redraws the splash and the
+  // dashboard under it rather than waiting for the next route change.
+  useLanguage();
   const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
@@ -53,7 +59,7 @@ export default function AdminBalancePage() {
   }, []);
 
   if (status === "loading") {
-    return <PageSplash line="Reading the balance..." />;
+    return <PageSplash line={t("Reading the balance...")} />;
   }
 
   if (status === "dashboard") return <BalanceDashboard />;

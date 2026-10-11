@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 
 /**
  * A lightweight SVG sparkline chart. Renders a polyline from an array
@@ -78,7 +79,7 @@ export function Sparkline({
         )}
         style={{ width, height }}
       >
-        N/A
+        {t("N/A")}
       </div>
     );
   }

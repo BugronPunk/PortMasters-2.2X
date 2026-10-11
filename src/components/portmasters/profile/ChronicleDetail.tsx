@@ -3,6 +3,7 @@
 import { VoyageChronicle } from "@/types/realtime/voyage";
 import { motion } from "framer-motion";
 import { Coins, Star, TrendingUp, Trophy } from "lucide-react";
+import { t } from "@/lib/game/i18n";
 import { ChronicleStat } from "./ChronicleStat";
 import { ChronicleLoans } from "./ChronicleLoans";
 
@@ -20,29 +21,30 @@ export function ChronicleDetail({ chronicle }: { chronicle: VoyageChronicle }) {
           {chronicle.body}
         </p>
 
-        {/* Visual stats grid */}
+        {/* Visual stats grid. The labels are read here, at the composer,
+            because ChronicleStat prints whatever label it is handed. */}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           <ChronicleStat
             icon={Trophy}
-            label="Peak Rep"
+            label={t("Peak Rep")}
             value={chronicle.peakReputation}
             tone="due"
           />
           <ChronicleStat
             icon={TrendingUp}
-            label="Final Rep"
+            label={t("Final Rep")}
             value={chronicle.finalReputation}
             tone="sea"
           />
           <ChronicleStat
             icon={Coins}
-            label="Final Gold"
+            label={t("Final Gold")}
             value={chronicle.finalGold}
             tone="gain"
           />
           <ChronicleStat
             icon={Star}
-            label="Best Trade"
+            label={t("Best Trade")}
             value={chronicle.largestTrade}
             tone="gold"
           />
@@ -56,7 +58,7 @@ export function ChronicleDetail({ chronicle }: { chronicle: VoyageChronicle }) {
         {/* Merchant rating */}
         <div className="rounded-xl bg-black/5 dark:bg-white/5 p-3">
           <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
-            Merchant Rating
+            {t("Merchant Rating")}
           </div>
           <div className="mt-0.5 text-sm font-semibold">
             {chronicle.merchantRating}

@@ -57,6 +57,7 @@ import {
 import { survivalLayerOn } from "./flags";
 import { holdCapacityOn, storeRoomMeals } from "./hold";
 import { wholeStamp, type GameState, type LarderLot } from "./types";
+import { t } from "@/lib/game/i18n";
 
 // The most lots a voyage can legitimately be carrying. Purchases merge
 // into the lot of the same food bought in the same leg, so a twelve leg
@@ -297,7 +298,16 @@ export function tickSpoilage(state: GameState, logs: string[]): void {
     if (!meals) continue;
     spoiled += meals;
     logs.push(
-      `${FOODS[food].icon} ${meals} ${meals === 1 ? "ration" : "rations"} of ${food} turned at sea. ${Math.max(0, state.larder - spoiled)} left in the larder.`,
+      t(
+        "{foodIcon} {meals} {rationWord} of {food} turned at sea. {larderAfter} left in the larder.",
+        {
+          foodIcon: FOODS[food].icon,
+          meals,
+          rationWord: meals === 1 ? "ration" : "rations",
+          food: t(food),
+          larderAfter: Math.max(0, state.larder - spoiled),
+        },
+      ),
     );
   }
   state.larderLots = kept;
@@ -332,7 +342,10 @@ export function preserveFood(state: GameState, logs: string[]): number {
   const batches = Math.floor(produce / PRESERVE_MEALS_IN);
   if (batches <= 0) {
     logs.push(
-      `❌ Not enough Produce aboard to preserve: a batch is ${PRESERVE_MEALS_IN} meals.`,
+      t(
+        "❌ Not enough Produce aboard to preserve: a batch is {PRESERVE_MEALS_IN} meals.",
+        { PRESERVE_MEALS_IN },
+      ),
     );
     return 0;
   }
@@ -342,7 +355,15 @@ export function preserveFood(state: GameState, logs: string[]): number {
   addLot(state, "Salt Fish", made, state.currentRound);
   state.larder = Math.max(0, state.larder - (taken - made));
   logs.push(
-    `🐟 Preserved ${taken} ${taken === 1 ? "ration" : "rations"} of Produce into ${made} of Salt Fish (${state.larder} in the larder).`,
+    t(
+      "🐟 Preserved {taken} {rationWord} of Produce into {made} of Salt Fish ({state.larder} in the larder).",
+      {
+        taken,
+        rationWord: taken === 1 ? "ration" : "rations",
+        made,
+        "state.larder": state.larder,
+      },
+    ),
   );
   return batches;
 }

@@ -7,6 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Crown, Trophy, Ship, Star, Swords } from "lucide-react";
+import { t } from "@/lib/game/i18n";
 import {
   renownProgress,
   renownTitleForLevel,
@@ -91,17 +92,26 @@ export function CaptainLegacyCard({
           <Star className="h-4 w-4 text-white" />
         </div>
         <div className="min-w-0">
+          {/* The line is the pack's own spelling, with the rung's title
+              riding in as a token value, the way the profile's ladder
+              reads its titles. */}
           <div className="text-sm font-semibold truncate">
-            Renown {level} · {title}
+            {t("Renown {level} · {title}", { level, title: t(title) })}
           </div>
           <div className="text-[10px] text-muted-foreground">
-            {legacy.renownXP} XP earned in total
+            {t("{legacy.renownXP} XP earned in total", {
+              "legacy.renownXP": legacy.renownXP,
+            })}
           </div>
         </div>
       </div>
       <Progress value={pct} className="h-1.5 mb-1" />
       <div className="text-[10px] text-muted-foreground mb-1.5">
-        {xpIntoLevel} / {xpForNextLevel} XP to Renown {level + 1}
+        {t("{xpIntoLevel} / {xpForNextLevel} XP to Renown {nextLevel}", {
+          xpIntoLevel,
+          xpForNextLevel,
+          nextLevel: level + 1,
+        })}
       </div>
       <div
         className={cn(
@@ -110,8 +120,16 @@ export function CaptainLegacyCard({
         )}
       >
         {favorUnlocked
-          ? "🤝 Broker's Favor unlocked"
-          : `🔒 Broker's Favor unlocks at Renown ${BROKERS_FAVOR_UNLOCK_LEVEL}, ${renownTitleForLevel(BROKERS_FAVOR_UNLOCK_LEVEL)} (${favorLevelsToGo} level${favorLevelsToGo === 1 ? "" : "s"} to go)`}
+          ? t("🤝 Broker's Favor unlocked")
+          : t(
+              "🔒 Broker's Favor unlocks at Renown {BROKERS_FAVOR_UNLOCK_LEVEL}, {unlockTitle} ({favorLevelsToGo} level{pluralS} to go)",
+              {
+                BROKERS_FAVOR_UNLOCK_LEVEL,
+                unlockTitle: t(renownTitleForLevel(BROKERS_FAVOR_UNLOCK_LEVEL)),
+                favorLevelsToGo,
+                pluralS: favorLevelsToGo === 1 ? "" : "s",
+              },
+            )}
       </div>
       <div className="flex flex-wrap gap-1.5 mb-2.5">
         {MERITS.map((m) => {
@@ -137,13 +155,15 @@ export function CaptainLegacyCard({
                 </span>
               </TooltipTrigger>
               <TooltipContent>
+                {/* The name and the line under it travel with the merit
+                    record, so both read here. */}
                 <div className="font-semibold flex items-center gap-1.5">
-                  <MeritIcon id={m.id} className="h-3.5 w-3.5" /> {m.name}
+                  <MeritIcon id={m.id} className="h-3.5 w-3.5" /> {t(m.name)}
                 </div>
-                <div className="text-muted-foreground">{m.desc}</div>
+                <div className="text-muted-foreground">{t(m.desc)}</div>
                 {!earned && (
                   <div className="text-muted-foreground mt-1">
-                    Not yet earned
+                    {t("Not yet earned")}
                   </div>
                 )}
               </TooltipContent>
@@ -160,20 +180,26 @@ export function CaptainLegacyCard({
                 <Ship className="h-3.5 w-3.5 text-sea" />{" "}
                 {legacy.voyagesCompleted}
               </div>
-              <div className="text-[9px] text-muted-foreground">Voyages</div>
+              <div className="text-[9px] text-muted-foreground">
+                {t("Voyages")}
+              </div>
             </div>
             <div className="rounded-lg bg-background/60 py-1.5">
               <div className="text-sm font-bold flex items-center justify-center gap-1">
                 <Crown className="h-3.5 w-3.5 text-gold-ink" />{" "}
                 {legacy.seaMasterCrowns}
               </div>
-              <div className="text-[9px] text-muted-foreground">Sea Master</div>
+              <div className="text-[9px] text-muted-foreground">
+                {t("Sea Master")}
+              </div>
             </div>
             <div className="rounded-lg bg-background/60 py-1.5">
               <div className="text-sm font-bold flex items-center justify-center gap-1">
                 <Trophy className="h-3.5 w-3.5 text-gain" /> {legacy.bestScore}
               </div>
-              <div className="text-[9px] text-muted-foreground">Best Rep.</div>
+              <div className="text-[9px] text-muted-foreground">
+                {t("Best Rep.")}
+              </div>
             </div>
           </div>
           {perTier.length > 0 && (
@@ -183,7 +209,9 @@ export function CaptainLegacyCard({
                   <TooltipTrigger asChild>
                     <span className="inline-flex cursor-default items-center gap-1 rounded-full bg-background/60 px-2 py-0.5 text-[10px]">
                       <span>{cfg.icon}</span>
-                      <span className="text-muted-foreground">{cfg.badge}</span>
+                      <span className="text-muted-foreground">
+                        {t(cfg.badge)}
+                      </span>
                       {stats.crowns > 0 && (
                         <span className="inline-flex items-center gap-0.5 font-semibold">
                           <Crown className="h-2.5 w-2.5 text-gold-ink" />
@@ -196,11 +224,16 @@ export function CaptainLegacyCard({
                     </span>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <div className="font-semibold">{cfg.name}</div>
+                    <div className="font-semibold">{t(cfg.name)}</div>
                     <div className="text-muted-foreground">
-                      {stats.crowns} Sea Master crown
-                      {stats.crowns === 1 ? "" : "s"} · best Reputation{" "}
-                      {stats.bestScore}
+                      {t(
+                        "{stats.crowns} Sea Master crown{pluralS} · best Reputation {stats.bestScore}",
+                        {
+                          "stats.crowns": stats.crowns,
+                          pluralS: stats.crowns === 1 ? "" : "s",
+                          "stats.bestScore": stats.bestScore,
+                        },
+                      )}
                     </div>
                   </TooltipContent>
                 </Tooltip>
@@ -219,8 +252,15 @@ export function CaptainLegacyCard({
         <div className="mt-3 flex items-center gap-2 rounded-lg bg-legacy/5 text-legacy px-2.5 py-2">
           <Swords className="h-3.5 w-3.5 shrink-0" />
           <span className="text-[11px] leading-snug">
-            Head to head with <b>{rival.displayName}</b>: {rival.myWins} wins,{" "}
-            {rival.theirWins} losses, {rival.ties} ties
+            {t(
+              "Head to head with {rival.displayName}: {rival.myWins} wins, {rival.theirWins} losses, {rival.ties} ties",
+              {
+                "rival.displayName": rival.displayName,
+                "rival.myWins": rival.myWins,
+                "rival.theirWins": rival.theirWins,
+                "rival.ties": rival.ties,
+              },
+            )}
           </span>
         </div>
       )}

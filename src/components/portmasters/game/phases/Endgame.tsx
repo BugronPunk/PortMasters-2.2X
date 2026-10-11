@@ -7,6 +7,7 @@ import { Trophy, Coins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { endgameRatingFor } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import type { CaptainLegacySummary } from "@/lib/game/legacy";
 import { PhaseHeading, type PhasePanelProps } from "./PhaseShared";
 import { FinancialSummary, PeerEconomySummary } from "./EndgameSummaries";
@@ -95,18 +96,22 @@ export function Endgame({
   return (
     <div className="max-w-md mx-auto text-center py-4">
       <PhaseHeading layout="mb-4" tone="text-endgame" brush>
-        🎮 Game Over!
+        {t("🎮 Game Over!")}
       </PhaseHeading>
       <div className="text-xl font-bold text-favor my-3 flex items-center justify-center gap-2">
         <Trophy className="h-5 w-5" />
-        Final Reputation: {game.score}
+        {t("Final Reputation:")} {game.score}
       </div>
       <div className="text-lg text-gold-ink my-2 flex items-center justify-center gap-2">
         <Coins className="h-5 w-5" />
-        Final Funds: {game.money} Gold
+        {t("Final Funds:")}{" "}
+        {t("{contract.fee} Gold", { "contract.fee": game.money })}
       </div>
       <div className="text-lg text-gold-ink my-4">
-        📈 Merchant Rank: {rating}
+        {/* The rank is a captain facing label off the shared lookup, so it
+            is read here, at the one place this screen prints it. */}
+        {t("📈 Merchant Rank: ")}
+        {t(rating)}
       </div>
 
       {/* Financial Summary */}
@@ -133,12 +138,12 @@ export function Endgame({
           onClick={onRestart}
           disabled={!onRestart}
         >
-          🔄 Restart Voyage
+          {t("🔄 Restart Voyage")}
         </Button>
       ) : (
         <div className="flex flex-col items-center gap-2.5">
           <p className="text-sm text-muted-foreground">
-            Waiting for the host to restart the voyage…
+            {t("Waiting for the host to restart the voyage…")}
           </p>
           {onLeave && (
             <Button
@@ -146,7 +151,7 @@ export function Endgame({
               className="rounded-xl px-8"
               onClick={onLeave}
             >
-              ⚓ Sail Again
+              {t("⚓ Sail Again")}
             </Button>
           )}
         </div>

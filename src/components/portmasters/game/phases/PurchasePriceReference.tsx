@@ -6,6 +6,7 @@ import {
   explainExpectedPrice,
   priceRatio,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { Term } from "../../Term";
 import { ItemIcon } from "../../shared";
@@ -27,7 +28,7 @@ export function MarketPriceReference({
   return (
     <HuePanel tone="market">
       <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mb-1.5">
-        ━━ MARKET PRICE REFERENCE (hover for details) ━━
+        {t("━━ MARKET PRICE REFERENCE (hover for details) ━━")}
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         {MARKET_GOODS.map((item) => {
@@ -47,7 +48,7 @@ export function MarketPriceReference({
                 className="inline-flex items-center gap-1 text-[11px]"
                 style={{ color: colorFor(item) }}
               >
-                <ItemIcon item={item} className="h-3 w-3" /> {item}
+                <ItemIcon item={item} className="h-3 w-3" /> {t(item)}
                 {hasHistory && (
                   <Sparkline
                     data={history}
@@ -77,21 +78,21 @@ export function MarketPriceReference({
         return (
           <div className="mt-2 border-t border-market/10 pt-2">
             <div className="text-[9px] text-muted-foreground mb-1">
-              Price History Heatmap
+              {t("Price History Heatmap")}
             </div>
             <div className="overflow-x-auto pm-scroll">
               <table className="text-[9px]">
                 <thead>
                   <tr>
                     <th className="pr-1.5 text-left font-normal text-muted-foreground">
-                      Good
+                      {t("Good")}
                     </th>
                     {Array.from({ length: maxRound }, (_, i) => (
                       <th
                         key={i}
                         className="px-0.5 text-center font-normal text-muted-foreground"
                       >
-                        R{i + 1}
+                        {t("R{round}", { round: i + 1 })}
                       </th>
                     ))}
                   </tr>
@@ -106,7 +107,7 @@ export function MarketPriceReference({
                           className="pr-1.5 whitespace-nowrap font-medium"
                           style={{ color: colorFor(item) }}
                         >
-                          {item}
+                          {t(item)}
                         </td>
                         {Array.from({ length: maxRound }, (_, i) => {
                           const price = history[i];
@@ -147,7 +148,15 @@ export function MarketPriceReference({
                                 style={{
                                   backgroundColor: `oklch(${lightness.toFixed(3)} 0.12 ${hue})`,
                                 }}
-                                title={`R${i + 1}: ${price} Gold (range ${min} to ${max})`}
+                                title={t(
+                                  "R{roundNo}: {price} Gold (range {min} to {max})",
+                                  {
+                                    roundNo: i + 1,
+                                    price,
+                                    min,
+                                    max,
+                                  },
+                                )}
                               >
                                 {price}
                               </span>

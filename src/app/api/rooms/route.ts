@@ -3,13 +3,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db, ROOM_WITH_MEMBERS } from "@/lib/db";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
 import {
   generateRoomCode,
   normalizeRoomName,
   serializeRoom,
 } from "@/lib/rooms";
 import { normalizeDifficulty } from "@/lib/game/difficulty";
+import { tFor } from "@/lib/game/i18n";
 import { modeConfig, normalizeMode } from "@/lib/game/mode";
 import { UNLOCKS, normalizePhrase, unlockForPhrase } from "@/lib/unlock";
 import { readJson } from "@/lib/api-json";
@@ -55,6 +60,9 @@ export async function POST(req: NextRequest) {
   const { name, isPublic } = body.data;
   const difficulty = normalizeDifficulty(body.data.difficulty);
   const mode = normalizeMode(body.data.mode);
+  // The three refusals below are sentences the host reads on the room
+  // form, so the language is read once, here.
+  const locale = await requestLocale();
 
   // [H9: the unlock code] The gate. A sealed mode opens with the phrase
   // and with nothing else: not with the host's own record, which is the
@@ -72,7 +80,12 @@ export async function POST(req: NextRequest) {
   const unlock = unlockForPhrase(body.data.unlock);
   if (unlock && UNLOCKS[unlock].mode !== mode) {
     return NextResponse.json(
-      { error: "That phrase opens a different voyage than the one asked for." },
+      {
+        error: tFor(
+          locale,
+          "That phrase opens a different voyage than the one asked for.",
+        ),
+      },
       { status: 403 },
     );
   }
@@ -80,8 +93,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: normalizePhrase(body.data.unlock)
-          ? "That phrase does not open this voyage. Check the words and try again."
-          : "This voyage is sealed. It opens with a phrase, and the harbor was not given one.",
+          ? tFor(
+              locale,
+              "That phrase does not open this voyage. Check the words and try again.",
+            )
+          : tFor(
+              locale,
+              "This voyage is sealed. It opens with a phrase, and the harbor was not given one.",
+            ),
       },
       { status: 403 },
     );

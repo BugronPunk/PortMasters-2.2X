@@ -6,6 +6,7 @@ import type { Server, Socket } from "socket.io";
 
 import { db } from "@/lib/db";
 import { roomMemberIds } from "@/lib/rooms";
+import { tFor } from "@/lib/game/i18n";
 import { gambitSystemsOn } from "@/lib/game/mode";
 import { seated } from "../auth";
 import { clearMutedUsers, emitRoomMembers } from "../chat";
@@ -58,14 +59,14 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       if (room.started) {
         socket.emit("room:error", {
           roomId,
-          error: "This voyage has already set sail.",
+          error: tFor(s.locale, "This voyage has already set sail."),
         });
         return;
       }
       if (room.hostId !== s.userId) {
         socket.emit("room:error", {
           roomId,
-          error: "Only the host can start the voyage.",
+          error: tFor(s.locale, "Only the host can start the voyage."),
         });
         return;
       }
@@ -78,7 +79,10 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       if (roster.length < 1) {
         socket.emit("room:error", {
           roomId,
-          error: "Need at least one captain in the harbor to set sail.",
+          error: tFor(
+            s.locale,
+            "Need at least one captain in the harbor to set sail.",
+          ),
         });
         return;
       }

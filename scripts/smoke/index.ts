@@ -105,6 +105,7 @@ import { theWayOutSuite } from "./suites/63-theWayOut";
 import { theFirstVoyageSuite } from "./suites/64-theFirstVoyage";
 import { theHousesAndTheAgesSuite } from "./suites/65-theHousesAndTheAges";
 import { theCrewAndTheLarderSuite } from "./suites/66-theCrewAndTheLarder";
+import { theBilingualHarborSuite } from "./suites/67-theBilingualHarbor";
 
 async function main(): Promise<void> {
   console.log(`\nSmoke testing ${BASE}\n`);
@@ -535,6 +536,14 @@ async function main(): Promise<void> {
     // finding together ahead of the ready check.
     console.log("\nThe crew and the Larder");
     await theCrewAndTheLarderSuite();
+    // The Bilingual Harbor's article is the language pack's own: the book
+    // and its readers walked leaf by leaf in process, and the tree walked
+    // for every call site the wiring hands them, so the pack's
+    // completeness is a property of the source rather than a promise. It
+    // opens no harbor, which is why it sits with the two hygiene walks
+    // ahead of the ready check.
+    console.log("\nThe Bilingual Harbor");
+    await theBilingualHarborSuite();
     // The ready check's article is the one that needs a harbor and a wall
     // clock rather than a table: its cure is a grace the room has to be
     // watched through, so it is the last thing the run does and it opens a

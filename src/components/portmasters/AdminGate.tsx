@@ -29,6 +29,8 @@ import { api } from "@/lib/api";
 import { ShieldCheck, KeyRound } from "lucide-react";
 import { APP_NAME } from "@/lib/game/constants/brand";
 import { NOT_AN_ADMINISTRATOR } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
+import { useLanguage } from "@/lib/use-language-preference";
 import { DISPLAY_NAME_MAX } from "@/lib/credentials";
 import {
   CHOSEN_NAME,
@@ -78,16 +80,19 @@ function ConsoleHeader() {
         <ShieldCheck className="h-8 w-8 text-white" strokeWidth={2.2} />
       </div>
       <h1 className="font-display text-xl font-bold tracking-tight">
-        Operator Console
+        {t("Operator Console")}
       </h1>
       <p className="mt-1.5 text-xs text-muted-foreground">
-        Account tools for {APP_NAME}
+        {t("Account tools for {APP_NAME}", { APP_NAME })}
       </p>
     </div>
   );
 }
 
 export function AdminGate({ onAuthed, notice, onDismissNotice }: DoorProps) {
+  // This console stands outside the harbor and the lobby, so it subscribes
+  // to the captain's language itself: the pick has to redraw these words.
+  useLanguage();
   return (
     <CredentialCard
       fields={{ login: SIGN_IN_FIELDS, register: REGISTER_FIELDS }}
@@ -114,10 +119,10 @@ export function AdminGate({ onAuthed, notice, onDismissNotice }: DoorProps) {
         // banned from another console cannot get back in through here.
         const { user } = await api.me();
         if (!user || user.role !== "admin")
-          throw new Error(NOT_AN_ADMINISTRATOR);
+          throw new Error(t(NOT_AN_ADMINISTRATOR));
         return { user, token };
       }}
-      labels={{ login: "Open the Console", register: "Create Operator" }}
+      labels={{ login: t("Open the Console"), register: t("Create Operator") }}
       icons={{
         login: <ShieldCheck className="mr-2 h-4 w-4" />,
         register: <KeyRound className="mr-2 h-4 w-4" />,
@@ -125,8 +130,9 @@ export function AdminGate({ onAuthed, notice, onDismissNotice }: DoorProps) {
       accent="pm-grad-admin"
       footer={
         <>
-          Registration needs the setup code the server was configured with.
-          Accounts created here are administrators.
+          {t(
+            "Registration needs the setup code the server was configured with. Accounts created here are administrators.",
+          )}
         </>
       }
     />

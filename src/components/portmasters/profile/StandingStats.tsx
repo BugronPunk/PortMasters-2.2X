@@ -1,6 +1,7 @@
 "use client";
 
 import { Crown, Waves } from "lucide-react";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 
 /**
@@ -18,19 +19,20 @@ export function StandingStats({
 }) {
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      {/* The tile prints the words it is handed, so both are read here. */}
       <StandingTile
         icon={Waves}
-        label="Solvent Streak"
+        label={t("Solvent Streak")}
         tone="text-profile"
         value={solventStreak}
-        caption="Consecutive voyages without bankruptcy"
+        caption={t("Consecutive voyages without bankruptcy")}
       />
       <StandingTile
         icon={Crown}
-        label="Crown Rate"
+        label={t("Crown Rate")}
         tone="text-gold-ink"
         value={`${Math.round(crownRate * 100)}%`}
-        caption="Share of voyages won as Sea Master"
+        caption={t("Share of voyages won as Sea Master")}
       />
     </div>
   );

@@ -23,6 +23,7 @@ import {
   CONVOY_VENTURE_PAYOUT_MULTIPLIER,
 } from "./constants/world";
 import { parseJsonObject } from "./json";
+import { t } from "@/lib/game/i18n";
 
 type VentureContribution = { name: string; amount: number };
 type VentureContributions = Record<string, VentureContribution>;
@@ -188,19 +189,35 @@ export function computeVentureDeadlineBounds(
 // above it is how a captain ends up reporting a button that was never going
 // to do anything.
 export function ventureAlreadySpentReason(): string {
-  return "This harbor has already used its one Venture for this voyage. It opens again on a fresh voyage or a restart.";
+  // One sentence, two seats: the captain's rail renders the return raw
+  // and the server hands it back as a refusal, so the read lives here
+  // rather than being wrapped twice.
+  return t(
+    "This harbor has already used its one Venture for this voyage. It opens again on a fresh voyage or a restart.",
+  );
 }
 
 // The room wide chat announcement for each outcome, kept alongside the
 // settlement math so the two can never quietly drift out of sync with each
 // other, the same reasoning WORD_ON_THE_DOCKS_REWARD and its own guide
 // copy are both derived from one constant rather than two separate numbers.
+//
+// Each arm is one row of the pack, read here; the paid reading names the
+// payout multiplier, which is the constant above rather than a number
+// written into the sentence.
 export function ventureAnnouncementFor(outcome: VentureOutcome): string {
   if (outcome === "filled") {
-    return `⚓ A Venture filled! Every contributor is paid their share, times ${CONVOY_VENTURE_PAYOUT_MULTIPLIER}x. This harbor's one Venture chance for this voyage has now been used.`;
+    return t(
+      "⚓ A Venture filled! Every contributor is paid their share, times {CONVOY_VENTURE_PAYOUT_MULTIPLIER}x. This harbor's one Venture chance for this voyage has now been used.",
+      { CONVOY_VENTURE_PAYOUT_MULTIPLIER },
+    );
   }
   if (outcome === "failed") {
-    return `⚓ A Venture missed its deadline. Every contributor gets back a partial refund.`;
+    return t(
+      "⚓ A Venture missed its deadline. Every contributor gets back a partial refund.",
+    );
   }
-  return `⚓ A Venture was canceled: another venture in the harbor already claimed this voyage's one chance. Every contributor gets back their full stake.`;
+  return t(
+    "⚓ A Venture was canceled: another venture in the harbor already claimed this voyage's one chance. Every contributor gets back their full stake.",
+  );
 }

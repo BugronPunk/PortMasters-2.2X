@@ -28,6 +28,7 @@ import type { ReactNode } from "react";
 import type { PublicUser } from "@/lib/api";
 import { QuantityInput } from "@/components/ui/quantity-input";
 import { CONSENT_FEE_MAX, CONSENT_FEE_MIN } from "@/lib/game/constants/paths";
+import { t } from "@/lib/game/i18n";
 import { AudienceSelect } from "./AudienceSelect";
 
 export function PrivateOffer({
@@ -65,10 +66,10 @@ export function PrivateOffer({
           onCommit={onFee}
           min={CONSENT_FEE_MIN}
           max={CONSENT_FEE_MAX}
-          aria-label="Fee in Gold"
+          aria-label={t("Fee in Gold")}
           className="w-20 h-9"
         />
-        <span className="text-muted-foreground">Gold, offered to</span>
+        <span className="text-muted-foreground">{t("Gold, offered to")}</span>
         <AudienceSelect
           value={targetId}
           onChange={onTarget}
@@ -79,9 +80,13 @@ export function PrivateOffer({
       </div>
       {targetId && (
         <p className="text-center text-[11px] text-muted-foreground mt-1.5">
-          Only {others.find((m) => m.id === targetId)?.displayName} will see
-          this offer, so nobody else can take it first. It still has to be taken{" "}
-          {deadline}
+          {t(
+            "Only {name} will see this offer, so nobody else can take it first. It still has to be taken {deadline}",
+            {
+              name: others.find((m) => m.id === targetId)?.displayName ?? "",
+              deadline,
+            },
+          )}
         </p>
       )}
     </>

@@ -22,6 +22,7 @@
 // (see ./constants/cards and ../cards), so this file holds the two drafts
 // and the flow between them and nothing about any particular card.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import {
   cardById,
   cardLead,
@@ -88,7 +89,9 @@ function applyBoon(state: GameState, card: CardRecord, logs: string[]) {
   if (card.effect.flags.instant_gold) {
     state.money += card.effect.flags.instant_gold;
     logs.push(
-      `💰 Boon applied: Gained ${card.effect.flags.instant_gold} Gold!`,
+      t("💰 Boon applied: Gained {card.effect.flags.instant_gold} Gold!", {
+        "card.effect.flags.instant_gold": card.effect.flags.instant_gold,
+      }),
     );
   }
 }
@@ -98,14 +101,16 @@ export function upgradeShip(state: GameState, logs: string[]) {
   const cost =
     state.shipUpgradeCost[state.shipLevel] + state.shipUpgradePenalty;
   if (state.money < cost) {
-    logs.push(`❌ Need ${cost} Gold to upgrade the ship`);
+    logs.push(t("❌ Need {cost} Gold to upgrade the ship", { cost }));
     return;
   }
   state.money -= cost;
   state.shipLevel++;
   logs.push(
-    `🎉 Ship Upgraded to Level ${state.shipLevel}! +1 Module Slot, ` +
-      `+${SHIP_DISCOUNT_PER_LEVEL} Discount`,
+    t(
+      "🎉 Ship Upgraded to Level {state.shipLevel}! +1 Module Slot, +{SHIP_DISCOUNT_PER_LEVEL} Discount",
+      { "state.shipLevel": state.shipLevel, SHIP_DISCOUNT_PER_LEVEL },
+    ),
   );
 }
 
@@ -206,13 +211,18 @@ function equipModule(
     const old = state.equippedModules[swapIdx];
     unequipModuleAccounting(state, old);
     state.equippedModules[swapIdx] = mod;
-    logs.push(`🔄 Swapped ${cardName(old.id)} for ${cardName(mod.id)}!`);
+    logs.push(
+      t("🔄 Swapped {oldCardName} for {newCardName}!", {
+        oldCardName: cardName(old.id),
+        newCardName: cardName(mod.id),
+      }),
+    );
   } else {
     if (moduleSlotsOpen(state) > 0) {
       state.equippedModules.push(mod);
-      logs.push(`✅ Installed ${cardName(mod.id)}!`);
+      logs.push(t("✅ Installed {cardName}!", { cardName: cardName(mod.id) }));
     } else {
-      logs.push("❌ No empty slots! Must swap.");
+      logs.push(t("❌ No empty slots! Must swap."));
       return;
     }
   }
@@ -267,8 +277,8 @@ export function startBoonDrafting(state: GameState, logs: string[]) {
   // agreed stops carrying the last leg's keys in every save it writes.
   resetEscortLeg(state);
   resetConsentLedger(state);
-  logs.push("\n🧭=== The Navigator's Compass ===");
-  logs.push("Choose a Boon to bend the rules of the upcoming voyage...");
+  logs.push(t("\n🧭=== The Navigator's Compass ==="));
+  logs.push(t("Choose a Boon to bend the rules of the upcoming voyage..."));
 }
 
 // Rerolls the current boon pool for BOON_SWAP_COST, once per round. The
@@ -279,17 +289,23 @@ export function startBoonDrafting(state: GameState, logs: string[]) {
 // equippable slots rather than a gold sink.
 export function swapBoonChoices(state: GameState, logs: string[]) {
   if (state.boonSwapUsed) {
-    logs.push("❌ You've already swapped your boon choices this round");
+    logs.push(t("❌ You've already swapped your boon choices this round"));
     return;
   }
   if (state.money < BOON_SWAP_COST) {
-    logs.push(`❌ Need ${BOON_SWAP_COST} Gold to swap boon choices`);
+    logs.push(
+      t("❌ Need {BOON_SWAP_COST} Gold to swap boon choices", {
+        BOON_SWAP_COST,
+      }),
+    );
     return;
   }
   state.money -= BOON_SWAP_COST;
   state.boonChoices = draftBoons(state);
   state.boonSwapUsed = true;
-  logs.push(`🔄 Swapped Boon Choices for ${BOON_SWAP_COST} Gold`);
+  logs.push(
+    t("🔄 Swapped Boon Choices for {BOON_SWAP_COST} Gold", { BOON_SWAP_COST }),
+  );
 }
 
 // Applies a boon. Returns whether one was actually applied, which is the
@@ -309,7 +325,9 @@ export function selectBoon(
 ): boolean {
   const card = cardById(boonId);
   if (!card || card.kind !== "boon") return false;
-  logs.push(`🧭 Boon Locked In: ${cardLead(card.id)}`);
+  logs.push(
+    t("🧭 Boon Locked In: {boonLead}", { boonLead: cardLead(card.id) }),
+  );
   noteCardPick(state.cardTally, card);
   // [F5: public offers] The fleet's record of this pick, written from the
   // draft before it is dropped two lines down: the cleared list is the one
@@ -501,7 +519,10 @@ function powerRefusal(
   displaced: CardRecord | null,
 ): string {
   const total = powerAfterTaking(state, card, displaced);
-  return `❌ ${cardName(card.id)} would put your hull at ${total} power, and a hull carries at most ${HELD_POWER_CAP}.`;
+  return t(
+    "❌ {moduleName} would put your hull at {total} power, and a hull carries at most {HELD_POWER_CAP}.",
+    { moduleName: cardName(card.id), total, HELD_POWER_CAP },
+  );
 }
 
 /**
@@ -564,23 +585,25 @@ export function startModuleDrafting(state: GameState) {
 // its swap on.
 export function swapModuleChoices(state: GameState, logs: string[]) {
   if (state.moduleSwapUsed) {
-    logs.push("❌ You've already swapped your module choices this round");
+    logs.push(t("❌ You've already swapped your module choices this round"));
     return;
   }
   if (!state._draftChoices?.length) {
-    logs.push("❌ Nothing to swap, draft your modules first");
+    logs.push(t("❌ Nothing to swap, draft your modules first"));
     return;
   }
   const { fresh, carried } = swapCandidates(state);
   if (fresh.length === 0) {
     logs.push(
-      "❌ The yard has nothing new to deal this hull: every module it could offer is either aboard or already on the table. Take one of these, sell one at the table, or come back next leg.",
+      t(
+        "❌ The yard has nothing new to deal this hull: every module it could offer is either aboard or already on the table. Take one of these, sell one at the table, or come back next leg.",
+      ),
     );
     return;
   }
   state._draftChoices = rerollModuleChoices(state, fresh, carried);
   state.moduleSwapUsed = true;
-  logs.push("🔄 Swapped Module Choices for a fresh batch");
+  logs.push(t("🔄 Swapped Module Choices for a fresh batch"));
 }
 
 export function handleModuleSelect(
@@ -644,7 +667,9 @@ export function finalizeModuleSwap(
   const displaced = state.equippedModules[slotIdx];
   if (!displaced) {
     logs.push(
-      "❌ That seat is no longer on your hull, so there is nothing there to replace. Back to Draft and take the card again: the yard fits it to the hull as it stands.",
+      t(
+        "❌ That seat is no longer on your hull, so there is nothing there to replace. Back to Draft and take the card again: the yard fits it to the hull as it stands.",
+      ),
     );
     return;
   }

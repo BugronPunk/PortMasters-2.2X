@@ -29,6 +29,7 @@ import { PrivateEntry } from "@/types/realtime/private-entry";
 import { PublicUser } from "@/types/realtime/presence";
 import type { Server } from "socket.io";
 import { db } from "@/lib/db";
+import { tFor } from "@/lib/game/i18n";
 import { leaveRoomForUser } from "@/lib/rooms";
 import type { SocketState } from "./types";
 import { forgetStatus } from "./status";
@@ -351,10 +352,19 @@ export async function reapDeparture(
     void closeVoyageTelemetry(roomId, "emptied", []);
     cleanup.clearRoomAllMaps(roomId);
   } else {
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content: `${displayName}'s voyage has ended`,
-    });
+    // The room reads this notice, so it goes to every socket still seated
+    // in the harbor, each in that captain's own language. The captain who
+    // just left has already been taken out of the map, so the walk is the
+    // remaining crew.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(state.locale, "{displayName}'s voyage has ended", {
+          displayName,
+        }),
+      });
+    }
     await cleanup.emitRoomMembers(io, roomId);
     // The captain who just left might have been the only one still
     // out at sea; everyone else could already be sitting at their

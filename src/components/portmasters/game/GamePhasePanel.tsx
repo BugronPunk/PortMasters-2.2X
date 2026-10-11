@@ -4,6 +4,7 @@ import { VoyageResult, VoyageReveal } from "@/types/realtime/voyage";
 import { motion, AnimatePresence } from "framer-motion";
 import { Anchor } from "lucide-react";
 import type { CaptainLegacySummary } from "@/lib/game/legacy";
+import { t } from "@/lib/game/i18n";
 import { phaseFace } from "@/lib/game/phases";
 import { Welcome } from "./phases/Welcome";
 import { BoonDraft } from "./phases/BoonDraft";
@@ -377,10 +378,12 @@ function ActivePhase(props: Props) {
             <Anchor className="h-6 w-6" />
           </div>
           <h2 className="font-display text-2xl text-brand mb-1.5 pm-brush">
-            Round {game.currentRound}
+            {t("Round {state.game.currentRound}", {
+              "state.game.currentRound": game.currentRound,
+            })}
           </h2>
           <p className="text-sm text-muted-foreground max-w-md leading-relaxed">
-            The Harbormaster is fetching the tide tables.
+            {t("The Harbormaster is fetching the tide tables.")}
           </p>
         </div>
       );

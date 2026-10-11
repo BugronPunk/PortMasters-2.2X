@@ -54,11 +54,11 @@ import {
   type CardKind,
   LANGUAGES,
   MODE_POWER_CEILING,
-  SHIPPED_LANGUAGE,
 } from "./constants/cards";
 import { CHARTERS, CHARTER_PATH } from "./constants/charters";
 import { WORKER_TYPE_IDS } from "./constants/crew";
 import { BOONS, MODULES } from "./constants/drafts";
+import { getLocale, type Locale } from "./i18n";
 import { type GameMode } from "./mode";
 import { PATH_IDS, type PathId, pathConfig } from "./paths";
 import { unlockedBoons, unlockedModules } from "./pools";
@@ -92,15 +92,20 @@ export function cardsOfKind(kind: CardKind): CardRecord[] {
 }
 
 /**
- * The card's words in the language the tree prints.
+ * The card's words in a language, defaulting to the one being read.
  *
- * The one accessor every surface reads a card through. Today it answers the
- * shipped language for every card, and the day a captain picks one it
- * answers theirs, which is the whole point of carrying both strings: the
- * switch is this function rather than every screen that ever prints a card.
+ * The one accessor every surface reads a card through, which is the whole
+ * point of carrying both strings: the pick a captain makes in settings is
+ * read here rather than hunted through every screen that ever prints a
+ * card. The default reads the tree's live pick (see ./i18n), so a call
+ * site with no opinion follows the captain, and one that has an opinion
+ * (a ledger line quoting another language) passes it in.
  */
-export function cardText(card: CardRecord): CardText {
-  return card.strings[SHIPPED_LANGUAGE];
+export function cardText(
+  card: CardRecord,
+  locale: Locale = getLocale(),
+): CardText {
+  return card.strings[locale];
 }
 
 /**
@@ -110,8 +115,8 @@ export function cardText(card: CardRecord): CardText {
  * honest line to print: a line naming a card this build does not know is
  * better than a line naming nothing, and it is never a crash inside a log.
  */
-export function cardName(id: string): string {
-  return cardById(id)?.strings[SHIPPED_LANGUAGE].name ?? id;
+export function cardName(id: string, locale: Locale = getLocale()): string {
+  return cardById(id)?.strings[locale].name ?? id;
 }
 
 /**
@@ -120,11 +125,9 @@ export function cardName(id: string): string {
  * each of the six sites that write such a line, so a card renamed for its
  * captain is renamed in the ledger the same afternoon.
  */
-export function cardLead(id: string): string {
+export function cardLead(id: string, locale: Locale = getLocale()): string {
   const card = cardById(id);
-  return card === null
-    ? id
-    : `${card.icon} ${card.strings[SHIPPED_LANGUAGE].name}`;
+  return card === null ? id : `${card.icon} ${card.strings[locale].name}`;
 }
 
 /**

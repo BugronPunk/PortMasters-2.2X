@@ -26,6 +26,7 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import type { PublicUser } from "@/lib/api";
+import { t } from "@/lib/game/i18n";
 import { seatMarks, type SeatStatus } from "@/lib/seatMarks";
 import { captainName } from "@/lib/voteTally";
 
@@ -84,12 +85,14 @@ export function VoteSeatPicker({
           onChange={(e) => onPick(e.target.value)}
           aria-label={selectLabel}
         >
-          <option value="">Choose a captain</option>
+          <option value="">{t("Choose a captain")}</option>
           {members
             .filter((m) => !marked(m.id))
             .map((m) => (
               <option key={m.id} value={m.id}>
-                {m.id === me.id ? `${m.displayName} (you)` : m.displayName}
+                {m.id === me.id
+                  ? `${m.displayName} ${t("(you)")}`
+                  : m.displayName}
               </option>
             ))}
         </Select>
@@ -99,7 +102,7 @@ export function VoteSeatPicker({
           onClick={onVote}
         >
           {myVote
-            ? "Your name is in"
+            ? t("Your name is in")
             : target
               ? pickLabel(nameOf(target))
               : callLabel}

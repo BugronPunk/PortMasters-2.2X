@@ -6,6 +6,7 @@ import type { Socket } from "socket.io-client";
 import type { PublicUser } from "@/lib/api";
 import { useRoomRoster } from "@/lib/use-room-roster";
 import { toast } from "sonner";
+import { t } from "@/lib/game/i18n";
 import { usePlayerDetail } from "@/lib/use-player-detail";
 import { RosterHeader } from "./roster/RosterHeader";
 import { RosterRow } from "./roster/RosterRow";
@@ -128,9 +129,11 @@ export function MembersPanel({
         return next;
       });
       if (data.alreadyFiled) {
-        toast("You have already reported this captain this voyage.");
+        toast(t("You have already reported this captain this voyage."));
       } else {
-        toast.success("Report filed. It goes on the record for this voyage.");
+        toast.success(
+          t("Report filed. It goes on the record for this voyage."),
+        );
       }
     };
     socket.on("player:report:filed", onFiled);
@@ -189,7 +192,7 @@ export function MembersPanel({
             ))}
             {members.length === 0 && (
               <div className="text-center text-xs text-muted-foreground py-6">
-                No captains in this harbor yet.
+                {t("No captains in this harbor yet.")}
               </div>
             )}
           </div>

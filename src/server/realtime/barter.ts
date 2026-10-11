@@ -31,6 +31,7 @@ import { BarterOffer } from "@/types/realtime/boards";
 import type { Server } from "socket.io";
 import { db } from "@/lib/db";
 import { FLEXIBLE_BARTER_UNLOCK_LEVEL } from "@/lib/game/constants/goods";
+import { tFor, type Locale } from "@/lib/game/i18n";
 import { DEFAULT_LEGACY_SUMMARY } from "@/lib/game/legacy";
 import { sockets, userSockets } from "./presence";
 
@@ -71,6 +72,10 @@ export async function authoritativeRenownLevel(
 // so the accept handler can run the same checks on both sides of its
 // database reads and be certain the second pass saw the board the first
 // one did.
+//
+// Every reason is composed in the locale the caller names, which is the
+// language of the captain whose accept it refuses: the sentence travels
+// back to that captain's socket and to nobody else.
 type OfferInspection =
   { ok: true; offer: BarterOffer } | { ok: false; reason: string };
 
@@ -78,16 +83,23 @@ export function inspectOfferForAccept(
   roomId: string,
   userId: string,
   offerId: string,
+  locale: Locale,
 ): OfferInspection {
   const offer = barterList(roomId).find((o) => o.id === offerId);
   if (!offer)
-    return { ok: false, reason: "That offer is no longer available." };
+    return {
+      ok: false,
+      reason: tFor(locale, "That offer is no longer available."),
+    };
   if (offer.fromUserId === userId)
-    return { ok: false, reason: "You can't accept your own offer." };
+    return {
+      ok: false,
+      reason: tFor(locale, "You can't accept your own offer."),
+    };
   if (offer.targetUserId && offer.targetUserId !== userId)
     return {
       ok: false,
-      reason: "That offer is only open to a specific captain.",
+      reason: tFor(locale, "That offer is only open to a specific captain."),
     };
   // The poster has to be reachable, because a trade the poster is never
   // told about cannot be settled honestly on their side. Their client
@@ -99,8 +111,10 @@ export function inspectOfferForAccept(
   if (!userSockets.get(offer.fromUserId)?.size)
     return {
       ok: false,
-      reason:
+      reason: tFor(
+        locale,
         "That captain is not here right now. Try again when they are back.",
+      ),
     };
   return { ok: true, offer };
 }
@@ -109,10 +123,18 @@ export function inspectOfferForAccept(
 // than the offer, turned them away. It names the level to go and earn,
 // because a refusal that only says no leaves them nothing to act on.
 //
+// The level is the pack's own token, so the number lands wherever the
+// sentence wants it. Read in the locale the caller names, which is the
+// language of the captain being refused.
+//
 // There is no counterpart for the Captain's Exchange, since nothing there
 // can refuse on these grounds any more.
-export function flexibleLockedReason(): string {
-  return `Flexible bartering unlocks at Renown Level ${FLEXIBLE_BARTER_UNLOCK_LEVEL}.`;
+export function flexibleLockedReason(locale: Locale): string {
+  return tFor(
+    locale,
+    "Flexible bartering unlocks at Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}.",
+    { FLEXIBLE_BARTER_UNLOCK_LEVEL },
+  );
 }
 
 // What a captain is told when the account read behind the gate fails. It
@@ -120,8 +142,11 @@ export function flexibleLockedReason(): string {
 // check did not run rather than pretending the captain failed it, and it
 // tells them the attempt costs nothing. Written out three times across the
 // two barter handlers before this existed, once per place a level is read.
-export function renownUnavailableReason(): string {
-  return "Could not check Renown just now. Try again in a moment.";
+export function renownUnavailableReason(locale: Locale): string {
+  return tFor(
+    locale,
+    "Could not check Renown just now. Try again in a moment.",
+  );
 }
 
 // What the poster is told when the captain they aimed a flexible offer at
@@ -129,8 +154,8 @@ export function renownUnavailableReason(): string {
 // (see bothFlexibleBarterUnlocked), and this is the half of that answer
 // that names the other captain rather than the asker, so the refusal does
 // not send them looking at their own level.
-export function otherCaptainLockedReason(): string {
-  return "That captain has not unlocked flexible bartering yet.";
+export function otherCaptainLockedReason(locale: Locale): string {
+  return tFor(locale, "That captain has not unlocked flexible bartering yet.");
 }
 
 // What a captain is told once others have already taken every flexible
@@ -138,8 +163,11 @@ export function otherCaptainLockedReason(): string {
 // so the refusal reads as an allowance running out rather than as a
 // lockout, which is exactly the confusion the two surfaces were split
 // apart to end.
-export function flexibleSpentReason(): string {
-  return "Every flexible trade this voyage allows you has already been taken. You can still use the Captain's Exchange and accept any offer.";
+export function flexibleSpentReason(locale: Locale): string {
+  return tFor(
+    locale,
+    "Every flexible trade this voyage allows you has already been taken. You can still use the Captain's Exchange and accept any offer.",
+  );
 }
 
 // The room's open offers. Module local on purpose: every reader and every

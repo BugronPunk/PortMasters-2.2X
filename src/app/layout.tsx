@@ -1,8 +1,16 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import { Geist, Geist_Mono, Noto_Serif_SC } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/game/constants/brand";
+import {
+  DEFAULT_LOCALE,
+  isLocale,
+  LOCALE_COOKIE_NAME,
+  tFor,
+  type Locale,
+} from "@/lib/game/i18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,23 +46,54 @@ const SITE_URL = process.env.RAILWAY_PUBLIC_DOMAIN
 // nothing in the app reads it. The social fields carry the card built
 // beside this file, which is why the two of them are named here rather
 // than described twice.
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: APP_NAME,
-  description: `${APP_NAME}: ${APP_DESCRIPTION}`,
-  keywords: [APP_NAME, "Silk Road", "trading game", "multiplayer", "maritime"],
-  openGraph: {
-    type: "website",
-    siteName: APP_NAME,
+//
+// The sentence a search engine reads (the description) and the two words
+// beside it are read in the captain's language, which is why this is a
+// function rather than a constant: metadata is built per request, from
+// the same cookie the socket's handshake reads, and the English a captain
+// sees today is what the read answers back when the cookie says English
+// or says nothing. The line itself is the pack's frame with the build's
+// own name filled in, because the name is a name and never translates.
+//
+// The link preview and the social card carry the sentence WITHOUT the
+// name, which is the plain APP_DESCRIPTION they have always carried; the
+// pack carries only the named spelling (shell.001), so those two fields
+// keep the shipped constant unwired rather than gaining a prefix their
+// card has never shown.
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await shellLocale();
+  // The meta description, with the build's own name in front. The social
+  // fields below carry the same sentence without the name (see the note
+  // above the function).
+  const about = tFor(
+    locale,
+    "{APP_NAME}: A multiplayer maritime trade game on the ancient Silk Road. Captains gather in a shared harbor, sail in lockstep, and the highest Reputation wins the Sea Master crown.",
+    { APP_NAME },
+  );
+  return {
+    metadataBase: new URL(SITE_URL),
     title: APP_NAME,
-    description: APP_DESCRIPTION,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: APP_NAME,
-    description: APP_DESCRIPTION,
-  },
-};
+    description: about,
+    keywords: [
+      APP_NAME,
+      tFor(locale, "Silk Road"),
+      tFor(locale, "trading game"),
+      "multiplayer",
+      "maritime",
+    ],
+    openGraph: {
+      type: "website",
+      siteName: APP_NAME,
+      title: APP_NAME,
+      description: APP_DESCRIPTION,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: APP_NAME,
+      description: APP_DESCRIPTION,
+    },
+  };
+}
 
 // The color the browser tints its own furniture with, per scheme, so a
 // phone's address bar blends into the page instead of framing it in
@@ -68,13 +107,29 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+// The language this request's captain reads, off the pm_locale cookie the
+// client keeps in step with the pick and the realtime layer reads at its
+// handshake. The shell is the one screen with no provider above it (it
+// renders them), so the cookie is the only reading it can make, and the
+// shipped language stands wherever the cookie is absent or names a
+// language this pack cannot print.
+async function shellLocale(): Promise<Locale> {
+  const store = await cookies();
+  const value = store.get(LOCALE_COOKIE_NAME)?.value;
+  return isLocale(value) ? value : DEFAULT_LOCALE;
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // The document's own language, for a screen reader, a search engine and
+  // the browser's font fallback, follows the same cookie the words do:
+  // "en" is what it has always been for an English captain.
+  const locale = await shellLocale();
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${notoSerif.variable} antialiased bg-background text-foreground`}
       >

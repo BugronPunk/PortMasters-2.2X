@@ -6,7 +6,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CAPTAIN_NOT_FOUND } from "@/lib/api";
 import { db, PUBLIC_USER_SELECT } from "@/lib/db";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
+import { tFor } from "@/lib/game/i18n";
 import { MESSAGE_PAGE, messageRows } from "@/lib/messages";
 
 export async function GET(
@@ -25,8 +30,13 @@ export async function GET(
     where: { id: otherUserId },
     select: PUBLIC_USER_SELECT,
   });
-  if (!other)
-    return NextResponse.json({ error: CAPTAIN_NOT_FOUND }, { status: 404 });
+  if (!other) {
+    const locale = await requestLocale();
+    return NextResponse.json(
+      { error: tFor(locale, CAPTAIN_NOT_FOUND) },
+      { status: 404 },
+    );
+  }
 
   const msgs = await db.message.findMany({
     where: {

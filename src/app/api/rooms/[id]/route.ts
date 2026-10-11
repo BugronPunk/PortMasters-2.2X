@@ -4,7 +4,12 @@
 import { NextResponse } from "next/server";
 import { ROOM_NOT_FOUND } from "@/lib/api";
 import { db, ROOM_WITH_MEMBERS, PUBLIC_USER_SELECT } from "@/lib/db";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
+import { tFor } from "@/lib/game/i18n";
 import { messageRows } from "@/lib/messages";
 import { serializeRoom } from "@/lib/rooms";
 
@@ -34,8 +39,13 @@ export async function GET(
       },
     },
   });
-  if (!room)
-    return NextResponse.json({ error: ROOM_NOT_FOUND }, { status: 404 });
+  if (!room) {
+    const locale = await requestLocale();
+    return NextResponse.json(
+      { error: tFor(locale, ROOM_NOT_FOUND) },
+      { status: 404 },
+    );
+  }
 
   const isMember = room.members.some((m) => m.userId === user.id);
 

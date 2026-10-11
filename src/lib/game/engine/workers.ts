@@ -27,6 +27,7 @@ import {
   hungryProductionNote,
 } from "../status-copy";
 import type { GameState } from "../types";
+import { t } from "@/lib/game/i18n";
 import { hasModule } from "./core";
 import { getHireCost } from "./pricing";
 
@@ -43,7 +44,7 @@ export function hireWorker(state: GameState, type: string, logs: string[]) {
   // free hire that their House promised them.
   const pledged = state.housePerks.jadeFreeHireAvailable;
   if (!pledged && state.money < wage) {
-    logs.push("❌ Insufficient funds to hire workers!");
+    logs.push(t("❌ Insufficient funds to hire workers!"));
     return;
   }
   const list = state.workers[type as WorkerTypeId];
@@ -74,12 +75,22 @@ export function hireWorker(state: GameState, type: string, logs: string[]) {
     freeFirstWage: pledged || undefined,
   });
   logs.push(
-    `${def?.icon ?? "🧑"} Hired ${identity.name} the ${label}! Wage: ${wage} Gold / Round (paid at round end)`,
+    t(
+      "{workerIcon} Hired {identity.name} the {label}! Wage: {wage} Gold / Round (paid at round end)",
+      {
+        workerIcon: def?.icon ?? "🧑",
+        "identity.name": identity.name,
+        label: t(label),
+        wage,
+      },
+    ),
   );
   if (pledged) {
     state.housePerks.jadeFreeHireAvailable = false;
     logs.push(
-      "🪷 Jade Pavilion pledge honored: this artisan joins at no cost, so the first wage is on the House.",
+      t(
+        "🪷 Jade Pavilion pledge honored: this artisan joins at no cost, so the first wage is on the House.",
+      ),
     );
   }
 }
@@ -99,7 +110,12 @@ export function fireWorker(
   const label = workerType(type)?.label ?? type;
   if (idx < 0 || idx >= list.length) return;
   if (state.money < wage) {
-    logs.push(`❌ Insufficient funds for ${label}'s severance: ${wage} Gold`);
+    logs.push(
+      t("❌ Insufficient funds for {label}'s severance: {wage} Gold", {
+        label: t(label),
+        wage,
+      }),
+    );
     return;
   }
   state.money -= wage;
@@ -109,9 +125,19 @@ export function fireWorker(
   // carried; the bench's rows show a name now, and a dismissal that named
   // only the craft would leave a captain matching people to the bill.
   logs.push(
-    `💔 Dismissed ${worker.name} the ${label}. Severance: ${wage} Gold`,
+    t("💔 Dismissed {worker.name} the {label}. Severance: {wage} Gold", {
+      "worker.name": worker.name,
+      label: t(label),
+      wage,
+    }),
   );
-  if (worker.task) logs.push(`  This worker was making: ${worker.task}`);
+  if (worker.task)
+    logs.push(
+      "  " +
+        t("This worker was making: {worker.task}", {
+          "worker.task": t(worker.task),
+        }),
+    );
 }
 
 export function assignTask(
@@ -149,26 +175,43 @@ export function assignTask(
         const short = Object.entries(recipe.materials)
           .map(([m, a]) => {
             const have = state.inventory[m] || 0;
-            return `${ICONS[m]}${m} ${have}/${a}${have < a ? " ⚠️" : ""}`;
+            return t("{moduleIcon}{m} {have}/{a}{shortMark}", {
+              moduleIcon: ICONS[m],
+              m: t(m),
+              have,
+              a,
+              shortMark: have < a ? " ⚠️" : "",
+            });
           })
           .join(" + ");
-        logs.push(`❌ Material shortage to produce ${task}! (Have: ${short})`);
+        logs.push(
+          t("❌ Material shortage to produce {task}! (Have: {short})", {
+            task: t(task),
+            short,
+          }),
+        );
         return;
       }
       for (const [m, a] of Object.entries(recipe.materials))
         state.inventory[m] -= a;
       worker.task = task;
       const matTxt = Object.entries(recipe.materials)
-        .map(([m, a]) => `${ICONS[m]}${m}×${a}`)
+        .map(([m, a]) => `${ICONS[m]}${t(m)}×${a}`)
         .join(" + ");
-      logs.push(`📋 Assigned: Produce ${ICONS[task]}${task} (Req: ${matTxt})`);
+      logs.push(
+        t("📋 Assigned: Produce {icon}{task} (Req: {materials})", {
+          icon: ICONS[task],
+          task: t(task),
+          materials: matTxt,
+        }),
+      );
       return;
     }
   }
   logs.push(
     frozen
       ? frozenAssignRefusal()
-      : "❌ All workers are already assigned tasks!",
+      : t("❌ All workers are already assigned tasks!"),
   );
 }
 
@@ -239,7 +282,12 @@ export function processProduction(state: GameState, logs: string[]) {
         // they have in common rather than one of the three.
         if (amt > base)
           logs.push(
-            `✅ Skilled ${name} finished ${amt}× ${ICONS[w.task]}${w.task}! (Bonus)`,
+            t("✅ Skilled {name} finished {amt}× {taskIcon}{w.task}! (Bonus)", {
+              name: t(name),
+              amt,
+              taskIcon: ICONS[w.task],
+              "w.task": t(w.task),
+            }),
           );
         // Reads its own amount rather than the 2 this branch used to spell
         // out. That was true for as long as a skilled artisan's output could
@@ -249,12 +297,28 @@ export function processProduction(state: GameState, logs: string[]) {
         // work the captain can count.
         else if (w.isSkilled)
           logs.push(
-            `✅ Skilled ${name} finished ${amt}× ${ICONS[w.task]}${w.task}!`,
+            t("✅ Skilled {name} finished {amt}× {taskIcon}{w.task}!", {
+              name: t(name),
+              amt,
+              taskIcon: ICONS[w.task],
+              "w.task": t(w.task),
+            }),
           );
-        else logs.push(`✅ ${name} finished ${ICONS[w.task]}${w.task}!`);
+        else
+          logs.push(
+            t("✅ {name} finished {taskIcon}{w.task}!", {
+              name: t(name),
+              taskIcon: ICONS[w.task],
+              "w.task": t(w.task),
+            }),
+          );
         if (w.producedCount >= 2 && !w.isSkilled) {
           w.isSkilled = true;
-          logs.push(`⭐ ${name} Promotion! Can now produce 2 items per round!`);
+          logs.push(
+            t("⭐ {name} Promotion! Can now produce 2 items per round!", {
+              name: t(name),
+            }),
+          );
         }
         w.task = null;
       }
@@ -364,9 +428,18 @@ export function payWages(
     }
   }
   for (const b of bills) {
+    // The singular reads (crew.role.* carries it); the English plural has
+    // no row of its own and stays as the roster spells it.
+    const bLabel = b.sponsored === 1 ? t(b.label) : b.plural;
     if (b.sponsored > 0)
       logs.push(
-        `🪷 Jade Pavilion covers the wage for ${b.sponsored} ${b.sponsored === 1 ? b.label : b.plural} this round.`,
+        t(
+          "🪷 Jade Pavilion covers the wage for {b.sponsored} {bLabel} this round.",
+          {
+            "b.sponsored": b.sponsored,
+            bLabel,
+          },
+        ),
       );
   }
   if (total === 0) return true;
@@ -381,15 +454,23 @@ export function payWages(
     // lists them as their own row, so the round bucket was the one place
     // that disagreed with the other two.
     for (const b of bills) {
+      const bLabel = b.count === 1 ? t(b.label) : b.plural;
       if (b.due > 0)
         logs.push(
-          `💰 Paid wages for ${b.count} ${b.count === 1 ? b.label : b.plural}: ${b.due} Gold`,
+          t("💰 Paid wages for {b.count} {bLabel}: {b.due} Gold", {
+            "b.count": b.count,
+            bLabel,
+            "b.due": b.due,
+          }),
         );
     }
     return true;
   }
   logs.push(
-    `⚠️ Insufficient funds! Needed: ${total} Gold, Have: ${state.money} Gold`,
+    t("⚠️ Insufficient funds! Needed: {total} Gold, Have: {state.money} Gold", {
+      total,
+      "state.money": state.money,
+    }),
   );
   // Both lines stopped short of promising what happens next. They used to
   // say the workers struck and the voyage was over, which was true for as
@@ -397,8 +478,8 @@ export function payWages(
   // sailing, the crew is left unpaid and the voyage is not over at all.
   // What the failure costs is decided in ./seats, which is the one place
   // that knows which mode this is.
-  logs.push("💥 Could not pay wages, the crew is left unpaid.");
-  logs.push("💥 Reputation collapsed: a bankruptcy is recorded.");
+  logs.push(t("💥 Could not pay wages, the crew is left unpaid."));
+  logs.push(t("💥 Reputation collapsed: a bankruptcy is recorded."));
   return "bankruptcy";
 }
 
@@ -428,17 +509,22 @@ export function payMaintenance(
   if (state.money >= cost) {
     state.money -= cost;
     state.maintenanceCosts += cost;
-    logs.push(`💸 Paid Ship Maintenance Fee: ${cost} Gold`);
+    logs.push(t("💸 Paid Ship Maintenance Fee: {cost} Gold", { cost }));
     return true;
   }
   if (state.money > 0) {
     const paid = state.money;
     state.money = 0;
     state.maintenanceCosts += paid;
-    logs.push(`⚠️ Forced payment of ${paid} Gold (Needed ${cost} Gold)`);
+    logs.push(
+      t("⚠️ Forced payment of {paid} Gold (Needed {cost} Gold)", {
+        paid,
+        cost,
+      }),
+    );
     // See the note on the wage failure above: this line used to end the
     // voyage in words, which is only half of what it now means.
-    logs.push("⚠️ Funds depleted: the maintenance fee goes unpaid.");
+    logs.push(t("⚠️ Funds depleted: the maintenance fee goes unpaid."));
     return "bankruptcy";
   }
   return "bankruptcy";

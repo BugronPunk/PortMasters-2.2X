@@ -24,6 +24,7 @@
 // that had already gone, and a second copy is where a drift would start.
 // =====================================================================
 import { cardByFlag, cardName, cardText, carriesTag } from "../cards";
+import { t } from "@/lib/game/i18n";
 import { WAGES } from "../constants/crew";
 import {
   COMMODITIES,
@@ -69,7 +70,10 @@ export type ExpectedPrice = {
 // prints for it are one string.
 function boonNameForModifierKey(key: string): string {
   const card = cardByFlag(key);
-  return card === null ? "Active boon" : cardText(card).name;
+  // The fallback is read where it is used, not at the module's scope: the
+  // tooltip that prints it is what decides the language, and this reader
+  // only hands the word onward.
+  return card === null ? t("Active boon") : cardText(card).name;
 }
 
 // ========== Transport ==========
@@ -132,7 +136,7 @@ export function explainTransportCost(
   // reading the breakdown is asking where each Gold went.
   const floored = Math.max(5, cost);
   if (floored !== cost) {
-    steps.push({ label: "Minimum freight", delta: floored - cost });
+    steps.push({ label: t("Minimum freight"), delta: floored - cost });
     cost = floored;
   }
 
@@ -140,7 +144,9 @@ export function explainTransportCost(
   if (shipDiscount > 0) {
     const next = Math.max(5, cost - shipDiscount);
     steps.push({
-      label: `Ship Level ${state.shipLevel} discount`,
+      label: t("Ship Level {state.shipLevel} discount", {
+        "state.shipLevel": state.shipLevel,
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -151,7 +157,10 @@ export function explainTransportCost(
       cost - state.modifierFlags.transport_flat_discount,
     );
     steps.push({
-      label: `${boonNameForModifierKey("transport_flat_discount")} (down ${state.modifierFlags.transport_flat_discount}g)`,
+      label: t("{boonName} (down {down}g)", {
+        boonName: boonNameForModifierKey("transport_flat_discount"),
+        down: state.modifierFlags.transport_flat_discount,
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -162,7 +171,9 @@ export function explainTransportCost(
       Math.floor(cost * state.modifierFlags.transport_silk_discount),
     );
     steps.push({
-      label: `${boonNameForModifierKey("transport_silk_discount")} on woven goods`,
+      label: t("{boonName} on woven goods", {
+        boonName: boonNameForModifierKey("transport_silk_discount"),
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -174,7 +185,10 @@ export function explainTransportCost(
     const perLot = state.modifierFlags.transport_per_lot_discount;
     const next = Math.max(0, cost - Math.floor(totalItems * perLot));
     steps.push({
-      label: `${boonNameForModifierKey("transport_per_lot_discount")} (down ${perLot}g per lot)`,
+      label: t("{boonName} (down {perLot}g per lot)", {
+        boonName: boonNameForModifierKey("transport_per_lot_discount"),
+        perLot,
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -182,7 +196,7 @@ export function explainTransportCost(
   if (hasModule(state, "bulk_hauler")) {
     const next = Math.max(0, cost - totalItems);
     steps.push({
-      label: `${cardName("bulk_hauler")} module`,
+      label: t("{cardName} module", { cardName: cardName("bulk_hauler") }),
       delta: next - cost,
     });
     cost = next;
@@ -190,14 +204,16 @@ export function explainTransportCost(
   if (hasModule(state, "overdrive_engine")) {
     const next = Math.max(0, cost - 5);
     steps.push({
-      label: `${cardName("overdrive_engine")} module`,
+      label: t("{cardName} module", { cardName: cardName("overdrive_engine") }),
       delta: next - cost,
     });
     cost = next;
   }
   if (hasModule(state, "silk_monopoly") && hasWoven) {
     steps.push({
-      label: `${cardName("silk_monopoly")} module (woven freight waived)`,
+      label: t("{cardName} module (woven freight waived)", {
+        cardName: cardName("silk_monopoly"),
+      }),
       delta: -cost,
     });
     cost = 0;
@@ -262,22 +278,38 @@ export function explainVAT(
   const workerCost = WAGES[recipe.worker_type];
   const taxable = sellingPrice - matCost - workerCost;
   const steps: PriceStep[] = [
-    { label: "Average material cost", delta: -matCost },
+    { label: t("Average material cost"), delta: -matCost },
     {
-      label: `${recipe.worker_type === "weaver" ? "Weaver" : recipe.worker_type === "master" ? "Master Weaver" : "Sachet Maker"} wage`,
+      // The artisan's name reads here because the tooltip prints it inside
+      // this label, the same reading the wage bill's lines take (see the
+      // singular arm in ./workers).
+      label: t("{workerLabel} wage", {
+        workerLabel: t(
+          recipe.worker_type === "weaver"
+            ? "Weaver"
+            : recipe.worker_type === "master"
+              ? "Master Weaver"
+              : "Sachet Maker",
+        ),
+      }),
       delta: -workerCost,
     },
   ];
   if (taxable <= 0) return { base: sellingPrice, steps, final: 0 };
   let vat = Math.floor(taxable * VAT_RATE);
   steps.push({
-    label: `${Math.round(VAT_RATE * 100)}% VAT on the margin`,
+    label: t("{vatPct}% VAT on the margin", {
+      vatPct: Math.round(VAT_RATE * 100),
+    }),
     delta: -vat,
   });
   if (state.modifierFlags.vat_discount) {
     const next = Math.floor(vat * (1 - state.modifierFlags.vat_discount));
     steps.push({
-      label: `${boonNameForModifierKey("vat_discount")} (down ${Math.round(state.modifierFlags.vat_discount * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("vat_discount"),
+        pct: Math.round(state.modifierFlags.vat_discount * 100),
+      }),
       delta: next - vat,
     });
     vat = next;
@@ -289,7 +321,10 @@ export function explainVAT(
   if (state.modifierFlags.harbor_credit) {
     const next = Math.floor(vat * (1 - state.modifierFlags.harbor_credit));
     steps.push({
-      label: `${boonNameForModifierKey("harbor_credit")} (down ${Math.round(state.modifierFlags.harbor_credit * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("harbor_credit"),
+        pct: Math.round(state.modifierFlags.harbor_credit * 100),
+      }),
       delta: next - vat,
     });
     vat = next;
@@ -303,7 +338,10 @@ export function explainVAT(
       vat * (1 - state.modifierFlags.voyage_dues_discount),
     );
     steps.push({
-      label: `${boonNameForModifierKey("voyage_dues_discount")} (down ${Math.round(state.modifierFlags.voyage_dues_discount * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("voyage_dues_discount"),
+        pct: Math.round(state.modifierFlags.voyage_dues_discount * 100),
+      }),
       delta: next - vat,
     });
     vat = next;
@@ -311,7 +349,9 @@ export function explainVAT(
   if (hasModule(state, "tax_evasion")) {
     const next = Math.floor(vat * 0.5);
     steps.push({
-      label: `${cardName("tax_evasion")} module (down 50%)`,
+      label: t("{cardName} module (down 50%)", {
+        cardName: cardName("tax_evasion"),
+      }),
       delta: next - vat,
     });
     vat = next;
@@ -380,7 +420,10 @@ export function explainCardPrice(
   if (state.modifierFlags.purchase_discount) {
     const next = Math.floor(cost * (1 - state.modifierFlags.purchase_discount));
     steps.push({
-      label: `${boonNameForModifierKey("purchase_discount")} (down ${Math.round(state.modifierFlags.purchase_discount * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("purchase_discount"),
+        pct: Math.round(state.modifierFlags.purchase_discount * 100),
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -396,7 +439,10 @@ export function explainCardPrice(
       cost * (1 - state.modifierFlags.voyage_purchase_discount),
     );
     steps.push({
-      label: `${boonNameForModifierKey("voyage_purchase_discount")} (down ${Math.round(state.modifierFlags.voyage_purchase_discount * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("voyage_purchase_discount"),
+        pct: Math.round(state.modifierFlags.voyage_purchase_discount * 100),
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -417,7 +463,10 @@ export function explainCardPrice(
     );
     if (reduction > 0) {
       steps.push({
-        label: `${boonNameForModifierKey("hemp_price_reduction")} (down ${hempReduction}g per unit)`,
+        label: t("{hempBoon} (down {hempReduction}g per unit)", {
+          hempBoon: boonNameForModifierKey("hemp_price_reduction"),
+          hempReduction,
+        }),
         delta: -reduction,
       });
       cost -= reduction;
@@ -433,7 +482,13 @@ export function explainCardPrice(
     );
     if (reduction > 0) {
       steps.push({
-        label: `${cardName("kiln_cellar")} module (down ${KILN_CELLAR_PER_UNIT}g per unit)`,
+        label: t(
+          "{kilnCellarName} module (down {KILN_CELLAR_PER_UNIT}g per unit)",
+          {
+            kilnCellarName: cardName("kiln_cellar"),
+            KILN_CELLAR_PER_UNIT,
+          },
+        ),
         delta: -reduction,
       });
       cost -= reduction;
@@ -449,7 +504,10 @@ export function explainCardPrice(
     );
     if (reduction > 0) {
       steps.push({
-        label: `${cardName("foreign_quarter_pass")} module (down ${FOREIGN_QUARTER_PER_UNIT}g per unit)`,
+        label: t("{cardName} module (down {perUnit}g per unit)", {
+          cardName: cardName("foreign_quarter_pass"),
+          perUnit: FOREIGN_QUARTER_PER_UNIT,
+        }),
         delta: -reduction,
       });
       cost -= reduction;
@@ -458,7 +516,9 @@ export function explainCardPrice(
   if (hasModule(state, "smugglers_hold")) {
     const next = Math.floor(cost * 0.85);
     steps.push({
-      label: `${cardName("smugglers_hold")} module (down 15%)`,
+      label: t("{smugglersHoldName} module (down 15%)", {
+        smugglersHoldName: cardName("smugglers_hold"),
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -466,7 +526,7 @@ export function explainCardPrice(
 
   const final = Math.max(0, cost);
   if (final !== cost)
-    steps.push({ label: "Floor at 0 Gold", delta: final - cost });
+    steps.push({ label: t("Floor at 0 Gold"), delta: final - cost });
   return { base: card.totalCost, steps, final };
 }
 
@@ -530,7 +590,10 @@ export function explainExpectedPrice(
       min = Math.floor(min * factor);
       max = Math.floor(max * factor);
       modifiers.push(
-        `${boonNameForModifierKey("purchase_discount")} (down ${Math.round(state.modifierFlags.purchase_discount * 100)}%)`,
+        t("{boonName} (down {pct}%)", {
+          boonName: boonNameForModifierKey("purchase_discount"),
+          pct: Math.round(state.modifierFlags.purchase_discount * 100),
+        }),
       );
     }
     // [F6: charters at leg four] The Long Ledger, folded into the range
@@ -543,7 +606,10 @@ export function explainExpectedPrice(
       min = Math.floor(min * factor);
       max = Math.floor(max * factor);
       modifiers.push(
-        `${boonNameForModifierKey("voyage_purchase_discount")} (down ${Math.round(state.modifierFlags.voyage_purchase_discount * 100)}%)`,
+        t("{boonName} (down {pct}%)", {
+          boonName: boonNameForModifierKey("voyage_purchase_discount"),
+          pct: Math.round(state.modifierFlags.voyage_purchase_discount * 100),
+        }),
       );
     }
     if (
@@ -553,7 +619,10 @@ export function explainExpectedPrice(
       min = Math.max(0, min - state.modifierFlags.hemp_price_reduction);
       max = Math.max(0, max - state.modifierFlags.hemp_price_reduction);
       modifiers.push(
-        `${boonNameForModifierKey("hemp_price_reduction")} (down ${state.modifierFlags.hemp_price_reduction}g per unit)`,
+        t("{hempBoon} (down {hempReduction}g per unit)", {
+          hempBoon: boonNameForModifierKey("hemp_price_reduction"),
+          hempReduction: state.modifierFlags.hemp_price_reduction,
+        }),
       );
     }
     // The two per unit module discounts. Flat Gold off a single unit, so
@@ -568,7 +637,10 @@ export function explainExpectedPrice(
       min = Math.max(0, min - KILN_CELLAR_PER_UNIT);
       max = Math.max(0, max - KILN_CELLAR_PER_UNIT);
       modifiers.push(
-        `${cardName("kiln_cellar")} module (down ${KILN_CELLAR_PER_UNIT}g per unit)`,
+        t("{kilnCellarName} module (down {KILN_CELLAR_PER_UNIT}g per unit)", {
+          kilnCellarName: cardName("kiln_cellar"),
+          KILN_CELLAR_PER_UNIT,
+        }),
       );
     }
     if (
@@ -578,13 +650,20 @@ export function explainExpectedPrice(
       min = Math.max(0, min - FOREIGN_QUARTER_PER_UNIT);
       max = Math.max(0, max - FOREIGN_QUARTER_PER_UNIT);
       modifiers.push(
-        `${cardName("foreign_quarter_pass")} module (down ${FOREIGN_QUARTER_PER_UNIT}g per unit)`,
+        t("{cardName} module (down {perUnit}g per unit)", {
+          cardName: cardName("foreign_quarter_pass"),
+          perUnit: FOREIGN_QUARTER_PER_UNIT,
+        }),
       );
     }
     if (hasModule(state, "smugglers_hold")) {
       min = Math.floor(min * 0.85);
       max = Math.floor(max * 0.85);
-      modifiers.push(`${cardName("smugglers_hold")} module (down 15%)`);
+      modifiers.push(
+        t("{smugglersHoldName} module (down 15%)", {
+          smugglersHoldName: cardName("smugglers_hold"),
+        }),
+      );
     }
   }
 

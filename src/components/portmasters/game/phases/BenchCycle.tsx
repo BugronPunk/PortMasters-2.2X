@@ -1,6 +1,7 @@
 "use client";
 
 import { lapPhases } from "@/lib/game/checkpoint";
+import { t } from "@/lib/game/i18n";
 import { isLegPhase, phaseFace } from "@/lib/game/phases";
 import type { GameState, LegPhase } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
@@ -46,7 +47,7 @@ export function BenchCycle({
   const cycle = seat === -1 ? lap : lap.slice(seat);
   return (
     <div className="rounded-xl bg-market/[0.06] border border-market/20 p-3.5 mb-4 text-xs">
-      <strong>⏱️ Production Cycle: What Happens When</strong>
+      <strong>{t("⏱️ Production Cycle: What Happens When")}</strong>
       {/* One tile per phase the round still has in front of it, each
           wearing the colour of the phase it names, so the strip is a map
           of this voyage's round rather than four unrelated swatches in
@@ -63,16 +64,32 @@ export function BenchCycle({
                 i === 0 && "ring-1 ring-foreground/25",
               )}
             >
-              <div>{i === 0 ? "📋 Now" : `${face.icon} ${face.label}`}</div>
-              <div className="text-[9px] opacity-90">{CYCLE_NOTE[p]}</div>
+              <div>
+                {i === 0
+                  ? t("📋 Now")
+                  : t("{face.icon} {face.label}", {
+                      "face.icon": face.icon,
+                      "face.label": t(face.label),
+                    })}
+              </div>
+              <div className="text-[9px] opacity-90">{t(CYCLE_NOTE[p])}</div>
             </div>
           );
         })}
       </div>
-      <div className="mt-2 text-gain">
-        💡 Materials consumed <strong>now</strong>. Finished goods and wage
-        deductions happen at <strong>{duePhase}</strong>, not instantly.
-      </div>
+      {/* The note as one read rather than assembled JSX: the pack carries
+          the sentence whole, its <strong> runs and all, so the wiring hands
+          it over in one piece and the token takes the phase the composer
+          already named in this language. */}
+      <div
+        className="mt-2 text-gain"
+        dangerouslySetInnerHTML={{
+          __html: t(
+            "💡 Materials consumed <strong>now</strong>. Finished goods and wage deductions happen at <strong>{duePhase}</strong>, not instantly.",
+            { duePhase },
+          ),
+        }}
+      />
     </div>
   );
 }

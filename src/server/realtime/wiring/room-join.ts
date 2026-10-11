@@ -8,6 +8,7 @@ import type { Server, Socket } from "socket.io";
 import { db } from "@/lib/db";
 import { normalizeMode } from "@/lib/game/mode";
 import { NOT_A_ROOM_MEMBER } from "@/lib/game/constants/copy";
+import { tFor } from "@/lib/game/i18n";
 import { aidList, removeUserAidRequest } from "../aid";
 import { auditRevealFor } from "../audit";
 import { requireAuth } from "../auth";
@@ -25,7 +26,7 @@ import {
   objectiveTotalFor,
   roomObjectiveTallies,
 } from "../objective";
-import { broadcastPresence, cancelDeparture } from "../presence";
+import { broadcastPresence, cancelDeparture, sockets } from "../presence";
 import { refitContracts } from "../refits";
 import { moduleTrades } from "../module-trades";
 import { revealFor } from "../reveal";
@@ -58,7 +59,7 @@ export function wireRoomJoin(
     if (!member) {
       socket.emit("room:error", {
         roomId,
-        error: NOT_A_ROOM_MEMBER,
+        error: tFor(s.locale, NOT_A_ROOM_MEMBER),
       });
       return;
     }
@@ -86,10 +87,21 @@ export function wireRoomJoin(
       // longer be told about, which credits the taker and never credits
       // them.
       removeUserBarterOffers(io, previousRoomId, s.userId);
-      io.to(`room:${previousRoomId}`).emit("room:system", {
-        roomId: previousRoomId,
-        content: `${s.user.displayName} set sail for another port`,
-      });
+      // The notice is read by the whole room, so it goes to every socket
+      // still in the old harbor, each in its captain's own language. The
+      // departing socket is already out of that room (roomId was cleared
+      // above), so the walk leaves it out.
+      for (const [socketId, state] of sockets) {
+        if (state.roomId !== previousRoomId) continue;
+        io.to(socketId).emit("room:system", {
+          roomId: previousRoomId,
+          content: tFor(
+            state.locale,
+            "{s.user.displayName} set sail for another port",
+            { "s.user.displayName": s.user.displayName },
+          ),
+        });
+      }
       void emitRoomMembers(io, previousRoomId);
     }
 
@@ -103,10 +115,21 @@ export function wireRoomJoin(
     s.mode = normalizeMode(member.room.mode);
     socket.join(`room:${roomId}`);
     if (!wasReconnecting) {
-      io.to(`room:${roomId}`).emit("room:system", {
-        roomId,
-        content: `${s.user.displayName} entered the harbor`,
-      });
+      // The room-wide rule again: every socket in the harbor reads the
+      // entry line in its own language, the joining socket included.
+      for (const [socketId, state] of sockets) {
+        if (state.roomId !== roomId) continue;
+        io.to(socketId).emit("room:system", {
+          roomId,
+          content: tFor(
+            state.locale,
+            "{s.user.displayName} entered the harbor",
+            {
+              "s.user.displayName": s.user.displayName,
+            },
+          ),
+        });
+      }
     }
     void emitRoomMembers(io, roomId);
     // Hydrate the joiner with everyone's last known game status, the
@@ -270,10 +293,20 @@ export function wireRoomJoin(
     // it has already recorded, so the reap below cannot print this
     // twice.
     noteVoyageLogDeparture(io, roomId, s.userId, s.user.displayName);
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content: `${s.user.displayName} left the harbor`,
-    });
+    // The notice is read by the whole room, so it goes to every socket
+    // still in the harbor, each in its captain's own language: the same
+    // walk the set-sail notice above takes, and the departing socket is
+    // already out of the room (roomId was cleared above), so the walk
+    // leaves it out the way the old broadcast did.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(state.locale, "{s.user.displayName} left the harbor", {
+          "s.user.displayName": s.user.displayName,
+        }),
+      });
+    }
     void emitRoomMembers(io, roomId);
     void tearDownIfRoomGone(roomId);
     broadcastPresence(io);

@@ -66,6 +66,7 @@ import {
   QUARTERMASTER_HOLD_GAIN,
 } from "./constants/paths";
 import { CARGO_SLOTS, FOODS } from "./constants/supplies";
+import { t } from "./i18n";
 import { RENOWN_MAX_LEVEL, RENOWN_TITLES, renownTitleForLevel } from "./legacy";
 
 interface PathConfig {
@@ -343,33 +344,49 @@ export function pathCargoModifier(value: PathId | null): number {
  * card and the ledger to disagree about the same refusal.
  */
 export function pathLockLine(id: PathId): string {
-  return `Only a captain who holds the ${PATHS[id].name} may fill this order.`;
+  return t("Only a captain who holds the {path} may fill this order.", {
+    path: t(PATHS[id].name),
+  });
 }
 
 // One reading a path's guide row prints, tagged with which reading it is.
 //
-// The tag exists for exactly one renderer: the draft's cards draw the
-// Renown rung through the glossary's Term so the word a captain meets
-// first is the word the glossary can explain, while the tutorial and the
-// manual print the same rung plain. The renown arm therefore carries the
-// rung's title rather than the finished sentence, and the composition of
-// "Renown to Navigator" belongs to the surface rather than to this record.
-// The other two arms are already complete fragments, so they carry text.
+// Every arm carries the raw reading rather than a finished sentence: the
+// hold as its percent, the order pool as its count, the Renown rung as its
+// title. The sentences belong to the pack and are composed where they are
+// read (see pathFactText), because the draft builds its copy of this record
+// once at module load (see PATH_GUIDE in phases/PathDraft) and a sentence
+// composed there would freeze in the language the process started in.
+//
+// The tag still earns its keep for one renderer: the draft's cards draw the
+// Renown rung through the glossary's Term so the word a captain meets first
+// is the word the glossary can explain, while the tutorial and the manual
+// print the same rung plain. That is why the renown arm carries the rung's
+// title alone and the composition of "Renown to Navigator" belongs to the
+// surface rather than to this record.
 export type PathFact =
-  | { kind: "hold"; text: string }
+  | { kind: "hold"; percent: number }
   | { kind: "renown"; title: string }
-  | { kind: "orders"; text: string };
+  | { kind: "orders"; count: number };
 
 /**
  * A fact as the plain reading a surface prints without a glossary.
  *
- * The draft's cards do not call this: they draw the renown arm through
- * their own Term instead, which is the one difference between the three
- * surfaces that print these rows. Everything else reads a fact through
- * this function, so a reworded rung arrives everywhere at once.
+ * Every surface that prints these rows reads them through this function,
+ * the draft's cards included, so a reworded rung arrives everywhere at
+ * once. The composition happens here at the call rather than when the
+ * guide is built, because a sentence built at module load would wear
+ * whatever language the process started in.
  */
 export function pathFactText(fact: PathFact): string {
-  return fact.kind === "renown" ? `Renown to ${fact.title}` : fact.text;
+  switch (fact.kind) {
+    case "hold":
+      return t("Hold {n}%", { n: fact.percent });
+    case "renown":
+      return t("Renown to {title}", { title: t(fact.title) });
+    case "orders":
+      return t("{n} locked orders", { n: fact.count });
+  }
 }
 
 // One path as the guide surfaces print it: the identity a card wears and
@@ -407,7 +424,7 @@ export function pathGuide(): PathGuideEntry[] {
     if (path.cargoModifier !== 1) {
       facts.push({
         kind: "hold",
-        text: `Hold ${Math.round(path.cargoModifier * 100)}%`,
+        percent: Math.round(path.cargoModifier * 100),
       });
     }
     facts.push({
@@ -417,7 +434,7 @@ export function pathGuide(): PathGuideEntry[] {
     if (path.orderPool.length > 0) {
       facts.push({
         kind: "orders",
-        text: `${path.orderPool.length} locked orders`,
+        count: path.orderPool.length,
       });
     }
     return {

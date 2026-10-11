@@ -59,8 +59,8 @@ export function wireOperator(
   adminAction("admin:ban", (actor, payload) =>
     banAccount(io, departureCleanup, actor, payload),
   );
-  adminAction("admin:unban", (_actor, payload) => unbanAccount(payload));
-  adminAction("admin:grant", (_actor, payload) => grantAdmin(payload));
+  adminAction("admin:unban", (actor, payload) => unbanAccount(actor, payload));
+  adminAction("admin:grant", (actor, payload) => grantAdmin(actor, payload));
   adminAction("admin:revoke", (actor, payload) =>
     revokeAdmin(io, actor, payload),
   );

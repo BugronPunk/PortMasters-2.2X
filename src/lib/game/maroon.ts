@@ -31,6 +31,7 @@
 // =====================================================================
 
 import { carriedTarget } from "./audit";
+import { t } from "@/lib/game/i18n";
 
 // The share of their Gold a marooned captain keeps. The rest goes to the
 // harbor with the ship, which is the price of the vote being real: a
@@ -189,6 +190,14 @@ export function portShiftMultiplier(
  */
 export function portShiftLine(shift: PortShift): string {
   const percent = PORT_SHIFT_PERCENT;
-  const way = shift.direction > 0 ? "higher" : "lower";
-  return `${shift.port}: every price ${percent} percent ${way}`;
+  // The way the price moves is the engine's direction, spelled as the two
+  // words the row names; each word carries its own row and is read here.
+  const way = t(shift.direction > 0 ? "higher" : "lower");
+  return t("{shift.port}: every price {percent} percent {way}", {
+    // The port has a row of its own (port.*), read here so the clause
+    // arrives whole.
+    "shift.port": t(shift.port),
+    percent,
+    way,
+  });
 }

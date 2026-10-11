@@ -1,6 +1,7 @@
 "use client";
 
 import { RECIPES } from "@/lib/game/constants/goods";
+import { t } from "@/lib/game/i18n";
 import type { Worker } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { TrendingUp } from "lucide-react";
@@ -37,7 +38,7 @@ export function BenchPayroll({
   return (
     <div className="rounded-xl bg-due/[0.06] border border-due/20 p-3.5 mb-4">
       <PanelHeading tone="text-due">
-        💰 Pending Payroll: Deducted at {duePhase}
+        {t("💰 Pending Payroll: Deducted at {duePhase}", { duePhase })}
       </PanelHeading>
       <div className="text-xs space-y-0.5">
         {rows
@@ -50,16 +51,19 @@ export function BenchPayroll({
               <span>
                 {r.icon}{" "}
                 <span className="pm-artisan-ink font-medium">
-                  {r.list.length}× {r.label}
+                  {r.list.length}× {t(r.label)}
                 </span>{" "}
-                @ {r.cost}g
+                @ {r.cost}
+                {t("g")}
               </span>
-              <b>{r.due} Gold</b>
+              <b>{t("{r.due} Gold", { "r.due": r.due })}</b>
             </div>
           ))}
         <div className="flex justify-between border-t border-due/20 pt-1 mt-1 font-bold">
-          <span>💸 Total Wages Due</span>
-          <span className="text-alarm">{totalWages} Gold</span>
+          <span>{t("💸 Total Wages Due")}</span>
+          <span className="text-alarm">
+            {t("{contract.fee} Gold", { "contract.fee": totalWages })}
+          </span>
         </div>
       </div>
       {/* Wage Efficiency Indicator */}
@@ -92,7 +96,7 @@ export function BenchPayroll({
           <div className="mt-2 border-t border-due/15 pt-2 flex items-center justify-between text-[11px]">
             <span className="text-muted-foreground flex items-center gap-1">
               <TrendingUp className="h-3 w-3 text-sea" />
-              Wage Efficiency
+              {t("Wage Efficiency")}
             </span>
             <span
               className={cn(
@@ -104,9 +108,12 @@ export function BenchPayroll({
                     : "text-alarm",
               )}
             >
-              {efficiency}x return
+              {t("{efficiency}x return", { efficiency })}
               <span className="font-normal text-muted-foreground ml-1">
-                ({totalProducedValue}g value / {totalWages}g wages)
+                {t("({produced}g value / {wages}g wages)", {
+                  produced: totalProducedValue,
+                  wages: totalWages,
+                })}
               </span>
             </span>
           </div>

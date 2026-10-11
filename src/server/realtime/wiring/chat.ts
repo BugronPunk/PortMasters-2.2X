@@ -7,6 +7,7 @@ import type { Server, Socket } from "socket.io";
 
 import { PUBLIC_USER_SELECT, db, publicUser } from "@/lib/db";
 import { TARGET_NOT_IN_HARBOR } from "@/lib/game/constants/copy";
+import { tFor } from "@/lib/game/i18n";
 import { CHAT_MESSAGE_MAX } from "@/lib/realtime-endpoint";
 import { requireAuth, seated } from "../auth";
 import {
@@ -154,7 +155,7 @@ export function wireChat(io: Server, socket: Socket): void {
       if (!room || room.hostId !== s.userId) {
         socket.emit("room:error", {
           roomId,
-          error: "Only the host can mute a captain.",
+          error: tFor(s.locale, "Only the host can mute a captain."),
         });
         return;
       }
@@ -170,7 +171,7 @@ export function wireChat(io: Server, socket: Socket): void {
       if (!roomMembers(roomId).some((m) => m.id === targetUserId)) {
         socket.emit("room:error", {
           roomId,
-          error: TARGET_NOT_IN_HARBOR,
+          error: tFor(s.locale, TARGET_NOT_IN_HARBOR),
         });
         return;
       }
@@ -242,7 +243,7 @@ export function wireChat(io: Server, socket: Socket): void {
       if (targetUserId === s.userId) {
         socket.emit("room:error", {
           roomId,
-          error: "You can't report yourself.",
+          error: tFor(s.locale, "You can't report yourself."),
         });
         return;
       }
@@ -252,7 +253,7 @@ export function wireChat(io: Server, socket: Socket): void {
       if (!roomMembers(roomId).some((m) => m.id === targetUserId)) {
         socket.emit("room:error", {
           roomId,
-          error: TARGET_NOT_IN_HARBOR,
+          error: tFor(s.locale, TARGET_NOT_IN_HARBOR),
         });
         return;
       }
@@ -284,7 +285,10 @@ export function wireChat(io: Server, socket: Socket): void {
           );
           socket.emit("room:error", {
             roomId,
-            error: "That report could not be filed. Try again in a moment.",
+            error: tFor(
+              s.locale,
+              "That report could not be filed. Try again in a moment.",
+            ),
           });
           return;
         }

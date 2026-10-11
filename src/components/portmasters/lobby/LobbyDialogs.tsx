@@ -30,6 +30,7 @@ import { BookOpen, Gift, Landmark, Loader2, Star } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
 import { Pill } from "@/components/portmasters/shared";
 import { RENOWN_BONUS_LINE } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
 import { CaptainLegacyCard } from "@/components/portmasters/CaptainLegacyCard";
 import { HouseLeaderboard } from "@/components/portmasters/HouseLeaderboard";
 import {
@@ -64,17 +65,25 @@ export function LegacyDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display">
             <Star className="h-5 w-5 text-legacy" />
-            Captain&apos;s Legacy
+            {/* The pack carries this row with the source's &apos; entity, so
+                it is read as HTML and the browser decodes it to the same
+                apostrophe JSX used to print. */}
+            <span
+              dangerouslySetInnerHTML={{ __html: t("Captain&apos;s Legacy") }}
+            />
           </DialogTitle>
           <DialogDescription>
-            Renown carries across every voyage this account ever sails, in any
-            harbor.
+            {t(
+              "Renown carries across every voyage this account ever sails, in any harbor.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <CaptainLegacyCard legacy={legacy} className="p-5" />
         <p className="text-xs text-muted-foreground leading-relaxed">
-          {RENOWN_BONUS_LINE}. It grows from the Reputation you bank across the
-          voyage, so it only ever goes up, even for a captain whose books fail.
+          {t(
+            "{RENOWN_BONUS_LINE}. It grows from the Reputation you bank across the voyage, so it only ever goes up, even for a captain whose books fail.",
+            { RENOWN_BONUS_LINE: t(RENOWN_BONUS_LINE) },
+          )}
         </p>
       </DialogContent>
     </Dialog>
@@ -103,12 +112,12 @@ export function CheckInDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display">
             <Gift className="h-5 w-5 text-checkin" />
-            Daily Check In
+            {t("Daily Check In")}
           </DialogTitle>
           <DialogDescription>
-            Claim a Renown reward each day. The 7 day cycle picks up where you
-            left off, even after a missed day, and restarts once Day 7 is
-            claimed.
+            {t(
+              "Claim a Renown reward each day. The 7 day cycle picks up where you left off, even after a missed day, and restarts once Day 7 is claimed.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
@@ -129,11 +138,11 @@ export function CheckInDialog({
                 )}
               >
                 <div className="text-[10px] text-muted-foreground">
-                  Day {day}
+                  {t("Day {day}", { day })}
                 </div>
                 <div className="text-sm font-bold leading-tight">+{xp}</div>
                 <div className="text-[9px] text-muted-foreground">
-                  {claimed ? "✓ XP" : "XP"}
+                  {claimed ? t("✓ XP") : t("XP")}
                 </div>
               </div>
             );
@@ -145,10 +154,13 @@ export function CheckInDialog({
           onClick={onClaim}
         >
           {claiming
-            ? "Claiming…"
+            ? t("Claiming…")
             : checkIn.canClaimToday
-              ? `Claim Day ${checkIn.currentDay}: +${checkIn.rewards[checkIn.currentDay - 1]} Renown XP`
-              : "Checked in today · back tomorrow"}
+              ? t("Claim Day {day}: +{xp} Renown XP", {
+                  day: checkIn.currentDay,
+                  xp: checkIn.rewards[checkIn.currentDay - 1],
+                })
+              : t("Checked in today · back tomorrow")}
         </Button>
       </DialogContent>
     </Dialog>
@@ -174,23 +186,32 @@ export function ChronicleDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display">
             <BookOpen className="h-5 w-5 text-chronicles" />
-            Voyage Chronicles
+            {t("Voyage Chronicles")}
           </DialogTitle>
           <DialogDescription>
-            The Harbormaster&apos;s ledger of your finished voyages, newest
-            first.
+            {/* An entity row like the legacy title above: the pack keeps the
+                source's &apos; and the HTML read decodes it for both
+                languages. */}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: t(
+                  "The Harbormaster&apos;s ledger of your finished voyages, newest first.",
+                ),
+              }}
+            />
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="pm-scroll-capped max-h-[60vh] pr-2">
           {loading ? (
             <div className="py-8 flex items-center justify-center text-muted-foreground text-sm">
-              <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading
-              chronicles…
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />{" "}
+              {t("Loading chronicles…")}
             </div>
           ) : chronicles.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
-              No chronicles yet. Finish a voyage and your headline will be
-              inscribed here.
+              {t(
+                "No chronicles yet. Finish a voyage and your headline will be inscribed here.",
+              )}
             </p>
           ) : (
             <ol className="space-y-3">
@@ -247,18 +268,19 @@ export function HousesDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display">
             <Landmark className="h-5 w-5 text-houses" />
-            Great Houses
+            {t("Great Houses")}
           </DialogTitle>
           <DialogDescription>
-            Pledge to one House. Its perk applies on your next fresh voyage.
-            Switch any time between voyages.
+            {t(
+              "Pledge to one House. Its perk applies on your next fresh voyage. Switch any time between voyages.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">
           {loading ? (
             <div className="py-8 flex items-center justify-center text-muted-foreground text-sm">
-              <Loader2 className="h-4 w-4 animate-spin mr-2" /> Loading
-              standings…
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />{" "}
+              {t("Loading standings…")}
             </div>
           ) : (
             HOUSES.map((house: House) => {
@@ -285,16 +307,16 @@ export function HousesDialog({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold font-display">
-                        {house.name}
+                        {t(house.name)}
                       </span>
                       {isMine && (
                         <Pill tone="none" className="bg-houses/5 text-houses">
-                          Pledged
+                          {t("Pledged")}
                         </Pill>
                       )}
                     </div>
                     <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">
-                      {house.perk}
+                      {t(house.perk)}
                     </p>
                     {standing && (
                       <div className="text-[10px] text-muted-foreground flex items-center gap-2 mt-1">
@@ -315,9 +337,9 @@ export function HousesDialog({
                     {pledgingHouse === house.id ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
                     ) : isMine ? (
-                      "Pledged"
+                      t("Pledged")
                     ) : (
-                      "Pledge"
+                      t("Pledge")
                     )}
                   </Button>
                 </div>

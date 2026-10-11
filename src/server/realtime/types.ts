@@ -10,6 +10,7 @@
 // =====================================================================
 import { PublicUser } from "@/types/realtime/presence";
 import type { GameMode } from "@/lib/game/mode";
+import type { Locale } from "@/lib/game/i18n";
 import type { Phase } from "@/lib/game/types";
 
 // One connected socket's server side state. A socket starts unauthed
@@ -34,6 +35,16 @@ export type SocketState = {
   // otherwise run a Classic voyage's rules over a room it has not checked
   // the caller into.
   mode: GameMode | null;
+  // The language this captain reads, for the frames this layer composes
+  // per captain (see tFor in @/lib/game/i18n and the sends that fill it).
+  // Read at the handshake from the pm_locale cookie the client keeps in
+  // step with the pick, and kept current by the locale frame (see
+  // ./wiring/locale), which is the one writer after that.
+  //
+  // The shipped language is the honest starting point rather than a
+  // guess: a socket that has said nothing reads English, the same answer
+  // the cookie reader gives a handshake that carries no cookie.
+  locale: Locale;
 };
 
 // The room's shared checkpoint: the round and phase every active

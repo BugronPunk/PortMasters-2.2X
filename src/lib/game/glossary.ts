@@ -5,56 +5,53 @@
 // (src/components/portmasters/Term.tsx) wherever that term is used as a
 // label across the status panel, the phase screens, and the player
 // detail popup.
+//
+// [The read] The entries are keyed by the English term the popover asks
+// by, and the sentence a captain reads is read off the pack when the
+// popover opens (glossaryText below) rather than copied out when the
+// bundle loaded. A copy taken at load wears the language the process
+// started in, and a captain who picked Mandarin before the first render
+// would hover a term and read English. The entries whose sentences carry
+// a figure hold the pack's own cell, tokens and all, and the reader
+// fills them from the same constants the engine prices by, so no
+// sentence is written twice.
 // =====================================================================
 import { cardText } from "./cards";
+import type { CardRecord } from "./constants/cards";
 import { BOONS, MODULES } from "./constants/drafts";
 import { ESCORT_OFFER_DEATH, RENOWN_BONUS_LINE } from "./constants/copy";
 import { FLEXIBLE_BARTER_UNLOCK_LEVEL } from "./constants/goods";
 import { CONVOY_RAID_COVERAGE } from "./constants/paths";
 import { DIFFICULTIES, pirateOddsLabel } from "./difficulty";
 import { INCOME_TAX_RATE, VAT_RATE } from "./engine";
+import { listJoiner, t, type Params } from "./i18n";
 
-// The escort fee is a charter dial, 10% on Fair Winds and steeper on the
-// two that follow, so the one figure this entry used to quote for all
-// three charters was wrong on two of them. Built from the config instead,
-// the same way the boon and module entries at the bottom of this file are,
-// which is the only version of it that cannot go stale.
-//
-// The entry is the harbor's own escort, bought at Resolve by any captain.
-// The escort a Convoy captain sells on a Gambit voyage is a different
-// thing with the same name, and it has its own entry below rather than a
-// share of this one. See CONVOY_RAID_COVERAGE in ./constants/paths for
-// the share the seller's guns beat off.
-const ESCORT_ENTRY = `The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the charter sets as a share of your Gold: ${Object.values(
-  DIFFICULTIES,
-)
-  .map((c) => `${Math.round(c.escortCostRate * 100)}% on ${c.name}`)
-  .join(", ")}. Once hired, the round's pirates are no longer a risk.`;
+// The two ladders the pack's cells leave as tokens, built from the
+// charter table the engine prices by rather than written out: the one
+// escort fee this entry used to quote for all three charters was wrong
+// on two of them, and the two tiers that raise their raid odds at the
+// midpoint raise them to a different figure. The names inside are read
+// for the language the captain holds, the joining separator is the
+// pack's own list joiner, and the words between a figure and a name
+// (" on ", " past the midpoint on ") carry fragment rows and are read
+// here.
+function escortLadder(): string {
+  return Object.values(DIFFICULTIES)
+    .map(
+      (c) => `${Math.round(c.escortCostRate * 100)}%${t(" on ")}${t(c.name)}`,
+    )
+    .join(listJoiner());
+}
 
-// The other escort, named so the two cannot be read as one: the market a
-// Convoy captain sells from at the Parley on a Gambit voyage, priced by
-// the two captains rather than by the charter, and read at the raid by
-// the one number above. It ends on the offer's own rule rather than a
-// second telling of it (see ESCORT_OFFER_DEATH in ./constants/copy),
-// which is the same sentence the desk that posts the offer opens with.
-const ESCORT_MARKET_ENTRY = `A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one leg of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off ${Math.round(
-  CONVOY_RAID_COVERAGE * 100,
-)}% of a raid in that leg, and the rest comes out of the seller's own Gold. ${ESCORT_OFFER_DEATH}`;
-
-// The pirate odds are a charter dial, and the two tiers that raise theirs at
-// the midpoint raise it to a different figure, so the sentence is built from
-// the same table the escort entry above reads rather than written once.
-const PIRATE_ENTRY = `A roll at Resolve, before wages and maintenance come due, that can take every Gold coin you're carrying. The charter sets the odds: ${Object.values(
-  DIFFICULTIES,
-)
-  .map((c) =>
-    c.pirateChance.length === 1
-      ? `${pirateOddsLabel(c)} on ${c.name}`
-      : `${pirateOddsLabel(c)} past the midpoint on ${c.name}`,
-  )
-  .join(
-    ", ",
-  )}. Hire an escort beforehand to guarantee safe passage instead of risking it.`;
+function pirateLadder(): string {
+  return Object.values(DIFFICULTIES)
+    .map((c) =>
+      c.pirateChance.length === 1
+        ? `${pirateOddsLabel(c)}${t(" on ")}${t(c.name)}`
+        : `${pirateOddsLabel(c)}${t(" past the midpoint on ")}${t(c.name)}`,
+    )
+    .join(listJoiner());
+}
 
 export const GLOSSARY: Record<string, string> = {
   // Raw materials
@@ -87,12 +84,14 @@ export const GLOSSARY: Record<string, string> = {
   // path draft prints a rung of (see the Renown line in PathDraft), so it
   // is explained here rather than left to be inferred from a title. The
   // bonus it grants is the line the Legacy card already prints (see
-  // RENOWN_BONUS_LINE in ./constants/copy) rather than a second telling
-  // of the same promise.
-  Renown: `Your standing across every harbor, kept on the account rather than in one voyage: the Reputation you bank becomes Renown XP when a voyage ends. ${RENOWN_BONUS_LINE}. The title beside your level is the ladder's own name for the rung you have reached.`,
+  // RENOWN_BONUS_LINE in ./constants/copy), filled as a token rather than
+  // a second telling of the same promise.
+  Renown:
+    "Your standing across every harbor, kept on the account rather than in one voyage: the Reputation you bank becomes Renown XP when a voyage ends. {RENOWN_BONUS_LINE}. The title beside your level is the ladder's own name for the rung you have reached.",
   Gold: "Your spendable funds. Hit zero with bills still due and the voyage ends in bankruptcy.",
-  VAT: `A ${Math.round(VAT_RATE * 100)}% tax on the profit margin of finished good sales (selling price minus material cost minus wage). Raw material sales aren't taxed this way.`,
-  "Income Tax": `A ${Math.round(INCOME_TAX_RATE * 100)}% tax on your net profit for the round, charged at Resolve after everything else is paid.`,
+  VAT: "A {vatPct}% tax on the profit margin of finished good sales (selling price minus material cost minus wage). Raw material sales aren't taxed this way.",
+  "Income Tax":
+    "A {incomeTaxPct}% tax on your net profit for the round, charged at Resolve after everything else is paid.",
   Freight:
     "The shipping fee for completing a trade order, based on how many items you're moving. Reduced by your ship level and certain boons or modules.",
   Maintenance:
@@ -104,10 +103,28 @@ export const GLOSSARY: Record<string, string> = {
   Boon: "A one round bonus you draft at the start of each round, at Dawn. It's picked personally, so your three choices differ from everyone else's.",
   Module:
     "A permanent ship upgrade, drafted from the Shipyard once you have a free slot. Stays equipped until you swap it out.",
-  Barter: `Trade directly with another captain instead of through the market, on the Captain's Exchange during the Parley or from the harbor chat once you reach Renown Level ${FLEXIBLE_BARTER_UNLOCK_LEVEL}. Post what you have for what you want; the offered amount is set aside the moment you post it, and comes back to you if it's canceled, if nobody takes it, or if a flexible offer of yours is taken and this one is retired with it.`,
-  "Pirate Attack": PIRATE_ENTRY,
-  Escort: ESCORT_ENTRY,
-  "Escort Market": ESCORT_MARKET_ENTRY,
+  Barter:
+    "Trade directly with another captain instead of through the market, on the Captain's Exchange during the Parley or from the harbor chat once you reach Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}. Post what you have for what you want; the offered amount is set aside the moment you post it, and comes back to you if it's canceled, if nobody takes it, or if a flexible offer of yours is taken and this one is retired with it.",
+  // The odds ladder is a token the reader fills (see pirateLadder).
+  "Pirate Attack":
+    "A roll at Resolve, before wages and maintenance come due, that can take every Gold coin you're carrying. The charter sets the odds: {pirateLadder}. Hire an escort beforehand to guarantee safe passage instead of risking it.",
+  // The harbor's own escort, bought at Resolve by any captain. The fee
+  // ladder is a token the reader fills (see escortLadder). The escort a
+  // Convoy captain sells on a Gambit voyage is a different thing with the
+  // same name, and it has its own entry below rather than a share of this
+  // one.
+  Escort:
+    "The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the charter sets as a share of your Gold: {escortLadder}. Once hired, the round's pirates are no longer a risk.",
+  // The other escort, named so the two cannot be read as one: the market
+  // a Convoy captain sells from at the Parley on a Gambit voyage, priced
+  // by the two captains rather than by the charter, and read at the raid
+  // by the coverage figure (see CONVOY_RAID_COVERAGE in ./constants/paths
+  // for the share the seller's guns beat off). It ends on the offer's own
+  // rule rather than a second telling of it (see ESCORT_OFFER_DEATH in
+  // ./constants/copy), which is the same sentence the desk that posts the
+  // offer opens with.
+  "Escort Market":
+    "A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one leg of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off {convoyCoverPct}% of a raid in that leg, and the rest comes out of the seller's own Gold. {ESCORT_OFFER_DEATH}",
   "Financial Aid":
     "A loan from another captain when you can't cover this round's wages or maintenance on your own. The lender's Gold transfers to you immediately; you owe it back before the voyage ends, or it's deducted automatically and handed to them at the voyage's final round.",
 
@@ -143,14 +160,56 @@ export const GLOSSARY: Record<string, string> = {
     "Gold or goods held aside the moment an offer, a pledge or a barter is posted, until the deal settles. Held goods cannot be spent or traded meanwhile, and they come back whole if the deal is canceled or expires.",
 };
 
-// [F2: the card record, and the mode weighting field] The two card entries a
-// captain can hover, read off the records rather than off copies kept here,
-// so a card renamed or retuned moves its glossary entry with it. The text
-// comes off cardText, which is the one place a card's shipped language is
-// chosen: an entry built from a second read of `strings` would be the first
-// place this build could print a card in one language and describe it in
-// another.
-for (const card of [...BOONS, ...MODULES]) {
-  const text = cardText(card);
-  GLOSSARY[text.name] = text.desc;
+// The fills for the seven entries whose pack cell carries a token rather
+// than a written figure. Each reads the module's own constants at the
+// moment the popover opens: the two tax rates through the same rounding
+// the tax lines use, the barter unlock off ./constants/goods, the Renown
+// bonus line, the offer's own closing rule, and the two ladders above. An
+// entry not listed here is a plain sentence and goes straight to t().
+const FIGURED_ENTRIES: Record<string, () => Params> = {
+  Renown: () => ({ RENOWN_BONUS_LINE: t(RENOWN_BONUS_LINE) }),
+  VAT: () => ({ vatPct: Math.round(VAT_RATE * 100) }),
+  "Income Tax": () => ({ incomeTaxPct: Math.round(INCOME_TAX_RATE * 100) }),
+  Barter: () => ({ FLEXIBLE_BARTER_UNLOCK_LEVEL }),
+  Escort: () => ({ escortLadder: escortLadder() }),
+  "Pirate Attack": () => ({ pirateLadder: pirateLadder() }),
+  "Escort Market": () => ({
+    convoyCoverPct: Math.round(CONVOY_RAID_COVERAGE * 100),
+    ESCORT_OFFER_DEATH: t(ESCORT_OFFER_DEATH),
+  }),
+};
+
+// [F2: the card record, and the mode weighting field] The two card
+// entries a captain can hover, read off the records rather than off
+// copies kept in the map above, so a card renamed or retuned moves its
+// glossary entry with it. The description comes off cardText, which is
+// the one place a card's shipped language is chosen, and it is read when
+// the popover opens rather than when this module loads, for the reason
+// the header gives. The key is the card's English name, and the card also
+// answers to the name it wears in the other language, because the screens
+// that hover a card hand over the name cardText answers with (see the
+// Shipyard's rig list and ModuleSwap).
+const CARDS = new Map<string, CardRecord>(
+  [...BOONS, ...MODULES].flatMap((card): [string, CardRecord][] => [
+    [cardText(card, "en").name, card],
+    [cardText(card, "zh").name, card],
+  ]),
+);
+
+/**
+ * The sentence a glossary term stands for, in the language the process
+ * is printing, or undefined for a term the glossary does not know.
+ *
+ * The one read Term and the price hovers share. The key is the English
+ * term, and a card also answers by the name it wears in the language on
+ * screen. An unknown term answering undefined is the signal the popover
+ * draws no tooltip at all rather than an empty one.
+ */
+export function glossaryText(term: string): string | undefined {
+  const card = CARDS.get(term);
+  if (card !== undefined) return cardText(card).desc;
+  const entry: string | undefined = GLOSSARY[term];
+  if (entry === undefined) return undefined;
+  const fills: (() => Params) | undefined = FIGURED_ENTRIES[term];
+  return fills === undefined ? t(entry) : t(entry, fills());
 }

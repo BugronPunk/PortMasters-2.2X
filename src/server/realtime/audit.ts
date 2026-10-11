@@ -51,6 +51,7 @@ import { normalizeLarder, onShortRations } from "@/lib/game/larder";
 import { normalizeWorkerRoster } from "@/lib/game/types";
 import { survivalLayerOn } from "@/lib/game/flags";
 import { auditOpensAt, normalizeMode } from "@/lib/game/mode";
+import { tFor, type Locale } from "@/lib/game/i18n";
 import { activeRosterSet } from "./checkpoint";
 import { parseSave } from "./save";
 import { noteTelemetry } from "./telemetry";
@@ -119,8 +120,18 @@ export function auditSpentLeg(roomId: string, round: number): boolean {
 // The five wires' sentences share this template and differ only in the
 // tail that names what reopens, so the template lives here beside its
 // predicate rather than being spelled out five times over.
-export function auditSpentReason(reopens: string): string {
-  return `The harbor spent this leg's Parley on the Manifest Audit. ${reopens} again next leg.`;
+//
+// Both halves are the pack's own rows and both are read through the
+// locale the caller names, which is the language of the captain whose
+// wire was refused: the tail arrives as the pack's English for what
+// reopens ("The exchange opens" and its four siblings), so it is read
+// here rather than composed at the wire.
+export function auditSpentReason(reopens: string, locale: Locale): string {
+  return tFor(
+    locale,
+    "The harbor spent this leg's Parley on the Manifest Audit. {reopens} again next leg.",
+    { reopens: tFor(locale, reopens) },
+  );
 }
 
 // Wipes a room's audit. Called on room:restart and when a room is deleted
@@ -428,7 +439,9 @@ async function settleAudit(
  * nomination was accepted, and a sentence for the captain who sent it
  * wherever it was refused. A refusal the caller cannot read is a refusal
  * that looks like the vote was taken, which is the reply a captain is
- * least able to act on.
+ * least able to act on. The sentence is composed in the language the
+ * caller names, which is the sender's own, because the sender is its one
+ * reader.
  *
  * The tally goes out after every vote including the last one, and the
  * reveal only ever goes out once. Both are broadcast, and neither carries
@@ -446,16 +459,21 @@ export async function recordAuditVote(
   voterId: string,
   round: number,
   targetUserId: string,
+  locale: Locale,
 ): Promise<string | null> {
   const gate = await auditRoomGate(roomId);
   // Silence where the room itself is wrong, which is the wiring's call as
   // much as this one's: a harbor with no manifest to open has nothing to
   // tell a captain who asked for one.
   if (!gate) return null;
-  if (round < gate.opensAt) return `The audit opens from leg ${gate.opensAt}.`;
+  if (round < gate.opensAt)
+    return tFor(locale, "The audit opens from leg {gate.opensAt}.", {
+      "gate.opensAt": gate.opensAt,
+    });
   const voyageEpoch = gate.voyageEpoch;
   const state = auditStateFor(roomId, round);
-  if (state.reveal) return "This voyage's audit has already carried.";
+  if (state.reveal)
+    return tFor(locale, "This voyage's audit has already carried.");
   const roster = await activeRosterSet(roomId);
   // The book is derived again against the room that exists now, not the room
   // that existed when each nomination was cast. A vote from a captain who
@@ -481,12 +499,15 @@ export async function recordAuditVote(
       );
     return sentence;
   };
-  if (!roster.has(voterId)) return refuse(SEAT_NOT_COUNTED);
-  if (!roster.has(targetUserId)) return refuse(TARGET_NOT_COUNTED);
+  if (!roster.has(voterId)) return refuse(tFor(locale, SEAT_NOT_COUNTED));
+  if (!roster.has(targetUserId))
+    return refuse(tFor(locale, TARGET_NOT_COUNTED));
   // The one name a captain gets. Checked and written without a pause so
   // two presses in the same tick cannot both pass it.
   if (state.votes.has(voterId))
-    return refuse("Your name is already in for this leg's audit.");
+    return refuse(
+      tFor(locale, "Your name is already in for this leg's audit."),
+    );
   state.votes.set(voterId, targetUserId);
   // [I1: the telemetry spine] The nomination, recorded where the vote is
   // accepted and before the tally goes out, so a record and the room can

@@ -3,6 +3,7 @@
 import { VoyageChronicle } from "@/types/realtime/voyage";
 import { useState } from "react";
 import { BookOpen } from "lucide-react";
+import { t } from "@/lib/game/i18n";
 import { ChronicleRow } from "./ChronicleRow";
 
 export function ChroniclesTab({
@@ -16,8 +17,9 @@ export function ChroniclesTab({
     return (
       <div className="py-12 text-center text-muted-foreground">
         <BookOpen className="mx-auto mb-3 h-10 w-10 opacity-30" />
-        No chronicles saved yet. A chronicle is written when your voyage
-        concludes.
+        {t(
+          "No chronicles saved yet. A chronicle is written when your voyage concludes.",
+        )}
       </div>
     );
   }

@@ -30,7 +30,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CredentialField, Notice } from "@/components/portmasters/shared";
 import { Loader2 } from "lucide-react";
-import { PASSWORD_HINT, USERNAME_HINT } from "@/lib/credentials";
+import { t } from "@/lib/game/i18n";
+import { hintText, PASSWORD_HINT, USERNAME_HINT } from "@/lib/credentials";
 import type { PublicUser } from "@/lib/api";
 
 type CredentialMode = "login" | "register";
@@ -202,7 +203,7 @@ export function CredentialCard({
       const { user, token } = await submit(mode, values);
       onAuthed(user, token);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : t("Something went wrong"));
     } finally {
       setLoading(false);
     }
@@ -241,20 +242,31 @@ export function CredentialCard({
             }}
           >
             <TabsList className="mb-5 grid w-full grid-cols-2">
-              <TabsTrigger value="login">Sign In</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="login">{t("Sign In")}</TabsTrigger>
+              <TabsTrigger value="register">{t("Register")}</TabsTrigger>
             </TabsList>
 
             <form onSubmit={send} className="space-y-4">
               {(["login", "register"] as const).map((side) => (
                 <TabsContent key={side} value={side} className="mt-0 space-y-4">
                   {fields[side].map((spec) => (
+                    // The specs are declared as data beside each door, so
+                    // the three lines a field prints are read here, where
+                    // they are handed to the field that draws them.
                     <CredentialField
                       key={spec.key}
-                      label={spec.label}
-                      hint={spec.hint}
+                      label={t(spec.label)}
+                      hint={
+                        spec.hint === undefined
+                          ? undefined
+                          : hintText(spec.hint)
+                      }
                       type={spec.type}
-                      placeholder={spec.placeholder}
+                      placeholder={
+                        spec.placeholder === undefined
+                          ? undefined
+                          : t(spec.placeholder)
+                      }
                       autoComplete={spec.autoComplete}
                       maxLength={spec.maxLength}
                       autoFocus={spec.autoFocus}

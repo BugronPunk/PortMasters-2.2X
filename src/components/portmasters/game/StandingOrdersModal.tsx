@@ -33,6 +33,7 @@ import { ScrollText } from "lucide-react";
 import { ICONS } from "@/lib/game/constants/brand";
 import { cardText } from "@/lib/game/cards";
 import { basePriceRange } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import {
   unlockedBoons,
   unlockedProducts,
@@ -232,14 +233,14 @@ function BuyRow({
           ✓
         </span>
         <span className="truncate text-[12.5px]">
-          {ICONS[good]} {good}
+          {ICONS[good]} {t(good)}
         </span>
       </button>
       {on && (
         <>
           <Input
             inputMode="numeric"
-            aria-label={`Dearest you will pay for ${good}`}
+            aria-label={t("Dearest you will pay for {good}", { good: t(good) })}
             disabled={disabled}
             value={typed ?? String(ceiling)}
             onChange={(e) => {
@@ -252,7 +253,7 @@ function BuyRow({
             onBlur={() => setTyped(null)}
             className="h-7 w-16 px-1.5 text-right text-[12px]"
           />
-          <span className="text-[10px] text-muted-foreground">gold</span>
+          <span className="text-[10px] text-muted-foreground">{t("gold")}</span>
         </>
       )}
     </div>
@@ -322,31 +323,45 @@ export function StandingOrdersModal({
             >
               <ScrollText className="h-4 w-4 text-white" />
             </span>
-            Standing orders
+            {t("Standing orders")}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            Instructions your seat follows when the harbor&apos;s clock plays it
-            while you are not standing at it.
+            {/* The pack carries this row with the source's &apos; entity,
+                so it is read as HTML and the browser decodes it to the
+                same apostrophe JSX used to print. */}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: t(
+                  "Instructions your seat follows when the harbor&apos;s clock plays it while you are not standing at it.",
+                ),
+              }}
+            />
           </DialogDescription>
         </DialogHeader>
 
         <div className="max-h-[62vh] space-y-4 overflow-y-auto pm-scroll pr-1">
           <OrderRow
-            title="Follow these orders"
-            hint="When the harbor's clock runs a phase out and you have not acted, your seat is played by what is written here instead of by the engine's own defaults. Turn this off and every seat goes back to being played the way it was before this panel existed. Nothing written below is lost either way."
+            title={t("Follow these orders")}
+            hint={t(
+              "When the harbor's clock runs a phase out and you have not acted, your seat is played by what is written here instead of by the engine's own defaults. Turn this off and every seat goes back to being played the way it was before this panel existed. Nothing written below is lost either way.",
+            )}
             checked={orders.enabled}
             onChange={(next) => set({ enabled: next })}
           />
 
           <Section
-            title="Dawn"
-            hint="Which boon to take when the draft is settled for you. A boon that is not on your board that round is passed over, so a name written here is never a promise the draft cannot keep."
+            title={t("Dawn")}
+            hint={t(
+              "Which boon to take when the draft is settled for you. A boon that is not on your board that round is passed over, so a name written here is never a promise the draft cannot keep.",
+            )}
           >
             <div className="grid gap-1.5 sm:grid-cols-2">
               <BoonOption
                 icon="1️⃣"
-                name="First offer on the board"
-                desc="Whatever the draft laid down first, which is what an absent captain is given today."
+                name={t("First offer on the board")}
+                desc={t(
+                  "Whatever the draft laid down first, which is what an absent captain is given today.",
+                )}
                 active={written === null}
                 disabled={off}
                 onClick={() => set({ boon: null })}
@@ -373,8 +388,10 @@ export function StandingOrdersModal({
           </Section>
 
           <Section
-            title="Market"
-            hint="Each good you mark is bought from the purchase board whenever every good on that card is at or under the price you set, in the order the board is laid out. Anything dearer is left on the board."
+            title={t("Market")}
+            hint={t(
+              "Each good you mark is bought from the purchase board whenever every good on that card is at or under the price you set, in the order the board is laid out. Anything dearer is left on the board.",
+            )}
           >
             <div className="space-y-1.5">
               {raw.map(goodRow)}
@@ -383,11 +400,13 @@ export function StandingOrdersModal({
           </Section>
 
           <Section
-            title="Orders"
-            hint="The trade board, filled the way a captain would fill it: only what the hold can actually cover, in the order the orders are laid out, and left alone when the hold cannot cover it. Nothing is bought to complete an order, so one your hold cannot pay for in goods is skipped rather than chased."
+            title={t("Orders")}
+            hint={t(
+              "The trade board, filled the way a captain would fill it: only what the hold can actually cover, in the order the orders are laid out, and left alone when the hold cannot cover it. Nothing is bought to complete an order, so one your hold cannot pay for in goods is skipped rather than chased.",
+            )}
           >
             <OrderRow
-              title="Fill every order the hold can cover"
+              title={t("Fill every order the hold can cover")}
               checked={orders.fill === "all"}
               disabled={off}
               onChange={(next) => set({ fill: next ? "all" : "none" })}
@@ -395,11 +414,13 @@ export function StandingOrdersModal({
           </Section>
 
           <Section
-            title="Dusk"
-            hint="The shipyard's one standing choice: the next ship level, bought the moment the shipyard opens if the purse covers it. The purse and the hull's own ceiling are checked by the engine, so an order to upgrade that cannot be paid for simply does nothing."
+            title={t("Dusk")}
+            hint={t(
+              "The shipyard's one standing choice: the next ship level, bought the moment the shipyard opens if the purse covers it. The purse and the hull's own ceiling are checked by the engine, so an order to upgrade that cannot be paid for simply does nothing.",
+            )}
           >
             <OrderRow
-              title="Upgrade the hull when you can afford it"
+              title={t("Upgrade the hull when you can afford it")}
               checked={orders.shipyard === "upgrade"}
               disabled={off}
               onChange={(next) =>
@@ -409,20 +430,23 @@ export function StandingOrdersModal({
           </Section>
 
           <p className="text-[11px] leading-snug text-muted-foreground">
-            Three seats are deliberately not here. Parley is a conversation with
-            a captain, which is not something a form can answer. The module
-            draft is rolled fresh every round, so there is no honest way to name
-            one ahead of it. And the Broker&apos;s Favor is a decision rather
-            than a default, so it is left for you to spend.
+            {/* An entity row for the same reason as the header above. */}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: t(
+                  "Three seats are deliberately not here. Parley is a conversation with a captain, which is not something a form can answer. The module draft is rolled fresh every round, so there is no honest way to name one ahead of it. And the Broker&apos;s Favor is a decision rather than a default, so it is left for you to spend.",
+                ),
+              }}
+            />
           </p>
         </div>
 
         <div className="flex items-center justify-between gap-3">
           <span className="text-[11px] text-muted-foreground">
-            Kept with this voyage, and the table does not see it.
+            {t("Kept with this voyage, and the table does not see it.")}
           </span>
           <Button variant="secondary" onClick={() => onOpenChange(false)}>
-            Close
+            {t("Close")}
           </Button>
         </div>
       </DialogContent>

@@ -8,6 +8,7 @@ import { STARTING_STOCK } from "@/lib/game/constants/goods";
 import { INCOME_TAX_RATE, VAT_RATE } from "@/lib/game/engine";
 import { openingPhase } from "@/lib/game/checkpoint";
 import { difficultyConfig, pirateOddsLabel } from "@/lib/game/difficulty";
+import { listJoiner, t } from "@/lib/game/i18n";
 import { modeConfig } from "@/lib/game/mode";
 import { phaseFace } from "@/lib/game/phases";
 import { cn } from "@/lib/utils";
@@ -48,7 +49,10 @@ function HarborRoster({
         })}
       </div>
       <div className="text-xs text-muted-foreground">
-        {ids.length} captain{ids.length !== 1 ? "s" : ""} in the harbor
+        {t("{count} captain{pluralS} in the harbor", {
+          count: ids.length,
+          pluralS: ids.length !== 1 ? "s" : "",
+        })}
       </div>
     </div>
   );
@@ -137,12 +141,21 @@ export function Welcome({
   // founding trade figures (20% raid, 15 Gold maintenance), while Open
   // Waters and Monsoon print their own.
   const cfg = difficultyConfig(game.difficulty);
+  // The three starting goods as the card prints them: each pair reads
+  // through its own row (see manual.048 in the pack), and the list joins
+  // with the separator the language writes a list with.
   const stockLine = ["Hemp", "Silk", "Tea"]
-    .map((r) => `${r}×${STARTING_STOCK[r]}`)
-    .join(", ");
+    .map((r) => t("{r}×{stockQty}", { r: t(r), stockQty: STARTING_STOCK[r] }))
+    .join(listJoiner());
   // income tax is not yet a DifficultyConfig dial: every charter still
   // uses the founding 10%, which is what calcIncomeTax charges.
   const taxRate = INCOME_TAX_RATE;
+  // The odds row carries the percent sign after its token, while the label
+  // answers with the sign already on (one rung, or two where the tier
+  // steps up), so the label is handed over without it.
+  const oddsLine = t("{raidPct}% chance of losing all Gold on hand", {
+    raidPct: pirateOddsLabel(cfg).replace(/%$/, ""),
+  });
   const [briefingOpen, setBriefingOpen] = useState(false);
   return (
     <div className="max-w-3xl mx-auto text-center py-4">
@@ -159,7 +172,9 @@ export function Welcome({
             It counts rounds rather than voyages: a voyage is the whole
             run and a round is one lap of it, and this is the one word
             the first screen of the game cannot afford to blur. */}
-        🌊 {game.maxRounds} rounds await, become the Sea Master!
+        {t("🌊 {rounds} rounds await, become the Sea Master!", {
+          rounds: game.maxRounds,
+        })}
       </p>
       <div className="flex flex-col items-center gap-3 mb-6">
         <HarborRoster members={members} ids={harborIds} />
@@ -178,9 +193,9 @@ export function Welcome({
               <Ship className="h-5 w-5 mr-2" />
               {canStart
                 ? harborIds.length === 1
-                  ? "Start Solo Practice Voyage"
-                  : START_VOYAGE
-                : `Need at least one captain in the harbor`}
+                  ? t("Start Solo Practice Voyage")
+                  : t(START_VOYAGE)
+                : t("Need at least one captain in the harbor")}
             </Button>
             {phaseSync.startError && (
               <p className="text-xs text-alarm">{phaseSync.startError}</p>
@@ -188,13 +203,15 @@ export function Welcome({
           </>
         ) : (
           <div className="text-sm text-muted-foreground">
-            ⏳ Waiting for the host to start the voyage… ({harborIds.length} in
-            harbor)
+            {t(
+              "⏳ Waiting for the host to start the voyage… ({harborIds.length} in harbor)",
+              { "harborIds.length": harborIds.length },
+            )}
           </div>
         )}
         <Button variant="ghost" className="rounded-xl" onClick={onTutorialOpen}>
           <BookOpen className="h-4 w-4 mr-2" />
-          New Captain Tutorial
+          {t("New Captain Tutorial")}
         </Button>
       </div>
       <div className="max-w-2xl mx-auto mt-3 space-y-2">
@@ -224,9 +241,9 @@ export function Welcome({
             the surfaces built for lists, and this panel says where it is
             rather than carrying another copy of it. */}
         <div className="rounded-lg bg-sea/[0.06] border border-sea/15 px-3.5 py-2.5 text-xs">
-          <strong>🔄 How a Round Runs:</strong>{" "}
+          <strong>{t("🔄 How a Round Runs:")}</strong>{" "}
           {briefing.kind === "line" ? (
-            briefing.text
+            t(briefing.text)
           ) : (
             <RoundFlow legs={briefing.legs} closes={briefing.closes} />
           )}
@@ -240,21 +257,29 @@ export function Welcome({
               line and needs no edit. */}
           {opening === "path_draft" && (
             <span className="block mt-1">
-              Your first seat is the {phaseFace("path_draft").label}: three
-              cards dealt face down, and the one you keep is the path you sail.
+              {t(
+                "Your first seat is the {label}: three cards dealt face down, and the one you keep is the path you sail.",
+                { label: t(phaseFace("path_draft").label) },
+              )}
             </span>
           )}
           <span className="block mt-1.5 pt-1.5 border-t border-sea/15">
-            <strong>🧭 {play.badge}:</strong> {play.tagline} {play.failureRule}
+            <strong>🧭 {t(play.badge)}:</strong> {t(play.tagline)}{" "}
+            {t(play.failureRule)}
             {/* It points at the button without a direction, because the
                 button sits above this panel rather than below it. */}
             {play.differences.length > 0 &&
-              " The New Captain Tutorial lists everything this mode changes."}
+              " " +
+                t(
+                  "The New Captain Tutorial lists everything this mode changes.",
+                )}
           </span>
         </div>
         <div className="rounded-lg bg-intel/[0.06] border border-intel/15 px-3.5 py-2.5 text-xs">
-          <strong>💡 New Captain Tip:</strong> Keep your purse above maintenance
-          plus all wages, and hire artisans only when you can sustain them.
+          <strong>{t("💡 New Captain Tip:")}</strong>{" "}
+          {t(
+            "Keep your purse above maintenance plus all wages, and hire artisans only when you can sustain them.",
+          )}
         </div>
       </div>
       {/* The five founding numbers, folded to a row at the foot of the
@@ -269,50 +294,58 @@ export function Welcome({
         <FoldRow
           tone="harbor"
           icon="📋"
-          title="Harbor Briefing"
-          gist="Starting resources, round costs, taxes and the pirate odds."
+          title={t("Harbor Briefing")}
+          gist={t(
+            "Starting resources, round costs, taxes and the pirate odds.",
+          )}
           open={briefingOpen}
           onToggle={() => setBriefingOpen((v) => !v)}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-left">
             <InfoCard
               tone="gain"
-              title="🚀 Starting Resources"
+              title={t("🚀 Starting Resources")}
               rows={[
-                `📦 ${stockLine}`,
-                `💰 ${cfg.startingGold} Gold starting funds`,
+                t("📦 {stock}", { stock: stockLine }),
+                t("💰 {gold} Gold starting funds", { gold: cfg.startingGold }),
               ]}
             />
             <InfoCard
               tone="warn"
-              title="⏱️ Production Delay"
+              title={t("⏱️ Production Delay")}
               rows={[
-                "Assign task now → item arrives at Resolve",
-                "Workers don't produce instantly!",
+                t("Assign task now → item arrives at Resolve"),
+                t("Workers don't produce instantly!"),
               ]}
             />
             <InfoCard
               tone="sea"
-              title="💸 Round End Costs"
+              title={t("💸 Round End Costs")}
               rows={[
-                `🔧 ${cfg.maintenance} Gold ship maintenance per round`,
-                "👥 Wages settled at Resolve, not on hire",
+                t("🔧 {cfg.maintenance} Gold ship maintenance per round", {
+                  "cfg.maintenance": cfg.maintenance,
+                }),
+                t("👥 Wages settled at Resolve, not on hire"),
               ]}
             />
             <InfoCard
               tone="alarm"
-              title="🧾 Taxes Explained"
+              title={t("🧾 Taxes Explained")}
               rows={[
-                `VAT: ${Math.round(VAT_RATE * 100)}% of finished goods profit margin`,
-                `Income Tax: ${Math.round(taxRate * 100)}% income tax`,
+                t("VAT: {vatPct}% of finished goods profit margin", {
+                  vatPct: Math.round(VAT_RATE * 100),
+                }),
+                t("Income Tax: {incomeTaxPct}% income tax", {
+                  incomeTaxPct: Math.round(taxRate * 100),
+                }),
               ]}
             />
             <InfoCard
               tone="warn"
-              title="🏴‍☠️ Pirates & Borrowing"
+              title={t("🏴‍☠️ Pirates & Borrowing")}
               rows={[
-                `${pirateOddsLabel(cfg)} chance of losing all Gold on hand`,
-                "Hire an escort, or ask the harbor for a loan",
+                oddsLine,
+                t("Hire an escort, or ask the harbor for a loan"),
               ]}
             />
           </div>

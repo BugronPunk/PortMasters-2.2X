@@ -13,6 +13,7 @@
 // ceiling: two separate ceilings would just move the exploit from
 // whichever is capped to whichever is not. ./backingState imports it.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import {
   AID_REPUTATION_PER_GOLD,
   helperReputationCapFor,
@@ -34,7 +35,10 @@ export function receiveLoan(
     roundBorrowed: state.currentRound,
   });
   logs.push(
-    `🆘 ${loan.fromName} lent you ${loan.amount} Gold. Repay it before the voyage ends, or it's deducted automatically.`,
+    t(
+      "🆘 {loan.fromName} lent you {loan.amount} Gold. Repay it before the voyage ends, or it's deducted automatically.",
+      { "loan.fromName": loan.fromName, "loan.amount": loan.amount },
+    ),
   );
 }
 
@@ -58,7 +62,10 @@ export function grantHelperReputation(
   const granted = Math.min(Math.max(1, rawGain), headroom);
   if (granted <= 0) {
     logs.push(
-      `🤝 No Reputation this time: you have already earned this voyage's full ${cap} for helping other captains.`,
+      t(
+        "🤝 No Reputation this time: you have already earned this voyage's full {cap} for helping other captains.",
+        { cap },
+      ),
     );
     return 0;
   }
@@ -92,10 +99,22 @@ export function grantLoan(
   );
   if (repGain > 0) {
     logs.push(
-      `🤝 Lent ${loan.borrowerName} ${loan.amount} Gold. Reputation +${repGain} for helping a fellow captain.`,
+      t(
+        "🤝 Lent {loan.borrowerName} {loan.amount} Gold. Reputation +{repGain} for helping a fellow captain.",
+        {
+          "loan.borrowerName": loan.borrowerName,
+          "loan.amount": loan.amount,
+          repGain,
+        },
+      ),
     );
   } else {
-    logs.push(`🤝 Lent ${loan.borrowerName} ${loan.amount} Gold.`);
+    logs.push(
+      t("🤝 Lent {loan.borrowerName} {loan.amount} Gold.", {
+        "loan.borrowerName": loan.borrowerName,
+        "loan.amount": loan.amount,
+      }),
+    );
   }
 }
 
@@ -109,13 +128,25 @@ export function repayLoan(state: GameState, debtId: string, logs: string[]) {
   if (!debt) return;
   if (state.money < debt.amount) {
     logs.push(
-      `❌ Need ${debt.amount} Gold to repay ${debt.counterpartyName}, have ${state.money}`,
+      t(
+        "❌ Need {debt.amount} Gold to repay {debt.counterpartyName}, have {state.money}",
+        {
+          "debt.amount": debt.amount,
+          "debt.counterpartyName": debt.counterpartyName,
+          "state.money": state.money,
+        },
+      ),
     );
     return;
   }
   state.money -= debt.amount;
   state.debts = state.debts.filter((d) => d.id !== debtId);
-  logs.push(`💰 Repaid ${debt.counterpartyName}: ${debt.amount} Gold`);
+  logs.push(
+    t("💰 Repaid {debt.counterpartyName}: {debt.amount} Gold", {
+      "debt.counterpartyName": debt.counterpartyName,
+      "debt.amount": debt.amount,
+    }),
+  );
 }
 
 // The lender's side of either a voluntary repayment or a forced one (see
@@ -129,7 +160,7 @@ export function receiveRepayment(
 ) {
   state.loansGiven = state.loansGiven.filter((l) => l.id !== debtId);
   state.money += amount;
-  logs.push(`💰 ${fromName} repaid you ${amount} Gold`);
+  logs.push(t("💰 {fromName} repaid you {amount} Gold", { fromName, amount }));
 }
 
 // [MANIFEST 07: Bequest Routing] Called only on the original lender's own
@@ -146,7 +177,11 @@ export function clearRedirectedLoan(
   logs: string[],
 ) {
   state.loansGiven = state.loansGiven.filter((l) => l.id !== debtId);
-  logs.push(`🤝 Your bequest was paid out to ${redirectedToName}`);
+  logs.push(
+    t("🤝 Your bequest was paid out to {redirectedToName}", {
+      redirectedToName,
+    }),
+  );
 }
 
 // Called once, at the true end of the last round (see the endRound
@@ -158,7 +193,7 @@ export function clearRedirectedLoan(
 // for everyone regardless.
 export function settleOutstandingDebts(state: GameState, logs: string[]) {
   if (!state.debts.length) return;
-  logs.push("\n📋=== Settling Outstanding Loans ===");
+  logs.push(t("\n📋=== Settling Outstanding Loans ==="));
   const settlements: {
     amount: number;
     debtId: string;
@@ -181,11 +216,24 @@ export function settleOutstandingDebts(state: GameState, logs: string[]) {
     if (paid < debt.amount) {
       state.defaultedDebt = true;
       logs.push(
-        `⚠️ Could not fully repay ${debt.counterpartyName}: paid ${paid} of ${debt.amount} Gold owed`,
+        t(
+          "⚠️ Could not fully repay {debt.counterpartyName}: paid {paid} of {debt.amount} Gold owed",
+          {
+            "debt.counterpartyName": debt.counterpartyName,
+            paid,
+            "debt.amount": debt.amount,
+          },
+        ),
       );
     } else {
       logs.push(
-        `💰 Settled outstanding loan to ${debt.counterpartyName}: ${paid} Gold`,
+        t(
+          "💰 Settled outstanding loan to {debt.counterpartyName}: {paid} Gold",
+          {
+            "debt.counterpartyName": debt.counterpartyName,
+            paid,
+          },
+        ),
       );
     }
   }

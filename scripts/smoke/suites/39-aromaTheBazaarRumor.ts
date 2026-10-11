@@ -653,7 +653,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         "const landsOn = rumorLandsOn({ round: game.currentRound });",
       ) &&
       deskSource.includes(
-        "`spoken in leg ${row.round} · priced at leg ${landsOn}`",
+        "spoken in leg {row.round} · priced at leg {landsOn}",
       ) &&
       deskSource.includes("rumorLandedLine(row, game.resourceCards)") &&
       !deskSource.includes("row.round + 1"),

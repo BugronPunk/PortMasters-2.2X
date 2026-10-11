@@ -2,6 +2,7 @@
 
 import { VoyageChronicle } from "@/types/realtime/voyage";
 import type { CaptainLegacySummary } from "@/lib/game/legacy";
+import { t } from "@/lib/game/i18n";
 import { KeyStatsGrid } from "./KeyStatsGrid";
 import { StandingStats } from "./StandingStats";
 import { DifficultyBreakdown } from "./DifficultyBreakdown";
@@ -25,7 +26,7 @@ export function StatsTab({
   if (!legacy || !stats) {
     return (
       <div className="py-12 text-center text-muted-foreground">
-        No voyage records yet. Set sail to begin your legacy.
+        {t("No voyage records yet. Set sail to begin your legacy.")}
       </div>
     );
   }

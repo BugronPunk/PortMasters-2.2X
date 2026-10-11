@@ -59,6 +59,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { TOO_MANY_ATTEMPTS_ERROR } from "./auth";
+import { tFor, type Locale } from "./game/i18n";
 import { spendToken, type TokenBucket } from "./token-bucket";
 
 /** Misses allowed on one account before it pauses. An honest captain
@@ -168,7 +169,7 @@ function pruneIfCrowded(now: number): void {
  * to answer with in the place of one, or `ok`, and the two routes read
  * it the way they read a body (see readJson in ./api-json):
  *
- *   const budget = spendDoorBudget(req, username);
+ *   const budget = spendDoorBudget(req, username, locale);
  *   if (!budget.ok) return budget.response;
  *
  * The account is looked at before the address, so a paused name
@@ -176,15 +177,19 @@ function pruneIfCrowded(now: number): void {
  * have to earn back, and both refusals are the one sentence: telling
  * them apart would tell a guesser which bound they met.
  */
-export function spendDoorBudget(req: NextRequest, account: string): DoorBudget {
+export function spendDoorBudget(
+  req: NextRequest,
+  account: string,
+  locale: Locale,
+): DoorBudget {
   const now = Date.now();
   pruneIfCrowded(now);
   const record = accounts.get(account);
   if (record && now < record.until) {
-    return { ok: false, response: overBudget() };
+    return { ok: false, response: overBudget(locale) };
   }
   if (!spendAddress(callerAddress(req), now)) {
-    return { ok: false, response: overBudget() };
+    return { ok: false, response: overBudget(locale) };
   }
   return { ok: true };
 }
@@ -223,6 +228,9 @@ export function noteDoorAttempt(account: string, accepted: boolean): void {
 // doors answer a spent budget with one status and one sentence, which is
 // the same reason the sentence itself lives with the other shared
 // wordings in ./auth.
-function overBudget(): NextResponse {
-  return NextResponse.json({ error: TOO_MANY_ATTEMPTS_ERROR }, { status: 429 });
+function overBudget(locale: Locale): NextResponse {
+  return NextResponse.json(
+    { error: tFor(locale, TOO_MANY_ATTEMPTS_ERROR) },
+    { status: 429 },
+  );
 }

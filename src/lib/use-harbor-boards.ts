@@ -24,6 +24,10 @@ import { useCallback, useEffect, useRef } from "react";
 import type { Socket } from "socket.io-client";
 import { toast } from "sonner";
 
+// The three settlements at the bottom of this hook are captain facing
+// toasts, and each is read at the moment it is raised, so the news
+// follows the language the captain is reading the room in.
+import { t } from "./game/i18n";
 import { useBarter, type BarterOffer, type PostedOffer } from "./use-barter";
 import {
   useAid,
@@ -351,18 +355,25 @@ export function useHarborBoards({
       // out when the frame arrives, held or not.
       onVoyage((g, l) => receiveVentureSettlement(g, mine.amount, l, outcome));
       if (outcome === "filled") {
-        toast.success("⚓ Venture filled!", {
-          description: `Your share: +${mine.amount} Gold.`,
+        toast.success(t("⚓ Venture filled!"), {
+          description: t("Your share: +{mine.amount} Gold.", {
+            "mine.amount": mine.amount,
+          }),
         });
         playSound("coin");
       } else if (outcome === "failed") {
-        toast("⚓ Venture missed its deadline", {
-          description: `Partial refund: +${mine.amount} Gold.`,
+        toast(t("⚓ Venture missed its deadline"), {
+          description: t("Partial refund: +{mine.amount} Gold.", {
+            "mine.amount": mine.amount,
+          }),
         });
         playSound("warn");
       } else {
-        toast("⚓ Venture canceled", {
-          description: `Another venture in the harbor already claimed this voyage's one chance. Full refund: +${mine.amount} Gold.`,
+        toast(t("⚓ Venture canceled"), {
+          description: t(
+            "Another venture in the harbor already claimed this voyage's one chance. Full refund: +{mine.amount} Gold.",
+            { "mine.amount": mine.amount },
+          ),
         });
       }
     },

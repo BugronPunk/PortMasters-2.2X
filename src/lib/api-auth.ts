@@ -6,6 +6,13 @@
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import {
+  DEFAULT_LOCALE,
+  isLocale,
+  LOCALE_COOKIE_NAME,
+  tFor,
+  type Locale,
+} from "./game/i18n";
+import {
   getUserFromToken,
   SESSION_COOKIE_NAME,
   sessionCookieMaxAge,
@@ -54,8 +61,33 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
 // object handed to two requests is one object two requests can both write
 // to. It is named after signedInResponse above for the same reason the two
 // sit together: they are the two answers a session door gives.
-export function unauthorizedResponse(): NextResponse {
-  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+//
+// The sentence is read at that moment, in the language the request asks
+// for: a 401 reaches a captain as a toast or a notice, so it is captain
+// facing copy like any other, and the count of twenty two is why the read
+// sits in here rather than at each of the call sites.
+export async function unauthorizedResponse(): Promise<NextResponse> {
+  const locale = await requestLocale();
+  return NextResponse.json(
+    { error: tFor(locale, "Unauthorized") },
+    { status: 401 },
+  );
+}
+
+/**
+ * The language this request's captain reads, off the pm_locale cookie.
+ *
+ * A route composes a few captain facing sentences of its own, and unlike
+ * the realtime layer there is no socket state to carry the language: a
+ * plain fetch has only its cookies, which is where the client keeps the
+ * pick (see use-language-preference). Anything the pack cannot print, and
+ * a request with no cookie at all, lands on the shipped language, the same
+ * honest fallback the socket's handshake reader gives it.
+ */
+export async function requestLocale(): Promise<Locale> {
+  const store = await cookies();
+  const value = store.get(LOCALE_COOKIE_NAME)?.value;
+  return isLocale(value) ? value : DEFAULT_LOCALE;
 }
 
 // Whether this request reached the app over TLS. The app never terminates

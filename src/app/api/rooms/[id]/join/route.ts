@@ -4,8 +4,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ROOM_NOT_FOUND } from "@/lib/api";
 import { db, PUBLIC_USER_SELECT } from "@/lib/db";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
 import { admitToRoom } from "@/lib/rooms";
+import { tFor } from "@/lib/game/i18n";
 
 export async function POST(
   _req: NextRequest,
@@ -14,6 +19,9 @@ export async function POST(
   const user = await getCurrentUser();
   if (!user) return unauthorizedResponse();
   const { id } = await params;
+  // Both refusals below are sentences the joining captain reads, so the
+  // language is read once, here.
+  const locale = await requestLocale();
 
   const room = await db.room.findUnique({
     where: { id },
@@ -25,11 +33,17 @@ export async function POST(
     },
   });
   if (!room)
-    return NextResponse.json({ error: ROOM_NOT_FOUND }, { status: 404 });
+    return NextResponse.json(
+      { error: tFor(locale, ROOM_NOT_FOUND) },
+      { status: 404 },
+    );
 
   const admitted = await admitToRoom(room, user.id);
   if ("error" in admitted)
-    return NextResponse.json({ error: admitted.error }, { status: 403 });
+    return NextResponse.json(
+      { error: tFor(locale, admitted.error) },
+      { status: 403 },
+    );
 
   return NextResponse.json({ room: admitted.room });
 }

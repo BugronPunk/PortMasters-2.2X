@@ -8,6 +8,7 @@
 // grantHelperReputation is imported from ./aid rather than duplicated,
 // because lending and backing share one per voyage Reputation ceiling.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import { BACKING_REPUTATION_PER_GOLD } from "../constants/reputation";
 import type { GameState } from "../types";
 import { ageBackingReputationMultiplier } from "./ages";
@@ -28,11 +29,18 @@ export function pledgeBacking(
 ) {
   if (amount <= 0) return;
   if (state.money < amount) {
-    logs.push(`❌ Need ${amount} Gold to back that loan, have ${state.money}`);
+    logs.push(
+      t("❌ Need {amount} Gold to back that loan, have {state.money}", {
+        amount,
+        "state.money": state.money,
+      }),
+    );
     return;
   }
   state.money -= amount;
-  logs.push(`🛡️ Pledged ${amount} Gold to back a fellow captain's loan`);
+  logs.push(
+    t("🛡️ Pledged {amount} Gold to back a fellow captain's loan", { amount }),
+  );
 }
 
 // [MANIFEST 05: Backing] The backer's own side of however the loan they
@@ -64,20 +72,35 @@ export function receiveBackingOutcome(
     );
     if (multiplier > 1 && base > 0)
       logs.push(
-        `⚖️ Age of the Lender: a pledge that comes home whole pays ${Math.round((multiplier - 1) * 100)}% more while it holds the harbor.`,
+        t(
+          "⚖️ Age of the Lender: a pledge that comes home whole pays {pledgeBonusPct}% more while it holds the harbor.",
+          { pledgeBonusPct: Math.round((multiplier - 1) * 100) },
+        ),
       );
     logs.push(
       repGain > 0
-        ? `🛡️ Your backing was never called on. Pledge returned in full: ${refundAmount} Gold. Reputation +${repGain} for the risk paying off.`
-        : `🛡️ Your backing was never called on. Pledge returned in full: ${refundAmount} Gold.`,
+        ? t(
+            "🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold. Reputation +{repGain} for the risk paying off.",
+            { refundAmount, repGain },
+          )
+        : t(
+            "🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold.",
+            { refundAmount },
+          ),
     );
   } else if (refundAmount > 0) {
     logs.push(
-      `🛡️ Your backing partially covered a captain's shortfall: ${calledAmount} Gold spent, ${refundAmount} Gold returned.`,
+      t(
+        "🛡️ Your backing partially covered a captain's shortfall: {calledAmount} Gold spent, {refundAmount} Gold returned.",
+        { calledAmount, refundAmount },
+      ),
     );
   } else {
     logs.push(
-      `🛡️ Your backing fully covered a captain's shortfall: all ${calledAmount} Gold pledged was spent helping the lender.`,
+      t(
+        "🛡️ Your backing fully covered a captain's shortfall: all {calledAmount} Gold pledged was spent helping the lender.",
+        { calledAmount },
+      ),
     );
   }
 }
@@ -97,6 +120,13 @@ export function receiveBackedCoverage(
 ) {
   state.money += amount;
   logs.push(
-    `🛡️ ${backerName} covered ${amount} Gold of ${borrowerName}'s shortfall as a backer.`,
+    t(
+      "🛡️ {backerName} covered {amount} Gold of {borrowerName}'s shortfall as a backer.",
+      {
+        backerName,
+        amount,
+        borrowerName,
+      },
+    ),
   );
 }

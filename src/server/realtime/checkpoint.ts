@@ -42,6 +42,7 @@ import {
 } from "@/lib/game/checkpoint";
 import { normalizePhase, phaseFace, seatOf } from "@/lib/game/phases";
 import { modeConfig, normalizeMode } from "@/lib/game/mode";
+import { tFor } from "@/lib/game/i18n";
 import { computeHarborPulse } from "@/lib/game/harborPulse";
 import { bazaarRumorsOn } from "@/lib/game/flags";
 import { rumorLean } from "@/lib/game/engine";
@@ -56,7 +57,7 @@ import type {
 } from "@/types/realtime/phase";
 import { bazaarList, broadcastBazaar } from "./bazaar";
 import { portShiftFor } from "./maroon";
-import { roomMembers } from "./presence";
+import { roomMembers, sockets } from "./presence";
 import { roomStatuses } from "./status";
 import { noteTelemetry } from "./telemetry";
 import { noteVoyageLog } from "./voyage-log";
@@ -522,11 +523,19 @@ async function reportNeverArrived(
   // which is a sentence a captain reads and would be a false one. The room is
   // told below, which is what a captain needs; the record is left to the
   // voyages that actually did something.
-  io.to(`room:${roomId}`).emit("room:system", {
-    roomId,
-    content:
-      "The harbor did not hear that leg move, so the ready check is open again. Press ready when you are done here and the voyage will carry on.",
-  });
+  //
+  // The notice is read by the whole room, so it goes to every socket in the
+  // harbor in that captain's own language rather than as one broadcast.
+  for (const [socketId, state] of sockets) {
+    if (state.roomId !== roomId) continue;
+    io.to(socketId).emit("room:system", {
+      roomId,
+      content: tFor(
+        state.locale,
+        "The harbor did not hear that leg move, so the ready check is open again. Press ready when you are done here and the voyage will carry on.",
+      ),
+    });
+  }
   await broadcastReadyState(io, roomId, cp);
 }
 
@@ -629,12 +638,18 @@ async function forceAdvance(
     // Said out loud, because a room that moved without a full ready set owes
     // the captains still sitting in it an explanation of why. It is not a
     // chat message from a captain: it is the harbor talking, on the same
-    // channel every other harbor announcement uses.
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content:
-        "The tide has run out for this leg, and the harbor moves on. Any captain who had not finished commits the phase's own defaults.",
-    });
+    // channel every other harbor announcement uses, and each captain reads
+    // it in their own language.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(
+          state.locale,
+          "The tide has run out for this leg, and the harbor moves on. Any captain who had not finished commits the phase's own defaults.",
+        ),
+      });
+    }
     await announceAdvance(io, roomId, from);
   });
 }

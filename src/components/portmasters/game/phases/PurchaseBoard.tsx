@@ -7,6 +7,7 @@ import {
   getCardFinalCost,
   purchaseCard,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { Term } from "../../Term";
@@ -47,9 +48,9 @@ function PurchaseCard({
       }
       header={
         <>
-          <span>📍 {c.port}</span>
+          <span>📍 {t(c.port)}</span>
           <span className="text-muted-foreground">
-            {c.isProductCard ? "Product" : "Raw Material"}
+            {c.isProductCard ? t("Product") : t("Raw Material")}
           </span>
         </>
       }
@@ -64,7 +65,9 @@ function PurchaseCard({
             disabled={!canAfford}
             onClick={() => act((g, l) => purchaseCard(g, c.id, l))}
           >
-            {purchased ? "✅ Purchased" : `🛒 Buy (${finalCost}💰)`}
+            {purchased
+              ? t("✅ Purchased")
+              : t("🛒 Buy ({cost}💰)", { cost: finalCost })}
           </Button>
           {/* Why a greyed Buy is greyed, said beside it. The one reason a
               card refuses that is not already on the button is the purse,
@@ -74,7 +77,7 @@ function PurchaseCard({
               to learn why a button will not take their press. */}
           {!purchased && game.money < finalCost && (
             <PanelNote tone="alarm" className="mt-1.5 text-[10px] text-center">
-              Need {finalCost - game.money} more Gold.
+              {t("Need {gold} more Gold.", { gold: finalCost - game.money })}
             </PanelNote>
           )}
         </>
@@ -105,12 +108,14 @@ function PurchaseCard({
             <ItemIcon item={r.type} className="mr-1.5 h-4 w-4" />
             <Term term={r.type} content={priceAwareTermContent(game, r.type)}>
               <span className="font-medium" style={{ color: colorFor(r.type) }}>
-                {r.type}
+                {t(r.type)}
               </span>
             </Term>
             <span className="mx-1.5">×{r.quantity}</span>
             <span className="ml-auto text-right text-muted-foreground">
-              <span className="block">Unit: {r.price}💰</span>
+              <span className="block">
+                {t("Unit: {price}💰", { price: unitPrice })}
+              </span>
               {range !== undefined && (isDeal || isPricey) && (
                 <span
                   className={cn(
@@ -118,7 +123,11 @@ function PurchaseCard({
                     isDeal ? "text-gain" : "text-alarm",
                   )}
                 >
-                  {isDeal ? "Deal" : "Pricey"}: {range[0]} to {range[1]} typical
+                  {isDeal ? t("Deal") : t("Pricey")}
+                  {t(": {low} to {high} typical", {
+                    low: range[0],
+                    high: range[1],
+                  })}
                 </span>
               )}
             </span>
@@ -130,7 +139,8 @@ function PurchaseCard({
                 )}
               >
                 {pulse > 0 ? "▲" : "▼"}
-                {Math.abs(Math.round(pulse * 100))}% price
+                {Math.abs(Math.round(pulse * 100))}
+                {t("% price")}
               </span>
             )}
           </div>
@@ -138,19 +148,21 @@ function PurchaseCard({
       })}
       {c.isProductCard && c.resources[0]?.materialCost ? (
         <div className="text-[10px] text-muted-foreground pl-6">
-          📦 Mat Cost: {c.resources[0].materialCost} Gold (
-          {c.resources[0].materialDetails})
+          {t("📦 Mat Cost: {gold} Gold ({details})", {
+            gold: c.resources[0].materialCost,
+            details: c.resources[0].materialDetails ?? "",
+          })}
         </div>
       ) : null}
       <div className="pt-2 mt-1 border-t border-dashed border-black/10 dark:border-white/10">
         <Term content={<PriceBreakdownTooltip breakdown={breakdown} />}>
           <span className="text-alarm font-bold text-sm">
-            💰 Total: {finalCost} Gold
+            {t("💰 Total: {gold} Gold", { gold: finalCost })}
           </span>
         </Term>
         {finalCost < c.totalCost && (
           <span className="text-muted-foreground text-[10px] ml-1">
-            (Was {c.totalCost})
+            {t("(Was {gold})", { gold: c.totalCost })}
           </span>
         )}
       </div>

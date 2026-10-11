@@ -1151,10 +1151,13 @@ export async function moduleTradesSuite(
   // hints at, and the rule that an offer dies, which the glossary tooltip prints
   // as well. Both are the copy module's own spelling, read here the same
   // way the desks above are, because a sentence two surfaces state is a
-  // sentence two surfaces can drift apart on.
+  // sentence two surfaces can drift apart on. The desk's sentences travel
+  // through the reader, so the assertions name the bindings the copy
+  // module's constants travel under rather than a raw print of them.
   check(
-    desks[1].includes("{consentFeeRule()}") &&
+    desks[1].includes("sellerRule: consentFeeRule()") &&
       desks[1].includes("{ESCORT_OFFER_DEATH}") &&
+      desks[1].includes("ESCORT_OFFER_DEATH: t(ESCORT_OFFER_DEATH)") &&
       desks[1].includes('from "@/lib/game/constants/copy"') &&
       !desks[1].includes("A fee is a whole number of Gold from"),
     "the escort desk states the fee's bounds and the offer-death rule in the copy module's own sentences rather than in a second spelling beside them, so the desk that hints at a fee and the wires that refuse one out of bounds cannot quote two ranges, and the desk that shows an offer dying and the tooltip that explains it cannot word the close two ways",

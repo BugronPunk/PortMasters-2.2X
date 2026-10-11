@@ -8,6 +8,7 @@ import type { GameState } from "@/lib/game/types";
 import type { BarterOffer } from "@/lib/use-barter";
 import { toast } from "sonner";
 import { MUTED_NOTICE } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
 import type { Barter } from "./game/phases/PhaseShared";
 import { MessageList, type StreamItem } from "./chat/MessageList";
 import { Composer } from "./chat/Composer";
@@ -225,8 +226,8 @@ export function ChatPanel({
     // like a message that vanished for no reason.
     const onMuted = (data: { roomId: string }) => {
       if (mode !== "room" || data.roomId !== roomId) return;
-      toast.error("You're muted", {
-        description: MUTED_NOTICE,
+      toast.error(t("You're muted"), {
+        description: t(MUTED_NOTICE),
       });
     };
     socket.on("chat:room", onRoom);
@@ -274,9 +275,9 @@ export function ChatPanel({
   }
 
   const emptyText = {
-    lobby: "Nothing on the harbor square yet. Say hello to the fleet.",
-    room: "No messages yet. Break the ice with your fellow captains.",
-    dm: "No messages yet between you two.",
+    lobby: t("Nothing on the harbor square yet. Say hello to the fleet."),
+    room: t("No messages yet. Break the ice with your fellow captains."),
+    dm: t("No messages yet between you two."),
   }[mode];
 
   // A private thread trades with the captain it is with, so the composer
@@ -292,13 +293,13 @@ export function ChatPanel({
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search messages…"
+            placeholder={t("Search messages…")}
             className="h-7 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
             autoFocus
           />
           {searchQuery && (
             <span className="text-[10px] text-muted-foreground">
-              {filteredMessages.length} found
+              {t("{count} found", { count: filteredMessages.length })}
             </span>
           )}
           <button
@@ -307,7 +308,7 @@ export function ChatPanel({
               setSearchQuery("");
             }}
             className="pm-pressable rounded-full p-1 hover:bg-black/5 dark:hover:bg-white/10"
-            aria-label="Close search"
+            aria-label={t("Close search")}
           >
             <X className="h-3.5 w-3.5 text-muted-foreground" />
           </button>

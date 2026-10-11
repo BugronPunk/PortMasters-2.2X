@@ -28,6 +28,7 @@
 
 import { cardById, cardName } from "@/lib/game/cards";
 import { MILESTONE_MOMENTS } from "@/lib/game/constants/milestones";
+import { t } from "@/lib/game/i18n";
 import { gambitSystemsOn } from "@/lib/game/mode";
 import type { BoonRecord, GameState } from "@/lib/game/types";
 import type { PublicUser } from "@/lib/api";
@@ -70,10 +71,13 @@ export function OpenBoons({
 
   return (
     <HuePanel tone="dawn" className={cn("px-3.5 py-2.5", className)}>
-      <PanelHeading className="mb-1.5 text-sm">🧭 Open Boons</PanelHeading>
+      <PanelHeading className="mb-1.5 text-sm">
+        {t("🧭 Open Boons")}
+      </PanelHeading>
       <p className="text-center text-[11px] text-muted-foreground mb-2.5">
-        Every compass draw is public: the three cards each captain was shown,
-        and the one they kept.
+        {t(
+          "Every compass draw is public: the three cards each captain was shown, and the one they kept.",
+        )}
       </p>
       <div className="space-y-1.5">
         {rows.map(({ member, record }) => (
@@ -83,14 +87,14 @@ export function OpenBoons({
           >
             <span className="font-medium">
               {member.id === me.id
-                ? `${member.displayName} (you)`
+                ? `${member.displayName} ${t("(you)")}`
                 : member.displayName}
             </span>
             <span className="text-[10px] text-muted-foreground/80 tabular-nums">
               {record.moment
-                ? (MILESTONE_MOMENTS[record.moment]?.title ?? "a moment")
-                : "the dawn draw"}
-              , leg {record.round}
+                ? t(MILESTONE_MOMENTS[record.moment]?.title ?? "a moment")
+                : t("the dawn draw")}
+              {t(", leg {leg}", { leg: record.round })}
             </span>
             <span className="flex flex-wrap items-center gap-1">
               {record.shown.map((id) => {

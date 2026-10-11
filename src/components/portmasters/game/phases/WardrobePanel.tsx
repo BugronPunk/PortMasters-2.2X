@@ -15,6 +15,7 @@ import {
   warmthText,
   wearGarment,
 } from "@/lib/game/garments";
+import { t } from "@/lib/game/i18n";
 import { crewSize } from "@/lib/game/larder";
 import { itemColorResolver } from "@/lib/use-color-preference";
 import { ItemIcon } from "../../shared";
@@ -70,25 +71,25 @@ export function Wardrobe({
     <HuePanel tone="wardrobe" className="px-3.5 py-2.5 mb-4">
       <PanelLabel
         tone="text-wardrobe"
-        note="a garment worn stays on until it wears out"
+        note={t("a garment worn stays on until it wears out")}
       >
-        🧥 Wardrobe
+        {t("🧥 Wardrobe")}
       </PanelLabel>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
         <PanelStat
-          label="This leg"
-          value={cold ? "❄️ Cold" : "mild"}
+          label={t("This leg")}
+          value={cold ? t("❄️ Cold") : t("mild")}
           valueClassName={cold ? "text-sea" : "text-muted-foreground"}
         />
         <PanelStat
-          label="Warmth"
+          label={t("Warmth")}
           value={warmthText(score)}
           valueClassName={short ? "text-alarm" : "text-wardrobe"}
           suffix={
             cold && (
               <span className="text-muted-foreground">
                 {" "}
-                / {COLD_LEG_WARMTH} asked
+                {t("/ {COLD_LEG_WARMTH} asked", { COLD_LEG_WARMTH })}
               </span>
             )
           }
@@ -103,7 +104,7 @@ export function Wardrobe({
           >
             <ItemIcon item={garment.good} className="h-3.5 w-3.5" />
             <span style={{ color: resolveColor(garment.good) }}>
-              {garment.good}
+              {t(garment.good)}
             </span>
             <b className="text-wardrobe">
               {warmthText(garmentWarmth(garment))}
@@ -114,8 +115,12 @@ export function Wardrobe({
       {cold && crew > 0 && (
         <PanelNote tone={short ? "alarm" : "muted"}>
           {short
-            ? "⚠️ The crew is short of warm clothes. The cold takes the newest hand, who is out of action for the next leg."
-            : "The crew is dressed for the cold this leg. The rest stay in the hold until a leg asks for more."}
+            ? t(
+                "⚠️ The crew is short of warm clothes. The cold takes the newest hand, who is out of action for the next leg.",
+              )
+            : t(
+                "The crew is dressed for the cold this leg. The rest stay in the hold until a leg asks for more.",
+              )}
         </PanelNote>
       )}
       {/* The wear buttons stand only where the leg is asking for warmth.
@@ -137,37 +142,42 @@ export function Wardrobe({
               className="rounded-lg"
               onClick={() => act((g, l) => wearGarment(g, good, l))}
             >
-              🧥 Wear {good} ({game.inventory[good]} in the hold,{" "}
-              {GARMENTS[good].warmth} warmth)
+              {t("🧥 Wear {good} ({heldQty} in the hold, {warmth} warmth)", {
+                good: t(good),
+                heldQty: game.inventory[good],
+                warmth: GARMENTS[good].warmth,
+              })}
             </Button>
           ))}
         </div>
       )}
       {!cold && crew > 0 && carried.length > 0 && (
         <PanelNote>
-          The sea is mild this leg and asks for no warmth. The clothes wait in
-          the hold for a cold leg, because a garment wears from the day it goes
-          on.
+          {t(
+            "The sea is mild this leg and asks for no warmth. The clothes wait in the hold for a cold leg, because a garment wears from the day it goes on.",
+          )}
         </PanelNote>
       )}
       {crew === 0 && (
         <PanelNote>
-          No crew aboard, so there is nobody to wear them. Hire artisans and the
-          cold starts to matter.
+          {t(
+            "No crew aboard, so there is nobody to wear them. Hire artisans and the cold starts to matter.",
+          )}
         </PanelNote>
       )}
       {crew > 0 && carried.length === 0 && (
         <PanelNote>
-          The hold carries no clothes. Linen Clothes, Cotton Clothes and Brocade
-          are made right here at the bench, and the ones the crew wears are the
-          ones it cannot sell.
+          {t(
+            "The hold carries no clothes. Linen Clothes, Cotton Clothes and Brocade are made right here at the bench, and the ones the crew wears are the ones it cannot sell.",
+          )}
         </PanelNote>
       )}
       {crew > 0 && (
         <PanelNote>
-          A garment the sea has worn out becomes rags and is scrapped for{" "}
-          {RAG_SCRAP_VALUE} Gold. Frostbite costs the newest hand one leg of
-          work rather than their place aboard.
+          {t(
+            "A garment the sea has worn out becomes rags and is scrapped for {RAG_SCRAP_VALUE} Gold. Frostbite costs the newest hand one leg of work rather than their place aboard.",
+            { RAG_SCRAP_VALUE },
+          )}
         </PanelNote>
       )}
     </HuePanel>

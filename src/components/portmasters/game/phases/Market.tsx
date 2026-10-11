@@ -32,6 +32,7 @@
 "use client";
 
 import { useState } from "react";
+import { t } from "@/lib/game/i18n";
 import { Purchase } from "./Purchase";
 import { WorkerMgmt } from "./WorkerMgmt";
 import {
@@ -76,8 +77,14 @@ export function Market({
 
   return (
     <div>
+      {/* The strip prints each station's label, so the read happens here,
+          at the point the captain reads it; the table above keeps its
+          English. */}
       <StationStrip
-        stations={STATIONS}
+        stations={STATIONS.map((station) => ({
+          ...station,
+          label: t(station.label),
+        }))}
         active={station}
         onSelect={setStation}
         waiting={phaseSync.waiting}

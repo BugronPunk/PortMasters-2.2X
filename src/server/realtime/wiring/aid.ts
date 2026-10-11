@@ -4,6 +4,7 @@
 
 import type { Server, Socket } from "socket.io";
 
+import { DEFAULT_LOCALE, tFor } from "@/lib/game/i18n";
 import {
   aidList,
   currentCheckpointRound,
@@ -21,12 +22,14 @@ import {
   resolveBackingFor,
   updateLoan,
 } from "../loans";
-import { emitToUser, roomMembers } from "../presence";
+import { emitToUser, roomMembers, sockets, userSockets } from "../presence";
 
 // Both books answer with this when the loan a press named is already gone:
 // the repayment handler below and the backing handler under it look the
 // same list up for two different presses, so the sentence is said once
-// here rather than spelled twice and drifting.
+// here rather than spelled twice and drifting. The constant keeps its
+// English value; each read below wraps it in tFor with its own socket's
+// locale, since the refusal is the presser's to read.
 const LOAN_GONE = "That loan is no longer outstanding.";
 
 export function wireAid(io: Server, socket: Socket): void {
@@ -43,7 +46,10 @@ export function wireAid(io: Server, socket: Socket): void {
     const { roomId } = s;
     const amount = payload?.amount;
     if (!Number.isInteger(amount) || (amount as number) < 1) {
-      socket.emit("aid:error", { roomId, error: "Invalid aid request" });
+      socket.emit("aid:error", {
+        roomId,
+        error: tFor(s.locale, "Invalid aid request"),
+      });
       return;
     }
     const request = {
@@ -74,7 +80,7 @@ export function wireAid(io: Server, socket: Socket): void {
       socket.emit("aid:help:fail", {
         roomId,
         requestId: payload.requestId,
-        reason: "That request is no longer open.",
+        reason: tFor(s.locale, "That request is no longer open."),
       });
       return;
     }
@@ -82,7 +88,7 @@ export function wireAid(io: Server, socket: Socket): void {
       socket.emit("aid:help:fail", {
         roomId,
         requestId: payload.requestId,
-        reason: "You can't fund your own request.",
+        reason: tFor(s.locale, "You can't fund your own request."),
       });
       return;
     }
@@ -130,16 +136,16 @@ export function wireAid(io: Server, socket: Socket): void {
         socket.emit("aid:repay:fail", { roomId, reason });
       };
       if (!debtId || !Number.isInteger(amount) || (amount as number) < 0) {
-        refuse("Invalid repayment");
+        refuse(tFor(s.locale, "Invalid repayment"));
         return;
       }
       const loan = loanList(roomId).find((l) => l.debtId === debtId);
       if (!loan) {
-        refuse(LOAN_GONE);
+        refuse(tFor(s.locale, LOAN_GONE));
         return;
       }
       if (loan.borrowerId !== s.userId) {
-        refuse("That loan is not yours to repay.");
+        refuse(tFor(s.locale, "That loan is not yours to repay."));
         return;
       }
       removeLoan(roomId, debtId);
@@ -155,11 +161,24 @@ export function wireAid(io: Server, socket: Socket): void {
         emitToUser(io, payeeId, "aid:repaid", repaid);
       }
       if (loan.redirectToUserId) {
-        emitToUser(io, loan.lenderId, "aid:redirected", {
-          roomId,
-          debtId,
-          redirectedToName: loan.redirectToName ?? "another captain",
-        });
+        // The lender reads this frame, and their client drops the name
+        // into a sentence of its own. The redirect target's real name is
+        // data and travels as it is; only the fallback for a missing one
+        // is copy, and the lender may hold two tabs in two languages, so
+        // the frame goes to each of their sockets with the fallback read
+        // in that socket's own language.
+        for (const socketId of userSockets.get(loan.lenderId) ?? []) {
+          io.to(socketId).emit("aid:redirected", {
+            roomId,
+            debtId,
+            redirectedToName:
+              loan.redirectToName ??
+              tFor(
+                sockets.get(socketId)?.locale ?? DEFAULT_LOCALE,
+                "another captain",
+              ),
+          });
+        }
       }
       resolveBackingFor(io, roomId, loan, amount as number);
       broadcastLoans(io, roomId);
@@ -228,7 +247,7 @@ export function wireAid(io: Server, socket: Socket): void {
         socket.emit("backing:fail", {
           roomId,
           debtId,
-          reason: LOAN_GONE,
+          reason: tFor(s.locale, LOAN_GONE),
         });
         return;
       }
@@ -236,7 +255,10 @@ export function wireAid(io: Server, socket: Socket): void {
         socket.emit("backing:fail", {
           roomId,
           debtId,
-          reason: "You can't back a loan you're already part of.",
+          reason: tFor(
+            s.locale,
+            "You can't back a loan you're already part of.",
+          ),
         });
         return;
       }
@@ -244,7 +266,7 @@ export function wireAid(io: Server, socket: Socket): void {
         socket.emit("backing:fail", {
           roomId,
           debtId,
-          reason: "That loan already has a backer.",
+          reason: tFor(s.locale, "That loan already has a backer."),
         });
         return;
       }

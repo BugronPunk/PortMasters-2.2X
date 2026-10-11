@@ -30,6 +30,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ICONS } from "@/lib/game/constants/brand";
+import { t } from "@/lib/game/i18n";
 import type { Objective, ObjectiveProgress } from "@/lib/game/objectives";
 import { OBJECTIVE_DELIVERY_PHASE } from "@/lib/game/engine";
 import type { GameState } from "@/lib/game/types";
@@ -62,13 +63,13 @@ export function ObjectivePanel({
     <div className="rounded-2xl px-3 py-2 border border-gold/70 bg-gradient-to-br from-gold/[0.18] to-gold/[0.06] ring-1 ring-gold/25">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-gold-ink">
-          Fleet Commission
+          {t("Fleet Commission")}
         </span>
         <span className="font-display text-sm font-semibold">
-          {objective.name}
+          {t(objective.name)}
         </span>
         <span className="hidden sm:inline text-xs text-muted-foreground truncate">
-          {objective.line}
+          {t(objective.line)}
         </span>
       </div>
 
@@ -84,15 +85,25 @@ export function ObjectivePanel({
             )}
           >
             {ICONS[row.type]}
-            {row.type} {row.delivered} of {row.required}
+            {/* The good is this deck's own spelling of a goods name, so the
+                display reads it; the count around it has no row of its own
+                and borrows the ledger's "N of M" reading. */}
+            {t(row.type)}{" "}
+            {t("{step.delivered} of {step.required}", {
+              "step.delivered": row.delivered,
+              "step.required": row.required,
+            })}
           </span>
         ))}
         <span className="text-[11px] font-semibold tabular-nums">
-          {progress.delivered} of {progress.required} handed over
+          {t("{progress.delivered} of {progress.required} handed over", {
+            "progress.delivered": progress.delivered,
+            "progress.required": progress.required,
+          })}
         </span>
         {!progress.met && (
           <span className="text-[11px] text-muted-foreground tabular-nums">
-            {outstanding} Gold still on the table
+            {t("{gold} Gold still on the table", { gold: outstanding })}
           </span>
         )}
         {/* The filled state, said rather than implied. The gold line above
@@ -103,7 +114,7 @@ export function ObjectivePanel({
             place. A captain reading it is owed the reason. */}
         {progress.met && (
           <span className="text-[11px] font-semibold text-gain">
-            The commission is met, and nothing more is owed.
+            {t("The commission is met, and nothing more is owed.")}
           </span>
         )}
         {open && deliverable > 0 && (
@@ -111,9 +122,11 @@ export function ObjectivePanel({
             size="sm"
             variant="outline"
             onClick={onDeliver}
-            title="The Emperor pays for what you hand over, and the commission is read when the voyage ends."
+            title={t(
+              "The Emperor pays for what you hand over, and the commission is read when the voyage ends.",
+            )}
           >
-            Deliver {deliverable}
+            {t("Deliver {deliverable}", { deliverable })}
           </Button>
         )}
       </div>

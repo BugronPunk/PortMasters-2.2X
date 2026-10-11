@@ -3,6 +3,7 @@
 import { OnlineUser, PublicUser } from "@/types/realtime/presence";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getSocket, getAuthToken } from "@/lib/realtime";
+import { useLanguage } from "@/lib/use-language-preference";
 
 /**
  * App wide realtime connection + presence. The socket is a singleton; this
@@ -32,9 +33,26 @@ export function useRealtime(
   const alive = useRef(true);
   const sessionLost = useRef(onSessionLost);
 
+  // The captain's language rides every connection (the server composes
+  // some captain facing lines per socket, see SocketState.locale), so a
+  // (re)connect presents the current pick the same way it presents the
+  // token. Held in a ref so the connect handler always reads the latest
+  // without the listener effect below re-running on every flip; the flip
+  // itself is presented by the effect after it.
+  const { locale } = useLanguage();
+  const localePresented = useRef(locale);
+
   useEffect(() => {
     sessionLost.current = onSessionLost;
   }, [onSessionLost]);
+
+  useEffect(() => {
+    localePresented.current = locale;
+    // A flip with the connection already up: the cookie carries it on the
+    // next handshake, and this frame carries it to the socket that is
+    // already open.
+    if (socket?.connected) socket.emit("locale:set", { locale });
+  }, [socket, locale]);
 
   useEffect(() => {
     if (!socket) {
@@ -57,6 +75,11 @@ export function useRealtime(
       // the connection still works if the cookie is ever scoped away. The
       // server treats a null token as "fall back to the cookie".
       socket.emit("auth", { token: getAuthToken() ?? undefined });
+      // And the language, for the same reason the token is re-sent: the
+      // handshake read the cookie, but a socket that reconnects after the
+      // pick moved while it was down would otherwise stay on the old
+      // language until the next reload.
+      socket.emit("locale:set", { locale: localePresented.current });
     };
     const onDisconnect = () => {
       setConnected(false);

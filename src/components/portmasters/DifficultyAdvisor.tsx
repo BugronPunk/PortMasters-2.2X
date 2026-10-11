@@ -11,6 +11,7 @@ import {
   type Difficulty,
 } from "@/lib/game/difficulty";
 import { voyageRoundsFor, type GameMode } from "@/lib/game/mode";
+import { listJoiner, t } from "@/lib/game/i18n";
 
 /**
  * Voyage Difficulty Advisor. Suggests which difficulty tier to pick
@@ -79,9 +80,12 @@ function getAdvice(
     const rounds = mandateRounds(DIFFICULTIES[tier]).filter(
       (round) => round <= roundsFor(tier),
     );
-    if (rounds.length === 0) return "none";
+    if (rounds.length === 0) return t("none");
     if (rounds.length === 1) return String(rounds[0]);
-    return `${rounds.slice(0, -1).join(", ")}, and ${rounds[rounds.length - 1]}`;
+    return t("{roundList}, and {lastRound}", {
+      roundList: rounds.slice(0, -1).join(listJoiner()),
+      lastRound: rounds[rounds.length - 1],
+    });
   };
 
   if (
@@ -91,27 +95,55 @@ function getAdvice(
     solventStreak >= 3
   ) {
     recommended = "monsoon";
-    reason = `You have the experience and the streak for the ${monsoon.name}. ${roundsFor("monsoon")} rounds, ${monsoon.renownXpMultiplier}x Renown, and two difficulty scoped Merits await: Storm Sovereign and Eye of the Storm.`;
+    reason = t(
+      "You have the experience and the streak for the {name}. {rounds} rounds, {multiplier}x Renown, and two difficulty scoped Merits await: Storm Sovereign and Eye of the Storm.",
+      {
+        name: t(monsoon.name),
+        rounds: roundsFor("monsoon"),
+        multiplier: monsoon.renownXpMultiplier,
+      },
+    );
   } else if (
     renownLevel >= OPEN_WATERS_RENOWN &&
     voyagesCompleted >= 5 &&
     bestScore >= 100
   ) {
     recommended = "open_waters";
-    reason = `Your Renown and voyage count suggest you are ready for ${openWaters.name}. ${roundsFor("open_waters")} rounds, ${openWaters.renownXpMultiplier}x Renown, and Imperial Mandates on rounds ${mandatesFor("open_waters")}.`;
+    reason = t(
+      "Your Renown and voyage count suggest you are ready for {openWaters.name}. {voyageRounds} rounds, {openWaters.renownXpMultiplier}x Renown, and Imperial Mandates on rounds {mandateRounds}.",
+      {
+        "openWaters.name": t(openWaters.name),
+        voyageRounds: roundsFor("open_waters"),
+        "openWaters.renownXpMultiplier": openWaters.renownXpMultiplier,
+        mandateRounds: mandatesFor("open_waters"),
+      },
+    );
   } else {
     recommended = "fair_winds";
-    reason = `${fairWinds.name} is the right starting point. ${roundsFor("fair_winds")} rounds, gentle pirate odds, and no mandates. Learn the loop before taking on heavier waters.`;
+    reason = t(
+      "{fairWinds.name} is the right starting point. {voyageRounds} rounds, gentle pirate odds, and no mandates. Learn the loop before taking on heavier waters.",
+      {
+        "fairWinds.name": t(fairWinds.name),
+        voyageRounds: roundsFor("fair_winds"),
+      },
+    );
   }
 
   // Cautions for overreaching
   if (selected === "monsoon" && renownLevel < OPEN_WATERS_RENOWN) {
-    caution = `Monsoon Season is very tough for a new captain. Consider Open Waters or Fair Winds until you reach Renown Level ${OPEN_WATERS_RENOWN}.`;
+    caution = t(
+      "Monsoon Season is very tough for a new captain. Consider Open Waters or Fair Winds until you reach Renown Level {OPEN_WATERS_RENOWN}.",
+      { OPEN_WATERS_RENOWN },
+    );
   } else if (selected === "open_waters" && voyagesCompleted < 3) {
-    caution =
-      "Open Waters introduces mandates and charter goods. Try a few Fair Winds voyages first to learn the core loop.";
+    caution = t(
+      "Open Waters introduces mandates and charter goods. Try a few Fair Winds voyages first to learn the core loop.",
+    );
   } else if (selected === "monsoon" && solventStreak === 0) {
-    caution = `${monsoon.name} has a ${pirateOddsLabel(monsoon)} pirate raid chance. Make sure you can survive a bankruptcy before risking it.`;
+    caution = t(
+      "{monsoon.name} has a {raidOdds} pirate raid chance. Make sure you can survive a bankruptcy before risking it.",
+      { "monsoon.name": t(monsoon.name), raidOdds: pirateOddsLabel(monsoon) },
+    );
   }
 
   return {
@@ -181,8 +213,10 @@ export function DifficultyAdvisor({
               {!advice.match && (
                 <p className="font-medium text-foreground">
                   {advice.caution
-                    ? "Heads up"
-                    : `Consider ${advice.recommended.replace(/_/g, " ")}`}
+                    ? t("Heads up")
+                    : t("Consider {adviceName}", {
+                        adviceName: advice.recommended.replace(/_/g, " "),
+                      })}
                 </p>
               )}
               <p className="text-muted-foreground">
@@ -192,9 +226,9 @@ export function DifficultyAdvisor({
             <button
               onClick={() => setDismissed(true)}
               className="pm-pressable shrink-0 rounded-full p-0.5 text-muted-foreground hover:text-foreground"
-              aria-label="Dismiss advice"
+              aria-label={t("Dismiss advice")}
             >
-              <span className="text-xs">x</span>
+              <span className="text-xs">{t("x")}</span>
             </button>
           </div>
         </motion.div>

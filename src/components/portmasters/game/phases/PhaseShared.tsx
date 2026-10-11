@@ -18,6 +18,7 @@ import type { useRoomRoster } from "@/lib/use-room-roster";
 import type { usePathDraft } from "@/lib/use-path-draft";
 import type { VoyageLog } from "@/lib/use-voyage-log";
 import type { GameState, GameContext } from "@/lib/game/types";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { ReadyBar } from "../ReadyBar";
@@ -220,13 +221,15 @@ export function CancelReadyButton({
  * The line is not always the same sentence, so it is passed: the shipyard
  * says it is waiting on the crew with a countdown in front of it, and the
  * boon draft has its own reason to be waiting. The default is the footer's
- * wording, which is the one every other screen uses.
+ * wording, which is the one every other screen uses, and it is read here
+ * where it is authored: every caller that passes one hands over a sentence
+ * it has already read in this language.
  */
 export function PhaseWaiting({
   phaseSync,
   members,
-  title = "Waiting for the rest of the crew",
-  cancelLabel = "Not ready yet",
+  title = t("Waiting for the rest of the crew"),
+  cancelLabel = t("Not ready yet"),
   className,
 }: {
   phaseSync: PhaseSync;
@@ -310,7 +313,7 @@ export function PhaseError({
       )}
     >
       <span>⚠️ {message}</span>
-      <button type="button" onClick={onDismiss} aria-label="Dismiss error">
+      <button type="button" onClick={onDismiss} aria-label={t("Dismiss error")}>
         <X className="h-3.5 w-3.5" />
       </button>
     </div>

@@ -4,7 +4,10 @@
 
 import type { Server, Socket } from "socket.io";
 
+import { tFor } from "@/lib/game/i18n";
 import { requireAuth } from "../auth";
+import { readLocaleCookie } from "../cookies";
+import { sockets } from "../presence";
 import { joinQueue, leaveQueue, matchQueuedCaptains } from "../quickstart";
 
 export function wireQuickStart(io: Server, socket: Socket): void {
@@ -17,8 +20,17 @@ export function wireQuickStart(io: Server, socket: Socket): void {
     const s = requireAuth(socket);
     if (!s) {
       // The button would otherwise spin forever with nothing listening.
+      // The reader may hold no state, so the handshake cookie answers the
+      // language where the socket has none, the same fallback requireAuth
+      // itself takes (see ../auth).
+      const locale =
+        sockets.get(socket.id)?.locale ??
+        readLocaleCookie(socket.handshake?.headers?.cookie);
       socket.emit("quickstart:error", {
-        error: "Your session expired. Sign in again to use Quick Start.",
+        error: tFor(
+          locale,
+          "Your session expired. Sign in again to use Quick Start.",
+        ),
       });
       return;
     }
@@ -34,7 +46,10 @@ export function wireQuickStart(io: Server, socket: Socket): void {
       console.error("[realtime] quick start match failed", err);
       leaveQueue(s.userId);
       socket.emit("quickstart:error", {
-        error: "Could not find a harbor just now. Please try again.",
+        error: tFor(
+          s.locale,
+          "Could not find a harbor just now. Please try again.",
+        ),
       });
     }
   });

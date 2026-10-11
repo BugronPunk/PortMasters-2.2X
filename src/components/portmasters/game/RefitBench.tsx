@@ -36,6 +36,7 @@ import {
   type RefitContract,
 } from "@/lib/game/engine";
 import { garmentRoom, garmentSpec } from "@/lib/game/garments";
+import { t } from "@/lib/game/i18n";
 import { pathConfig } from "@/lib/game/paths";
 import type { GameState } from "@/lib/game/types";
 import { MarketBlock, MarketEmpty, OfferRow } from "./OfferBoard";
@@ -52,9 +53,15 @@ const SELLER_PATH = pathConfig(REFIT_SELLER_PATH)!;
 // What the harbor tailors do, quoted rather than spelled into the two
 // sentences that describe it. "One point" written as words is a second place
 // the rule lives, and the one the engine reads (MEND_POINTS) is the one that
-// would move. Both spellings are here because a sentence built from the
-// number alone reads "1 points" the moment it is anything but one.
-const TAILOR_WORK = MEND_POINTS === 1 ? "one point" : `${MEND_POINTS} points`;
+// would move. Both spellings are the pack's two rows, so a sentence built
+// from the number alone never reads "1 points", and the read is here rather
+// than at module load, where it would freeze the language the process
+// started in. The plural row names the count this fills.
+function tailorWorkText(): string {
+  return MEND_POINTS === 1
+    ? t("one point")
+    : t("{MEND_POINTS} points", { MEND_POINTS });
+}
 
 /**
  * [D4: Loom: the Refit] The Loom's bench, drawn on the port board of the
@@ -125,12 +132,15 @@ export function RefitBench({
           repetition of the same sentence between the row and the
           paragraph that explains the trade. */}
       <p className="text-[11px] text-muted-foreground mb-2 max-w-2xl">
-        Clothes lose a point of wear every leg and two on a cold one. A{" "}
-        {SELLER_PATH.name} captain can put {REFIT_POINTS} points back in a
-        single leg for whatever fee the two of you agree, and anyone can take{" "}
-        {TAILOR_WORK} from the harbor tailors for {MEND_GOLD_PER_POINT} Gold.
-        One open offer per captain you name, one refit taken on a leg, and an
-        offer nobody takes before the Market closes is gone.
+        {t(
+          "Clothes lose a point of wear every leg and two on a cold one. A {SELLER_PATH.name} captain can put {REFIT_POINTS} points back in a single leg for whatever fee the two of you agree, and anyone can take {TAILOR_WORK} from the harbor tailors for {MEND_GOLD_PER_POINT} Gold. One open offer per captain you name, one refit taken on a leg, and an offer nobody takes before the Market closes is gone.",
+          {
+            "SELLER_PATH.name": t(SELLER_PATH.name),
+            REFIT_POINTS,
+            TAILOR_WORK: tailorWorkText(),
+            MEND_GOLD_PER_POINT,
+          },
+        )}
       </p>
 
       {/* The offer form belongs to the path that sells the work. A captain
@@ -140,26 +150,29 @@ export function RefitBench({
         <MarketBlock tone="refit">
           {takenOn ? (
             <p className="text-center text-[11px] text-muted-foreground">
-              You have already taken on a refit this leg, and one pair of hands
-              works one garment. The bench opens again next leg.
+              {t(
+                "You have already taken on a refit this leg, and one pair of hands works one garment. The bench opens again next leg.",
+              )}
             </p>
           ) : (
             <PrivateOffer
               lead={
                 <>
-                  <span className="text-muted-foreground">Put right</span>
+                  <span className="text-muted-foreground">
+                    {t("Put right")}
+                  </span>
                   <Select
                     value={good}
                     onChange={(e) => setGood(e.target.value)}
-                    aria-label="The garment this refit works on"
+                    aria-label={t("The garment this refit works on")}
                   >
                     {SELLER_PATH.goods.map((option) => (
                       <option key={option} value={option}>
-                        {option}
+                        {t(option)}
                       </option>
                     ))}
                   </Select>
-                  <span className="text-muted-foreground">for</span>
+                  <span className="text-muted-foreground">{t("for")}</span>
                 </>
               }
               fee={fee}
@@ -167,14 +180,14 @@ export function RefitBench({
               targetId={targetId}
               onTarget={setTargetId}
               others={others}
-              audienceLabel="Offer this refit to a specific captain"
-              deadline="before the Market closes."
+              audienceLabel={t("Offer this refit to a specific captain")}
+              deadline={t("before the Market closes.")}
               action={
                 <Button
                   className="rounded-lg"
                   onClick={() => refit.post(fee, good, targetId || undefined)}
                 >
-                  {SELLER_PATH.crest} Offer a Refit
+                  {SELLER_PATH.crest} {t("Offer a Refit")}
                 </Button>
               }
             />
@@ -188,14 +201,16 @@ export function RefitBench({
       {canSell && (
         <MarketBlock tone="refit">
           <div className="flex flex-wrap items-center justify-center gap-2 text-[11px]">
-            <span className="text-muted-foreground">Harbor pile</span>
+            <span className="text-muted-foreground">{t("Harbor pile")}</span>
             <span className="font-bold text-refit">{pile}</span>
             <span className="text-muted-foreground">
               {pile === 1
-                ? "rag left for you this leg"
-                : "rags left for you this leg"}
+                ? t("rag left for you this leg")
+                : t("rags left for you this leg")}
             </span>
-            <span className="text-muted-foreground">· in the hold: {held}</span>
+            <span className="text-muted-foreground">
+              {t("· in the hold: {held}", { held })}
+            </span>
             <Button
               size="sm"
               className="h-7 rounded-lg px-2.5 text-[11px]"
@@ -203,7 +218,8 @@ export function RefitBench({
               disabled={pile <= 0}
               onClick={() => act((g, l) => buyRag(g, l))}
             >
-              {ICONS.Rags} Buy a Rag ({RAG_SCRAP_VALUE}💰)
+              {ICONS.Rags}{" "}
+              {t("Buy a Rag ({RAG_SCRAP_VALUE}💰)", { RAG_SCRAP_VALUE })}
             </Button>
             <Button
               size="sm"
@@ -212,14 +228,25 @@ export function RefitBench({
               disabled={held < REWEAVE_RAGS}
               onClick={() => act((g, l) => reweaveRags(g, l))}
             >
-              {SELLER_PATH.crest} Reweave {REWEAVE_RAGS} Rags into{" "}
-              {REWEAVE_GOOD}
+              {SELLER_PATH.crest}{" "}
+              {t("Reweave {rags} Rags into {good}", {
+                rags: REWEAVE_RAGS,
+                good: t(REWEAVE_GOOD),
+              })}
             </Button>
           </div>
           <p className="text-center text-[11px] text-muted-foreground mt-1.5">
             {pile === 0
-              ? "No rags came ashore this leg. The pile only fills after a cold one."
-              : `The pile is what the fleet's scrap comes to after a cold leg, and it is drawn from the voyage's own weather. ${REWEAVE_RAGS} rags go back on the loom as one ${REWEAVE_GOOD}.`}
+              ? t(
+                  "No rags came ashore this leg. The pile only fills after a cold one.",
+                )
+              : t(
+                  "The pile is what the fleet's scrap comes to after a cold leg, and it is drawn from the voyage's own weather. {REWEAVE_RAGS} rags go back on the loom as one {REWEAVE_GOOD}.",
+                  {
+                    REWEAVE_RAGS,
+                    REWEAVE_GOOD: t(REWEAVE_GOOD),
+                  },
+                )}
           </p>
         </MarketBlock>
       )}
@@ -235,22 +262,27 @@ export function RefitBench({
           press says tomorrow without taking the numbers down. */}
       <MarketBlock tone="plain">
         <div className="flex flex-wrap items-center justify-center gap-2 text-[11px]">
-          <span className="text-muted-foreground">Harbor tailors</span>
+          <span className="text-muted-foreground">{t("Harbor tailors")}</span>
           {mendedThisLeg ? (
             <span className="text-muted-foreground">
-              have already worked on the crew this leg. Another garment waits
-              for tomorrow.
+              {t(
+                "have already worked on the crew this leg. Another garment waits for tomorrow.",
+              )}
             </span>
           ) : mendable.length === 0 ? (
             <span className="text-muted-foreground">
               {(game.garments ?? []).length === 0
-                ? "have nothing to put right. Nobody in the crew is wearing anything."
-                : "have nothing to put right. The crew's clothes are whole."}
+                ? t(
+                    "have nothing to put right. Nobody in the crew is wearing anything.",
+                  )
+                : t("have nothing to put right. The crew's clothes are whole.")}
             </span>
           ) : (
             <span className="text-muted-foreground">
-              will put {TAILOR_WORK} back for {MEND_GOLD_PER_POINT} Gold, once a
-              leg.
+              {t("will put {points} back for {gold} Gold, once a leg.", {
+                points: tailorWorkText(),
+                gold: MEND_GOLD_PER_POINT,
+              })}
             </span>
           )}
           {/* The row of buttons stays a row after the mend: the same
@@ -275,8 +307,19 @@ export function RefitBench({
                 disabled={mendedThisLeg}
                 onClick={() => act((g, l) => mendGarment(g, worn, l))}
               >
-                {ICONS.Rags} Mend {worn} ({left}
-                {spec ? ` of ${spec.durability}` : ""}, {MEND_GOLD_PER_POINT}💰)
+                {ICONS.Rags}{" "}
+                {spec
+                  ? t("Mend {worn} ({left} of {durability}, {gold}💰)", {
+                      worn: t(worn),
+                      left,
+                      durability: spec.durability,
+                      gold: MEND_GOLD_PER_POINT,
+                    })
+                  : t("Mend {worn} ({left}, {gold}💰)", {
+                      worn: t(worn),
+                      left,
+                      gold: MEND_GOLD_PER_POINT,
+                    })}
               </Button>
             );
           })}
@@ -292,8 +335,8 @@ export function RefitBench({
       {refit.refits.length === 0 ? (
         <MarketEmpty className="py-2">
           {canSell
-            ? "Nothing on the bench yet. Your offer is the first."
-            : "No refit work on offer this leg."}
+            ? t("Nothing on the bench yet. Your offer is the first.")
+            : t("No refit work on offer this leg.")}
         </MarketEmpty>
       ) : (
         <div className="space-y-1.5">
@@ -349,11 +392,13 @@ function RefitRow({
   // canPayFee).
   const hold = getOwnedAmount(game, "Gold");
   const blocked = stale
-    ? STALE_OFFER
+    ? t(STALE_OFFER)
     : points < 1
-      ? `Nothing left to put right on your ${row.good}.`
+      ? t("Nothing left to put right on your {row.good}.", {
+          "row.good": t(row.good),
+        })
       : refitSellerBusy(refit.refits, row.sellerUserId, game.currentRound)
-        ? REFIT_ALREADY_TAKEN
+        ? t(REFIT_ALREADY_TAKEN)
         : !canPayFee(game, row.fee)
           ? feeShortfallLine(hold, row.fee)
           : null;
@@ -371,7 +416,7 @@ function RefitRow({
           ? { forMe: isBuyer, name: row.buyerName }
           : null
       }
-      acceptLabel={`${crest} Take It`}
+      acceptLabel={t("{crest} Take It", { crest })}
       blocked={blocked}
       onCancel={() => refit.cancel(row.id)}
       onAccept={() => refit.accept(row.id)}
@@ -393,14 +438,36 @@ function RefitRow({
 function refitLine(row: RefitContract, me: PublicUser): string {
   const mine = row.sellerUserId === me.id;
   const isBuyer = row.buyerUserId === me.id;
-  const who = isBuyer ? "you" : (row.buyerName ?? "a captain");
-  const fee = `${row.fee} Gold`;
+  // The possessive is the pack's own pair: "your" where the row speaks about
+  // this captain, and the buyer's name with its possessive token where it
+  // speaks about somebody else.
+  const possessive = isBuyer
+    ? t("your")
+    : t("{who}'s", { who: row.buyerName ?? t("a captain") });
+  const good = t(row.good);
+  const fee = t("{row.fee} Gold", { "row.fee": row.fee });
   if (row.status === "offered") {
     return mine
-      ? `You are offering to put a ${row.good} right for ${fee}`
-      : `${row.sellerName} offers to put a ${row.good} right for ${fee}`;
+      ? t("You are offering to put a {row.good} right for {fee}", {
+          "row.good": good,
+          fee,
+        })
+      : t("{row.sellerName} offers to put a {row.good} right for {fee}", {
+          "row.sellerName": row.sellerName,
+          "row.good": good,
+          fee,
+        });
   }
   return mine
-    ? `You put ${who === "you" ? "your" : `${who}'s`} ${row.good} right for ${fee}`
-    : `${row.sellerName} put ${who === "you" ? "your" : `${who}'s`} ${row.good} right for ${fee}`;
+    ? t("You put {possessive} {row.good} right for {fee}", {
+        possessive,
+        "row.good": good,
+        fee,
+      })
+    : t("{row.sellerName} put {possessive} {row.good} right for {fee}", {
+        "row.sellerName": row.sellerName,
+        possessive,
+        "row.good": good,
+        fee,
+      });
 }

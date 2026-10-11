@@ -1,5 +1,8 @@
 "use client";
 
+import { t } from "@/lib/game/i18n";
+import { useLanguage } from "@/lib/use-language-preference";
+
 // The last boundary: the one that catches a throw in the root layout
 // itself, which means nothing above it survived, including the layout
 // that loads the game's stylesheet. That is why every rule below is an
@@ -11,6 +14,10 @@
 // the two failures read as one game handling one kind of problem, and
 // its only action is a reload, because at this level there is no segment
 // left to re-render.
+//
+// It replaces the root layout, so it sits outside the providers as well:
+// the language read below is the fallback reading, which answers in the
+// language the process already holds and has no tree above it to redraw.
 
 export default function GlobalError({
   reset,
@@ -18,8 +25,15 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  // The words below read through the pack like every other screen's.
+  // This boundary replaces the root layout, so it sits outside the
+  // providers: useLanguage() answers with the fallback reading, the
+  // language the process already holds, and t() prints in that same
+  // reading. The attribute and the words therefore always name one
+  // language, which on a first-render crash is the shipped one.
+  const { locale } = useLanguage();
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         style={{
           margin: 0,
@@ -45,7 +59,7 @@ export default function GlobalError({
           }}
         >
           <h1 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>
-            This screen hit rough water
+            {t("This screen hit rough water")}
           </h1>
           <p
             style={{
@@ -55,9 +69,9 @@ export default function GlobalError({
               margin: "12px 0 24px",
             }}
           >
-            Something went wrong while drawing it. Your voyage is stored on the
-            server, so nothing sailed on without you. Try again first; a reload
-            settles what trying again does not.
+            {t(
+              "Something went wrong while drawing it. Your voyage is stored on the server, so nothing sailed on without you. Try again first; a reload settles what trying again does not.",
+            )}
           </p>
           <button
             type="button"
@@ -74,7 +88,7 @@ export default function GlobalError({
               cursor: "pointer",
             }}
           >
-            Try again
+            {t("Try again")}
           </button>
         </div>
       </body>

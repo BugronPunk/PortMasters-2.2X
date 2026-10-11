@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { Coins, Trophy, SkullIcon, Anchor, Utensils } from "lucide-react";
 import { seatMarks } from "@/lib/seatMarks";
 import { hungryPillLine, hungryTooltip } from "@/lib/game/status-copy";
+import { t } from "@/lib/game/i18n";
+import { phaseLabel } from "@/lib/game/engine";
 
 /**
  * [MANIFEST 18: Fleet Ticker] A glance at the whole harbor without opening
@@ -66,12 +68,12 @@ export function FleetTicker({
             >
               <Avatar hue={m.avatarHue} name={m.displayName} size={20} />
               <span className="text-[11px] font-medium max-w-[84px] truncate">
-                {isMe ? "You" : m.displayName}
+                {isMe ? t("You") : m.displayName}
               </span>
               {isMarooned && (
                 <span
                   className="flex items-center text-alarm"
-                  title="Put ashore by a vote of the harbor"
+                  title={t("Put ashore by a vote of the harbor")}
                 >
                   <Anchor className="h-3 w-3" />
                 </span>
@@ -95,12 +97,20 @@ export function FleetTicker({
               )}
               {isBankrupt ? (
                 <span className="flex items-center gap-1 text-[10px] text-alarm">
-                  <SkullIcon className="h-3 w-3" /> Bankrupt
+                  <SkullIcon className="h-3 w-3" /> {t("Bankrupt")}
                 </span>
               ) : (
                 <>
                   <span className="text-[10px] text-muted-foreground truncate max-w-[96px]">
-                    {st ? st.phaseLabel : "loading…"}
+                    {/* The label each captain reads is derived from the
+                        frame's own phase and round, so a harbor speaking
+                        two languages reads two, not whoever reported last. */}
+                    {st
+                      ? phaseLabel({
+                          phase: st.phase,
+                          currentRound: st.round,
+                        })
+                      : t("loading…")}
                   </span>
                   <span className="flex items-center gap-0.5 text-[10px] text-gold-ink">
                     <Coins className="h-3 w-3" /> {st ? st.gold : "…"}

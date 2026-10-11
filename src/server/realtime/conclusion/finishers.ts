@@ -14,6 +14,7 @@
 import { RevealedCaptain } from "@/types/realtime/voyage";
 import type { Server } from "socket.io";
 import { db } from "@/lib/db";
+import { tFor } from "@/lib/game/i18n";
 import {
   levelForRenownXP,
   parseStatsByDifficulty,
@@ -39,6 +40,7 @@ import { MAX_HELD_CARDS } from "@/lib/game/combinations";
 import { normalizeCharter, normalizeHeldBoons } from "@/lib/game/held-cards";
 import { unlockLineFor } from "@/lib/unlock";
 import { maroonResultFor } from "../maroon";
+import { sockets } from "../presence";
 import type { RivalStanding } from "../rival";
 import type { FinishedCaptain, VoyageRun } from "./voyage";
 // The standings row is declared with the wire shape it travels in; the
@@ -770,17 +772,46 @@ function announceFinisher(
   rows: FinisherRows,
 ): void {
   if (rows.outcome.leveledUp) {
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content: `${f.user.displayName} reached Renown Level ${rows.outcome.newLevel}: ${renownTitleForLevel(rows.outcome.newLevel)}!`,
-    });
+    // The room reads this notice, so it goes to every socket in the
+    // harbor in that captain's own language rather than as one broadcast.
+    // The title is read per socket for the same reason: it is a name the
+    // client reads through the pack, so it has to land in the reader's
+    // language too.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(
+          state.locale,
+          "{f.user.displayName} reached Renown Level {rows.outcome.newLevel}: {renownTitle}!",
+          {
+            "f.user.displayName": f.user.displayName,
+            "rows.outcome.newLevel": rows.outcome.newLevel,
+            renownTitle: tFor(
+              state.locale,
+              renownTitleForLevel(rows.outcome.newLevel),
+            ),
+          },
+        ),
+      });
+    }
   }
   for (const meritId of rows.newMerits) {
     const merit = meritById(meritId);
     if (!merit) continue;
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content: `${f.user.displayName} earned the Captain's Merit: ${merit.name}!`,
-    });
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(
+          state.locale,
+          "{f.user.displayName} earned the Captain's Merit: {merit.name}!",
+          {
+            "f.user.displayName": f.user.displayName,
+            "merit.name": merit.name,
+          },
+        ),
+      });
+    }
   }
 }
