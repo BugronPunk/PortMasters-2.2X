@@ -3,7 +3,13 @@
 // a port, ordered over ../refits' own board.
 // =====================================================================
 
-import { consentFeeRule, STALE_OFFER } from "@/lib/game/constants/copy";
+import {
+  OFFER_ALREADY_GONE,
+  OFFER_FOR_ANOTHER_CAPTAIN,
+  REFIT_ALREADY_TAKEN,
+  consentFeeRule,
+  STALE_OFFER,
+} from "@/lib/game/constants/copy";
 import type { Server, Socket } from "socket.io";
 
 import {
@@ -14,6 +20,7 @@ import {
   type RefitContract,
 } from "@/lib/game/engine";
 import { garmentSpec } from "@/lib/game/garments";
+import { tFor } from "@/lib/game/i18n";
 import { requireAuth, seated } from "../auth";
 import { getCheckpoint } from "../checkpoint";
 import { rowId } from "../ids";
@@ -74,7 +81,7 @@ export function wireRefits(io: Server, socket: Socket): void {
         socket.emit("refit:error", { roomId, error });
       };
       if (!refitsOn(s.mode)) {
-        fail(BENCH_OFF);
+        fail(tFor(s.locale, BENCH_OFF));
         return;
       }
       // The fee is read through the same reader the panel reads it
@@ -82,7 +89,7 @@ export function wireRefits(io: Server, socket: Socket): void {
       // about what a price is (see consentFeeFor).
       const fee = consentFeeFor(payload?.fee);
       if (fee === null) {
-        fail(consentFeeRule());
+        fail(consentFeeRule(s.locale));
         return;
       }
       // The term is a good rather than a number, so it is validated
@@ -93,21 +100,24 @@ export function wireRefits(io: Server, socket: Socket): void {
       // would sit on the board for a whole leg.
       const good = typeof payload?.good === "string" ? payload.good : null;
       if (!good || !garmentSpec(good)) {
-        fail("A refit names a garment the crew can wear.");
+        fail(tFor(s.locale, "A refit names a garment the crew can wear."));
         return;
       }
       // The one await in this handler, and every check is after it, so
       // nothing between a check and the change it guards can yield.
       const cp = await getCheckpoint(roomId);
       if (cp.phase !== "market") {
-        fail("A refit is agreed at a port, in the Market phase.");
+        fail(
+          tFor(s.locale, "A refit is agreed at a port, in the Market phase."),
+        );
         return;
       }
       const named = await resolveNamedBuyer(
         roomId,
         s.userId,
         payload?.targetUserId,
-        "You can't sell a refit to yourself.",
+        tFor(s.locale, "You can't sell a refit to yourself."),
+        s.locale,
       );
       if (!named.ok) {
         fail(named.reason);
@@ -121,7 +131,7 @@ export function wireRefits(io: Server, socket: Socket): void {
       // have to refuse, which is a worse thing to hand a customer than a
       // sentence at the moment the offer is made.
       if (refitSellerBusy(list, s.userId, cp.round)) {
-        fail("You have already taken on a refit this leg.");
+        fail(tFor(s.locale, "You have already taken on a refit this leg."));
         return;
       }
       const standing = offerStandingRefusal(
@@ -129,6 +139,7 @@ export function wireRefits(io: Server, socket: Socket): void {
         s.userId,
         buyerUserId,
         buyerName,
+        s.locale,
       );
       if (standing !== null) {
         fail(standing);
@@ -175,7 +186,7 @@ export function wireRefits(io: Server, socket: Socket): void {
         socket.emit("refit:error", { roomId, error });
       };
       if (!refitsOn(s.mode)) {
-        fail(BENCH_OFF);
+        fail(tFor(s.locale, BENCH_OFF));
         return;
       }
       const cp = await getCheckpoint(roomId);
@@ -185,23 +196,25 @@ export function wireRefits(io: Server, socket: Socket): void {
       const board = refitContracts.list(roomId);
       const opening = board.find((c) => c.id === contractId);
       if (!opening || opening.status !== "offered") {
-        fail("That offer has already gone.");
+        fail(tFor(s.locale, OFFER_ALREADY_GONE));
         return;
       }
       if (opening.sellerUserId === s.userId) {
-        fail("You are the one selling that refit.");
+        fail(tFor(s.locale, "You are the one selling that refit."));
         return;
       }
       if (opening.buyerUserId !== null && opening.buyerUserId !== s.userId) {
-        fail("That offer was addressed to another captain.");
+        fail(tFor(s.locale, OFFER_FOR_ANOTHER_CAPTAIN));
         return;
       }
       if (opening.round !== cp.round) {
-        fail(STALE_OFFER);
+        fail(tFor(s.locale, STALE_OFFER));
         return;
       }
       if (cp.phase !== "market") {
-        fail("A refit is agreed at a port, in the Market phase.");
+        fail(
+          tFor(s.locale, "A refit is agreed at a port, in the Market phase."),
+        );
         return;
       }
       // The seller's bound rather than the buyer's, and the side is the
@@ -209,7 +222,7 @@ export function wireRefits(io: Server, socket: Socket): void {
       // consentPartyBusy). A customer may buy a refit for every garment
       // they own; a Loom has two hands and one leg.
       if (refitSellerBusy(board, opening.sellerUserId, cp.round)) {
-        fail("That captain has already taken on a refit this leg.");
+        fail(tFor(s.locale, REFIT_ALREADY_TAKEN));
         return;
       }
       refitContracts.set(
@@ -242,7 +255,7 @@ export function wireRefits(io: Server, socket: Socket): void {
         socket.emit("refit:error", { roomId, error });
       };
       if (!refitsOn(s.mode)) {
-        fail(BENCH_OFF);
+        fail(tFor(s.locale, BENCH_OFF));
         return;
       }
       const board = refitContracts.list(roomId);
@@ -253,7 +266,12 @@ export function wireRefits(io: Server, socket: Socket): void {
       // who regrets the price has the gap the voyage leaves them rather
       // than a button.
       if (mine.status !== "offered") {
-        fail("That refit has been agreed, so it can't be withdrawn.");
+        fail(
+          tFor(
+            s.locale,
+            "That refit has been agreed, so it can't be withdrawn.",
+          ),
+        );
         return;
       }
       refitContracts.set(

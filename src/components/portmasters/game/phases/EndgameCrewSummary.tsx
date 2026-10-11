@@ -1,6 +1,7 @@
 "use client";
 
 import { Users } from "lucide-react";
+import { listJoiner, t } from "@/lib/game/i18n";
 import { flatWorkerRoster, type GameState } from "@/lib/game/types";
 import { PanelTotal, StatTile, SummaryHeading } from "./PhaseShared";
 
@@ -34,43 +35,57 @@ export function CrewSummary({ game }: { game: GameState }) {
 
   if (crewAboard === 0) return null;
 
+  // The hands the voyage took, each named with the leg it happened on. The
+  // join is the language's own, so a Mandarin list separates the way its
+  // sentences do.
+  const lostList = lost
+    .map((loss) =>
+      t("{loss.name} (leg {loss.round})", {
+        "loss.name": loss.name,
+        "loss.round": loss.round,
+      }),
+    )
+    .join(listJoiner());
+
   return (
     <div className="rounded-xl border border-due/20 bg-due/[0.03] px-4 py-3 my-3 text-left">
       <SummaryHeading tone="text-due">
         <Users className="h-3.5 w-3.5" />
-        Crew Summary
+        {t("Crew Summary")}
       </SummaryHeading>
       <div className="grid grid-cols-3 gap-2">
         <StatTile
           value={crewAboard}
           valueClassName="text-due"
-          label="Crew Aboard"
+          label={t("Crew Aboard")}
         />
         <StatTile
           value={skilledCount}
           valueClassName="text-gain"
-          label="Skilled"
+          label={t("Skilled")}
         />
         <StatTile
           value={totalProduced}
           valueClassName="text-sea"
-          label="Items Made"
+          label={t("Items Made")}
         />
       </div>
       <PanelTotal
         tone="border-due/10"
-        label={<span className="text-muted-foreground">Total Wages Paid</span>}
+        label={
+          <span className="text-muted-foreground">{t("Total Wages Paid")}</span>
+        }
       >
-        <span className="font-bold text-due">{totalWages} Gold</span>
+        <span className="font-bold text-due">
+          {t("{contract.fee} Gold", { "contract.fee": totalWages })}
+        </span>
       </PanelTotal>
       {lost.length > 0 && (
         <div className="mt-1.5 flex items-baseline justify-between gap-2 text-[11px]">
           <span className="text-muted-foreground shrink-0">
-            ⚰️ Lost over the voyage
+            {t("⚰️ Lost over the voyage")}
           </span>
-          <span className="font-bold text-alarm text-right">
-            {lost.map((loss) => `${loss.name} (leg ${loss.round})`).join(", ")}
-          </span>
+          <span className="font-bold text-alarm text-right">{lostList}</span>
         </div>
       )}
     </div>

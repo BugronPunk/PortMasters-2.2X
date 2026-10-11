@@ -2,8 +2,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db, PUBLIC_USER_SELECT } from "@/lib/db";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
 import { admitToRoom } from "@/lib/rooms";
+import { tFor } from "@/lib/game/i18n";
 import { readJson } from "@/lib/api-json";
 
 const Schema = z.object({ code: z.string().length(6) });
@@ -11,11 +16,14 @@ const Schema = z.object({ code: z.string().length(6) });
 export async function POST(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return unauthorizedResponse();
+  // Both refusals below are sentences the joining captain reads, so the
+  // language is read once, here.
+  const locale = await requestLocale();
 
   const body = await readJson(
     req,
     Schema,
-    "A 6 character room code is required",
+    tFor(locale, "A 6 character room code is required"),
   );
   if (!body.ok) return body.response;
   const code = body.data.code.toUpperCase();
@@ -31,13 +39,16 @@ export async function POST(req: NextRequest) {
   });
   if (!room)
     return NextResponse.json(
-      { error: "No room exists with that code" },
+      { error: tFor(locale, "No room exists with that code") },
       { status: 404 },
     );
 
   const admitted = await admitToRoom(room, user.id);
   if ("error" in admitted)
-    return NextResponse.json({ error: admitted.error }, { status: 403 });
+    return NextResponse.json(
+      { error: tFor(locale, admitted.error) },
+      { status: 403 },
+    );
 
   return NextResponse.json({ room: admitted.room });
 }

@@ -41,6 +41,7 @@ import {
   type GambitCard,
   type GambitRole,
 } from "@/lib/game/gambit";
+import { tFor } from "@/lib/game/i18n";
 import { roomMemberIds } from "@/lib/rooms";
 import { isUniqueViolation } from "./chat";
 import { objectiveForRoom } from "./objective";
@@ -108,6 +109,13 @@ async function alliesFor(
 // One card, to the one captain it belongs to. The line comes from the
 // card record rather than being written here, so the sentence a captain
 // reads and the title above it are the same piece of copy.
+//
+// The sentence is read per socket in the language that socket presented:
+// the record holds the line as pack copy, and the card's own surface
+// reads the same record through the same door at the print, so the sent
+// line and the printed line are one piece of copy read twice, and a
+// captain who flips the pick mid voyage cannot end up reading the two of
+// them in two languages.
 function sendCard(
   io: Server,
   roomId: string,
@@ -115,13 +123,13 @@ function sendCard(
   card: GambitCard,
   ally: { userId: string; name: string } | null,
 ): void {
-  emitPrivate(io, roomId, userId, {
+  emitPrivate(io, roomId, userId, (locale) => ({
     kind: "card",
-    text: roleCard(card.role).line,
+    text: tFor(locale, roleCard(card.role).line),
     role: card.role,
     ...(card.flourishId ? { flourish: card.flourishId } : {}),
     ...(ally ? { ally } : {}),
-  });
+  }));
 }
 
 // A whole hand into the sockets it belongs to, one entry each.
@@ -139,7 +147,7 @@ async function sendCards(
 /**
  * Deals every card at the table, on the moment a voyage sets sail.
  *
- * A no-op in any mode but Ocean Gambit, so the caller does not have to
+ * Does nothing in any mode but Ocean Gambit, so the caller does not have to
  * ask which game it is holding before calling this. It is idempotent too:
  * a voyage that already holds rows is sent what it holds rather than
  * dealt a second hand, which is what keeps a double start from moving
@@ -279,7 +287,7 @@ type HeldCard = {
  * it belongs to can read.
  *
  * [F6: charters at leg four] The charter take is the second. The leg
- * report's one non-figure claim is a card a captain holds, and the
+ * report's one claim that is not a figure is a card a captain holds, and the
  * alignment that take is recorded with has to come off this table rather
  * than off the wire (see charter_taken in @/lib/game/telemetry), so an
  * operator measurement says what the voyage dealt a captain and never

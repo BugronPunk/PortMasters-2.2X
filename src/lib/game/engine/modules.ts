@@ -77,6 +77,7 @@
 // in ./core).
 // =====================================================================
 import { cardById, cardName, cardsOfKind } from "../cards";
+import { t } from "@/lib/game/i18n";
 import { moduleTradesOn } from "../flags";
 import type { GameState } from "../types";
 import {
@@ -167,7 +168,7 @@ export function moduleListedThisLeg(
  * must not move the module again either.
  *
  * Returns whether the state changed, which is what the React layer reads to
- * decide whether it owes the captain a re-render.
+ * decide whether it owes the captain a fresh render.
  */
 export function applyModuleTradeSide(
   state: GameState,
@@ -202,7 +203,11 @@ export function applyModuleTradeSide(
     state.modulesBought += 1;
     state.moduleFeesPaid += paid;
     logs.push(
-      `🤝 Module trade: paid ${paid} Gold to ${trade.sellerName} for ${name}.`,
+      t("🤝 Module trade: paid {paid} Gold to {trade.sellerName} for {name}.", {
+        paid,
+        "trade.sellerName": trade.sellerName,
+        name,
+      }),
     );
     // The pool is asked rather than the row trusted, so a board written by a
     // build that knew a module this one does not costs the captain their fee
@@ -213,7 +218,7 @@ export function applyModuleTradeSide(
     const card = cardById(trade.module);
     if (card !== null && card.kind === "module") {
       state.equippedModules.push(card);
-      // The bolt-on is the one door onto a hull that does not pass through
+      // Bolting a module on is the one door onto a hull that bypasses
       // equipModule (its slot guard must not stand between an agreed trade
       // and its settle), so it calls the same install accounting every
       // other landing site calls. Without it the card landed bare: the
@@ -222,9 +227,9 @@ export function applyModuleTradeSide(
       // negative bill that paid the captain every Resolve (see
       // installModuleAccounting in ./boons).
       installModuleAccounting(state, card);
-      logs.push(`🔧 ${name} is bolted to the hull.`);
+      logs.push(t("🔧 {name} is bolted to the hull.", { name }));
     } else {
-      logs.push(`❌ The yard has no ${name} to bolt on.`);
+      logs.push(t("❌ The yard has no {name} to bolt on.", { name }));
     }
   } else {
     // The automatic unequip the plan names, and it is found by position
@@ -236,7 +241,10 @@ export function applyModuleTradeSide(
       unequipModuleAccounting(state, state.equippedModules[at]);
       state.equippedModules = state.equippedModules.filter((_, i) => i !== at);
       logs.push(
-        `🔧 ${name} leaves your hull for ${trade.buyerName ?? "a captain"}.`,
+        t("🔧 {name} leaves your hull for {buyerName}.", {
+          name,
+          buyerName: trade.buyerName ?? t("a captain"),
+        }),
       );
     }
     addOwnedAmount(state, "Gold", trade.fee);
@@ -245,7 +253,11 @@ export function applyModuleTradeSide(
     state.modulesTraded[trade.module] =
       (state.modulesTraded[trade.module] ?? 0) + 1;
     logs.push(
-      `🤝 Module trade: ${trade.buyerName ?? "A captain"} paid ${trade.fee} Gold for ${name}.`,
+      t("🤝 Module trade: {buyerName} paid {trade.fee} Gold for {name}.", {
+        buyerName: trade.buyerName ?? t("A captain"),
+        "trade.fee": trade.fee,
+        name,
+      }),
     );
   }
   markMovement(state, key);

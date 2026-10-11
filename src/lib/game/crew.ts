@@ -70,6 +70,7 @@ import {
   type GameState,
   type Worker,
 } from "./types";
+import { t } from "@/lib/game/i18n";
 
 // The longest a name read off a save may be, and the most losses a save may
 // claim. Both are bounds on input rather than content: names are drawn from
@@ -183,13 +184,32 @@ function loseNewest(state: GameState, logs: string[]): void {
   // own line: a rule that changed its number must not leave a sentence
   // behind telling the table something the rule no longer does.
   logs.push(
-    `⚰️ ${gone.name} the ${label} is lost after ${CREW_LOSS_AFTER_HUNGRY_LEGS} legs on short rations, and nothing brings them back.`,
+    t(
+      "⚰️ {gone.name} the {label} is lost after {CREW_LOSS_AFTER_HUNGRY_LEGS} legs on short rations, and nothing brings them back.",
+      {
+        // The hand's own name stays a value; the role and the task are
+        // content with rows of their own (crew.role.*, goods.*), read
+        // here so the sentence arrives whole.
+        "gone.name": gone.name,
+        label: t(label),
+        CREW_LOSS_AFTER_HUNGRY_LEGS,
+      },
+    ),
   );
   if (gone.task) {
-    logs.push(`  The ${gone.task} they were working is lost with them.`);
+    // The indent belongs to the log's own shape rather than to the
+    // sentence, so it stays outside the read.
+    logs.push(
+      "  " +
+        t("The {gone.task} they were working is lost with them.", {
+          "gone.task": t(gone.task),
+        }),
+    );
   }
   logs.push(
-    left === 0 ? "🌊 There is no one left aboard." : `🌊 ${left} still aboard.`,
+    left === 0
+      ? t("🌊 There is no one left aboard.")
+      : t("🌊 {left} still aboard.", { left }),
   );
 }
 

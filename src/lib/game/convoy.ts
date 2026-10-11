@@ -19,8 +19,11 @@
 // =====================================================================
 import {
   CONVOY_VENTURE_FAILURE_REFUND_RATE,
+  CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE,
   CONVOY_VENTURE_PAYOUT_MULTIPLIER,
 } from "./constants/world";
+import { parseJsonObject } from "./json";
+import { t, tFor, type Locale } from "@/lib/game/i18n";
 
 type VentureContribution = { name: string; amount: number };
 type VentureContributions = Record<string, VentureContribution>;
@@ -45,7 +48,7 @@ type VentureContributions = Record<string, VentureContribution>;
 export type VentureOutcome = "filled" | "failed" | "destroyed";
 
 // One contributor's share of however a venture ended, as the settlement
-// event carries it. The hook that relays that event re exports this rather
+// event carries it. The hook that relays that event exports this rather
 // than declaring its own copy: two identical declarations in two files
 // drift the moment either one is edited, and nothing would catch it.
 export type VentureSettlement = {
@@ -54,28 +57,22 @@ export type VentureSettlement = {
   amount: number;
 };
 
-// Deliberately defensive: this parses a JSON column written by this same
-// server, but a malformed or hand edited row should degrade to "nobody
-// contributed" rather than throw inside a socket handler every other
-// captain in the room is waiting on.
+// Deliberately defensive: a malformed or hand edited row should degrade
+// to "nobody contributed" rather than throw inside a socket handler every
+// other captain in the room is waiting on. The parse itself is the shared
+// one (see parseJsonObject in ./json); what follows is this column's own
+// field checks.
 export function parseVentureContributions(raw: string): VentureContributions {
-  try {
-    const parsed: unknown = JSON.parse(raw);
-    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
-      return {};
-    const out: VentureContributions = {};
-    for (const [userId, value] of Object.entries(
-      parsed as Record<string, unknown>,
-    )) {
-      if (!value || typeof value !== "object") continue;
-      const v = value as { name?: unknown; amount?: unknown };
-      if (typeof v.name !== "string" || typeof v.amount !== "number") continue;
-      out[userId] = { name: v.name, amount: v.amount };
-    }
-    return out;
-  } catch {
-    return {};
+  const parsed = parseJsonObject(raw);
+  if (!parsed) return {};
+  const out: VentureContributions = {};
+  for (const [userId, value] of Object.entries(parsed)) {
+    if (!value || typeof value !== "object") continue;
+    const v = value as { name?: unknown; amount?: unknown };
+    if (typeof v.name !== "string" || typeof v.amount !== "number") continue;
+    out[userId] = { name: v.name, amount: v.amount };
   }
+  return out;
 }
 
 export function ventureTotal(contributions: VentureContributions): number {
@@ -100,10 +97,26 @@ export function ventureTotal(contributions: VentureContributions): number {
 // which both prints free Gold and burns the room's one shared chance for
 // personal gain instead of the room's; requiring real headroom to remain
 // for someone else is what actually forces genuine multi captain
-// participation before a venture can ever fill. Rounded up (not down) so
-// two contributors splitting an odd targetGold in half still have exactly
-// enough combined room to reach it; rounding down would occasionally leave
-// a venture mathematically impossible to ever fill at all.
+// participation before a venture can ever fill.
+//
+// That cap is a Gold figure, and the same one is read in three places: the
+// accept decision below, the refusal the venture:contribute handler words
+// (src/server/realtime/wiring/ventures.ts), and the board that swaps a
+// captain's own form for a note once they reach it
+// (src/components/portmasters/game/status/ConvoyVentures.tsx). All three
+// call contributorShareCap, because a cap printed one Gold off from the
+// cap actually enforced is a button lit for an amount the server refuses.
+export function contributorShareCap(
+  targetGold: number,
+  maxContributorShare: number = CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE,
+): number {
+  // Rounded up (not down) so two contributors splitting an odd targetGold
+  // in half still have exactly enough combined room to reach it; rounding
+  // down would occasionally leave a venture mathematically impossible to
+  // ever fill at all.
+  return Math.ceil(targetGold * maxContributorShare);
+}
+
 export function computeAcceptedContribution(
   currentTotal: number,
   targetGold: number,
@@ -113,7 +126,10 @@ export function computeAcceptedContribution(
 ): number {
   const remainingInTarget = targetGold - currentTotal;
   if (remainingInTarget <= 0) return 0;
-  const maxPerContributor = Math.ceil(targetGold * maxContributorShare);
+  const maxPerContributor = contributorShareCap(
+    targetGold,
+    maxContributorShare,
+  );
   const remainingForContributor =
     maxPerContributor - contributorAlreadyContributed;
   if (remainingForContributor <= 0) return 0;
@@ -173,19 +189,47 @@ export function computeVentureDeadlineBounds(
 // above it is how a captain ends up reporting a button that was never going
 // to do anything.
 export function ventureAlreadySpentReason(): string {
-  return "This harbor has already used its one Venture for this voyage. It opens again on a fresh voyage or a restart.";
+  // One sentence, two seats: the captain's rail renders the return raw
+  // and the server hands it back as a refusal, so the read lives here
+  // rather than being wrapped twice.
+  return t(
+    "This harbor has already used its one Venture for this voyage. It opens again on a fresh voyage or a restart.",
+  );
 }
 
 // The room wide chat announcement for each outcome, kept alongside the
 // settlement math so the two can never quietly drift out of sync with each
 // other, the same reasoning WORD_ON_THE_DOCKS_REWARD and its own guide
 // copy are both derived from one constant rather than two separate numbers.
-export function ventureAnnouncementFor(outcome: VentureOutcome): string {
+//
+// Each arm is one row of the pack, read here; the paid reading names the
+// payout multiplier, which is the constant above rather than a number
+// written into the sentence.
+//
+// The read takes a language rather than reading this process's own,
+// because the announcement is a line the server sends: it goes to every
+// socket in the room (see settleVenture in src/server/realtime/ventures),
+// and one harbor can hold two languages, so the sentence is built once
+// per reader at the send.
+export function ventureAnnouncementFor(
+  locale: Locale,
+  outcome: VentureOutcome,
+): string {
   if (outcome === "filled") {
-    return `⚓ A Venture filled! Every contributor is paid their share, times ${CONVOY_VENTURE_PAYOUT_MULTIPLIER}x. This harbor's one Venture chance for this voyage has now been used.`;
+    return tFor(
+      locale,
+      "⚓ A Venture filled! Every contributor is paid their share, times {CONVOY_VENTURE_PAYOUT_MULTIPLIER}x. This harbor's one Venture chance for this voyage has now been used.",
+      { CONVOY_VENTURE_PAYOUT_MULTIPLIER },
+    );
   }
   if (outcome === "failed") {
-    return `⚓ A Venture missed its deadline. Every contributor gets back a partial refund.`;
+    return tFor(
+      locale,
+      "⚓ A Venture missed its deadline. Every contributor gets back a partial refund.",
+    );
   }
-  return `⚓ A Venture was canceled: another venture in the harbor already claimed this voyage's one chance. Every contributor gets back their full stake.`;
+  return tFor(
+    locale,
+    "⚓ A Venture was canceled: another venture in the harbor already claimed this voyage's one chance. Every contributor gets back their full stake.",
+  );
 }

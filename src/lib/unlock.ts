@@ -23,6 +23,13 @@
 // Nothing here reads a clock, a database or a socket.
 // =====================================================================
 import type { GameMode } from "./game/mode";
+// The harbor's line below is read at the moment it is built rather than
+// stored, so the rumor a captain is handed follows the language the log
+// it lands in prints in. The table above keeps its English values: a
+// label is read where it is rendered (the room card wraps its own read)
+// and the phrase is what a host types, which the normalizer below only
+// accepts in one form.
+import { t } from "./game/i18n";
 
 export type UnlockId = "second_ledger";
 
@@ -121,8 +128,14 @@ export function unlockForPhrase(value: unknown): UnlockId | null {
 // The count is read into the sentence rather than spelled out beside it,
 // so the number a captain is told and the number the rule waits for are
 // the same constant: a threshold that moved would move the words with it.
+// The phrase is read through the pack like a name rather than passed
+// raw, so the line names the door the way the guide and the room card
+// name it.
 export function unlockLineFor(voyagesCompleted: number): string | null {
   if (voyagesCompleted !== UNLOCK_EARNED_AT) return null;
   const unlock = UNLOCKS[UNLOCK_ORDER[0]];
-  return `The harbor keeps one door shut, and ${UNLOCK_EARNED_AT} completed voyages is what opens it: the phrase is ${unlock.phrase}, and the guide has the line for whoever asks.`;
+  return t(
+    "The harbor keeps one door shut, and {UNLOCK_EARNED_AT} completed voyages is what opens it: the phrase is {unlock.phrase}, and the guide has the line for whoever asks.",
+    { UNLOCK_EARNED_AT, "unlock.phrase": t(unlock.phrase) },
+  );
 }

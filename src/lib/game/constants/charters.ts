@@ -116,8 +116,8 @@ export const CHARTERS: readonly CardRecord[] = [
         desc: "Freight is 1 Gold cheaper per lot for the rest of the voyage.",
       },
       zh: {
-        name: "大宗契",
-        desc: "大批装运，本航程每批运费降低 1 金。",
+        name: "大宗特许",
+        desc: "大批装运，本航程每件运费降低1金币。",
       },
     },
   },
@@ -139,7 +139,7 @@ export const CHARTERS: readonly CardRecord[] = [
       },
       zh: {
         name: "常备舱单",
-        desc: "本航程每笔完成订单多付 15%。",
+        desc: "本航程每笔完成的订单多付 15%。",
       },
     },
   },
@@ -161,7 +161,7 @@ export const CHARTERS: readonly CardRecord[] = [
       },
       zh: {
         name: "火炮特许",
-        desc: "全船武装，本航程遭遇袭击的概率降低 30%。",
+        desc: "全船武装，本航程遭遇劫掠的概率降低 30%。",
       },
     },
   },
@@ -182,7 +182,7 @@ export const CHARTERS: readonly CardRecord[] = [
         desc: "A cutter keeps station. Escort contracts cost half, for the rest of the voyage.",
       },
       zh: {
-        name: "常驻护航",
+        name: "常备护航",
         desc: "快船随行，本航程护航合同费用减半。",
       },
     },
@@ -204,8 +204,8 @@ export const CHARTERS: readonly CardRecord[] = [
         desc: "The looms never stop. Each weaver produces 1 extra item every round, for the rest of the voyage.",
       },
       zh: {
-        name: "织工特许",
-        desc: "织机不停，本航程每位织工每轮多产出 1 件货物。",
+        name: "织女特许",
+        desc: "织机不停，本航程每位织女每轮多产出1件货物。",
       },
     },
   },
@@ -271,7 +271,7 @@ export const CHARTERS: readonly CardRecord[] = [
       },
       zh: {
         name: "静默账户",
-        desc: "费用预先结清，本航程港口费用减半。",
+        desc: "费用预先结清，本航程港务费减半。",
       },
     },
   },
@@ -297,8 +297,8 @@ export const CHARTERS: readonly CardRecord[] = [
         desc: "A factor keeps your books. Borrowing is open three times a voyage, and each borrow carries a 60% penalty.",
       },
       zh: {
-        name: "代理人",
-        desc: "账房有人打理，本航程可借款三次，每次扣除 60%。",
+        name: "管事",
+        desc: "有管事替你打理账目，本航程可借款三次，每笔附带60%的罚息。",
       },
     },
   },

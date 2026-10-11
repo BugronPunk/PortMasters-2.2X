@@ -18,6 +18,7 @@
 import type { GameState } from "@/lib/game/types";
 import type { PublicUser, RoomDetail } from "@/lib/api";
 import { cn, normalizeRoomName } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 import { ActionSuggester } from "../ActionSuggester";
 import { AgeBanner } from "../AgeBanner";
 import { Avatar, OnlineDot, Pill } from "../shared";
@@ -80,7 +81,7 @@ export function HarborTopBar({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="font-bold leading-tight truncate font-display">
-                {normalizeRoomName(room.name)}
+                {t(normalizeRoomName(room.name))}
               </h1>
               <Pill tone="sea" className="shrink-0">
                 <Users className="h-3 w-3" /> {memberCount}
@@ -102,7 +103,7 @@ export function HarborTopBar({
           </div>
           <Pill tone="gain" className="hidden sm:inline-flex">
             <OnlineDot online={connected && authed} size={8} />{" "}
-            {connected && authed ? "Live" : "Linking…"}
+            {connected && authed ? t("Live") : t("Linking…")}
           </Pill>
           <Button
             variant="ghost"
@@ -111,8 +112,15 @@ export function HarborTopBar({
             onClick={onToggleColorblind}
             title={
               colorblindSafe
-                ? "Colorblind safe palette on, click to use the default colors"
-                : "Use a colorblind safe palette for goods"
+                ? t(
+                    "Colorblind safe palette on, click to use the default colors",
+                  )
+                : t("Use a colorblind safe palette for goods")
+            }
+            aria-label={
+              colorblindSafe
+                ? t("Turn off the colorblind safe palette")
+                : t("Use the colorblind safe palette")
             }
           >
             <Palette className="h-4 w-4" />
@@ -124,11 +132,11 @@ export function HarborTopBar({
             onClick={onToggleSound}
             title={
               soundOn
-                ? "Harbor sounds on, click to mute"
-                : "Turn on harbor sounds and UI feedback"
+                ? t("Harbor sounds on, click to mute")
+                : t("Turn on harbor sounds and UI feedback")
             }
             aria-label={
-              soundOn ? "Mute harbor sounds" : "Turn on harbor sounds"
+              soundOn ? t("Mute harbor sounds") : t("Turn on harbor sounds")
             }
           >
             {soundOn ? (
@@ -142,8 +150,8 @@ export function HarborTopBar({
             size="sm"
             className="rounded-lg"
             onClick={onOpenSettings}
-            title="Settings"
-            aria-label="Open settings"
+            title={t("Settings")}
+            aria-label={t("Open settings")}
           >
             <Settings className="h-4 w-4" />
           </Button>
@@ -152,7 +160,12 @@ export function HarborTopBar({
             size="sm"
             className="rounded-lg relative"
             onClick={onToggleNotifications}
-            title="Notifications"
+            title={t("Notifications")}
+            aria-label={
+              unreadCount > 0
+                ? t("Notifications, {unreadCount} unread", { unreadCount })
+                : t("Notifications")
+            }
           >
             <Bell className="h-4 w-4" />
             {unreadCount > 0 && (
@@ -176,12 +189,12 @@ export function HarborTopBar({
               variant="ghost"
               size="sm"
               className="rounded-lg"
-              aria-label="Leave the harbor"
-              title="Leave the harbor"
+              aria-label={t("Leave the harbor")}
+              title={t("Leave the harbor")}
               onClick={onLeave}
             >
               <DoorOpen className="h-4 w-4 sm:mr-1.5" />
-              <span className="hidden sm:inline">Leave</span>
+              <span className="hidden sm:inline">{t("Leave")}</span>
             </Button>
           </div>
         </div>

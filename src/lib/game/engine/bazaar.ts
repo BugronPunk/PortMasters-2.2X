@@ -30,10 +30,12 @@
 // without opening a server, and the one switch this feature reads is
 // judged in ./flags where the epic keeps that policy.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import { COMMODITIES } from "../constants/goods";
 import {
   RUMOR_COOLDOWN_ROUNDS,
   RUMOR_SHIFT_FRACTION,
+  RUMOR_SHIFT_PERCENT,
 } from "../constants/paths";
 import { bazaarRumorsOn } from "../flags";
 import type { PathId } from "../paths";
@@ -208,7 +210,9 @@ export function rumorCanLand(round: number, voyageRounds: number): boolean {
  * wants the fleet to trust it.
  */
 export function rumorClosingLine(): string {
-  return "A rumor is priced by the port one leg after the leg it was spoken in, and this is the last leg of the voyage, so a rumor spoken here would move nothing.";
+  return t(
+    "A rumor is priced by the port one leg after the leg it was spoken in, and this is the last leg of the voyage, so a rumor spoken here would move nothing.",
+  );
 }
 
 /**
@@ -310,9 +314,15 @@ export function rumorWaitLine(
   const spoke = rumorSpokeIn(rows, userId);
   const next = rumorNextLeg(rows, userId);
   if (next > voyageRounds) {
-    return `The bazaar is quiet for you to the end of this voyage. You spoke in leg ${spoke}.`;
+    return t(
+      "The bazaar is quiet for you to the end of this voyage. You spoke in leg {spoke}.",
+      { spoke },
+    );
   }
-  return `${rumorCooldownLine(left)} You spoke in leg ${spoke}, so the bazaar hears you again at leg ${next}.`;
+  return t(
+    "{rumorWait} You spoke in leg {spoke}, so the bazaar hears you again at leg {next}.",
+    { rumorWait: rumorCooldownLine(left), spoke, next },
+  );
 }
 
 /**
@@ -352,10 +362,10 @@ export function rumorCooldownLeft(
  * enforces are the same number.
  */
 export function rumorCooldownLine(left: number): string {
-  if (left < 1) return "The bazaar will hear you again.";
+  if (left < 1) return t("The bazaar will hear you again.");
   return left === 1
-    ? "The bazaar is quiet for you for one more leg."
-    : `The bazaar is quiet for you for ${left} more legs.`;
+    ? t("The bazaar is quiet for you for one more leg.")
+    : t("The bazaar is quiet for you for {left} more legs.", { left });
 }
 
 /**
@@ -439,8 +449,14 @@ export function rumorLandedLine(
     card.resources.some((resource) => resource.type === row.good),
   );
   return drew
-    ? `The port of leg ${leg} drew ${row.good} and priced it against your rumor.`
-    : `The port of leg ${leg} drew no ${row.good}, so your rumor moved no price you could buy.`;
+    ? t(
+        "The port of leg {leg} drew {row.good} and priced it against your rumor.",
+        { leg, "row.good": t(row.good) },
+      )
+    : t(
+        "The port of leg {leg} drew no {row.good}, so your rumor moved no price you could buy.",
+        { leg, "row.good": t(row.good) },
+      );
 }
 
 /**
@@ -524,17 +540,23 @@ export function rumorLean(
  * A clause rather than a sentence, exactly as the Harbormaster's own call
  * is (see portShiftLine in ../maroon), and for the same reason: whoever
  * shows it frames it with the leg and the captain who spoke, and the
- * clause then reads the same in every frame. The percent is rounded for
- * the reason that clause gives, and it is read from the constant rather
- * than written as a number, so the sentence a captain reads and the
- * arithmetic the market runs cannot come apart.
+ * clause then reads the same in every frame. The percent is read from
+ * RUMOR_SHIFT_PERCENT, which is where its rounding is accounted for, so
+ * the sentence a captain reads and the arithmetic the market runs cannot
+ * come apart.
  */
 export function rumorDirectionLine(
   row: Pick<BazaarRumor, "good" | "direction">,
 ): string {
-  const percent = Math.round(RUMOR_SHIFT_FRACTION * 100);
-  const way = row.direction > 0 ? "higher" : "lower";
-  return `${row.good}: every price ${percent} percent ${way} at the next port`;
+  const percent = RUMOR_SHIFT_PERCENT;
+  // The direction word is captain facing inside the sentence below, so it
+  // is read here rather than handed over as a bare English value.
+  const way = row.direction > 0 ? t("higher") : t("lower");
+  return t("{row.good}: every price {percent} percent {way} at the next port", {
+    "row.good": t(row.good),
+    percent,
+    way,
+  });
 }
 
 /**

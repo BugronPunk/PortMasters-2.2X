@@ -4,10 +4,12 @@ import type { Socket } from "socket.io-client";
 import type { PublicUser } from "@/lib/api";
 import { useRoomRoster } from "@/lib/use-room-roster";
 import { Avatar } from "./shared";
-import { cn } from "@/lib/utils";
+import { cn, memberRowClass } from "@/lib/utils";
 import { Coins, Trophy, SkullIcon, Anchor, Utensils } from "lucide-react";
 import { seatMarks } from "@/lib/seatMarks";
 import { hungryPillLine, hungryTooltip } from "@/lib/game/status-copy";
+import { t } from "@/lib/game/i18n";
+import { phaseLabel } from "@/lib/game/engine";
 
 /**
  * [MANIFEST 18: Fleet Ticker] A glance at the whole harbor without opening
@@ -59,19 +61,17 @@ export function FleetTicker({
               key={m.id}
               className={cn(
                 "flex items-center gap-1.5 rounded-xl px-2 py-1 border shrink-0",
-                isMe
-                  ? "border-members/30 bg-members/[0.06]"
-                  : "border-black/5 dark:border-white/10 bg-background/40",
+                memberRowClass(isMe),
               )}
             >
               <Avatar hue={m.avatarHue} name={m.displayName} size={20} />
               <span className="text-[11px] font-medium max-w-[84px] truncate">
-                {isMe ? "You" : m.displayName}
+                {isMe ? t("You") : m.displayName}
               </span>
               {isMarooned && (
                 <span
                   className="flex items-center text-alarm"
-                  title="Put ashore by a vote of the harbor"
+                  title={t("Put ashore by a vote of the harbor")}
                 >
                   <Anchor className="h-3 w-3" />
                 </span>
@@ -79,12 +79,11 @@ export function FleetTicker({
               {/* [C1: the Larder and Short Rations] The hungry crew, in the
                   same red the roster uses and for the same reason: a
                   shortage is a status, and a status draws from the meaning
-                  half of the palette. [W3: the status convention] The mark
-                  used to be an icon whose sentence lived only in a title,
-                  which a touch screen never shows: it now carries the
-                  roster pill's own two clauses visibly, the state and the
-                  way back, with the full sentence in the title beside
-                  them. */}
+                  half of the palette. [W3: the status convention] It
+                  carries the roster pill's own two clauses visibly, the
+                  state and the way back, with the full sentence in the
+                  title beside them: a title alone never shows on a touch
+                  screen. */}
               {st?.shortRations && (
                 <span
                   className="flex items-center gap-1 text-[10px] text-alarm"
@@ -96,12 +95,20 @@ export function FleetTicker({
               )}
               {isBankrupt ? (
                 <span className="flex items-center gap-1 text-[10px] text-alarm">
-                  <SkullIcon className="h-3 w-3" /> Bankrupt
+                  <SkullIcon className="h-3 w-3" /> {t("Bankrupt")}
                 </span>
               ) : (
                 <>
                   <span className="text-[10px] text-muted-foreground truncate max-w-[96px]">
-                    {st ? st.phaseLabel : "loading…"}
+                    {/* The label each captain reads is derived from the
+                        frame's own phase and round, so a harbor speaking
+                        two languages reads two, not whoever reported last. */}
+                    {st
+                      ? phaseLabel({
+                          phase: st.phase,
+                          currentRound: st.round,
+                        })
+                      : t("loading…")}
                   </span>
                   <span className="flex items-center gap-0.5 text-[10px] text-gold-ink">
                     <Coins className="h-3 w-3" /> {st ? st.gold : "…"}

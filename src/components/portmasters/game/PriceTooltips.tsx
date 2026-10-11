@@ -5,6 +5,7 @@ import {
   type ExpectedPrice,
   type PriceBreakdown,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { GLOSSARY } from "@/lib/game/glossary";
 import { unlockedProducts, unlockedResources } from "@/lib/game/pools";
@@ -25,7 +26,7 @@ export function PriceBreakdownTooltip({
   return (
     <div className="space-y-0.5 min-w-[160px]">
       <div className="flex justify-between gap-3">
-        <span>Base</span>
+        <span>{t("Base")}</span>
         <span>{breakdown.base}g</span>
       </div>
       {breakdown.steps.map((s, i) => (
@@ -38,7 +39,7 @@ export function PriceBreakdownTooltip({
         </div>
       ))}
       <div className="flex justify-between gap-3 font-semibold border-t border-current/15 pt-0.5 mt-0.5">
-        <span>Final</span>
+        <span>{t("Final")}</span>
         <span>{breakdown.final}g</span>
       </div>
     </div>
@@ -49,8 +50,11 @@ export function ExpectedPriceTooltip({ price }: { price: ExpectedPrice }) {
   return (
     <div className="space-y-1 min-w-[170px]">
       <div className="font-semibold">
-        Typically {price.min} to {price.max} Gold{" "}
-        {price.isProduct ? "per item" : "per unit"}
+        {t("Typically {min} to {max} Gold {unit}", {
+          min: price.min,
+          max: price.max,
+          unit: price.isProduct ? t("per item") : t("per unit"),
+        })}
       </div>
       {price.modifiers.map((m, i) => (
         <div key={i} className="text-[11px]">
@@ -59,11 +63,11 @@ export function ExpectedPriceTooltip({ price }: { price: ExpectedPrice }) {
       ))}
       {!price.isProduct && (
         <div className="text-[11px] opacity-80">
-          ±1 Gold depending on the port
+          {t("±1 Gold depending on the port")}
         </div>
       )}
       <div className="text-[11px] opacity-70 pt-0.5 border-t border-current/15 mt-1">
-        Actual market cards this round can still vary
+        {t("Actual market cards this round can still vary")}
       </div>
     </div>
   );

@@ -16,12 +16,15 @@ import { db } from "@/lib/db";
 import {
   computeAcceptedContribution,
   computeVentureDeadlineBounds,
+  contributorShareCap,
   parseVentureContributions,
   ventureAlreadySpentReason,
   ventureTotal,
 } from "@/lib/game/convoy";
+import { tFor } from "@/lib/game/i18n";
 import { voyageRoundsFor } from "@/lib/game/mode";
 import { seated } from "../auth";
+import { sockets } from "../presence";
 import {
   broadcastVentures,
   destroyOtherOpenVentures,
@@ -52,7 +55,10 @@ export function wireVentures(io: Server, socket: Socket): void {
       const targetGold = Math.floor(Number(payload?.targetGold));
       const deadlineRound = Math.floor(Number(payload?.deadlineRound));
       if (!Number.isFinite(targetGold) || !Number.isFinite(deadlineRound)) {
-        socket.emit("venture:error", { roomId, error: "Invalid venture." });
+        socket.emit("venture:error", {
+          roomId,
+          error: tFor(s.locale, "Invalid venture."),
+        });
         return;
       }
       if (
@@ -61,7 +67,11 @@ export function wireVentures(io: Server, socket: Socket): void {
       ) {
         socket.emit("venture:error", {
           roomId,
-          error: `Target must be between ${CONVOY_VENTURE_MIN_TARGET} and ${CONVOY_VENTURE_MAX_TARGET} Gold.`,
+          error: tFor(
+            s.locale,
+            "Target must be between {CONVOY_VENTURE_MIN_TARGET} and {CONVOY_VENTURE_MAX_TARGET} Gold.",
+            { CONVOY_VENTURE_MIN_TARGET, CONVOY_VENTURE_MAX_TARGET },
+          ),
         });
         return;
       }
@@ -96,8 +106,10 @@ export function wireVentures(io: Server, socket: Socket): void {
       if (!bounds) {
         socket.emit("venture:error", {
           roomId,
-          error:
+          error: tFor(
+            s.locale,
             "Too late in the voyage to post a new Venture. There's no round left that would leave time to spend the reward.",
+          ),
         });
         return;
       }
@@ -105,7 +117,11 @@ export function wireVentures(io: Server, socket: Socket): void {
       if (deadlineRound < minRound || deadlineRound > maxRound) {
         socket.emit("venture:error", {
           roomId,
-          error: `Deadline must be between round ${minRound} and round ${maxRound}.`,
+          error: tFor(
+            s.locale,
+            "Deadline must be between round {minRound} and round {maxRound}.",
+            { minRound, maxRound },
+          ),
         });
         return;
       }
@@ -121,10 +137,23 @@ export function wireVentures(io: Server, socket: Socket): void {
         },
       });
       await broadcastVentures(io, roomId);
-      io.to(`room:${roomId}`).emit("room:system", {
-        roomId,
-        content: `${s.user.displayName} posted a Venture: ${targetGold} Gold needed by Round ${deadlineRound}.`,
-      });
+      // The posting goes to the whole room, so it goes to every socket
+      // still in the harbor, each in its captain's own language.
+      for (const [socketId, state] of sockets) {
+        if (state.roomId !== roomId) continue;
+        io.to(socketId).emit("room:system", {
+          roomId,
+          content: tFor(
+            state.locale,
+            "{s.user.displayName} posted a Venture: {targetGold} Gold needed by Round {deadlineRound}.",
+            {
+              "s.user.displayName": s.user.displayName,
+              targetGold,
+              deadlineRound,
+            },
+          ),
+        });
+      }
     },
   );
 
@@ -143,7 +172,7 @@ export function wireVentures(io: Server, socket: Socket): void {
       if (!ventureId || !Number.isFinite(amount) || amount <= 0) {
         socket.emit("venture:error", {
           roomId,
-          error: "Invalid contribution.",
+          error: tFor(s.locale, "Invalid contribution."),
         });
         return;
       }
@@ -153,7 +182,7 @@ export function wireVentures(io: Server, socket: Socket): void {
       if (!venture || venture.roomId !== roomId || venture.status !== "open") {
         socket.emit("venture:error", {
           roomId,
-          error: "That venture is no longer open.",
+          error: tFor(s.locale, "That venture is no longer open."),
         });
         return;
       }
@@ -171,7 +200,7 @@ export function wireVentures(io: Server, socket: Socket): void {
       if (room && room.currentRound > venture.deadlineRound) {
         socket.emit("venture:error", {
           roomId,
-          error: "That venture's deadline has already passed.",
+          error: tFor(s.locale, "That venture's deadline has already passed."),
         });
         return;
       }
@@ -188,15 +217,15 @@ export function wireVentures(io: Server, socket: Socket): void {
       if (accepted <= 0) {
         const atOwnShareCap =
           currentTotal < venture.targetGold &&
-          (existing?.amount ?? 0) >=
-            Math.ceil(
-              venture.targetGold * CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE,
-            );
+          (existing?.amount ?? 0) >= contributorShareCap(venture.targetGold);
         socket.emit("venture:error", {
           roomId,
           error: atOwnShareCap
-            ? "You've already backed this venture as much as any single captain can. It needs another captain to fund the rest."
-            : "That venture is already fully funded.",
+            ? tFor(
+                s.locale,
+                "You've already backed this venture as much as any single captain can. It needs another captain to fund the rest.",
+              )
+            : tFor(s.locale, "That venture is already fully funded."),
         });
         return;
       }

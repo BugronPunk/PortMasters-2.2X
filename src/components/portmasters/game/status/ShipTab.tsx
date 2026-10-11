@@ -3,6 +3,7 @@
 import { cardText } from "@/lib/game/cards";
 import type { CardRecord } from "@/lib/game/constants/cards";
 import { SHIP_DISCOUNT_PER_LEVEL } from "@/lib/game/constants/ships";
+import { t } from "@/lib/game/i18n";
 import { Term } from "../../Term";
 import { Row } from "./Rows";
 
@@ -21,24 +22,27 @@ export function ShipTab({
   const discount = shipLevel * SHIP_DISCOUNT_PER_LEVEL;
   return (
     <>
-      <Row label={<Term term="Ship Level">Class</Term>}>
-        <b>Level {shipLevel}</b>
+      {/* The glossary key stays the English term (see Term), and the two
+          labels a captain reads are read here. */}
+      <Row label={<Term term="Ship Level">{t("Class")}</Term>}>
+        <b>{t("Level {n}", { n: shipLevel })}</b>
       </Row>
-      <Row label={<Term term="Freight">Freight</Term>}>
+      <Row label={<Term term="Freight">{t("Freight")}</Term>}>
         <span className="text-[10px] text-muted-foreground">
-          max(5, n×2 minus {discount})
+          {t("max(5, n×2 minus {discount})", { discount })}
         </span>
       </Row>
-      <Row label="Modules">
+      <Row label={t("Modules")}>
         <b>
           {modules.length} of {shipLevel}{" "}
-          {shipLevel === 1 ? "module slot" : "module slots"}
+          {shipLevel === 1 ? t("module slot") : t("module slots")}
         </b>
       </Row>
       {modules.length === 0 ? (
         <p className="pt-1 text-[10px] text-muted-foreground">
-          No modules installed. Upgrade the ship in the Shipyard to unlock
-          slots.
+          {t(
+            "No modules installed. Upgrade the ship in the Shipyard to unlock slots.",
+          )}
         </p>
       ) : (
         modules.map((card) => {

@@ -10,6 +10,7 @@ import {
   ModalOverlay,
 } from "@/components/ui/modal-overlay";
 import type { Age, AgeId } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 
 /**
@@ -60,12 +61,19 @@ const AGE_VISUALS: Record<AgeId, AgeVisual> = {
 // are rounded, so the coarseness never shows at the scale anyone reads it.
 function remainingLabel(until: Date): string {
   const ms = until.getTime() - Date.now();
-  if (ms <= 0) return "handing over now";
+  if (ms <= 0) return t("handing over now");
   const hours = Math.floor(ms / 3_600_000);
-  if (hours < 1) return "under an hour remaining";
-  if (hours < 48) return `${hours} ${hours === 1 ? "hour" : "hours"} remaining`;
+  if (hours < 1) return t("under an hour remaining");
+  if (hours < 48) {
+    return t("{hours} {hourWord} remaining", {
+      hours,
+      hourWord: hours === 1 ? "hour" : "hours",
+    });
+  }
   // Two days or more, so the plural is the only form this can take.
-  return `${Math.round(ms / 86_400_000)} days remaining`;
+  return t("{daysLeft} days remaining", {
+    daysLeft: Math.round(ms / 86_400_000),
+  });
 }
 
 export function AgeBanner({
@@ -95,14 +103,14 @@ export function AgeBanner({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <h3 className={cn("font-display text-sm font-bold", visual.ink)}>
-                {age.name}
+                {t(age.name)}
               </h3>
               <span className="text-[10px] text-muted-foreground">
                 {remainingLabel(nextChange)}
               </span>
             </div>
             <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-              {age.description}
+              {t(age.description)}
             </p>
           </div>
         </div>
@@ -119,13 +127,21 @@ export function AgeBanner({
           visual.gradient,
           className,
         )}
-        title={`${age.name}. ${age.description}`}
-        aria-label={`Current age: ${age.name}. Click for details.`}
+        title={t("{age.name}. {age.description}", {
+          "age.name": t(age.name),
+          "age.description": t(age.description),
+        })}
+        aria-label={t("Current age: {age.name}. Click for details.", {
+          "age.name": t(age.name),
+        })}
       >
         <Sparkles className="h-3 w-3" />
-        <span className="hidden sm:inline">{age.name}</span>
+        <span className="hidden sm:inline">{t(age.name)}</span>
+        {/* Below sm there is no room for the full Age name, so the pill
+            prints the age's own short word, read through the pack like
+            the long form beside it. */}
         <span className="sm:hidden">
-          {age.id.charAt(0).toUpperCase() + age.id.slice(1)}
+          {t(age.id.charAt(0).toUpperCase() + age.id.slice(1))}
         </span>
       </button>
       <AnimatePresence>
@@ -152,7 +168,10 @@ function AgeDetailDialog({
 }) {
   const Icon = visual.icon;
   return (
-    <ModalOverlay onClose={onClose}>
+    <ModalOverlay
+      label={t("Age details: {name}", { name: t(age.name) })}
+      onClose={onClose}
+    >
       <ModalCard>
         <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center gap-3">
@@ -166,25 +185,23 @@ function AgeDetailDialog({
             </div>
             <div>
               <h2 className={cn("font-display text-lg font-bold", visual.ink)}>
-                {age.name}
+                {t(age.name)}
               </h2>
               <p className="text-[11px] text-muted-foreground">
-                The harbor leans this way for a fortnight
+                {t("The harbor leans this way for a fortnight")}
               </p>
             </div>
           </div>
-          <ModalClose label="Close age details" onClick={onClose} />
+          <ModalClose label={t("Close age details")} onClick={onClose} />
         </div>
         <p className="text-sm leading-relaxed text-foreground">
-          {age.description}
+          {t(age.description)}
         </p>
         <div className="mt-4 rounded-xl bg-black/5 p-3 dark:bg-white/5">
           <p className="text-xs text-muted-foreground">
-            Every captain in every harbor shares the same Age at the same
-            moment. The rotation cycles through the Lender, the Trader, and the
-            Broker every two weeks, then repeats. An Age only shifts the weight
-            of one already legal action, never the rules, which keeps a voyage
-            that began under one Age from unbalancing when the next takes over.
+            {t(
+              "Every captain in every harbor shares the same Age at the same moment. The rotation cycles through the Lender, the Trader, and the Broker every two weeks, then repeats. An Age only shifts the weight of one already legal action, never the rules, which keeps a voyage that began under one Age from unbalancing when the next takes over.",
+            )}
           </p>
         </div>
       </ModalCard>

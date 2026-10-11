@@ -7,6 +7,8 @@ import { Search, X } from "lucide-react";
 import type { GameState } from "@/lib/game/types";
 import type { BarterOffer } from "@/lib/use-barter";
 import { toast } from "sonner";
+import { MUTED_NOTICE } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
 import type { Barter } from "./game/phases/PhaseShared";
 import { MessageList, type StreamItem } from "./chat/MessageList";
 import { Composer } from "./chat/Composer";
@@ -142,7 +144,7 @@ export function ChatPanel({
   // Seed with initial messages if they change (e.g. switching DM target, or
   // the parent's history fetch resolving after this already mounted). Done as
   // a render time adjustment rather than in an effect: React throws away the
-  // in progress render and immediately re renders with the new state, instead
+  // render in progress, then immediately renders again with the new state, instead
   // of committing one pass and then cascading a second one, which is what an
   // effect calling setState synchronously does (react-hooks/set-state-in-effect).
   // The trigger is the conversation identity and the incoming history: a
@@ -162,7 +164,7 @@ export function ChatPanel({
     if (!socket) return;
     // Dedupe against the list itself rather than a separate ref of seen ids.
     // Returning `prev` untouched for a message already present means React
-    // bails out on the identical reference, so a duplicate costs no re render,
+    // bails out on the identical reference, so a duplicate costs no extra render,
     // and there is no parallel bookkeeping to keep in sync when the seeded
     // history changes underneath it.
     const onRoom = (data: { roomId: string; message: ChatMessage }) => {
@@ -224,8 +226,8 @@ export function ChatPanel({
     // like a message that vanished for no reason.
     const onMuted = (data: { roomId: string }) => {
       if (mode !== "room" || data.roomId !== roomId) return;
-      toast.error("You're muted", {
-        description: "The host has muted you in room chat this voyage.",
+      toast.error(t("You're muted"), {
+        description: t(MUTED_NOTICE),
       });
     };
     socket.on("chat:room", onRoom);
@@ -245,7 +247,7 @@ export function ChatPanel({
   // Auto scroll to bottom on new messages and on a change in how many
   // offers the board holds. The count is tracked rather than the array so
   // that this only runs when the stream actually grew: depending on the
-  // board's own identity would re scroll on every broadcast and yank a
+  // board's own identity would scroll again on every broadcast and yank a
   // captain back down while they were reading further up.
   useEffect(() => {
     const el = scrollRef.current;
@@ -273,9 +275,9 @@ export function ChatPanel({
   }
 
   const emptyText = {
-    lobby: "Nothing on the harbor square yet. Say hello to the fleet.",
-    room: "No messages yet. Break the ice with your fellow captains.",
-    dm: "No messages yet between you two.",
+    lobby: t("Nothing on the harbor square yet. Say hello to the fleet."),
+    room: t("No messages yet. Break the ice with your fellow captains."),
+    dm: t("No messages yet between you two."),
   }[mode];
 
   // A private thread trades with the captain it is with, so the composer
@@ -291,13 +293,13 @@ export function ChatPanel({
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search messages…"
+            placeholder={t("Search messages…")}
             className="h-7 flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
             autoFocus
           />
           {searchQuery && (
             <span className="text-[10px] text-muted-foreground">
-              {filteredMessages.length} found
+              {t("{count} found", { count: filteredMessages.length })}
             </span>
           )}
           <button
@@ -306,7 +308,7 @@ export function ChatPanel({
               setSearchQuery("");
             }}
             className="pm-pressable rounded-full p-1 hover:bg-black/5 dark:hover:bg-white/10"
-            aria-label="Close search"
+            aria-label={t("Close search")}
           >
             <X className="h-3.5 w-3.5 text-muted-foreground" />
           </button>

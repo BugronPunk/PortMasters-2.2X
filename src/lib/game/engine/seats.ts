@@ -33,6 +33,7 @@ import { ITEMS } from "../constants/goods";
 import { modeConfig } from "../mode";
 import { maroonKeptGold } from "../maroon";
 import type { GameState } from "../types";
+import { t } from "@/lib/game/i18n";
 import { unequipModuleAccounting } from "./boons";
 
 /**
@@ -55,7 +56,9 @@ export function failSeat(state: GameState, logs: string[]): void {
   // bankruptcy rather than as the same mark being held against them.
   if (!state.bankrupt) {
     logs.push(
-      "🏴 Bankrupt: the harbor marks it against this captain's name for the rest of the voyage.",
+      t(
+        "🏴 Bankrupt: the harbor marks it against this captain's name for the rest of the voyage.",
+      ),
     );
   }
   state.bankrupt = true;
@@ -97,11 +100,16 @@ export function maroonSeat(state: GameState, logs: string[]): void {
   state.shipLevel = 0;
   for (const item of ITEMS) state.inventory[item] = 0;
   state.marooned = true;
-  logs.push("🏝️ The harbor has voted to maroon this captain.");
+  logs.push(t("🏝️ The harbor has voted to maroon this captain."));
   logs.push(
-    `⚖️ The ship and its hold are forfeit. The harbor takes ${taken} Gold and leaves ${kept} Gold aboard.`,
+    t(
+      "⚖️ The ship and its hold are forfeit. The harbor takes {taken} Gold and leaves {kept} Gold aboard.",
+      { taken, kept },
+    ),
   );
   logs.push(
-    "🧭 The Harbormaster's hand: once a leg, one port's prices answer to this captain.",
+    t(
+      "🧭 The Harbormaster's hand: once a leg, one port's prices answer to this captain.",
+    ),
   );
 }

@@ -45,6 +45,7 @@
 // of what already happened and the ledger of movements already applied,
 // both of which are records rather than agreements.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import { CONVOY_RAID_COVERAGE } from "../constants/paths";
 import { escortContractsOn } from "../flags";
 import type { PathId } from "../paths";
@@ -264,7 +265,7 @@ export function resetEscortLeg(state: GameState): void {
  * "id:fee" or "id:claim" and a second call with the same key does nothing.
  *
  * Returns whether the state changed, which is what the React layer uses to
- * decide whether it owes the captain a re-render rather than to read the
+ * decide whether it owes the captain a fresh render rather than to read the
  * ledger itself.
  */
 export function applyEscortSide(
@@ -295,14 +296,23 @@ export function applyEscortSide(
       state.escortBought += 1;
       state.escortFeesPaid += paid;
       logs.push(
-        `🤝 Escort contract: paid ${paid} Gold to ${contract.sellerName} for one leg of protection.`,
+        t(
+          "🤝 Escort contract: paid {paid} Gold to {contract.sellerName} for one leg of protection.",
+          { paid, "contract.sellerName": contract.sellerName },
+        ),
       );
     } else {
       addOwnedAmount(state, "Gold", contract.fee);
       state.escortSold += 1;
       state.escortFeesEarned += contract.fee;
       logs.push(
-        `🤝 Escort contract: ${contract.buyerName ?? "A captain"} paid ${contract.fee} Gold for one leg of protection.`,
+        t(
+          "🤝 Escort contract: {buyerName} paid {contract.fee} Gold for one leg of protection.",
+          {
+            buyerName: contract.buyerName ?? t("A captain"),
+            "contract.fee": contract.fee,
+          },
+        ),
       );
     }
     markMovement(state, key);
@@ -322,11 +332,23 @@ export function applyEscortSide(
     addOwnedAmount(state, "Gold", -ate);
     state.escortClaims += 1;
     state.escortAbsorbed += ate;
-    const who = contract.buyerName ?? "a captain";
+    // The name travels as a value, but the fallback for a buyer the board
+    // no longer names is the harbor's own phrase, so it is read the way
+    // every panel reads it before handing it over.
+    const who = contract.buyerName ?? t("a captain");
     logs.push(
       ate > 0
-        ? `🛡️ Raiders meant for ${who} met your guns: your hold lost ${ate} Gold.`
-        : `🛡️ Raiders meant for ${who} met your guns and found your hold already bare.`,
+        ? t(
+            "🛡️ Raiders meant for {who} met your guns: your hold lost {ate} Gold.",
+            {
+              who,
+              ate,
+            },
+          )
+        : t(
+            "🛡️ Raiders meant for {who} met your guns and found your hold already bare.",
+            { who },
+          ),
     );
     markMovement(state, key);
     return true;

@@ -4,9 +4,22 @@ import { motion } from "framer-motion";
 import type { ChatMessage, PublicUser } from "@/lib/api";
 import type { BarterOffer } from "@/lib/use-barter";
 import { formatTime } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 import { OfferCard } from "../game/BarterTrade";
 import type { ChatTrade } from "../ChatPanel";
 import { MessageRow } from "./MessageRow";
+
+// A value on its way into an HTML read, with the characters that would
+// otherwise be read as markup escaped. The search notice below goes to the
+// browser as HTML so its quotation entities decode the way JSX decoded
+// them before, and the query inside it is a captain's own typing: escaped,
+// it lands on the screen exactly as it was typed, in either language.
+function escapeForHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
 
 // A message and an offer share one timeline, so both are carried in one
 // item shape. The timestamps are ISO 8601 in the same format, which is what
@@ -42,10 +55,21 @@ export function MessageList({
   // One notice, two reasons to draw it: an empty channel and a search that
   // matched nothing are the same empty box with a different sentence in
   // it, so the sentence is chosen here and the box is drawn once below.
+  //
+  // The search row carries its quotation marks as HTML entities, the way
+  // the JSX spelled them before the pack carried the sentence, so it is
+  // read as HTML and the browser decodes them back to the marks the source
+  // used to print.
   const notice = !hasContent ? (
     emptyText
   ) : stream.length === 0 ? (
-    <>No messages match &ldquo;{searchQuery}&rdquo;.</>
+    <span
+      dangerouslySetInnerHTML={{
+        __html: t("No messages match &ldquo;{searchQuery}&rdquo;.", {
+          searchQuery: escapeForHtml(searchQuery),
+        }),
+      }}
+    />
   ) : null;
 
   return (

@@ -23,6 +23,8 @@ import { motion } from "framer-motion";
 import { api } from "@/lib/api";
 import { Anchor, Ship, Waves } from "lucide-react";
 import { APP_NAME } from "@/lib/game/constants/brand";
+import { t } from "@/lib/game/i18n";
+import { useLanguage } from "@/lib/use-language-preference";
 import { DISPLAY_NAME_MAX } from "@/lib/credentials";
 import {
   CHOSEN_NAME,
@@ -137,14 +139,17 @@ function HarborHeader() {
       {/* A tagline, not a second title: the screen prints one name for
           the game, and this line is only the sentence under it. */}
       <p className="mt-1.5 flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Waves className="h-3.5 w-3.5" /> Maritime trade on the ancient Silk
-        Road
+        <Waves className="h-3.5 w-3.5" />{" "}
+        {t("Maritime trade on the ancient Silk Road")}
       </p>
     </div>
   );
 }
 
 export function AuthScreen({ onAuthed, notice, onDismissNotice }: DoorProps) {
+  // This screen stands outside the harbor and the lobby, so it subscribes
+  // to the captain's language itself: the pick has to redraw these words.
+  useLanguage();
   return (
     <CredentialCard
       fields={{ login: SIGN_IN_FIELDS, register: REGISTER_FIELDS }}
@@ -165,7 +170,7 @@ export function AuthScreen({ onAuthed, notice, onDismissNotice }: DoorProps) {
               displayName: values.displayName.trim() || undefined,
             })
       }
-      labels={{ login: "Set Sail", register: "Hoist the Colors" }}
+      labels={{ login: t("Set Sail"), register: t("Hoist the Colors") }}
       icons={{
         login: <Ship className="mr-2 h-4 w-4" />,
         register: <Anchor className="mr-2 h-4 w-4" />,
@@ -173,8 +178,9 @@ export function AuthScreen({ onAuthed, notice, onDismissNotice }: DoorProps) {
       accent="pm-grad-brand shadow-brand/20"
       footer={
         <>
-          Open this page in another browser to register a second captain and see
-          them appear online in real time.
+          {t(
+            "Open this page in another browser to register a second captain and see them appear online in real time.",
+          )}
         </>
       }
     />

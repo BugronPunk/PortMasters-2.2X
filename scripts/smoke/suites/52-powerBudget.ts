@@ -1199,11 +1199,17 @@ export async function powerBudgetSuite(): Promise<void> {
     sourceOf("src/components/portmasters/game/ModuleMarket.tsx"),
   ].map(flat);
   const marketSentence =
-    "Taking it would put your hull at ${powerAfterTaking(game, card)} power, and a hull carries at most ${HELD_POWER_CAP}.";
+    "Taking it would put your hull at {newPower} power, and a hull carries at most {HELD_POWER_CAP}.";
+  // The sentence travels through the reader, so the binding is asserted
+  // beside it: the two values the words are handed are the reader and the
+  // constant, which is the claim this check was written for.
+  const marketBinding =
+    "{ newPower: powerAfterTaking(game, card), HELD_POWER_CAP }";
   const swapSentence = "carries at most {HELD_POWER_CAP}";
   check(
     panels.every((text) => text.includes("HELD_POWER_CAP")) &&
       panels[2].includes(marketSentence) &&
+      panels[2].includes(marketBinding) &&
       panels[1].includes(swapSentence) &&
       panels[0].includes("Selling one at the Parley table makes room.") &&
       !CARRIES_A_DASH.test(marketSentence) &&

@@ -11,6 +11,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cardText } from "@/lib/game/cards";
 import type { Difficulty } from "@/lib/game/difficulty";
+import { t } from "@/lib/game/i18n";
 import {
   unlockedProducts,
   unlockedResources,
@@ -86,7 +87,7 @@ function CargoRow({
     <div className="flex items-center text-[12px] py-0.5">
       <ItemIcon item={item} className="mr-1.5 h-3.5 w-3.5" />
       <span className="flex-1" style={{ color }}>
-        {item}
+        {t(item)}
       </span>
       <b style={{ color }}>{count}</b>
     </div>
@@ -174,10 +175,10 @@ export function PlayerDetailModal({
               )}
               <div>
                 <DialogTitle className="flex items-center gap-2 text-base">
-                  {player?.displayName ?? "Captain"}
+                  {player?.displayName ?? t("Captain")}
                   {isMe && (
                     <span className="text-xs text-muted-foreground font-normal">
-                      (you)
+                      {t("(you)")}
                     </span>
                   )}
                 </DialogTitle>
@@ -188,24 +189,24 @@ export function PlayerDetailModal({
                         currentRound: detail.round,
                       })
                     : loading
-                      ? "Loading…"
-                      : "Unavailable"}
+                      ? t("Loading…")
+                      : t("Unavailable")}
                 </div>
               </div>
             </div>
             {detail?.phase === "bankruptcy" && (
               <Pill tone="alarm" className="shrink-0">
-                💥 Bankrupt, spectating
+                {t("💥 Bankrupt, spectating")}
               </Pill>
             )}
             {detail?.phase === "endgame" && (
               <Pill tone="gain" className="shrink-0">
-                🏁 Voyage complete
+                {t("🏁 Voyage complete")}
               </Pill>
             )}
           </div>
           <DialogDescription className="sr-only">
-            Detailed voyage status
+            {t("Detailed voyage status")}
           </DialogDescription>
         </DialogHeader>
 
@@ -213,11 +214,11 @@ export function PlayerDetailModal({
           <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm py-10">
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Asking the harbor
-                master…
+                <Loader2 className="h-4 w-4 animate-spin" />{" "}
+                {t("Asking the harbor master…")}
               </>
             ) : (
-              "Not available right now, they may have stepped away."
+              t("Not available right now, they may have stepped away.")
             )}
           </div>
         ) : (
@@ -226,19 +227,19 @@ export function PlayerDetailModal({
               <ProfileStatTile
                 icon={<Coins className="h-3.5 w-3.5" />}
                 value={detail.money}
-                label="Gold"
+                label={t("Gold")}
                 toneClassName="text-gold-ink"
               />
               <ProfileStatTile
                 icon={<Trophy className="h-3.5 w-3.5" />}
                 value={detail.score}
-                label="Reputation"
+                label={t("Reputation")}
                 toneClassName="text-favor"
               />
               <ProfileStatTile
                 icon={<Ship className="h-3.5 w-3.5" />}
                 value={detail.shipLevel}
-                label="Ship Level"
+                label={t("Ship Level")}
                 toneClassName="text-sea"
               />
             </div>
@@ -261,8 +262,8 @@ export function PlayerDetailModal({
             <FoldRow
               tone="profile"
               icon="🗂️"
-              title="The Ship's Books"
-              gist="Cargo, artisans, equipped modules and the recent log."
+              title={t("The Ship's Books")}
+              gist={t("Cargo, artisans, equipped modules and the recent log.")}
               open={refOpen}
               onToggle={() => setRefOpen((v) => !v)}
             >
@@ -270,12 +271,12 @@ export function PlayerDetailModal({
                 <div className="space-y-3.5">
                   <div className="rounded-xl border border-profile/15 bg-profile/[0.03] p-3.5">
                     <h4 className="text-xs font-semibold text-muted-foreground mb-2">
-                      📦 Cargo
+                      {t("📦 Cargo")}
                     </h4>
                     <div className="grid grid-cols-2 gap-x-4">
                       <div>
                         <div className="text-[10px] font-medium text-muted-foreground mb-1">
-                          Raw Materials
+                          {t("Raw Materials")}
                         </div>
                         {unlockedResources(difficulty, detail.round).map(
                           (r) => (
@@ -290,7 +291,7 @@ export function PlayerDetailModal({
                       </div>
                       <div>
                         <div className="text-[10px] font-medium text-muted-foreground mb-1">
-                          Finished Goods
+                          {t("Finished Goods")}
                         </div>
                         {unlockedProducts(difficulty, detail.round).map((r) => (
                           <CargoRow
@@ -306,7 +307,7 @@ export function PlayerDetailModal({
 
                   <div className="rounded-xl border border-black/10 dark:border-white/10 p-3.5">
                     <h4 className="text-xs font-semibold text-muted-foreground mb-2">
-                      👥 Workers
+                      {t("👥 Workers")}
                     </h4>
                     {/* The star the idle rows carry, defined where it
                         appears for the same reason the bench carries the
@@ -317,12 +318,12 @@ export function PlayerDetailModal({
                       g.list.some((w) => w.isSkilled),
                     ) && (
                       <p className="mb-2 text-[11px] text-muted-foreground">
-                        {SKILLED_LEGEND}
+                        {t(SKILLED_LEGEND)}
                       </p>
                     )}
                     {workerGroups.every((g) => g.list.length === 0) ? (
                       <p className="text-xs text-muted-foreground">
-                        No artisans hired yet.
+                        {t("No artisans hired yet.")}
                       </p>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -331,7 +332,11 @@ export function PlayerDetailModal({
                           .map((g) => (
                             <div key={g.name}>
                               <div className="text-[11px] font-semibold mb-1">
-                                {g.icon} {g.name} ({g.list.length})
+                                {t("{icon} {name} ({count})", {
+                                  icon: g.icon,
+                                  name: g.name,
+                                  count: g.list.length,
+                                })}
                               </div>
                               {g.list.map((w, i) => (
                                 <div
@@ -351,11 +356,11 @@ export function PlayerDetailModal({
                 <div className="space-y-3.5">
                   <div className="rounded-xl border border-black/10 dark:border-white/10 p-3.5">
                     <h4 className="text-xs font-semibold text-muted-foreground mb-2">
-                      🔧 Equipped Modules
+                      {t("🔧 Equipped Modules")}
                     </h4>
                     {detail.equippedModules.length === 0 ? (
                       <p className="text-xs text-muted-foreground">
-                        No modules installed.
+                        {t("No modules installed.")}
                       </p>
                     ) : (
                       <div className="space-y-1">
@@ -374,12 +379,12 @@ export function PlayerDetailModal({
 
                   <div className="rounded-xl border border-black/10 dark:border-white/10 p-3.5">
                     <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5">
-                      <Eye className="h-3.5 w-3.5" /> Recent Log
+                      <Eye className="h-3.5 w-3.5" /> {t("Recent Log")}
                     </h4>
                     <ScrollArea className="h-40 pr-2">
                       {detail.logs.length === 0 ? (
                         <p className="text-xs text-muted-foreground italic">
-                          Nothing logged yet.
+                          {t("Nothing logged yet.")}
                         </p>
                       ) : (
                         <div className="space-y-0.5 font-mono text-[11px] leading-relaxed">
@@ -480,11 +485,11 @@ function ComparisonBar({
     <div className="rounded-xl border border-border/40 bg-black/[0.02] p-3.5 dark:bg-white/[0.02]">
       <div className="mb-2.5 flex items-center justify-between">
         <h4 className="text-xs font-semibold text-muted-foreground">
-          Captain Comparison
+          {t("Captain Comparison")}
         </h4>
         <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
-          <span>You</span>
-          <span>vs</span>
+          <span>{t("You")}</span>
+          <span>{t("vs")}</span>
           <span>{theirPlayer.displayName}</span>
         </div>
       </div>

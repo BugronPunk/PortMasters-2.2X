@@ -1,6 +1,6 @@
 "use client";
 
-import { wageBill } from "@/lib/game/engine";
+import { maintenanceDue, unlockedWorkerRoster } from "@/lib/game/engine";
 import { onShortRations } from "@/lib/game/larder";
 import { survivalLayerOn } from "@/lib/game/flags";
 import {
@@ -9,9 +9,9 @@ import {
   shortOfWarmth,
   warmthScore,
 } from "@/lib/game/garments";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import type { WorkerType } from "@/lib/game/constants/crew";
-import { unlockedWorkerTypes } from "@/lib/game/pools";
 import { useConvoy } from "@/lib/use-convoy";
 import { VoyageTimeline } from "./VoyageTimeline";
 import { GameLogPanel } from "./GameLogPanel";
@@ -48,8 +48,7 @@ export type RosterEntry = WorkerType & {
  * funds, reputation, and what is owed at round end) lead the column, and
  * everything else is a tab, so the ledger is a peer tab rather than a
  * footnote below the fold. Five sections stacked in one narrow column
- * (Captain's Log, Vessel Status, Cargo Hold, Outstanding Loans, Round End
- * Obligations) would be an unavoidably long vertical scroll in a rail
+ * (Captain's Log, Vessel Status, Cargo Hold, Outstanding Loans, Dues) would be an unavoidably long vertical scroll in a rail
  * roughly 260px wide, and the ledger, which a captain consults constantly,
  * would sit furthest from the eye.
  *
@@ -82,7 +81,9 @@ export function GameStatusPanel({
   myUserId?: string;
   colorFor?: (item: string) => string | undefined;
 }) {
-  const showObligations = ![0, 5, "endgame", "bankruptcy"].includes(game.phase);
+  const showObligations = !["harbor", "dawn", "endgame", "bankruptcy"].includes(
+    game.phase,
+  );
   // [C1: the Larder and Short Rations] Read once for the two decisions
   // below, since it is the same answer to both: whether the layer is
   // running decides whether the stat exists at all, and if it is running,
@@ -100,23 +101,15 @@ export function GameStatusPanel({
   const warmth = warmthScore(game);
   const shortWarmth = shortOfWarmth(game);
 
-  // Summed across the whole unlocked roster, not the three founding types,
-  // and priced off the engine's own bill (see wageBill) rather than a hand
-  // count multiplied here: the multiplication this replaces billed a Jade
-  // Pavilion captain one wage too many, which inflated the obligations
-  // figure this rail exists to show and could paint a solvent captain's
-  // rail in the alarm tone. A type outside the engine's roster is one
-  // payWages does not charge either, so a missing row reads as no wages
-  // due rather than as a second opinion about the same absence.
-  const payroll = new Map(wageBill(game).map((b) => [b.id, b]));
-  const roster = unlockedWorkerTypes(game.difficulty, game.currentRound).map(
-    (w) => {
-      const list = game.workers[w.id] ?? [];
-      return { ...w, list, due: payroll.get(w.id)?.due ?? 0 };
-    },
-  );
+  // The whole unlocked roster, not the three founding types, each type
+  // with its hands and the wage it is due: the join lives in the engine
+  // now (see unlockedWorkerRoster), so this rail and Worker Management
+  // cannot come to disagree about who owes what. The obligations figure
+  // below is summed from it, which is what keeps the alarm tone off a
+  // solvent captain's rail.
+  const roster = unlockedWorkerRoster(game);
   const pendWages = roster.reduce((sum, r) => sum + r.due, 0);
-  const pendMaint = game.fixedCost + game.maintenancePenalty;
+  const pendMaint = maintenanceDue(game);
   const pendTotal = pendWages + pendMaint;
   const safe = game.money >= pendTotal;
   const nW = roster.reduce((sum, r) => sum + r.list.length, 0);
@@ -152,25 +145,25 @@ export function GameStatusPanel({
         <TabsList className="grid w-full shrink-0 grid-cols-4">
           <TabsTrigger value="hold" className="text-[11px]">
             <Term term="Hold" focusable={false}>
-              Hold
+              {t("Hold")}
             </Term>
           </TabsTrigger>
           <TabsTrigger value="ship" className="text-[11px]">
-            Ship
+            {t("Ship")}
           </TabsTrigger>
           <TabsTrigger value="dues" className="text-[11px]">
             <Term term="Dues" focusable={false}>
-              Dues
+              {t("Dues")}
             </Term>
             {duesAlert && (
               <span
                 className="ml-1 inline-block h-1.5 w-1.5 rounded-full bg-alarm"
-                aria-label="attention needed"
+                aria-label={t("attention needed")}
               />
             )}
           </TabsTrigger>
           <TabsTrigger value="log" className="text-[11px]">
-            Ledger
+            {t("Ledger")}
           </TabsTrigger>
         </TabsList>
 

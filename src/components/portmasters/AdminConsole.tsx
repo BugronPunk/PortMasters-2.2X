@@ -74,8 +74,9 @@ import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { PublicUser } from "@/lib/api";
 import { NO_LONGER_AN_ADMINISTRATOR } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
 import { useRealtime } from "@/lib/use-realtime";
-import { useAdmin } from "@/lib/use-admin";
+import { READING_THE_REGISTER, useAdmin } from "@/lib/use-admin";
 import { Avatar, Notice, OnlineDot, Th } from "@/components/portmasters/shared";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -121,7 +122,7 @@ const CHECKBOX =
 // chip buttons with icons and words that alone held the widest column on
 // the register. Drawing those actions as quiet words took the floor down
 // to 817 and the threshold down with it, which is what let the table into
-// widths the chips never fit. The width probe re-measures this at every
+// widths the chips never fit. The width probe measures it again at every
 // pass: it draws the table at each size and reads the drag to the last
 // column, which must be zero. Below the threshold the register is a card
 // per account, which is the right shape for the widths the table cannot
@@ -135,7 +136,7 @@ const CHECKBOX =
 // `hidden @min-[52rem]:flex` and the card list is `@min-[52rem]:hidden`.
 
 // The register's header cells, held to the top of the frame that scrolls
-// under them. A see-through header cell would let the rows show through it
+// under them. A transparent header cell would let the rows show through it
 // as they pass beneath, so the cells wear the glass shell's own fill, read
 // from --pm-glass-fill, which .pm-glass publishes for each theme (see
 // globals.css). The dark value rides along with the property, so a theme
@@ -190,7 +191,7 @@ export function AdminConsole({
     useAdmin(
       socket,
       authed,
-      () => onLeave(NO_LONGER_AN_ADMINISTRATOR),
+      () => onLeave(t(NO_LONGER_AN_ADMINISTRATOR)),
       announceBulk,
     );
   // The account the deletion dialog is about, and what the operator has
@@ -353,23 +354,19 @@ export function AdminConsole({
               </div>
               <div className="min-w-0 flex-1">
                 <h1 className="font-display text-sm font-bold leading-tight tracking-tight">
-                  Operator Console
+                  {t("Operator Console")}
                 </h1>
                 <p className="text-[11px] leading-tight text-muted-foreground">
-                  {accounts === null ? (
-                    "Reading the register..."
-                  ) : (
-                    <>
-                      {accounts.length} accounts, {onlineCount} online
-                      {/* The release name is what a narrow bar drops first:
-                          the counts are the fact, the name is the flourish.
-                          The decision reads the column rather than the
-                          window, like every other width on this page. */}
-                      <span className="hidden @md:inline">
-                        , for {APP_NAME}
-                      </span>
-                    </>
-                  )}
+                  {accounts === null
+                    ? t(READING_THE_REGISTER)
+                    : t(
+                        "{accounts.length} accounts, {onlineCount} online, for {APP_NAME}",
+                        {
+                          "accounts.length": accounts.length,
+                          onlineCount,
+                          APP_NAME,
+                        },
+                      )}
                 </p>
               </div>
               {/* The console's one neighbour: the balance dashboard reads
@@ -379,25 +376,25 @@ export function AdminConsole({
               <a
                 href="/admin/balance"
                 className="pm-tool pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="The balance dashboard"
+                title={t("The balance dashboard")}
               >
                 <Gauge className="h-3.5 w-3.5" />
-                <span className="hidden @md:inline">Balance</span>
+                <span className="hidden @md:inline">{t("Balance")}</span>
               </a>
               <button
                 onClick={refresh}
                 className="pm-tool pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="Refresh the roster"
-                aria-label="Refresh the roster"
+                title={t("Refresh the roster")}
+                aria-label={t("Refresh the roster")}
               >
                 <RefreshCw className="h-3.5 w-3.5" />
-                <span className="hidden @md:inline">Refresh</span>
+                <span className="hidden @md:inline">{t("Refresh")}</span>
               </button>
               <button
                 onClick={onSignOut}
                 className="pm-tool pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="Sign out"
-                aria-label="Sign out"
+                title={t("Sign out")}
+                aria-label={t("Sign out")}
               >
                 <LogOut className="h-3.5 w-3.5" />
               </button>
@@ -430,8 +427,8 @@ export function AdminConsole({
                   onKeyDown={(e) => {
                     if (e.key === "Escape") setQuery("");
                   }}
-                  placeholder="Search name or handle"
-                  aria-label="Search accounts"
+                  placeholder={t("Search name or handle")}
+                  aria-label={t("Search accounts")}
                   autoComplete="off"
                   spellCheck={false}
                   className="h-10 rounded-xl border-black/10 bg-black/[0.04] pl-9 pr-8 text-xs dark:border-white/10 dark:bg-white/[0.06]"
@@ -439,8 +436,8 @@ export function AdminConsole({
                 {query !== "" && (
                   <button
                     onClick={() => setQuery("")}
-                    aria-label="Clear the search"
-                    title="Clear the search"
+                    aria-label={t("Clear the search")}
+                    title={t("Clear the search")}
                     className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground"
                   >
                     <X className="h-3.5 w-3.5" />
@@ -449,7 +446,7 @@ export function AdminConsole({
               </div>
               <div
                 role="group"
-                aria-label="Filter the register"
+                aria-label={t("Filter the register")}
                 className="flex flex-wrap items-center gap-1.5"
               >
                 {FILTER_ORDER.map((key) => (
@@ -463,7 +460,7 @@ export function AdminConsole({
                         : "bg-black/[0.05] text-muted-foreground hover:text-foreground dark:bg-white/10"
                     }`}
                   >
-                    {FILTERS[key].label}
+                    {t(FILTERS[key].label)}
                     <span className="tabular-nums opacity-70">
                       {counts[key]}
                     </span>
@@ -484,8 +481,10 @@ export function AdminConsole({
           {selected.length > 0 && (
             <div className="flex shrink-0 flex-wrap items-center gap-2 rounded-xl border border-black/[0.06] bg-black/[0.03] px-2 py-1.5 dark:border-white/[0.08] dark:bg-white/[0.05]">
               <span className="px-1 text-xs font-medium">
-                {selected.length}{" "}
-                {selected.length === 1 ? "account" : "accounts"} selected
+                {t("{selected.length} {accountWord} selected", {
+                  "selected.length": selected.length,
+                  accountWord: plural(selected.length),
+                })}
               </span>
               {/* The selection survives the action, so the same set of
                 accounts can be banned, corrected and banned again without
@@ -494,32 +493,32 @@ export function AdminConsole({
               <div className="ml-auto flex flex-wrap items-center gap-1.5">
                 <ConsoleButton
                   icon={<Ban className="h-3.5 w-3.5" />}
-                  label="Ban"
+                  label={t("Ban")}
                   disabled={busy}
                   onClick={() => bulk("ban", selected)}
                 />
                 <ConsoleButton
                   icon={<RotateCcw className="h-3.5 w-3.5" />}
-                  label="Unban"
+                  label={t("Unban")}
                   disabled={busy}
                   onClick={() => bulk("unban", selected)}
                 />
                 <ConsoleButton
                   icon={<ShieldCheck className="h-3.5 w-3.5" />}
-                  label="Grant admin"
+                  label={t("Grant admin")}
                   disabled={busy}
                   onClick={() => bulk("grant", selected)}
                 />
                 <ConsoleButton
                   icon={<Trash2 className="h-3.5 w-3.5" />}
-                  label="Delete"
+                  label={t("Delete")}
                   tone="danger"
                   disabled={busy}
                   onClick={openBulkPurge}
                 />
                 <ConsoleButton
                   icon={<X className="h-3.5 w-3.5" />}
-                  label="Clear"
+                  label={t("Clear")}
                   onClick={() => setTicked(new Set())}
                 />
               </div>
@@ -531,26 +530,26 @@ export function AdminConsole({
               <div className="flex flex-1 items-center justify-center px-4 py-12 text-center">
                 <p className="text-xs text-muted-foreground">
                   <Loader2 className="mx-auto mb-2 h-4 w-4 animate-spin" />
-                  Reading the register...
+                  {t(READING_THE_REGISTER)}
                 </p>
               </div>
             ) : accounts.length === 0 ? (
               <div className="flex flex-1 items-center justify-center px-4 py-12 text-center">
                 <p className="text-xs text-muted-foreground">
-                  There are no accounts to show.
+                  {t("There are no accounts to show.")}
                 </p>
               </div>
             ) : visible.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 py-12 text-center">
                 <p className="text-xs text-muted-foreground">
-                  No accounts match this view.
+                  {t("No accounts match this view.")}
                 </p>
                 <button
                   onClick={clearView}
                   className="pm-tool pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
                 >
                   <X className="h-3.5 w-3.5" />
-                  <span>Clear search and filters</span>
+                  <span>{t("Clear search and filters")}</span>
                 </button>
               </div>
             ) : (
@@ -589,21 +588,23 @@ export function AdminConsole({
                               checked={allVisibleSelected}
                               onChange={toggleAll}
                               disabled={visible.length === 0}
-                              aria-label="Select every account shown"
-                              title="Select every account shown"
+                              aria-label={t("Select every account shown")}
+                              title={t("Select every account shown")}
                               className={CHECKBOX}
                             />
                           </th>
-                          <Th className={STICKY}>Captain</Th>
+                          <Th className={STICKY}>{t("Captain")}</Th>
                           <Th className={`${STICKY} w-px whitespace-nowrap`}>
-                            Status
+                            {t("Status")}
                           </Th>
                           <Th className={`${STICKY} w-px text-right`}>
-                            Harbors
+                            {t("Harbors")}
                           </Th>
-                          <Th className={`${STICKY} w-px text-right`}>Seats</Th>
                           <Th className={`${STICKY} w-px text-right`}>
-                            Actions
+                            {t("Seats")}
+                          </Th>
+                          <Th className={`${STICKY} w-px text-right`}>
+                            {t("Actions")}
                           </Th>
                         </tr>
                       </thead>
@@ -656,9 +657,9 @@ export function AdminConsole({
           </div>
 
           <p className="shrink-0 px-1 text-[11px] leading-relaxed text-muted-foreground">
-            Banning ends every session the account holds and clears its seats on
-            the spot. Deleting removes the account and every harbor it hosts,
-            and cannot be undone.
+            {t(
+              "Banning ends every session the account holds and clears its seats on the spot. Deleting removes the account and every harbor it hosts, and cannot be undone.",
+            )}
           </p>
         </main>
       </div>
@@ -678,19 +679,22 @@ export function AdminConsole({
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-alarm/5">
                 <Trash2 className="h-4 w-4 text-alarm" />
               </span>
-              Delete {purgeTarget?.displayName}?
+              {t("Delete {purgeTarget}?", {
+                purgeTarget: purgeTarget?.displayName ?? "",
+              })}
             </DialogTitle>
             <DialogDescription>
-              The account is removed, along with every harbor it hosts, every
-              seat it holds, and every voyage, chronicle and merit it has
-              earned. Any captain sitting in one of those harbors is sent back
-              to the Lobby. This cannot be undone.
+              {t(
+                "The account is removed, along with every harbor it hosts, every seat it holds, and every voyage, chronicle and merit it has earned. Any captain sitting in one of those harbors is sent back to the Lobby. This cannot be undone.",
+              )}
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-2 space-y-1.5">
             <Label className="text-sm font-medium">
-              Type {purgeTarget?.username} to confirm
+              {t("Type {purgeTargetHandle} to confirm", {
+                purgeTargetHandle: purgeTarget?.username ?? "",
+              })}
             </Label>
             <Input
               value={confirmText}
@@ -703,7 +707,7 @@ export function AdminConsole({
 
           <div className="mt-4 flex justify-end gap-2">
             <Button variant="secondary" onClick={closePurge}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               className="bg-alarm text-background"
@@ -714,7 +718,7 @@ export function AdminConsole({
                 closePurge();
               }}
             >
-              Delete Account
+              {t("Delete Account")}
             </Button>
           </div>
         </DialogContent>
@@ -732,13 +736,15 @@ export function AdminConsole({
               <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-alarm/5">
                 <Trash2 className="h-4 w-4 text-alarm" />
               </span>
-              Delete {bulkCount} {bulkCount === 1 ? "account" : "accounts"}?
+              {t("Delete {bulkCount} {accountWord}?", {
+                bulkCount,
+                accountWord: plural(bulkCount),
+              })}
             </DialogTitle>
             <DialogDescription>
-              Every account ticked is removed, along with every harbor it hosts,
-              every seat it holds, and every voyage, chronicle and merit it has
-              earned. Any captain sitting in one of those harbors is sent back
-              to the Lobby. This cannot be undone.
+              {t(
+                "Every account ticked is removed, along with every harbor it hosts, every seat it holds, and every voyage, chronicle and merit it has earned. Any captain sitting in one of those harbors is sent back to the Lobby. This cannot be undone.",
+              )}
             </DialogDescription>
           </DialogHeader>
 
@@ -748,7 +754,7 @@ export function AdminConsole({
                 the operator can only produce by looking at what they
                 ticked, and the server holds the two against each other. */}
             <Label className="text-sm font-medium">
-              Type {bulkCount} to confirm
+              {t("Type {bulkCount} to confirm", { bulkCount })}
             </Label>
             <Input
               value={bulkConfirm}
@@ -762,7 +768,7 @@ export function AdminConsole({
 
           <div className="mt-4 flex justify-end gap-2">
             <Button variant="secondary" onClick={closeBulkPurge}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               className="bg-alarm text-background"
@@ -772,7 +778,7 @@ export function AdminConsole({
                 closeBulkPurge();
               }}
             >
-              Delete Accounts
+              {t("Delete Accounts")}
             </Button>
           </div>
         </DialogContent>
@@ -788,11 +794,22 @@ export function AdminConsole({
 // lists what was left behind and why. That list is the whole reason the
 // report exists, so it is shown at length rather than summarised.
 function announceBulk(report: AdminBulkReport): void {
-  const verb = BULK_VERB[report.action];
+  // Both the verb and the sentence are read here rather than at module
+  // scope: the report arrives after the operator's press, and the words
+  // have to answer in whatever language the console is printing by then.
+  const verb = t(BULK_VERB[report.action]);
   const line =
     report.skipped.length === 0
-      ? `${verb} ${report.applied} ${plural(report.applied)}.`
-      : `${verb} ${report.applied} of ${report.requested} accounts.`;
+      ? t("{verb} {report.applied} {accountWord}.", {
+          verb,
+          "report.applied": report.applied,
+          accountWord: plural(report.applied),
+        })
+      : t("{verb} {report.applied} of {report.requested} accounts.", {
+          verb,
+          "report.applied": report.applied,
+          "report.requested": report.requested,
+        });
   if (report.skipped.length === 0) {
     toast.success(line);
     return;
@@ -837,11 +854,13 @@ type AccountRowProps = {
 // differed the register would say two things about one account.
 function RoleChip({ isAdmin }: { isAdmin: boolean }) {
   if (!isAdmin) {
-    return <span className="text-[11px] text-muted-foreground">Captain</span>;
+    return (
+      <span className="text-[11px] text-muted-foreground">{t("Captain")}</span>
+    );
   }
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-admin/10 px-2 py-0.5 text-[11px] font-medium text-admin">
-      <ShieldCheck className="h-3 w-3" /> Administrator
+      <ShieldCheck className="h-3 w-3" /> {t("Administrator")}
     </span>
   );
 }
@@ -859,14 +878,14 @@ function StatusChip({
   if (isBanned) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-alarm/10 px-2 py-0.5 text-[11px] font-medium text-alarm">
-        <Ban className="h-3 w-3" /> Banned
+        <Ban className="h-3 w-3" /> {t("Banned")}
       </span>
     );
   }
   return (
     <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
       <OnlineDot online={online} size={7} />
-      {online ? "Online" : "Away"}
+      {online ? t("Online") : t("Away")}
     </span>
   );
 }
@@ -900,7 +919,7 @@ function AccountActions({
   // Banning, demoting and deleting your own account would be a way to lock
   // yourself out of the console with one click, and none of them is ever
   // what was meant. The server refuses all three as well.
-  const selfTitle = isSelf ? "Not available on your own account" : undefined;
+  const selfTitle = isSelf ? t("Not available on your own account") : undefined;
 
   if (busy) {
     return (
@@ -910,10 +929,13 @@ function AccountActions({
   return (
     <>
       {isBanned ? (
-        <RowButton label="Unban" onClick={() => onAct("unban", account.id)} />
+        <RowButton
+          label={t("Unban")}
+          onClick={() => onAct("unban", account.id)}
+        />
       ) : (
         <RowButton
-          label="Ban"
+          label={t("Ban")}
           disabled={isSelf}
           title={selfTitle}
           onClick={() => onAct("ban", account.id)}
@@ -921,23 +943,23 @@ function AccountActions({
       )}
       {isAdmin ? (
         <RowButton
-          label="Revoke admin"
+          label={t("Revoke admin")}
           disabled={isSelf}
           title={selfTitle}
           onClick={() => onAct("revoke", account.id)}
         />
       ) : (
         <RowButton
-          label="Grant admin"
+          label={t("Grant admin")}
           // A banned account cannot open the console, so the role would be
           // a promise the console cannot keep.
           disabled={isBanned}
-          title={isBanned ? "Unban the account first" : undefined}
+          title={isBanned ? t("Unban the account first") : undefined}
           onClick={() => onAct("grant", account.id)}
         />
       )}
       <RowButton
-        label="Delete"
+        label={t("Delete")}
         tone="danger"
         disabled={isSelf}
         title={selfTitle}
@@ -1159,8 +1181,12 @@ function SelectBox({
       type="checkbox"
       checked={selected}
       onChange={onToggle}
-      aria-label={`Select ${account.displayName}`}
-      title={`Select ${account.displayName}`}
+      aria-label={t("Select {account.displayName}", {
+        "account.displayName": account.displayName,
+      })}
+      title={t("Select {account.displayName}", {
+        "account.displayName": account.displayName,
+      })}
       className={CHECKBOX}
     />
   );
@@ -1215,7 +1241,7 @@ function ConsoleButton({
 // not to the second when.
 function formatJoined(iso: string): string {
   const at = new Date(iso);
-  if (Number.isNaN(at.getTime())) return "Unknown";
+  if (Number.isNaN(at.getTime())) return t("Unknown");
   return at.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",

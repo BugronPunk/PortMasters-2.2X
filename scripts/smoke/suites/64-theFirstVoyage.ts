@@ -38,18 +38,21 @@ export async function theFirstVoyageSuite(): Promise<void> {
   const classic = tutorialSteps("classic", "fair_winds");
 
   // The three readings of a row, taken apart with the narrow that makes
-  // each readable, rather than one cast apiece at every use below.
+  // each readable, rather than one cast apiece at every use below. The
+  // hold and order readings are printed through the plain reader, which
+  // composes them from the record's own numbers, so what is compared
+  // below is the sentence a surface actually shows.
   const holdText = (id: PathId): string | undefined => {
     const fact = guide
       .find((entry) => entry.id === id)!
       .facts.find((f) => f.kind === "hold");
-    return fact?.kind === "hold" ? fact.text : undefined;
+    return fact ? pathFactText(fact) : undefined;
   };
   const ordersText = (id: PathId): string | undefined => {
     const fact = guide
       .find((entry) => entry.id === id)!
       .facts.find((f) => f.kind === "orders");
-    return fact?.kind === "orders" ? fact.text : undefined;
+    return fact ? pathFactText(fact) : undefined;
   };
   const renownTitle = (id: PathId): string | undefined => {
     const fact = guide
@@ -121,12 +124,14 @@ export async function theFirstVoyageSuite(): Promise<void> {
   check(
     guide.every((entry) =>
       entry.facts.every((fact) =>
-        fact.kind === "renown"
-          ? pathFactText(fact) === `Renown to ${fact.title}`
-          : pathFactText(fact) === fact.text,
+        fact.kind === "hold"
+          ? pathFactText(fact) === `Hold ${fact.percent}%`
+          : fact.kind === "orders"
+            ? pathFactText(fact) === `${fact.count} locked orders`
+            : pathFactText(fact) === `Renown to ${fact.title}`,
       ),
     ),
-    "the plain reading composes the Renown arm into its sentence and hands the other two arms through untouched, which is the whole difference between it and the draft's own rendering",
+    "the plain reading composes every arm into its own sentence: the hold from the record's own percentage, the count from the record's own pool and the Renown rung through the ladder's title reader",
   );
 
   // The two pages the deal draws, held to the rows rather than to a copy
@@ -212,7 +217,7 @@ export async function theFirstVoyageSuite(): Promise<void> {
   // parked on: the artisan page's advice used to end on the manual's own
   // comparison of the two modes' stakes, a second telling of a rule the
   // mode record owns and prints a page earlier. The page is a function of
-  // the mode now (the third of the manual's record-reading pages), and
+  // the mode now (the third of the manual's pages that read the record), and
   // the retyped sentence has nowhere left to sit. Read as source like
   // the checks above, with the comments stripped, so the note that
   // records the old sentence does not read as the sentence itself.

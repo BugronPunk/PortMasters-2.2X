@@ -18,16 +18,20 @@ import {
   calcTransportCost,
   canFillOrder,
   explainVAT,
+  fleetOfTreasuresUnits,
   getCardFinalCost,
   getHireCost,
   getIntelCost,
   INCOME_TAX_RATE,
   lockedBehind,
+  maintenanceDue,
   moduleSlotsOpen,
-  wageBill,
+  orderRewardBonusSteps,
+  wagesDue,
 } from "@/lib/game/engine";
 import { RECIPES } from "@/lib/game/constants/goods";
 import { SHIP_DISCOUNT_PER_LEVEL } from "@/lib/game/constants/ships";
+import { listJoiner, t } from "@/lib/game/i18n";
 import { TONE_WASH } from "./shared";
 
 /**
@@ -87,11 +91,11 @@ export function ActionSuggester({ game }: { game: GameState }) {
              tokens. */
           TONE_WASH[suggestion.tone],
         )}
-        title="Show the recommended action for this phase"
-        aria-label="Show action suggestion"
+        title={t("Show the recommended action for this phase")}
+        aria-label={t("Show action suggestion")}
       >
         <Sparkles className="h-3 w-3" />
-        <span className="hidden sm:inline">Suggest</span>
+        <span className="hidden sm:inline">{t("Suggest")}</span>
       </button>
 
       {/* Suggestion panel */}
@@ -118,7 +122,7 @@ export function ActionSuggester({ game }: { game: GameState }) {
               <button
                 onClick={() => setOpen(false)}
                 className="pm-pressable rounded-full p-0.5 hover:bg-black/5 dark:hover:bg-white/10"
-                aria-label="Close suggestion"
+                aria-label={t("Close suggestion")}
               >
                 <X className="h-3.5 w-3.5 text-muted-foreground" />
               </button>
@@ -130,7 +134,7 @@ export function ActionSuggester({ game }: { game: GameState }) {
               onClick={() => setOpen(false)}
               className="mt-2 flex items-center gap-1 text-[10px] font-medium text-muted-foreground hover:text-foreground"
             >
-              <ChevronRight className="h-3 w-3" /> Got it
+              <ChevronRight className="h-3 w-3" /> {t("Got it")}
             </button>
           </motion.div>
         )}
@@ -203,8 +207,15 @@ function analyzeBoonDraft(game: GameState): Suggestion | null {
   if (emergency && emergencyGold && game.money < 30) {
     return {
       icon: emergency.icon,
-      title: `Take the ${cardText(emergency).name}`,
-      body: `You have ${game.money} Gold. The ${cardText(emergency).name} gives ${emergencyGold} Gold immediately, which should cover wages and maintenance this round. Without it, you risk bankruptcy at Resolve.`,
+      title: t("Take the {name}", { name: cardText(emergency).name }),
+      body: t(
+        "You have {gold} Gold. The {name} gives {amount} Gold immediately, which should cover wages and maintenance this round. Without it, you risk bankruptcy at Resolve.",
+        {
+          gold: game.money,
+          name: cardText(emergency).name,
+          amount: emergencyGold,
+        },
+      ),
       tone: "alarm",
     };
   }
@@ -232,8 +243,16 @@ function analyzeBoonDraft(game: GameState): Suggestion | null {
     );
     return {
       icon: apprentice.icon,
-      title: `Pick ${cardText(apprentice).name}`,
-      body: `You have no artisans yet. ${cardText(apprentice).name} cuts hiring costs by ${Math.round(hireDiscount * 100)}% this round, letting you get a Weaver for ${weaverThen} Gold instead of ${weaverNow}. Good for establishing production early.`,
+      title: t("Pick {name}", { name: cardText(apprentice).name }),
+      body: t(
+        "You have no artisans yet. {apprenticeName} cuts hiring costs by {hireDiscountPct}% this round, letting you get a Weaver for {weaverThen} Gold instead of {weaverNow}. Good for establishing production early.",
+        {
+          apprenticeName: cardText(apprentice).name,
+          hireDiscountPct: Math.round(hireDiscount * 100),
+          weaverThen,
+          weaverNow,
+        },
+      ),
       tone: "gain",
     };
   }
@@ -248,8 +267,16 @@ function analyzeBoonDraft(game: GameState): Suggestion | null {
   if (taxShelter && shelterRate && score > 50) {
     return {
       icon: taxShelter.icon,
-      title: `Grab the ${cardText(taxShelter).name}`,
-      body: `You have ${score} Reputation. With high earnings expected, the ${cardText(taxShelter).name} cuts income tax from ${Math.round(INCOME_TAX_RATE * 100)}% to ${Math.round(shelterRate * 100)}%, saving Gold at round end.`,
+      title: t("Grab the {name}", { name: cardText(taxShelter).name }),
+      body: t(
+        "You have {score} Reputation. With high earnings expected, the {name} cuts income tax from {taxRatePct}% to {shelterRatePct}%, saving Gold at round end.",
+        {
+          score,
+          name: cardText(taxShelter).name,
+          taxRatePct: Math.round(INCOME_TAX_RATE * 100),
+          shelterRatePct: Math.round(shelterRate * 100),
+        },
+      ),
       tone: "warn",
     };
   }
@@ -260,7 +287,7 @@ function analyzeBoonDraft(game: GameState): Suggestion | null {
   const first = cardText(choices[0]);
   return {
     icon: "🧭",
-    title: `Consider ${first.name}`,
+    title: t("Consider {first.name}", { "first.name": first.name }),
     body: first.desc,
     tone: "intel",
   };
@@ -271,10 +298,15 @@ function analyzePurchase(game: GameState): Suggestion | null {
   const unpurchased = cards.filter((c) => !game.purchasedCards.includes(c.id));
   if (unpurchased.length === 0) return null;
 
-  // Find the best deal (lowest unit price relative to range)
+  // Find the best deal (lowest unit price relative to range). The winning
+  // resource's own price is kept beside its name, because the two bodies
+  // below quote both: reading resources[0] instead would quote whichever
+  // good the card happens to list first, which is not always the one the
+  // score picked.
   let bestCard = null as (typeof unpurchased)[0] | null;
   let bestScore = -1;
   let bestGoodName = "";
+  let bestGoodPrice = 0;
   for (const card of unpurchased) {
     for (const r of card.resources) {
       const range = basePriceRange(r.type) ?? [0, 100];
@@ -284,6 +316,7 @@ function analyzePurchase(game: GameState): Suggestion | null {
         bestScore = score;
         bestCard = card;
         bestGoodName = r.type;
+        bestGoodPrice = unit;
       }
     }
   }
@@ -295,8 +328,11 @@ function analyzePurchase(game: GameState): Suggestion | null {
   if (game.money < finalCost) {
     return {
       icon: "⚠️",
-      title: "Skip buying this round",
-      body: `The best deal costs ${finalCost} Gold but you only have ${game.money}. Save your Gold for the Resolve bills. You can still barter for goods you need.`,
+      title: t("Skip buying this round"),
+      body: t(
+        "The best deal costs {finalCost} Gold but you only have {game.money}. Save your Gold for the Resolve bills. You can still barter for goods you need.",
+        { finalCost, "game.money": game.money },
+      ),
       tone: "alarm",
     };
   }
@@ -309,16 +345,32 @@ function analyzePurchase(game: GameState): Suggestion | null {
   ) {
     return {
       icon: "🔮",
-      title: "Buy a Broker's Rumor",
-      body: `You have ${game.money} Gold. Spending ${intelCost} Gold on a rumor guarantees a matching order in Orders, then buying the ${bestGoodName} at ${bestCard.resources[0]?.price} Gold per unit sets up a profitable trade.`,
+      title: t("Buy a Broker's Rumor"),
+      body: t(
+        "You have {game.money} Gold. Spending {intelCost} Gold on a rumor guarantees a matching order in Orders, then buying the {bestGoodName} at {bestPrice} Gold per unit sets up a profitable trade.",
+        {
+          "game.money": game.money,
+          intelCost,
+          bestGoodName: t(bestGoodName),
+          bestPrice: bestGoodPrice,
+        },
+      ),
       tone: "intel",
     };
   }
 
   return {
     icon: "🛒",
-    title: `Buy ${bestGoodName}`,
-    body: `Best deal this round: ${bestGoodName} at ${bestCard.resources[0]?.price} Gold per unit from ${bestCard.port}. This is ${Math.round(bestScore * 100)}% of the typical price range, making it a good value.`,
+    title: t("Buy {name}", { name: t(bestGoodName) }),
+    body: t(
+      "Best deal this round: {bestGoodName} at {bestPrice} Gold per unit from {bestCard.port}. This is {pricePct}% of the typical price range, making it a good value.",
+      {
+        bestGoodName: t(bestGoodName),
+        bestPrice: bestGoodPrice,
+        "bestCard.port": t(bestCard.port),
+        pricePct: Math.round(bestScore * 100),
+      },
+    ),
     tone: "gain",
   };
 }
@@ -333,18 +385,38 @@ function analyzeWorkerMgmt(game: GameState): Suggestion | null {
     // move every other payroll figure move this one, and this screen quotes
     // the number out loud in both branches below.
     const weaverWage = getHireCost(game, "weaver");
-    if (game.money >= weaverWage * 2 + 20) {
+    // The purse bar both branches below quote, named once: the advice that
+    // hires and the advice that waits both speak about the same number, and
+    // two spellings of one arithmetic claim is how advice starts disagreeing
+    // with itself.
+    const hireBar = weaverWage * 2 + 20;
+    if (game.money >= hireBar) {
       return {
-        icon: "👩\u200d🔧",
-        title: "Hire a Weaver",
-        body: `A Weaver costs ${weaverWage} Gold per round and can make Linen Clothes from Hemp. You have ${game.money} Gold, enough for ${Math.floor(game.money / weaverWage)} rounds of wages. Production starts next round, so hire now to get goods by Resolve.`,
+        icon: t("👩‍🔧"),
+        title: t("Hire a Weaver"),
+        body: t(
+          "A Weaver costs {weaverWage} Gold per round and can make Linen Clothes from Hemp. You have {game.money} Gold, enough for {wageRounds} rounds of wages. Production runs the same round you assign it, so hire now to get goods by Resolve.",
+          {
+            weaverWage,
+            "game.money": game.money,
+            wageRounds: Math.floor(game.money / weaverWage),
+          },
+        ),
         tone: "gain",
       };
     }
     return {
       icon: "⚠️",
-      title: "Hold off on hiring",
-      body: `A Weaver needs ${weaverWage} Gold per round in wages. With ${game.money} Gold, you can only cover ${Math.floor(game.money / weaverWage)} rounds. Wait until you have at least ${weaverWage * 2 + 20} Gold before hiring.`,
+      title: t("Hold off on hiring"),
+      body: t(
+        "A Weaver needs {weaverWage} Gold per round in wages. With {gold} Gold, you can only cover {wageRounds} rounds. Wait until you have at least {hireBar} Gold before hiring.",
+        {
+          weaverWage,
+          gold: game.money,
+          wageRounds: Math.floor(game.money / weaverWage),
+          hireBar,
+        },
+      ),
       tone: "warn",
     };
   }
@@ -352,8 +424,10 @@ function analyzeWorkerMgmt(game: GameState): Suggestion | null {
   if (hasWorkers && roundsLeft <= 1) {
     return {
       icon: "🏁",
-      title: "Last round, no new hires",
-      body: "Only one round remains. Hiring now wastes Gold on wages with no production return. Focus on filling orders with what you already have.",
+      title: t("Last round, no new hires"),
+      body: t(
+        "Only one round remains. Hiring now wastes Gold on wages with no production return. Focus on filling orders with what you already have.",
+      ),
       tone: "warn",
     };
   }
@@ -376,23 +450,36 @@ function analyzeWorkerMgmt(game: GameState): Suggestion | null {
           if (canCraft) {
             return {
               icon: "🔨",
-              title: `Assign task: ${product}`,
-              body: `Your ${type} is idle and you have the materials to make ${product}. Assign the task now so production lands at Resolve next round. Materials: ${Object.entries(
-                recipe.materials,
-              )
-                .map(([m, q]) => `${m} x${q}`)
-                .join(", ")}.`,
+              title: t("Assign task: {product}", { product: t(product) }),
+              body: t(
+                "Your {type} is idle and you have the materials to make {product}. Assign the task now so production lands at this round's Resolve. Materials: {materialsList}.",
+                {
+                  type,
+                  product: t(product),
+                  materialsList: Object.entries(recipe.materials)
+                    .map(([m, q]) => `${t(m)} x${q}`)
+                    .join(listJoiner()),
+                },
+              ),
               tone: "gain",
             };
           }
           return {
             icon: "📦",
-            title: `Buy materials for ${product}`,
-            body: `Your ${type} is idle but you lack materials for ${product}. You need: ${Object.entries(
-              recipe.materials,
-            )
-              .map(([m, q]) => `${m} x${q} (have ${game.inventory[m] || 0})`)
-              .join(", ")}. Buy these next round.`,
+            title: t("Buy materials for {product}", { product: t(product) }),
+            body: t(
+              "Your {type} is idle but you lack materials for {product}. You need: {materialsList}. Buy these next round.",
+              {
+                type,
+                product: t(product),
+                materialsList: Object.entries(recipe.materials)
+                  .map(
+                    ([m, q]) =>
+                      `${t(m)} x${q} (have ${game.inventory[m] || 0})`,
+                  )
+                  .join(listJoiner()),
+              },
+            ),
             tone: "warn",
           };
         }
@@ -422,15 +509,20 @@ function analyzeParley(game: GameState): Suggestion {
   if (count < 1) {
     return {
       icon: "🤝",
-      title: "Ready up when you are done",
-      body: "Your hold carries no goods to trade this Parley. Post a Gold offer for the good you still need, or ready up so the fleet can move on.",
+      title: t("Ready up when you are done"),
+      body: t(
+        "Your hold carries no goods to trade this Parley. Post a Gold offer for the good you still need, or ready up so the fleet can move on.",
+      ),
       tone: "intel",
     };
   }
   return {
     icon: "🤝",
-    title: "Post a barter offer",
-    body: `You are holding ${count} ${top}. Post what your voyage can spare and name the good you are still short of, then ready up once the table is done with you.`,
+    title: t("Post a barter offer"),
+    body: t(
+      "You are holding {count} {top}. Post what your voyage can spare and name the good you are still short of, then ready up once the table is done with you.",
+      { count, top: t(top) },
+    ),
     tone: "gold",
   };
 }
@@ -442,6 +534,7 @@ function analyzeOrders(game: GameState): Suggestion | null {
   // Find the most profitable completable order
   let bestOrder = null as (typeof orders)[0] | null;
   let bestProfit = -Infinity;
+  let bestReward = 0;
   for (const o of orders) {
     if (game.completedOrders.includes(o.id)) continue;
     // The engine's own reader rather than a second copy of the hold test,
@@ -452,8 +545,16 @@ function analyzeOrders(game: GameState): Suggestion | null {
     // in ./engine/orders).
     if (!canFillOrder(game, o)) continue;
     const hasWoven = cargoCarriesTag(o.resources, "woven");
-    const transport = calcTransportCost(game, o.totalItems, hasWoven);
+    // The freight through the same read the fill charges through, the
+    // Fleet of Treasures units included (see fleetOfTreasuresUnits).
+    const transport = calcTransportCost(
+      game,
+      o.totalItems,
+      hasWoven,
+      fleetOfTreasuresUnits(game, o.resources),
+    );
     let net = o.reward - transport;
+    let vatTotal = 0;
     if (o.isProductOrder) {
       // Charged exactly as completeOrder charges it, per unit, rather than
       // as a flat five percent of the reward. The real figure comes off the
@@ -468,25 +569,40 @@ function analyzeOrders(game: GameState): Suggestion | null {
       const productRef = o.resources[0];
       const required = productRef?.required ?? 0;
       if (productRef && required > 0) {
-        net -=
+        vatTotal =
           explainVAT(game, productRef.type, o.reward / required).final *
           required;
+        net -= vatTotal;
       }
     }
+    // The percentage bonuses the fill will credit, read through the
+    // settlement's own chain off the same post VAT reward it starts from
+    // (see orderRewardBonusSteps), so the sentence below names the Gold
+    // the fill actually lands rather than the face value.
+    const rewardWithBonuses = orderRewardBonusSteps(
+      game,
+      o,
+      o.reward - vatTotal,
+    ).reward;
+    net += rewardWithBonuses - (o.reward - vatTotal);
     if (o.isBrokerFavor) {
       net -= brokersFavorCommission(o.reward);
     }
     if (net > bestProfit) {
       bestProfit = net;
       bestOrder = o;
+      bestReward = rewardWithBonuses;
     }
   }
 
   if (bestOrder && bestProfit > 0) {
     return {
       icon: "🤝",
-      title: `Trade order #${bestOrder.id}`,
-      body: `This order pays ${bestOrder.reward} Gold with an estimated net profit of ${bestProfit} Gold after transport and taxes. It is the most profitable order you can complete right now.`,
+      title: t("Trade order #{id}", { id: bestOrder.id }),
+      body: t(
+        "This order pays {bestOrder.reward} Gold with an estimated net profit of {bestProfit} Gold after transport and taxes. It is the most profitable order you can complete right now.",
+        { "bestOrder.reward": bestReward, bestProfit },
+      ),
       tone: "gain",
     };
   }
@@ -509,10 +625,27 @@ function analyzeOrders(game: GameState): Suggestion | null {
     const missing = close.resources.find(
       (r) => (game.inventory[r.type] || 0) < (r.required ?? 0),
     );
+    // This branch is reached with a hold that already covers the card (an
+    // order complete but not worth filling), and then there is no missing
+    // good to name. The two reads below keep printing what the old
+    // template printed for that state, which is the word "undefined":
+    // stringifying the absent value is what the sentence did before the
+    // row took it over, and the row's English is pinned as it stands.
+    const missingGood = missing?.type;
+    const missingNeed = missing?.required;
     return {
       icon: "⏳",
-      title: `Almost ready for order #${close.id}`,
-      body: `You are only missing ${missing?.type} (have ${game.inventory[missing?.type ?? ""] || 0}, need ${missing?.required}). Try bartering for it, or wait to buy it next round.`,
+      title: t("Almost ready for order #{close.id}", { "close.id": close.id }),
+      body: t(
+        "You are only missing {missingGood} (have {missingHave}, need {missingNeed}). Try bartering for it now; a fresh order board is dealt each round.",
+        {
+          missingGood:
+            missingGood === undefined ? String(missingGood) : t(missingGood),
+          missingHave: game.inventory[missingGood ?? ""] || 0,
+          missingNeed:
+            missingNeed === undefined ? String(missingNeed) : missingNeed,
+        },
+      ),
       tone: "warn",
     };
   }
@@ -524,29 +657,35 @@ function analyzeSettlement(game: GameState): Suggestion | null {
   if (game.pirateAttackResolved) {
     // Already resolved the pirate attack, now it is about bills.
     //
-    // The engine's own bill (see wageBill), so the advice quotes the figure
-    // payWages is about to charge rather than a second opinion about the
-    // same roster: a sum counted off the raw roster would include the wage
-    // a Jade Pavilion pledge waives and could warn a captain about to
-    // settle cleanly that they were going bankrupt, and a flat per artisan
-    // multiple would be wrong twice over (the trades do not share a wage,
-    // and every wage carries the captain's own modifiers), which could
-    // call a captain solvent on the round they went bankrupt.
-    const wagesDue = wageBill(game).reduce((sum, b) => sum + b.due, 0);
-    const totalDue = game.fixedCost + game.maintenancePenalty + wagesDue;
+    // The engine's own bills (see wagesDue and maintenanceDue), so the
+    // advice quotes the figures payWages and payMaintenance are about to
+    // charge rather than a second opinion about the same roster: a sum
+    // counted off the raw roster would include the wage a Jade Pavilion
+    // pledge waives and could warn a captain about to settle cleanly that
+    // they were going bankrupt, and a flat per artisan multiple would be
+    // wrong twice over (the trades do not share a wage, and every wage
+    // carries the captain's own modifiers), which could call a captain
+    // solvent on the round they went bankrupt.
+    const totalDue = wagesDue(game) + maintenanceDue(game);
 
     if (game.money < totalDue) {
       return {
         icon: "🆘",
-        title: "Request a loan",
-        body: `You owe about ${totalDue} Gold in wages and maintenance but only have ${game.money} Gold. Ask the harbor for a loan before settling, or you will go bankrupt.`,
+        title: t("Request a loan"),
+        body: t(
+          "You owe about {totalDue} Gold in wages and maintenance but only have {game.money} Gold. Ask the harbor for a loan before settling, or you will go bankrupt.",
+          { totalDue, "game.money": game.money },
+        ),
         tone: "alarm",
       };
     }
     return {
       icon: "✅",
-      title: "Settle your bills",
-      body: `You have ${game.money} Gold, enough to cover the estimated ${totalDue} Gold in wages and maintenance. Settle your bills and move on to Dusk.`,
+      title: t("Settle your bills"),
+      body: t(
+        "You have {game.money} Gold, enough to cover the estimated {totalDue} Gold in wages and maintenance. Settle your bills and move on to Dusk.",
+        { "game.money": game.money, totalDue },
+      ),
       tone: "gain",
     };
   }
@@ -568,15 +707,21 @@ function analyzeShipyard(game: GameState): Suggestion | null {
     if (game.money >= cost + 20) {
       return {
         icon: "⚓",
-        title: "Upgrade to Ship Level 1",
-        body: `Upgrading costs ${cost} Gold and gives +1 module slot and +${SHIP_DISCOUNT_PER_LEVEL} Gold transport discount. With ${roundsLeft} rounds left, the transport savings alone will pay for the upgrade.`,
+        title: t("Upgrade to Ship Level 1"),
+        body: t(
+          "Upgrading costs {cost} Gold and gives +1 module slot and +{SHIP_DISCOUNT_PER_LEVEL} Gold transport discount. With {roundsLeft} rounds left, the transport savings alone will pay for the upgrade.",
+          { cost, SHIP_DISCOUNT_PER_LEVEL, roundsLeft },
+        ),
         tone: "gain",
       };
     }
     return {
       icon: "⏭️",
-      title: "Skip the shipyard",
-      body: `Ship upgrade costs ${cost} Gold but you only have ${game.money}. Save the Gold for the Resolve bills and continue the voyage.`,
+      title: t("Skip the shipyard"),
+      body: t(
+        "Ship upgrade costs {cost} Gold but you only have {game.money}. Save the Gold for the Resolve bills and continue the voyage.",
+        { cost, "game.money": game.money },
+      ),
       tone: "warn",
     };
   }
@@ -585,8 +730,14 @@ function analyzeShipyard(game: GameState): Suggestion | null {
   if (game.shipLevel > 0 && moduleSlotsOpen(game) > 0) {
     return {
       icon: "🔧",
-      title: "Draft and install a module",
-      body: `You have ${game.equippedModules.length} of ${game.shipLevel} module slots filled. An empty slot is wasted potential. Draft a module now to gain a permanent bonus.`,
+      title: t("Draft and install a module"),
+      body: t(
+        "You have {game.equippedModules.length} of {game.shipLevel} module slots filled. An empty slot is wasted potential. Draft a module now to gain a permanent bonus.",
+        {
+          "game.equippedModules.length": game.equippedModules.length,
+          "game.shipLevel": game.shipLevel,
+        },
+      ),
       tone: "intel",
     };
   }

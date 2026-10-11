@@ -29,6 +29,7 @@ import {
   usedStoreSlots,
 } from "@/lib/game/hold";
 import { survivalLayerOn } from "@/lib/game/flags";
+import { t } from "@/lib/game/i18n";
 import {
   bargeLeftAtPort,
   bargePortAtLeg,
@@ -60,12 +61,23 @@ import {
  */
 function keeping(food: FoodId, meals: number, legsLeft: number | null): string {
   const spec = FOODS[food];
-  const density = `${spec.mealsPerSlot} ${spec.mealsPerSlot === 1 ? "meal" : "meals"} a slot`;
-  if (spec.keeps === null) return `${density}, keeps forever`;
-  if (meals <= 0) return `${density}, keeps ${spec.keeps} legs`;
+  const density = t("{count} meal{pluralS} a slot", {
+    count: spec.mealsPerSlot,
+    pluralS: spec.mealsPerSlot === 1 ? "" : "s",
+  });
+  if (spec.keeps === null) return t("{density}, keeps forever", { density });
+  if (meals <= 0)
+    return t("{density}, keeps {spec.keeps} legs", {
+      density,
+      "spec.keeps": spec.keeps,
+    });
   if (legsLeft === null) return density;
-  if (legsLeft <= 0) return `${density}, turns at this Dusk`;
-  return `${density}, turns after ${legsLeft} ${legsLeft === 1 ? "leg" : "legs"}`;
+  if (legsLeft <= 0) return t("{density}, turns at this Dusk", { density });
+  return t("{density}, turns after {legs} leg{pluralS}", {
+    density,
+    legs: legsLeft,
+    pluralS: legsLeft === 1 ? "" : "s",
+  });
 }
 
 /**
@@ -173,13 +185,13 @@ export function Provisions({
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
         <span className="flex items-center gap-1.5 text-[10px] font-semibold tracking-wide text-larder">
           <Utensils className="h-3.5 w-3.5" />
-          Provisions
+          {t("Provisions")}
           <span className="font-normal text-muted-foreground ml-1">
-            one ration a head, eaten at each Dawn
+            {t("one ration a head, eaten at each Dawn")}
           </span>
         </span>
         <PanelStat
-          label={<Term term="Larder">Larder</Term>}
+          label={<Term term="Larder">{t("Larder")}</Term>}
           value={game.larder}
           valueClassName={short ? "text-alarm" : "text-larder"}
           suffix={
@@ -194,7 +206,7 @@ export function Provisions({
                 stores round up and the cargo, counted one unit a slot, does
                 not have to (see ./hold). */}
             <PanelStat
-              label={<Term term="Stores">Stores</Term>}
+              label={<Term term="Stores">{t("Stores")}</Term>}
               value={Math.ceil(usedStoreSlots(game))}
               suffix={
                 <span className="text-muted-foreground">
@@ -204,7 +216,7 @@ export function Provisions({
               }
             />
             <PanelStat
-              label="Cargo"
+              label={t("Cargo")}
               value={usedCargoSlots(game)}
               valueClassName={short ? "text-alarm" : undefined}
               suffix={
@@ -225,11 +237,10 @@ export function Provisions({
             />
           </>
         )}
-        <PanelStat label="Crew" value={crew} />
+        <PanelStat label={t("Crew")} value={crew} />
         {crew > 0 && (
           <span className="text-[11px] text-muted-foreground">
-            a leg of rations costs{" "}
-            <span className="font-bold text-foreground">{legCost}</span> Gold
+            {t("a leg of rations costs {legCost} Gold", { legCost })}
           </span>
         )}
       </div>
@@ -238,11 +249,13 @@ export function Provisions({
         <FoldRow
           tone="larder"
           icon="🌾"
-          title="Rations"
+          title={t("Rations")}
           gist={
             batches > 0
-              ? "The three foods the crew eats, and a batch of Produce ready to preserve."
-              : "The three foods the crew eats, and what each keeps."
+              ? t(
+                  "The three foods the crew eats, and a batch of Produce ready to preserve.",
+                )
+              : t("The three foods the crew eats, and what each keeps.")
           }
           open={rationsFoldOpen}
           onToggle={() => setRationsFoldOpen((v) => !v)}
@@ -260,7 +273,7 @@ export function Provisions({
                 >
                   <span className="w-32 text-[11px]">
                     <span className="mr-1">{FOODS[food].icon}</span>
-                    <span className="font-medium">{food}</span>
+                    <span className="font-medium">{t(food)}</span>
                     <span className="text-muted-foreground">
                       {" "}
                       {line?.meals ?? 0}
@@ -282,8 +295,10 @@ export function Provisions({
                     disabled={oneLeg <= 0}
                     onClick={() => act((g, l) => provisionFood(g, food, 1, l))}
                   >
-                    {FOODS[food].icon} Buy{" "}
-                    {oneLeg > 0 ? `1 Leg (${legCost}💰)` : "Rations"}
+                    {FOODS[food].icon}{" "}
+                    {oneLeg > 0
+                      ? t("Buy 1 Leg ({legCost}💰)", { legCost })
+                      : t("Buy Rations")}
                   </Button>
                   <Button
                     size="sm"
@@ -294,10 +309,12 @@ export function Provisions({
                       act((g, l) => provisionFood(g, food, fillLegs, l))
                     }
                   >
-                    Fill
                     {fillLegs > 1
-                      ? ` (${fillLegs} Legs, ${fillLegs * legCost}💰)`
-                      : ""}
+                      ? t("Fill ({legs} Legs, {gold}💰)", {
+                          legs: fillLegs,
+                          gold: fillLegs * legCost,
+                        })
+                      : t("Fill")}
                   </Button>
                 </div>
               );
@@ -311,8 +328,10 @@ export function Provisions({
                 variant="secondary"
                 onClick={() => act((g, l) => preserveFood(g, l))}
               >
-                🐟 Preserve {batches * PRESERVE_MEALS_IN} Produce into{" "}
-                {batches * PRESERVE_MEALS_OUT} Salt Fish
+                {t("🐟 Preserve {produceIn} Produce into {saltOut} Salt Fish", {
+                  produceIn: batches * PRESERVE_MEALS_IN,
+                  saltOut: batches * PRESERVE_MEALS_OUT,
+                })}
               </Button>
             </div>
           )}
@@ -338,11 +357,14 @@ export function Provisions({
         <FoldRow
           tone="larder"
           icon="⛵"
-          title="Supply Barge"
+          title={t("Supply Barge")}
           gist={
             bargeLeft < 1
-              ? "The barge has nothing left for you this leg."
-              : `An unnamed trader on the quay: ${bargePrice} Gold a ration against the port's ${RATION_PRICE}.`
+              ? t("The barge has nothing left for you this leg.")
+              : t(
+                  "An unnamed trader on the quay: {bargePrice} Gold a ration against the port's {RATION_PRICE}.",
+                  { bargePrice, RATION_PRICE },
+                )
           }
           open={bargeFoldOpen}
           onToggle={() => setBargeFoldOpen((v) => !v)}
@@ -352,8 +374,10 @@ export function Provisions({
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <span className="text-[11px]">
                 <span className="mr-1">⛵</span>
-                <span className="font-medium">Supply Barge</span>
-                <span className="text-muted-foreground"> at {bargePort}</span>
+                <span className="font-medium">{t("Supply Barge")}</span>
+                <span className="text-muted-foreground">
+                  {t(" at {bargePort}", { bargePort })}
+                </span>
               </span>
               <Button
                 size="sm"
@@ -362,7 +386,10 @@ export function Provisions({
                 disabled={bargeOne <= 0}
                 onClick={() => act((g, l) => buyFromBarge(g, 1, l))}
               >
-                🌾 Buy {bargeOne > 0 ? `1 Ration (${bargePrice}💰)` : "Rations"}
+                🌾{" "}
+                {bargeOne > 0
+                  ? t("Buy 1 Ration ({bargePrice}💰)", { bargePrice })
+                  : t("Buy Rations")}
               </Button>
               <Button
                 size="sm"
@@ -371,34 +398,46 @@ export function Provisions({
                 disabled={bargeLot <= 1}
                 onClick={() => act((g, l) => buyFromBarge(g, bargeLeft, l))}
               >
-                Take the Lot
                 {bargeLot > 1
-                  ? ` (${bargeLot}, ${bargeLot * bargePrice}💰)`
-                  : ""}
+                  ? t("Take the Lot ({lot}, {gold}💰)", {
+                      lot: bargeLot,
+                      gold: bargeLot * bargePrice,
+                    })
+                  : t("Take the Lot")}
               </Button>
             </div>
             <p className="text-[10px] text-muted-foreground mt-1.5">
               {bargeLeft < 1
-                ? "The barge has nothing left for you this leg, and it is a fresh lot tomorrow."
-                : `${bargeLeft} ${bargeLeft === 1 ? "ration is" : "rations are"} left for you this leg.`}
+                ? t(
+                    "The barge has nothing left for you this leg, and it is a fresh lot tomorrow.",
+                  )
+                : t(
+                    "{bargeLeft} ration{pluralS} {beWord} left for you this leg.",
+                    {
+                      bargeLeft,
+                      pluralS: bargeLeft === 1 ? "" : "s",
+                      beWord: bargeLeft === 1 ? "is" : "are",
+                    },
+                  )}
             </p>
           </div>
         </FoldRow>
       )}
       {crew === 0 && (
         <PanelNote>
-          No crew aboard, so there is nobody to feed. Hire artisans and the
-          larder starts to matter.
+          {t(
+            "No crew aboard, so there is nobody to feed. Hire artisans and the larder starts to matter.",
+          )}
         </PanelNote>
       )}
       {crew > 0 && !anyRoom && (
         <PanelNote>
-          The larder is full, so there is nothing more to buy here.
+          {t("The larder is full, so there is nothing more to buy here.")}
         </PanelNote>
       )}
       {crew > 0 && anyRoom && affordable === 0 && (
         <PanelNote tone="alarm">
-          Not enough Gold for a leg of rations.
+          {t("Not enough Gold for a leg of rations.")}
         </PanelNote>
       )}
     </HuePanel>

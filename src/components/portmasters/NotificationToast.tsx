@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
 
 /**
  * The body for every popup notification (ledger digests, harbor chat,
@@ -56,7 +57,7 @@ export function NotificationToast({
     >
       <button
         type="button"
-        aria-label="Dismiss notification"
+        aria-label={t("Dismiss notification")}
         onClick={(e) => {
           e.stopPropagation();
           dismiss(toastId);

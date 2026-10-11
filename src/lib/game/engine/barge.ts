@@ -59,6 +59,7 @@
 // already carry, and no build of this branch can be sailing the mode
 // without the vendor standing at the quay.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import {
   BARGE_PRICE_MULTIPLIER,
   BARGE_RATIONS_PER_LEG,
@@ -67,7 +68,7 @@ import {
 } from "../constants/supplies";
 import { survivalLayerOn } from "../flags";
 import { addLot, foodRoomMeals, reconcileLarder } from "../foods";
-import { crewSize } from "../larder";
+import { LARDER_FULL_LINE, provisioningCrew } from "../larder";
 import { unlockedPorts } from "../pools";
 import { createRng } from "../rng";
 import type { GameState } from "../types";
@@ -250,14 +251,10 @@ export function buyFromBarge(
   logs: string[],
 ): number {
   if (!bargeOn(state.mode)) return 0;
-  const crew = crewSize(state);
-  if (crew === 0) {
-    logs.push("⚓ No crew aboard, so there is nothing to provision.");
-    return 0;
-  }
+  if (provisioningCrew(state, logs) === null) return 0;
   const left = bargeLeftAtPort(state);
   if (left < 1) {
-    logs.push("⛵ The barge has nothing left for you this leg.");
+    logs.push(t("⛵ The barge has nothing left for you this leg."));
     return 0;
   }
   reconcileLarder(state);
@@ -267,12 +264,15 @@ export function buyFromBarge(
   const wanted = Math.min(Math.floor(rations), left, room, affordable);
   if (wanted < 1) {
     if (Math.floor(rations) < 1) {
-      logs.push("❌ Name how many rations to buy from the barge.");
+      logs.push(t("❌ Name how many rations to buy from the barge."));
     } else if (room < 1) {
-      logs.push("🧺 The larder is full.");
+      logs.push(t(LARDER_FULL_LINE));
     } else {
       logs.push(
-        `❌ The barge charges ${price} Gold a ration, and the purse cannot cover one.`,
+        t(
+          "❌ The barge charges {price} Gold a ration, and the purse cannot cover one.",
+          { price },
+        ),
       );
     }
     return 0;
@@ -291,7 +291,17 @@ export function buyFromBarge(
   }
   state.bargeTaken += wanted;
   logs.push(
-    `⛵ The barge takes ${cost} Gold for ${wanted} ${wanted === 1 ? "ration" : "rations"} of grain. ${left - wanted} left for you this leg.`,
+    t(
+      "⛵ The barge takes {cost} Gold for {wanted} {rationWord} of grain. {rationsLeft} left for you this leg.",
+      {
+        cost,
+        wanted,
+        // The word the count carries is English glue with no row of its
+        // own; the pack's Mandarin drops the token entirely.
+        rationWord: wanted === 1 ? "ration" : "rations",
+        rationsLeft: left - wanted,
+      },
+    ),
   );
   return wanted;
 }

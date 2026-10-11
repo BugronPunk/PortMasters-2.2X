@@ -7,7 +7,7 @@ import type { PublicUser } from "@/lib/api";
 import { ICONS } from "@/lib/game/constants/brand";
 import {
   RUMOR_COOLDOWN_ROUNDS,
-  RUMOR_SHIFT_FRACTION,
+  RUMOR_SHIFT_PERCENT,
 } from "@/lib/game/constants/paths";
 import {
   BAZAAR_SELLER_PATH,
@@ -32,15 +32,12 @@ import {
   rumorWaitLine,
 } from "@/lib/game/engine/bazaar";
 import { bazaarRumorsOn } from "@/lib/game/flags";
+import { t } from "@/lib/game/i18n";
 import { pathConfig } from "@/lib/game/paths";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
-import {
-  MarketBlock,
-  MarketEmpty,
-  MarketError,
-  MarketPanel,
-} from "./OfferBoard";
+import { RefusalLine } from "../shared";
+import { MarketBlock, MarketEmpty, MarketPanel } from "./OfferBoard";
 import type { Bazaar } from "./phases/PhaseShared";
 
 // The speaking path's own record, resolved once at module load rather than
@@ -165,40 +162,44 @@ export function BazaarRumors({
     cooldown >= 1
       ? rumorWaitLine(bazaar.rumors, me.id, game.currentRound, game.maxRounds)
       : "";
+  // The speaking path's own name, read here at the composer because the
+  // heading, the intro and the refusal below all print it inside sentences
+  // of their own (see the token rule the pack is lifted under).
+  const sellerName = t(SELLER_PATH.name);
 
   return (
     <MarketPanel
-      title={`${SELLER_PATH.crest} ${SELLER_PATH.name} Bazaar`}
-      intro={
-        <>
-          Once every {RUMOR_COOLDOWN_ROUNDS} legs, each {SELLER_PATH.name}{" "}
-          captain may spread a word about one commodity, here at the Parley. The
-          next port prices that good against it, by up to{" "}
-          {Math.round(RUMOR_SHIFT_FRACTION * 100)} percent, which is the same
-          hand the Harbormaster leans a port with. The whole harbor is told who
-          spoke and which good they named, and only the speaker knows which way
-          they leaned until the port they named has priced it.
-        </>
-      }
+      title={t("{SELLER_PATH.crest} {SELLER_PATH.name} Bazaar", {
+        "SELLER_PATH.crest": SELLER_PATH.crest,
+        "SELLER_PATH.name": sellerName,
+      })}
+      intro={t(
+        "Once every {RUMOR_COOLDOWN_ROUNDS} legs, each {SELLER_PATH.name} captain may spread a word about one commodity, here at the Parley. The next port prices that good against it, by up to {rumorPct} percent, which is the same hand the Harbormaster leans a port with. The whole harbor is told who spoke and which good they named, and only the speaker knows which way they leaned until the port they named has priced it.",
+        {
+          RUMOR_COOLDOWN_ROUNDS,
+          "SELLER_PATH.name": sellerName,
+          rumorPct: RUMOR_SHIFT_PERCENT,
+        },
+      )}
     >
       <MarketBlock>
         {mine ? (
           <>
             {canSpeak ? (
               <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
-                <span className="text-muted-foreground">Speak for</span>
+                <span className="text-muted-foreground">{t("Speak for")}</span>
                 <Select
                   value={chosen}
                   onChange={(e) => setGood(e.target.value)}
-                  aria-label="Good the rumor is about"
+                  aria-label={t("Good the rumor is about")}
                 >
                   {goods.map((g) => (
                     <option key={g} value={g}>
-                      {ICONS[g]} {g}
+                      {ICONS[g]} {t(g)}
                     </option>
                   ))}
                 </Select>
-                <span className="text-muted-foreground">leaning</span>
+                <span className="text-muted-foreground">{t("leaning")}</span>
                 {/* Both directions are buttons rather than a toggle, for the
                     reason the Harbormaster's console gives: the two are the
                     whole of the choice, and a captain reading this for the
@@ -213,7 +214,7 @@ export function BazaarRumors({
                   variant={direction === 1 ? "default" : "secondary"}
                   onClick={() => setDirection(1)}
                 >
-                  📈 Higher
+                  {t("📈 Higher")}
                 </Button>
                 <Button
                   size="sm"
@@ -224,13 +225,13 @@ export function BazaarRumors({
                   variant={direction === -1 ? "default" : "secondary"}
                   onClick={() => setDirection(-1)}
                 >
-                  📉 Lower
+                  {t("📉 Lower")}
                 </Button>
                 <Button
                   className="rounded-lg pm-grad-parley"
                   onClick={() => bazaar.publish(chosen, direction)}
                 >
-                  {SELLER_PATH.crest} Publish
+                  {SELLER_PATH.crest} {t("Publish")}
                 </Button>
               </div>
             ) : myLean !== null && myRow ? (
@@ -239,13 +240,19 @@ export function BazaarRumors({
               // the receipt, and it is also the only place this captain is
               // owed the direction they chose.
               <p className="text-center text-xs leading-relaxed">
-                <span className="font-semibold text-due">Spoken.</span> Your
-                rumor is on the board and the harbor has your name and{" "}
-                {myRow.good}. Only you know which way it leans:{" "}
-                {rumorDirectionLine({ good: myRow.good, direction: myLean })}.
-                The table reads it the moment the port of leg{" "}
-                {rumorLandsOn(myRow)} prices it. The bazaar is quiet for you
-                until leg {nextLeg}.
+                <span className="font-semibold text-due">{t("Spoken.")}</span>{" "}
+                {t(
+                  "Your rumor is on the board and the harbor has your name and {good}. Only you know which way it leans: {direction}. The table reads it the moment the port of leg {landsOn} prices it. The bazaar is quiet for you until leg {nextLeg}.",
+                  {
+                    good: t(myRow.good),
+                    direction: rumorDirectionLine({
+                      good: myRow.good,
+                      direction: myLean,
+                    }),
+                    landsOn: rumorLandsOn(myRow),
+                    nextLeg,
+                  },
+                )}
               </p>
             ) : (
               // Every way of being unable to speak, in the order the
@@ -258,7 +265,9 @@ export function BazaarRumors({
                 {closesHere
                   ? rumorClosingLine()
                   : goods.length === 0
-                    ? "No commodity on this route is traded yet, so there is nothing to say."
+                    ? t(
+                        "No commodity on this route is traded yet, so there is nothing to say.",
+                      )
                     : closedOn}
               </p>
             )}
@@ -271,8 +280,10 @@ export function BazaarRumors({
               // confirmation reports with, so the promise made here and
               // the receipt that answers it are one pair of numbers.
               <p className="text-center text-[11px] text-muted-foreground mt-1.5">
-                The port of leg {landsOn} prices it. Speaking now quiets the
-                bazaar for you until leg {quietUntil}.
+                {t(
+                  "The port of leg {landsOn} prices it. Speaking now quiets the bazaar for you until leg {quietUntil}.",
+                  { landsOn, quietUntil },
+                )}
               </p>
             )}
           </>
@@ -286,14 +297,19 @@ export function BazaarRumors({
           // this paragraph carries the refusal and the pointer rather than
           // spelling the rule a second time.
           <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
-            Speaking at the bazaar belongs to the {SELLER_PATH.name} path, and
-            you do not hold it this voyage. Whoever holds it is named in the
-            voyage log, and the board below names them the moment they speak.
+            {t(
+              "Speaking at the bazaar belongs to the {SELLER_PATH.name} path, and you do not hold it this voyage. Whoever holds it is named in the voyage log, and the board below names them the moment they speak.",
+              { "SELLER_PATH.name": sellerName },
+            )}
           </p>
         )}
       </MarketBlock>
 
-      <MarketError error={bazaar.error} onDismiss={bazaar.clearError} />
+      <RefusalLine
+        className="text-center mb-2"
+        error={bazaar.error}
+        onDismiss={bazaar.clearError}
+      />
 
       <RumorList rumors={bazaar.rumors} me={me} game={game} />
     </MarketPanel>
@@ -334,8 +350,10 @@ function RumorList({
     return (
       <MarketEmpty>
         {rumors.length === 0
-          ? "Nobody has spoken at the bazaar yet this voyage."
-          : "Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through."}
+          ? t("Nobody has spoken at the bazaar yet this voyage.")
+          : t(
+              "Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through.",
+            )}
       </MarketEmpty>
     );
   }
@@ -414,13 +432,18 @@ function RumorRow({
             standing ? "text-parley" : "text-muted-foreground",
           )}
         >
-          Bazaar ·{" "}
           {standing
-            ? "waiting"
-            : `spoken in leg ${row.round} · priced at leg ${landsOn}`}
+            ? t("Bazaar · waiting")
+            : `Bazaar · ${t(
+                "spoken in leg {row.round} · priced at leg {landsOn}",
+                {
+                  "row.round": row.round,
+                  landsOn,
+                },
+              )}`}
         </span>
         <span className="font-display text-sm font-semibold">
-          {mine ? "You" : row.publisherName}
+          {mine ? t("You") : row.publisherName}
         </span>
         {direction !== null && (
           <span className="text-[11px] font-medium rounded-lg px-1.5 py-0.5 border border-parley/25 tabular-nums">
@@ -431,9 +454,13 @@ function RumorRow({
       <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground/80">
         {standing
           ? mine
-            ? "Spoken in this leg. The next port prices this good against it, and the table reads which way you leaned the moment it does."
-            : "Spoken in this leg. The direction belongs to the speaker until the next port prices it, so nobody at this table can tell a call from a lie yet."
-          : `The market of this leg was priced against it, so the direction is public now.${
+            ? t(
+                "Spoken in this leg. The next port prices this good against it, and the table reads which way you leaned the moment it does.",
+              )
+            : t(
+                "Spoken in this leg. The direction belongs to the speaker until the next port prices it, so nobody at this table can tell a call from a lie yet.",
+              )
+          : `${t("The market of this leg was priced against it, so the direction is public now.")}${
               outcome ? ` ${outcome}` : ""
             }`}
       </p>

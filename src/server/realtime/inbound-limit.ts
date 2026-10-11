@@ -15,7 +15,7 @@
 // room sends about nine frames in a hundred and fifty, and the tightest
 // legitimate loop in the smoke suite sends twelve frames a hundred
 // milliseconds apart. The machine ceiling is twenty five a second, reached
-// only by a script re-triggering the three debounced reports this app's
+// only by a script repeatedly triggering the three debounced reports this app's
 // interface uses, which is exactly the shape a budget exists to bound.
 //
 // So it is a token bucket per socket: thirty frames in hand, ten a second
@@ -42,6 +42,9 @@
 // captain's "my clicks stopped landing" needs to find.
 // =====================================================================
 import type { Socket } from "socket.io";
+import { tFor } from "@/lib/game/i18n";
+import { spendToken, type TokenBucket } from "@/lib/token-bucket";
+import { readLocaleCookie } from "./cookies";
 import { sockets } from "./presence";
 
 /** Frames a socket may hold at once. The header holds the reading this
@@ -60,24 +63,18 @@ const INBOUND_REFILL_PER_SECOND = 10;
 // Time is kept here rather than in a timer per socket: a bucket is refilled
 // when it is read, which costs one subtraction on a frame that is already
 // being handled and leaves nothing running in between.
-const buckets = new Map<string, { tokens: number; at: number }>();
+const buckets = new Map<string, TokenBucket>();
 
-/** Spend one frame, or refuse it. */
+/** Spend one frame, or refuse it. The arithmetic is @/lib/token-bucket's,
+ *  shared with the account doors, which was written to read the same. */
 function spend(socketId: string, now: number): boolean {
-  let bucket = buckets.get(socketId);
-  if (!bucket) {
-    bucket = { tokens: INBOUND_BURST, at: now };
-    buckets.set(socketId, bucket);
-  }
-  const elapsed = Math.max(0, now - bucket.at);
-  bucket.at = now;
-  bucket.tokens = Math.min(
+  return spendToken(
+    buckets,
+    socketId,
+    now,
     INBOUND_BURST,
-    bucket.tokens + (elapsed * INBOUND_REFILL_PER_SECOND) / 1000,
+    INBOUND_REFILL_PER_SECOND,
   );
-  if (bucket.tokens < 1) return false;
-  bucket.tokens -= 1;
-  return true;
 }
 
 /**
@@ -113,8 +110,13 @@ export function guardInbound(socket: Socket): void {
     // it on yet.
     socket.emit("room:error", {
       roomId: state?.roomId ?? "",
-      error:
+      // The captain being slowed is the only reader, so the refusal is read
+      // in their own language, off the socket's state or the cookie the
+      // handshake carried before the state was filed.
+      error: tFor(
+        state?.locale ?? readLocaleCookie(socket.handshake?.headers?.cookie),
         "Too many actions at once. Give the harbor a moment, then try again.",
+      ),
     });
     console.warn(
       `[inbound] socket ${socket.id} went over its frame budget on "${String(event)}".`,

@@ -2,6 +2,7 @@
 
 import { RivalEntry } from "@/types/realtime/standings";
 import { motion } from "framer-motion";
+import { t } from "@/lib/game/i18n";
 import { Avatar, Pill } from "../shared";
 
 export function RivalRow({
@@ -39,17 +40,20 @@ export function RivalRow({
             {rival.partner.displayName}
           </div>
           <div className="text-xs text-muted-foreground">
-            {total} {total === 1 ? "meeting" : "meetings"}
+            {t(total === 1 ? "{count} meeting" : "{count} meetings", {
+              count: total,
+            })}
           </div>
         </div>
         <div className="text-right">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-bold text-profile">{myWins}</span>
-            <span className="text-muted-foreground">vs</span>
+            <span className="text-muted-foreground">{t("vs")}</span>
             <span className="font-bold text-alarm">{theirWins}</span>
           </div>
           <div className="text-xs text-muted-foreground">
-            {ties} ties {myRate > 50 && <Pill tone="gain">Leading</Pill>}
+            {t("{ties} ties", { ties })}{" "}
+            {myRate > 50 && <Pill tone="gain">{t("Leading")}</Pill>}
           </div>
         </div>
       </div>

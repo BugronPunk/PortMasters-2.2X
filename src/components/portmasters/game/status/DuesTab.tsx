@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -47,25 +48,35 @@ export function DuesTab({
     <>
       {showObligations ? (
         <>
-          <Row label={<Term term="Maintenance">🔧 Maintenance</Term>}>
-            <b>{pendMaint} Gold</b>
+          <Row label={<Term term="Maintenance">{t("🔧 Maintenance")}</Term>}>
+            <b>{t("{contract.fee} Gold", { "contract.fee": pendMaint })}</b>
           </Row>
           <Row
             label={
               <Term term="Wages">
-                👥 Wages{workerCount > 0 ? ` (${workerCount} workers)` : ""}
+                👥 {t("Wages")}
+                {workerCount > 0
+                  ? t(" ({count} workers)", { count: workerCount })
+                  : ""}
               </Term>
             }
           >
-            <b>{workerCount > 0 ? `${pendWages} Gold` : "…"}</b>
+            <b>
+              {workerCount > 0
+                ? t("{contract.fee} Gold", { "contract.fee": pendWages })
+                : "…"}
+            </b>
           </Row>
           {roster
             .filter((r) => r.due > 0)
             .map((r) => (
               <SubRow
                 key={r.id}
-                label={`↳ ${r.list.length}× ${r.label}`}
-                value={`${r.due} Gold`}
+                label={t("↳ {r.list.length}× {r.label}", {
+                  "r.list.length": r.list.length,
+                  "r.label": t(r.label),
+                })}
+                value={t("{r.due} Gold", { "r.due": r.due })}
               />
             ))}
           <div
@@ -74,33 +85,33 @@ export function DuesTab({
               safe ? "border-gain/20" : "border-alarm/30",
             )}
           >
-            <span className="text-xs font-semibold">💸 Total Due</span>
+            <span className="text-xs font-semibold">{t("💸 Total Due")}</span>
             <span
               className={cn("font-bold", safe ? "text-gain" : "text-alarm")}
             >
-              {pendTotal} Gold
+              {t("{contract.fee} Gold", { "contract.fee": pendTotal })}
             </span>
           </div>
           {safe ? (
             <div className="mt-1.5 text-center text-[10px] text-gain">
-              ✅ Funds sufficient for round end
+              {t("✅ Funds sufficient for round end")}
             </div>
           ) : (
             <div className="mt-1.5 rounded-md bg-alarm/5 py-1 text-center text-[10px] text-alarm">
-              🚨 Risk: Funds may fall short at round end!
+              {t("🚨 Risk: Funds may fall short at round end!")}
             </div>
           )}
         </>
       ) : (
         <p className="py-2 text-[11px] text-muted-foreground">
-          Nothing is owed until the voyage is under way.
+          {t("Nothing is owed until the voyage is under way.")}
         </p>
       )}
 
       {hasLoans && (
         <div className="mt-3 border-t border-black/5 pt-2 dark:border-white/10">
           <div className="mb-1 text-[10px] font-semibold tracking-wide text-muted-foreground">
-            ━━ Outstanding Loans ━━
+            {t("━━ Outstanding Loans ━━")}
           </div>
           {debts.map((d) => (
             <div
@@ -108,11 +119,12 @@ export function DuesTab({
               className="flex items-center justify-between gap-1.5 py-0.5"
             >
               <span className="text-[12px] text-muted-foreground">
-                You owe <b className="text-foreground">{d.counterpartyName}</b>
+                {t("You owe")}{" "}
+                <b className="text-foreground">{d.counterpartyName}</b>
               </span>
               <div className="flex shrink-0 items-center gap-1.5">
                 <span className="text-[12px] font-bold text-alarm">
-                  {d.amount} Gold
+                  {t("{contract.fee} Gold", { "contract.fee": d.amount })}
                 </span>
                 {onRepayLoan && (
                   <Button
@@ -122,7 +134,7 @@ export function DuesTab({
                     disabled={money < d.amount}
                     onClick={() => onRepayLoan(d.id)}
                   >
-                    Repay
+                    {t("Repay")}
                   </Button>
                 )}
               </div>
@@ -133,11 +145,13 @@ export function DuesTab({
               key={l.id}
               label={
                 <span>
-                  Owed by <b>{l.counterpartyName}</b>
+                  {t("Owed by")} <b>{l.counterpartyName}</b>
                 </span>
               }
             >
-              <span className="font-bold text-gain">{l.amount} Gold</span>
+              <span className="font-bold text-gain">
+                {t("{contract.fee} Gold", { "contract.fee": l.amount })}
+              </span>
             </Row>
           ))}
           <p className="pt-1 text-[10px] text-muted-foreground">

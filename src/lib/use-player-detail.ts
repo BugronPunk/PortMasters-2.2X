@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import type { GameState } from "@/lib/game/types";
 import type { CardRecord } from "@/lib/game/constants/cards";
@@ -14,7 +14,6 @@ export type PlayerDetailData = {
   shipLevel: number;
   round: number;
   phase: GameState["phase"];
-  gameOver: boolean;
   inventory: GameState["inventory"];
   workers: GameState["workers"];
   equippedModules: CardRecord[];
@@ -56,7 +55,7 @@ export function usePlayerDetail(
     myDetailRef.current = myDetail;
   }, [myDetail]);
 
-  // One timer per captain being asked about, so a second press re-arms the
+  // One timer per captain being asked about, so a second press resets the
   // wait rather than stacking a second clock on the same row.
   const peekTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
     new Map(),
@@ -155,5 +154,12 @@ export function usePlayerDetail(
     [socket, roomId, stopWaiting],
   );
 
-  return { detail, loading, requestDetail };
+  // Memoized so the hook's answer holds one identity until something in
+  // it changes: callers keep it in dependency lists (GameRoom's
+  // handleSelectPlayer above every other), and a fresh literal every
+  // render rebuilt their callbacks every render.
+  return useMemo(
+    () => ({ detail, loading, requestDetail }),
+    [detail, loading, requestDetail],
+  );
 }

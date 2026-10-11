@@ -7,6 +7,7 @@ import type { Server, Socket } from "socket.io";
 
 import { db } from "@/lib/db";
 import { HOST_ONLY_RESTART } from "@/lib/game/constants/copy";
+import { tFor } from "@/lib/game/i18n";
 import { ENTRY_PHASE } from "@/lib/game/phases";
 import { clearAid } from "../aid";
 import { clearAudits } from "../audit";
@@ -14,6 +15,7 @@ import { seated } from "../auth";
 import { clearBazaar } from "../bazaar";
 import { clearBoonLedger } from "../boon-ledger";
 import { clearBarter, clearFlexibleAccepted } from "../barter";
+import { roomChannel } from "../channel";
 import { clearMutedUsers, clearSessionChat, emitRoomMembers } from "../chat";
 import {
   broadcastReadyState,
@@ -71,7 +73,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
       if (room.hostId !== s.userId) {
         socket.emit("room:error", {
           roomId,
-          error: HOST_ONLY_RESTART,
+          error: tFor(s.locale, HOST_ONLY_RESTART),
         });
         return;
       }
@@ -89,6 +91,13 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
           // reloads into a reopened lobby draws the founding board for
           // the epoch waiting to start rather than the dead voyage's.
           voyageSeats: 0,
+          // [I1: the telemetry spine] The reopened lobby's clock starts
+          // now. Room.createdAt is the harbor's birthday and never moves,
+          // so a voyage dealt from this reopened table would otherwise
+          // report a fill time counting every hour since the room was
+          // first chartered; the record's openedAt reads this column at
+          // departure instead (see openVoyageTelemetry).
+          lobbyOpenedAt: new Date(),
         },
       });
       await db.gameState.deleteMany({ where: { roomId } });
@@ -198,7 +207,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
       // copy on this signal rather than showing talk from a voyage
       // that no longer exists.
       if (clearSessionChat(roomId))
-        io.to(`room:${roomId}`).emit("chat:cleared", { roomId });
+        io.to(roomChannel(roomId)).emit("chat:cleared", { roomId });
       if (clearMutedUsers(roomId)) void emitRoomMembers(io, roomId);
       // [B4: the log surfaces] A restarted voyage is a new voyage, so the
       // log that belonged to the old one goes with the conversation above.
@@ -208,7 +217,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
       clearVoyageLog(roomId);
       // [D7: the draft, and switching] And the path draft's two maps. A
       // restarted voyage deals a fresh hand for the reason the alignment
-      // cards are re dealt at the top of this handler: the draft that was
+      // cards are redealt at the top of this handler: the draft that was
       // running belongs to the voyage that just ended. The seats still
       // standing in one are told, which is what the broadcast clear is for
       // rather than the silent one, and the book of switches goes with it,
@@ -226,7 +235,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
         "restarted",
         roomMembers(roomId).map((m) => m.id),
       );
-      io.to(`room:${roomId}`).emit("room:restarted", {
+      io.to(roomChannel(roomId)).emit("room:restarted", {
         roomId,
         voyageEpoch: restarted.voyageEpoch,
         difficulty: restarted.difficulty,

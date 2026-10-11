@@ -3,6 +3,7 @@
 import { answerCharter } from "@/lib/game/engine";
 import { CHARTER_MOMENT } from "@/lib/game/constants/charters";
 import { charterChoices, charterPending } from "@/lib/game/charters";
+import { t } from "@/lib/game/i18n";
 import { MomentOverlay } from "./MomentOverlay";
 import type { PhasePanelProps } from "./PhaseShared";
 
@@ -19,7 +20,7 @@ import type { PhasePanelProps } from "./PhaseShared";
  * The three cards are charterChoices and nothing else, the same table
  * the engine's answer path validates against (see answerCharter), so the
  * cards a captain presses are exactly the cards a press may take. The
- * trio is derived off a round-less seed, so a reload between the moment
+ * trio is derived off the voyage's seed, so a reload between the moment
  * becoming due and the answer cannot reshuffle the cards under the
  * captain's eyes.
  *
@@ -42,7 +43,9 @@ export function CharterDraft({
       pending={charterPending}
       moment={() => CHARTER_MOMENT}
       choices={charterChoices}
-      actionLabel="Sail Under This"
+      // The charter's own words for the press, read here at the caller so
+      // the label arrives in this captain's language.
+      actionLabel={t("Sail Under This")}
       answer={answerCharter}
     />
   );

@@ -11,6 +11,7 @@ import {
   flexibleBarterUnlocked,
   flexibleOffersLeft,
 } from "@/lib/game/engine/barterAccess";
+import { tFor } from "@/lib/game/i18n";
 import { auditSpentLeg, auditSpentReason } from "../audit";
 import { requireAuth, seated } from "../auth";
 import {
@@ -91,14 +92,14 @@ export function wireBarter(io: Server, socket: Socket): void {
         !Number.isInteger(requestAmount) ||
         (requestAmount as number) < 1
       ) {
-        refuse("Invalid barter offer");
+        refuse(tFor(s.locale, "Invalid barter offer"));
         return;
       }
       let targetUserId: string | undefined;
       let targetName: string | undefined;
       if (payload?.targetUserId) {
         if (payload.targetUserId === s.userId) {
-          refuse("You can't direct an offer to yourself.");
+          refuse(tFor(s.locale, "You can't direct an offer to yourself."));
           return;
         }
         const targetMember = await db.roomMember.findUnique({
@@ -108,7 +109,7 @@ export function wireBarter(io: Server, socket: Socket): void {
           include: { user: { select: { displayName: true } } },
         });
         if (!targetMember) {
-          refuse(TARGET_NOT_IN_HARBOR);
+          refuse(tFor(s.locale, TARGET_NOT_IN_HARBOR));
           return;
         }
         targetUserId = payload.targetUserId;
@@ -132,7 +133,10 @@ export function wireBarter(io: Server, socket: Socket): void {
         const cp = await getCheckpoint(roomId);
         if (cp.phase !== "parley") {
           refuse(
-            "The Captain's Exchange is only open during the Parley phase.",
+            tFor(
+              s.locale,
+              "The Captain's Exchange is only open during the Parley phase.",
+            ),
           );
           return;
         }
@@ -142,7 +146,7 @@ export function wireBarter(io: Server, socket: Socket): void {
         // offers are not gated on the phase and are not gated here: they
         // travel the chat road, and no parley clock ever priced them.
         if (auditSpentLeg(roomId, cp.round)) {
-          refuse(auditSpentReason("The exchange opens"));
+          refuse(auditSpentReason("The exchange opens", s.locale));
           return;
         }
       }
@@ -157,11 +161,11 @@ export function wireBarter(io: Server, socket: Socket): void {
       if (flexible) {
         const myLevel = await authoritativeRenownLevel(s.userId);
         if (myLevel === null) {
-          refuse(renownUnavailableReason());
+          refuse(renownUnavailableReason(s.locale));
           return;
         }
         if (!flexibleBarterUnlocked(myLevel)) {
-          refuse(flexibleLockedReason());
+          refuse(flexibleLockedReason(s.locale));
           return;
         }
         // Posting is free and always allowed while there is something
@@ -177,17 +181,17 @@ export function wireBarter(io: Server, socket: Socket): void {
             flexibleOffersAccepted(roomId, s.userId),
           ) === 0
         ) {
-          refuse(flexibleSpentReason());
+          refuse(flexibleSpentReason(s.locale));
           return;
         }
         if (targetUserId) {
           const theirLevel = await authoritativeRenownLevel(targetUserId);
           if (theirLevel === null) {
-            refuse(renownUnavailableReason());
+            refuse(renownUnavailableReason(s.locale));
             return;
           }
           if (!bothFlexibleBarterUnlocked(myLevel, theirLevel)) {
-            refuse(otherCaptainLockedReason());
+            refuse(otherCaptainLockedReason(s.locale));
             return;
           }
         }
@@ -262,7 +266,12 @@ export function wireBarter(io: Server, socket: Socket): void {
         socket.emit("barter:accept:fail", { roomId, offerId, reason });
       };
 
-      const opening = inspectOfferForAccept(roomId, s.userId, offerId);
+      const opening = inspectOfferForAccept(
+        roomId,
+        s.userId,
+        offerId,
+        s.locale,
+      );
       if (!opening.ok) {
         fail(opening.reason);
         return;
@@ -278,7 +287,7 @@ export function wireBarter(io: Server, socket: Socket): void {
       if (!opening.offer.flexible) {
         const cp = await getCheckpoint(roomId);
         if (auditSpentLeg(roomId, cp.round)) {
-          fail(auditSpentReason("The exchange opens"));
+          fail(auditSpentReason("The exchange opens", s.locale));
           return;
         }
       }
@@ -299,14 +308,14 @@ export function wireBarter(io: Server, socket: Socket): void {
           authoritativeRenownLevel(opening.offer.fromUserId),
         ]);
         if (myLevel === null || theirLevel === null) {
-          fail(renownUnavailableReason());
+          fail(renownUnavailableReason(s.locale));
           return;
         }
         if (!bothFlexibleBarterUnlocked(myLevel, theirLevel)) {
           fail(
             flexibleBarterUnlocked(myLevel)
-              ? otherCaptainLockedReason()
-              : flexibleLockedReason(),
+              ? otherCaptainLockedReason(s.locale)
+              : flexibleLockedReason(s.locale),
           );
           return;
         }
@@ -321,12 +330,22 @@ export function wireBarter(io: Server, socket: Socket): void {
           opening.offer.fromUserId,
         );
         if (flexibleOffersLeft(theirLevel, theirAccepted) === 0) {
-          fail("Every flexible trade that captain has this voyage is done.");
+          fail(
+            tFor(
+              s.locale,
+              "Every flexible trade that captain has this voyage is done.",
+            ),
+          );
           return;
         }
       }
 
-      const inspected = inspectOfferForAccept(roomId, s.userId, offerId);
+      const inspected = inspectOfferForAccept(
+        roomId,
+        s.userId,
+        offerId,
+        s.locale,
+      );
       if (!inspected.ok) {
         fail(inspected.reason);
         return;

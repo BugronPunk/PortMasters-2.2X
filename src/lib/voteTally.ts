@@ -23,6 +23,10 @@
 // =====================================================================
 
 import type { PublicUser } from "@/lib/api";
+// Every count and list below is read at the moment it is composed rather
+// than stored, so the values a vote card fills into its own sentence
+// arrive in the language of the captain reading the card.
+import { listJoiner, t } from "./game/i18n";
 
 export type TallyRow = {
   targetId: string;
@@ -48,45 +52,59 @@ export type VoteCensus = {
  * One captain as this side can name them. The fallback is lower case
  * because every place it lands is mid sentence: a row that reads "a
  * captain has one name" is a row about a captain this client can no
- * longer see, and naming them at all is the honest rendering.
+ * longer see, and naming them at all is the honest rendering. The
+ * fallback is read through the pack like a label, since it is words
+ * about a captain rather than the name of one.
  */
 export function captainName(members: PublicUser[], id: string): string {
-  return members.find((m) => m.id === id)?.displayName ?? "a captain";
+  return members.find((m) => m.id === id)?.displayName ?? t("a captain");
 }
 
 /**
  * A list of names as a captain reads one: "AaronZ", "AaronZ and JoeZ",
  * "AaronZ, JoeZ and Kim". Oxford commas are left out on purpose, the same
- * way the rest of this tree writes a list of names out loud.
+ * way the rest of this tree writes a list of names out loud. The join and
+ * the conjunction are the row's own business: the names are joined with
+ * the reader's own separator and the " and " lives in the pack's row.
  */
 export function nameList(names: string[]): string {
   if (names.length === 0) return "";
   if (names.length === 1) return names[0];
-  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return t("{nameList} and {lastName}", {
+    nameList: names.slice(0, -1).join(listJoiner()),
+    lastName: names[names.length - 1],
+  });
 }
 
 /**
  * A count of names with its word, so no card has to print "1 names".
+ * Both readings are the pack's rows, the singular and the plural.
  */
 export function nameCount(count: number): string {
-  return count === 1 ? "1 name" : `${count} names`;
+  return count === 1 ? t("1 name") : t("{count} names", { count });
 }
 
 /**
  * A count of captains with its word, the same arrangement as the count
- * above and for the same reason.
+ * above and for the same reason, both readings the pack's rows.
  */
 export function captainCount(count: number): string {
-  return count === 1 ? "1 captain" : `${count} captains`;
+  return count === 1 ? t("1 captain") : t("{count} captains", { count });
 }
 
 /**
  * The running count as one sentence: how many names are in of how many
  * captains the vote is divided by. Both vote surfaces render this line
  * rather than building it, so the number and its verb agree in one place.
+ * The verb is English glue with no row of its own; the pack's Mandarin
+ * reads the count without a verb, which is why the row drops the token.
  */
 export function namedCountLine(named: number, roster: number): string {
-  return `${named} of ${roster} captains ${named === 1 ? "has" : "have"} named someone.`;
+  return t("{named} of {roster} captains {haveWord} named someone.", {
+    named,
+    roster,
+    haveWord: named === 1 ? "has" : "have",
+  });
 }
 
 export function tallyRows(

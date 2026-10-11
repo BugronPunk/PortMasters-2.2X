@@ -18,6 +18,7 @@ import type { useRoomRoster } from "@/lib/use-room-roster";
 import type { usePathDraft } from "@/lib/use-path-draft";
 import type { VoyageLog } from "@/lib/use-voyage-log";
 import type { GameState, GameContext } from "@/lib/game/types";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 import { ReadyBar } from "../ReadyBar";
@@ -48,8 +49,11 @@ export type ModuleTrades = ReturnType<typeof useModuleTrades>;
 export type Bazaar = ReturnType<typeof useBazaarRumors>;
 type Aid = ReturnType<typeof useAid>;
 type Backing = ReturnType<typeof useBacking>;
-type Audit = ReturnType<typeof useAudit>;
-type Maroon = ReturnType<typeof useMaroon>;
+// Exported because the two vote panels that take them as props
+// (AuditPanel, MaroonPanel) name them rather than redeclaring the alias
+// locally.
+export type Audit = ReturnType<typeof useAudit>;
+export type Maroon = ReturnType<typeof useMaroon>;
 type Boons = ReturnType<typeof useBoonLedger>;
 type Roster = ReturnType<typeof useRoomRoster>;
 // [W2: the path draft] The deal's own board, threaded like every market
@@ -144,6 +148,14 @@ export type PhasePanelProps = {
   draft: Draft;
 };
 
+// The two boards of the Market (the port's purchase board and the
+// manifest's order board) take exactly this much of the phase panel: the
+// game, the act, and the cargo colour reader. Named once so the two board
+// signatures cannot drift apart.
+export type MarketBoardProps = Pick<PhasePanelProps, "game" | "act"> & {
+  colorFor: (item: string) => string | undefined;
+};
+
 /**
  * [B2: hard timers, the server as timekeeper] The room's clock, drawn on a
  * screen a captain has not acted on yet: the tally, the countdown, and the
@@ -220,13 +232,15 @@ export function CancelReadyButton({
  * The line is not always the same sentence, so it is passed: the shipyard
  * says it is waiting on the crew with a countdown in front of it, and the
  * boon draft has its own reason to be waiting. The default is the footer's
- * wording, which is the one every other screen uses.
+ * wording, which is the one every other screen uses, and it is read here
+ * where it is authored: every caller that passes one hands over a sentence
+ * it has already read in this language.
  */
 export function PhaseWaiting({
   phaseSync,
   members,
-  title = "Waiting for the rest of the crew",
-  cancelLabel = "Not ready yet",
+  title = t("Waiting for the rest of the crew"),
+  cancelLabel = t("Not ready yet"),
   className,
 }: {
   phaseSync: PhaseSync;
@@ -310,7 +324,7 @@ export function PhaseError({
       )}
     >
       <span>⚠️ {message}</span>
-      <button type="button" onClick={onDismiss} aria-label="Dismiss error">
+      <button type="button" onClick={onDismiss} aria-label={t("Dismiss error")}>
         <X className="h-3.5 w-3.5" />
       </button>
     </div>
@@ -319,7 +333,7 @@ export function PhaseError({
 
 // The fittings the panel bodies are built from and the two card frames the
 // boards and the drafts are drawn on live beside this file, and are
-// re-exported here, which is the path every phase panel imports them from.
+// passed on here, which is the path every phase panel imports them from.
 // Two module splits rather than one file because a single shared file had
 // grown past what any one of its readers was looking for: the chrome a
 // screen waits behind stays here, and the pieces a screen is drawn from
@@ -336,6 +350,7 @@ export {
   PanelStat,
   PanelTotal,
   StatTile,
+  StationStrip,
   IntelBanner,
   PathDeskRow,
   JustForChip,

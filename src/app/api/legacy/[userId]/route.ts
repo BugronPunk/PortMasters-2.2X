@@ -7,9 +7,15 @@
 // public game profile works. Still requires being signed in, just not
 // shared membership. The check in state stays private to the owner.
 import { NextRequest, NextResponse } from "next/server";
+import { CAPTAIN_NOT_FOUND } from "@/lib/api";
 import { db } from "@/lib/db";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
 import { legacySummaryFor } from "@/lib/captain-legacy";
+import { tFor } from "@/lib/game/i18n";
 
 export async function GET(
   _req: NextRequest,
@@ -23,8 +29,13 @@ export async function GET(
     where: { id: userId },
     select: { id: true },
   });
-  if (!other)
-    return NextResponse.json({ error: "Captain not found" }, { status: 404 });
+  if (!other) {
+    const locale = await requestLocale();
+    return NextResponse.json(
+      { error: tFor(locale, CAPTAIN_NOT_FOUND) },
+      { status: 404 },
+    );
+  }
 
   const { summary } = await legacySummaryFor(userId);
 

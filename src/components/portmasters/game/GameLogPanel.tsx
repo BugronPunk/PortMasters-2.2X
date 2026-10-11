@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { t } from "@/lib/game/i18n";
 
 // How many of the tail the ledger draws. The session keeps up to
 // LEDGER_LINE_CAP lines, so a long voyage has more than this to show and
@@ -25,10 +26,12 @@ export function GameLogPanel({ logs }: { logs: string[] }) {
     <div className="flex flex-col">
       <div className="flex items-center justify-between mb-1.5 px-1 shrink-0">
         <span className="text-[11px] font-semibold text-muted-foreground tracking-wide">
-          📜 Ledger
+          {t("📜 Ledger")}
         </span>
         <span className="text-[10px] text-muted-foreground">
-          {logs.length} {logs.length === 1 ? "entry" : "entries"}
+          {logs.length === 1
+            ? t("{count} entry", { count: logs.length })
+            : t("{count} entries", { count: logs.length })}
         </span>
       </div>
       <div
@@ -37,7 +40,7 @@ export function GameLogPanel({ logs }: { logs: string[] }) {
       >
         {logs.length === 0 ? (
           <div className="text-muted-foreground italic px-1 py-2">
-            The ledger is empty. Set sail to begin recording your voyage.
+            {t("The ledger is empty. Set sail to begin recording your voyage.")}
           </div>
         ) : (
           logs.slice(-LEDGER_TAIL).map((m, i) => (

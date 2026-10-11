@@ -1,6 +1,7 @@
 "use client";
 
 import { leavePhase } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import { itemColorResolver } from "@/lib/use-color-preference";
 import { Coins } from "lucide-react";
 import {
@@ -29,20 +30,22 @@ export function Orders({
     <div>
       <PanelTitle className="mb-4">
         <Coins className="h-5 w-5 text-orders" />
-        Trade Manifest
+        {t("Trade Manifest")}
       </PanelTitle>
       <OrderFulfillmentPlanner game={game} />
+      {/* The banner prints the note it is given, so the read happens
+          here, where the manifest names its own pointer. */}
       <IntelBanner
         game={game}
         tone="intel"
-        note="(look for the 🔮 badge below)."
+        note={t("(look for the 🔮 badge below).")}
       />
       <BrokerFavor game={game} act={act} />
       <OrdersBoard game={game} act={act} colorFor={resolveColor} />
       <ReadyFooter
         phaseSync={phaseSync}
         members={members}
-        idleLabel="✅ Complete Trades, Continue"
+        idleLabel={t("✅ Complete Trades, Continue")}
         onConfirm={() => phaseSync.markReady((g, l) => leavePhase(g, ctx, l))}
       />
     </div>

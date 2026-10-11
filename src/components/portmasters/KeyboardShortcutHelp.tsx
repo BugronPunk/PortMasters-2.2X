@@ -7,44 +7,25 @@ import {
   ModalClose,
   ModalOverlay,
 } from "@/components/ui/modal-overlay";
+import { SHORTCUTS, type KeyboardShortcut } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
 
 /**
  * Keyboard Shortcut Help overlay. Shows all available keyboard shortcuts
  * in a clean, readable layout. Opens with the ? key or F2, closes with
  * Escape or clicking the backdrop.
+ *
+ * The two tables below keep the record's own English group names, because
+ * the name is also the key the list filters by; the heading a captain reads
+ * is that name read through the pack.
  */
 
-type Shortcut = {
-  keys: string[];
-  label: string;
-  group: "Navigation" | "Game Actions" | "Help";
-};
-
-const SHORTCUTS: Shortcut[] = [
-  { keys: ["Ctrl", "S"], label: "Save game state", group: "Game Actions" },
-  {
-    keys: ["Ctrl", "N"],
-    label: "Next phase or continue",
-    group: "Game Actions",
-  },
-  {
-    keys: ["Ctrl", "R"],
-    label: "Restart voyage (host only)",
-    group: "Game Actions",
-  },
-  { keys: ["F1"], label: "Open the full navigation guide", group: "Help" },
-  { keys: ["?"], label: "Open this shortcut help", group: "Help" },
-  { keys: ["F2"], label: "Open this shortcut help", group: "Help" },
-  { keys: ["Esc"], label: "Close this shortcut help", group: "Navigation" },
+const GROUP_ORDER: KeyboardShortcut["group"][] = [
+  "Game Actions",
+  "Navigation",
+  "Help",
 ];
-
-// Every row above names a key the window keydown listener in GameRoom
-// actually acts on: a shortcut that does nothing has no place on a screen
-// whose entire job is to say which keys do something. A row goes in only
-// beside the handler that reads it.
-
-const GROUP_ORDER: Shortcut["group"][] = ["Game Actions", "Navigation", "Help"];
-const GROUP_ICONS: Record<Shortcut["group"], string> = {
+const GROUP_ICONS: Record<KeyboardShortcut["group"], string> = {
   "Game Actions": "🎮",
   Navigation: "🧭",
   Help: "📚",
@@ -60,7 +41,10 @@ export function KeyboardShortcutHelp({
   return (
     <AnimatePresence>
       {open && (
-        <ModalOverlay onClose={() => onOpenChange(false)}>
+        <ModalOverlay
+          label={t("Keyboard Shortcuts")}
+          onClose={() => onOpenChange(false)}
+        >
           <ModalCard>
             <div className="mb-5 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -68,11 +52,11 @@ export function KeyboardShortcutHelp({
                   <Keyboard className="h-5 w-5" />
                 </div>
                 <h2 className="font-display text-lg font-bold text-shortcuts">
-                  Keyboard Shortcuts
+                  {t("Keyboard Shortcuts")}
                 </h2>
               </div>
               <ModalClose
-                label="Close shortcut help"
+                label={t("Close shortcut help")}
                 onClick={() => onOpenChange(false)}
               />
             </div>
@@ -85,7 +69,7 @@ export function KeyboardShortcutHelp({
                   <div key={group}>
                     <h3 className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                       <span>{GROUP_ICONS[group]}</span>
-                      {group}
+                      {t(group)}
                     </h3>
                     <div className="space-y-1.5">
                       {shortcuts.map((s) => (
@@ -99,7 +83,7 @@ export function KeyboardShortcutHelp({
                           className="flex items-center justify-between rounded-lg px-3 py-2 hover:bg-black/5 dark:hover:bg-white/5"
                         >
                           <span className="text-sm text-foreground">
-                            {s.label}
+                            {t(s.label)}
                           </span>
                           <div className="flex items-center gap-1">
                             {s.keys.map((key, i) => (
@@ -120,7 +104,7 @@ export function KeyboardShortcutHelp({
             </div>
 
             <p className="mt-5 text-center text-[11px] text-muted-foreground">
-              Shortcuts are ignored while typing in inputs or text areas.
+              {t("Shortcuts are ignored while typing in inputs or text areas.")}
             </p>
           </ModalCard>
         </ModalOverlay>

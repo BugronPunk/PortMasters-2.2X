@@ -15,6 +15,7 @@ import { APP_NAME } from "@/lib/game/constants/brand";
 import { guideText, tutorialSteps } from "@/lib/game/constants/copy";
 import { tipsHeading, tipsText } from "@/lib/game/constants/tips";
 import type { Difficulty } from "@/lib/game/difficulty";
+import { getLocale, t } from "@/lib/game/i18n";
 // The two modals below that quote a voyage's length take the mode as well
 // as the tier, because the length is the voyage's rather than the tier's
 // alone (see voyageLegs in src/lib/game/mode). The caller reads both off
@@ -23,7 +24,7 @@ import type { Difficulty } from "@/lib/game/difficulty";
 import type { GameMode } from "@/lib/game/mode";
 import type { GameState } from "@/lib/game/types";
 import { getIntelCost } from "@/lib/game/engine";
-import { cn } from "@/lib/utils";
+import { cn, formatTime } from "@/lib/utils";
 import { CloseFooter } from "./CloseFooter";
 import {
   Sparkles,
@@ -118,8 +119,8 @@ export function GuideModal({
           <BookOpen className="h-4 w-4" />
         </span>
       }
-      title="Navigation Guide"
-      description={`${APP_NAME} rules and shortcuts`}
+      title={t("Navigation Guide")}
+      description={t("{APP_NAME} rules and shortcuts", { APP_NAME })}
       body={guideText(mode, difficulty)}
     />
   );
@@ -136,7 +137,7 @@ export function TipsModal({
       open={open}
       onOpenChange={onOpenChange}
       badge={<Lightbulb className="h-5 w-5 text-advisor" />}
-      title="Trade Strategy Advice"
+      title={t("Trade Strategy Advice")}
       // The description is the advice page's own heading (see tipsHeading
       // in @/lib/game/constants/tips), so the dialog names the strategy
       // the body under it actually prints for this mode rather than the
@@ -171,16 +172,18 @@ export function NotificationHistoryModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5 text-notifications" />
-            Notifications
+            {t("Notifications")}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            Every ledger update, harbor message, and direct message this session
+            {t(
+              "Every ledger update, harbor message, and direct message this session",
+            )}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="pm-scroll-capped max-h-[60vh]">
           {items.length === 0 ? (
             <div className="flex flex-col items-center gap-2 text-muted-foreground text-sm py-10">
-              <BellOff className="h-6 w-6" /> Nothing yet this voyage.
+              <BellOff className="h-6 w-6" /> {t("Nothing yet this voyage.")}
             </div>
           ) : (
             <div className="space-y-2 pr-2">
@@ -200,10 +203,7 @@ export function NotificationHistoryModal({
                   <div className="text-sm font-semibold mb-1 flex items-center gap-1.5">
                     <span className="text-base">{n.icon}</span> {n.title}
                     <span className="ml-auto text-[10px] text-muted-foreground font-normal">
-                      {new Date(n.at).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {formatTime(new Date(n.at))}
                     </span>
                   </div>
                   <div className="space-y-0.5">
@@ -251,10 +251,10 @@ export function RumorBoardModal({
             <span className="pm-grad-rumors inline-flex h-7 w-7 items-center justify-center rounded-lg">
               <Sparkles className="h-4 w-4" />
             </span>
-            Broker's Rumor Board
+            {t("Broker's Rumor Board")}
           </DialogTitle>
           <DialogDescription>
-            Spend gold to reveal what Orders will ask for!
+            {t("Spend gold to reveal what Orders will ask for!")}
           </DialogDescription>
         </DialogHeader>
         {/* The button greys outside Market because the engine refuses the
@@ -267,11 +267,11 @@ export function RumorBoardModal({
             onClick={onBuy}
             disabled={game.phase !== "market"}
           >
-            🔮 Buy Rumor ({intelCost}💰)
+            {t("🔮 Buy Rumor ({intelCost}💰)", { intelCost })}
           </Button>
           {game.phase !== "market" && (
             <p className="text-[11px] text-muted-foreground">
-              The Broker only deals during Market.
+              {t("The Broker only deals during Market.")}
             </p>
           )}
         </div>
@@ -279,24 +279,28 @@ export function RumorBoardModal({
           {game.revealedIntel.length ? (
             <>
               <div className="font-semibold text-rumors text-sm mb-1.5">
-                📜 Revealed Intel:
+                {t("📜 Revealed Intel:")}
               </div>
               {game.revealedIntel.map((i, idx) => (
                 <div key={idx} className="text-[13px] py-0.5">
-                  • 🗣️ '{i.port} wants {i.item}'
+                  {t("• 🗣️ '{port} wants {item}'", {
+                    port: t(i.port),
+                    item: t(i.item),
+                  })}
                 </div>
               ))}
             </>
           ) : (
             <div className="text-muted-foreground text-center py-5 text-sm">
-              ✨ No rumors revealed yet... Spend gold to listen to the Broker's
-              whispers.
+              {t(
+                "✨ No rumors revealed yet... Spend gold to listen to the Broker's whispers.",
+              )}
             </div>
           )}
         </div>
         <CloseFooter
           onClose={() => onOpenChange(false)}
-          label="Close Board"
+          label={t("Close Board")}
           className="mt-2"
         />
       </DialogContent>
@@ -307,7 +311,7 @@ export function RumorBoardModal({
 /**
  * Host only confirmation before a restart goes out over the wire. A
  * restart resets every captain currently in the harbor back to round one,
- * not just whoever clicks the button, and re opens the room to new joins,
+ * not just whoever clicks the button, and reopens the room to new joins,
  * so it's worth one extra click to make sure that's actually intended.
  *
  * Wears the vermilion gradient so the consequence reads at a glance: a
@@ -334,17 +338,17 @@ export function RestartConfirmModal({
             <span className="bg-alarm/5 inline-flex h-7 w-7 items-center justify-center rounded-lg">
               <RotateCcw className="h-4 w-4 text-alarm" />
             </span>
-            Restart the voyage?
+            {t("Restart the voyage?")}
           </DialogTitle>
           <DialogDescription>
-            Every captain currently in this harbor goes back to round one: gold,
-            cargo, workers, and ship upgrades all reset. The harbor also
-            reopens, so new captains can join again. This can't be undone.
+            {t(
+              "Every captain currently in this harbor goes back to round one: gold, cargo, workers, and ship upgrades all reset. The harbor also reopens, so new captains can join again. This can't be undone.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-end gap-2 mt-2">
           <Button variant="secondary" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button
             className="bg-alarm text-background"
@@ -353,7 +357,7 @@ export function RestartConfirmModal({
               onConfirm();
             }}
           >
-            Restart for Everyone
+            {t("Restart for Everyone")}
           </Button>
         </div>
       </DialogContent>
@@ -384,17 +388,17 @@ export function LeaveConfirmModal({
             <span className="bg-alarm/5 inline-flex h-7 w-7 items-center justify-center rounded-lg">
               <DoorOpen className="h-4 w-4 text-alarm" />
             </span>
-            Leave the voyage?
+            {t("Leave the voyage?")}
           </DialogTitle>
           <DialogDescription>
-            The harbor sails on without you: your seat is written off, and the
-            gold and cargo you were carrying go with it. You can start or join a
-            new harbor right away. This can't be undone.
+            {t(
+              "The harbor sails on without you: your seat is written off, and the gold and cargo you were carrying go with it. You can start or join a new harbor right away. This can't be undone.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="flex justify-end gap-2 mt-2">
           <Button variant="secondary" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t("Cancel")}
           </Button>
           <Button
             className="bg-alarm text-background"
@@ -403,7 +407,7 @@ export function LeaveConfirmModal({
               onConfirm();
             }}
           >
-            Leave the Voyage
+            {t("Leave the Voyage")}
           </Button>
         </div>
       </DialogContent>
@@ -418,9 +422,13 @@ export function TutorialModal({
   difficulty,
 }: VoyageReadingProps) {
   const [step, setStep] = useState(0);
+  // The step copy is composed for the language in force when it is built
+  // (see tutorialSteps), so the language is part of the memo's own key: a
+  // flip rebuilds the steps rather than leaving the last one on screen.
+  const locale = getLocale();
   const steps = useMemo(
     () => tutorialSteps(mode, difficulty),
-    [mode, difficulty],
+    [mode, difficulty, locale],
   );
   const total = steps.length;
   const s = steps[step];
@@ -455,7 +463,7 @@ export function TutorialModal({
             {s.title}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            Tutorial step {step + 1} of {total}
+            {t("Tutorial step {step} of {total}", { step: step + 1, total })}
           </DialogDescription>
         </DialogHeader>
         <Progress value={pct} className="h-1.5 shrink-0" />
@@ -471,10 +479,13 @@ export function TutorialModal({
             disabled={step === 0}
             onClick={() => setStep((s) => Math.max(0, s - 1))}
           >
-            <ChevronLeft className="h-3.5 w-3.5" /> Back
+            <ChevronLeft className="h-3.5 w-3.5" /> {t("Back")}
           </Button>
           <span className="justify-self-center whitespace-nowrap text-[11px] text-muted-foreground">
-            {step + 1} of {total}
+            {t("{step.delivered} of {step.required}", {
+              "step.delivered": step + 1,
+              "step.required": total,
+            })}
           </span>
           {isLast ? (
             <Button
@@ -482,7 +493,7 @@ export function TutorialModal({
               className="justify-self-end pm-grad-guide"
               onClick={close}
             >
-              🚢 Set Sail!
+              {t("🚢 Set Sail!")}
             </Button>
           ) : (
             <Button
@@ -490,7 +501,7 @@ export function TutorialModal({
               className="justify-self-end pm-grad-guide"
               onClick={() => setStep((s) => s + 1)}
             >
-              Continue <ChevronRight className="h-3.5 w-3.5" />
+              {t("Continue")} <ChevronRight className="h-3.5 w-3.5" />
             </Button>
           )}
         </div>
@@ -499,7 +510,7 @@ export function TutorialModal({
             onClick={close}
             className="text-[11px] text-muted-foreground hover:text-muted-foreground underline underline-offset-2"
           >
-            Skip tutorial
+            {t("Skip tutorial")}
           </button>
         </div>
       </DialogContent>

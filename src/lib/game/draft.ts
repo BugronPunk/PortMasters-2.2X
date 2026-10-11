@@ -44,6 +44,10 @@ import {
   PATH_SWITCH_FROM_ROUND,
   PATH_SWITCH_TO_ROUND,
 } from "./constants/paths";
+// The ports list below is read at the moment it is composed, and its join
+// is the reader's own joiner, so the refusal that names the seats is one
+// sentence in either language.
+import { listJoiner, t } from "./i18n";
 import { PATH_IDS, type PathId } from "./paths";
 import { phaseFace } from "./phases";
 import { type Rng } from "./rng";
@@ -309,8 +313,11 @@ export function pathSwitchPhase(phase: unknown): boolean {
  * would.
  */
 export function pathSwitchPortsList(): string {
-  const names = PATH_SWITCH_PHASES.map((phase) => phaseFace(phase).label);
-  return `${names.slice(0, -1).join(", ")} or ${names[names.length - 1]}`;
+  const names = PATH_SWITCH_PHASES.map((phase) => t(phaseFace(phase).label));
+  return t("{nameList} or {lastName}", {
+    nameList: names.slice(0, -1).join(listJoiner()),
+    lastName: names[names.length - 1],
+  });
 }
 
 /**

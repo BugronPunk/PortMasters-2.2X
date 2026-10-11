@@ -20,6 +20,7 @@
 // trust gate on Backing, a gate that has never existed: lending and
 // backing are open to every captain whatever their Renown.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 
 // The minimum Renown a viewer needs to see another captain's detail.
 const DETAIL_VIEWER_MIN_LEVEL = 5;
@@ -33,12 +34,16 @@ const DETAIL_SUBJECT_MIN_LEVEL = 3;
 // Returns "none" for zero so an empty hold reads as empty rather than as
 // a missing field; the other bands widen deliberately so a viewer can
 // tell "a few" from "a haul" without learning the precise number.
+//
+// Each band is read at the return, because these are the engine's own
+// words and the peek only ever prints the answer: no caller compares one
+// band against another, so the value can travel already spoken.
 export function bandFor(count: number): string {
-  if (count <= 0) return "none";
-  if (count <= 3) return "a few";
-  if (count <= 8) return "some";
-  if (count <= 15) return "plenty";
-  return "a haul";
+  if (count <= 0) return t("none");
+  if (count <= 3) return t("a few");
+  if (count <= 8) return t("some");
+  if (count <= 15) return t("plenty");
+  return t("a haul");
 }
 
 // Whether a captain at myRenownLevel is allowed to see the detail of a

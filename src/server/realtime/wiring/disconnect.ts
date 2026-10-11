@@ -4,6 +4,7 @@
 
 import type { Server, Socket } from "socket.io";
 
+import { tFor } from "@/lib/game/i18n";
 import { emitRoomMembers } from "../chat";
 import { noteDraftAway } from "../draft";
 import {
@@ -33,10 +34,21 @@ export function wireDisconnect(
       }
       if (s.roomId) {
         forgetStatusIfLastSocket(s.roomId, s.userId, userSockets);
-        io.to(`room:${s.roomId}`).emit("room:system", {
-          roomId: s.roomId,
-          content: `${s.user.displayName} has gone ashore`,
-        });
+        // The room reads this notice, so it goes to every socket still
+        // seated in the harbor, each in that captain's own language. The
+        // leaving socket was taken out of the map above, so the walk is
+        // the rest of the crew.
+        for (const [socketId, state] of sockets) {
+          if (state.roomId !== s.roomId) continue;
+          io.to(socketId).emit("room:system", {
+            roomId: s.roomId,
+            content: tFor(
+              state.locale,
+              "{s.user.displayName} has gone ashore",
+              { "s.user.displayName": s.user.displayName },
+            ),
+          });
+        }
         void emitRoomMembers(io, s.roomId);
         if (!set || set.size === 0) {
           // [W2: the path draft] A live draft holds the room at the

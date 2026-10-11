@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 import { JustForChip, PathDeskRow } from "./phases/PhaseShared";
 
@@ -13,7 +14,7 @@ import { JustForChip, PathDeskRow } from "./phases/PhaseShared";
  * state and the same offer row four times over: eighteen shared JSX and
  * class lines pairwise between the escort, module and refit panels alone,
  * with the wrapper, the heading, the form block, the error block, the
- * empty state and the row button cluster byte-identical. Three copies of
+ * empty state and the row button cluster byte for byte. Three copies of
  * a row is three chances for one desk's accept button, blocked note or
  * cancel press to drift from the next, which is the same defect
  * PathDeskRow was extracted to end one layer down.
@@ -84,29 +85,6 @@ export function MarketBlock({
 }
 
 /**
- * Where a desk's socket refusals land: the message and the Dismiss press,
- * one block for all four markets, so a refusal reads the same at every
- * desk it can arrive at.
- */
-export function MarketError({
-  error,
-  onDismiss,
-}: {
-  error: string | null | undefined;
-  onDismiss: () => void;
-}) {
-  if (!error) return null;
-  return (
-    <p className="text-center text-[11px] text-alarm mb-2">
-      {error}{" "}
-      <button type="button" onClick={onDismiss} className="underline">
-        Dismiss
-      </button>
-    </p>
-  );
-}
-
-/**
  * The line a market shows when its board is empty. The bench keeps its
  * own tighter padding through className; the sentences are the market's
  * own and arrive as children.
@@ -140,6 +118,11 @@ export function MarketEmpty({
  * an offer wears, the chip an aimed offer wears, the seller's own Cancel
  * press, and the buyer's Take and Turn Down buttons with the refusal note
  * under them.
+ *
+ * The accept and decline labels arrive from the desk that names them,
+ * already read, because each market's button says something different.
+ * The Cancel press is the same press on every board, so its label is the
+ * row's own and reads through the pack right here.
  *
  * The two readings the row draws its buttons from are deliberately two
  * rather than one. `standing` is whether this row is still an offer somebody
@@ -202,7 +185,7 @@ export function OfferRow({
             className="h-7 px-2.5 text-[10px] rounded shrink-0"
             onClick={onCancel}
           >
-            Cancel
+            {t("Cancel")}
           </Button>
         ) : (
           <span className="flex flex-col items-end gap-0.5 shrink-0">

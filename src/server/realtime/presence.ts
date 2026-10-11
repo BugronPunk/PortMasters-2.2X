@@ -29,9 +29,11 @@ import { PrivateEntry } from "@/types/realtime/private-entry";
 import { PublicUser } from "@/types/realtime/presence";
 import type { Server } from "socket.io";
 import { db } from "@/lib/db";
+import { DEFAULT_LOCALE, tFor, type Locale } from "@/lib/game/i18n";
 import { leaveRoomForUser } from "@/lib/rooms";
 import type { SocketState } from "./types";
-import { forgetStatusIfLastSocket } from "./status";
+import { roomChannel } from "./channel";
+import { forgetStatus } from "./status";
 import { closeVoyageTelemetry, noteCaptainLeft } from "./telemetry";
 import { noteVoyageLogDeparture } from "./voyage-log";
 
@@ -61,13 +63,23 @@ export function emitToUser(
 // never into a broadcast. Everything hidden in this game rides this, so
 // the rule lives in one place that can be read at a glance rather than in
 // every handler that has a secret to deliver.
+//
+// The entry is built per socket rather than once for the user, because a
+// line can carry the reader's language and one captain can hold two tabs
+// in two of them. The builder is handed this socket's language and
+// returns the entry; a line that reads the same in every language goes
+// through the same shape, so the delivery of a secret has one form rather
+// than two.
 export function emitPrivate(
   io: Server,
   roomId: string,
   userId: string,
-  entry: PrivateEntry,
+  build: (locale: Locale) => PrivateEntry,
 ): void {
-  emitToUser(io, userId, "private:entry", { roomId, entry });
+  for (const sid of userSockets.get(userId) ?? []) {
+    const locale = sockets.get(sid)?.locale ?? DEFAULT_LOCALE;
+    io.to(sid).emit("private:entry", { roomId, entry: build(locale) });
+  }
 }
 
 // Abandoned seat cleanup. Keyed by "roomId:userId" since a user can
@@ -351,10 +363,19 @@ export async function reapDeparture(
     void closeVoyageTelemetry(roomId, "emptied", []);
     cleanup.clearRoomAllMaps(roomId);
   } else {
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content: `${displayName}'s voyage has ended`,
-    });
+    // The room reads this notice, so it goes to every socket still seated
+    // in the harbor, each in that captain's own language. The captain who
+    // just left has already been taken out of the map, so the walk is the
+    // remaining crew.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(state.locale, "{displayName}'s voyage has ended", {
+          displayName,
+        }),
+      });
+    }
     await cleanup.emitRoomMembers(io, roomId);
     // The captain who just left might have been the only one still
     // out at sea; everyone else could already be sitting at their
@@ -407,7 +428,7 @@ export function detachUser(io: Server, userId: string): string[] {
   for (const socketId of ids) {
     const state = sockets.get(socketId);
     if (!state?.roomId) continue;
-    io.sockets.sockets.get(socketId)?.leave(`room:${state.roomId}`);
+    io.sockets.sockets.get(socketId)?.leave(roomChannel(state.roomId));
     state.roomId = null;
   }
   return ids;
@@ -424,16 +445,20 @@ export function detachUser(io: Server, userId: string): string[] {
 export function emptyRoom(io: Server, roomId: string): void {
   for (const [socketId, state] of sockets) {
     if (state.roomId !== roomId) continue;
-    io.sockets.sockets.get(socketId)?.leave(`room:${roomId}`);
+    io.sockets.sockets.get(socketId)?.leave(roomChannel(roomId));
     state.roomId = null;
-    const set = userSockets.get(state.userId);
-    if (set) {
-      set.delete(socketId);
-      if (set.size === 0) userSockets.delete(state.userId);
-    }
-    // Only forgets the status if no other socket of theirs is still in
-    // this room, which is the same rule the disconnect path applies.
-    forgetStatusIfLastSocket(roomId, state.userId, userSockets);
+    // The account keeps its place in userSockets. The sockets here are
+    // still connected and still registered: the map's documented meaning
+    // is every live socket an account holds. This used to edit the set as
+    // if the socket had gone away, which left a captain sitting in an
+    // emptied room absent from their own account's entry, so a later ban
+    // or purge of them found no ids at detachUser and closed nothing
+    // while the socket went on acting on its cached session. The status
+    // row goes outright, the same rule room:join and room:leave apply: a
+    // captain who is no longer in this room sends a fresh status if they
+    // ever come back, and until then the roster must not read them as
+    // present.
+    forgetStatus(roomId, state.userId);
   }
 }
 
@@ -488,8 +513,8 @@ function scheduleBootDeparture(
 // The fix mirrors the disconnect grace period: arm the same departure
 // timer for every current member of every room as soon as the process
 // comes up. A captain whose browser tab is still genuinely open
-// reconnects within a couple of seconds (the client re auths and re
-// emits room:join automatically), which cancels this. Anyone who
+// reconnects within a couple of seconds (the client authenticates again
+// and resends room:join automatically), which cancels this. Anyone who
 // doesn't reconnect within the window is reaped the same way.
 //
 // It arms the boot variant of that timer, so a harbor whose whole crew

@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { itemColorResolver } from "@/lib/use-color-preference";
 import { Anchor } from "lucide-react";
+import { ICONS } from "@/lib/game/constants/brand";
 import { refitsOn } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import { FoldRow } from "../FoldRow";
 import { RefitBench } from "../RefitBench";
 import { IntelBanner, PanelTitle, type PhasePanelProps } from "./PhaseShared";
@@ -45,7 +47,7 @@ export function Purchase({
       <div className="flex items-center justify-between mb-4">
         <PanelTitle>
           <Anchor className="h-5 w-5 text-market" />
-          Port Merchant Exchange
+          {t("Port Board")}
         </PanelTitle>
         <Button
           variant="secondary"
@@ -53,13 +55,13 @@ export function Purchase({
           className="rounded-lg"
           onClick={onRumorBoardOpen}
         >
-          🔮 Broker's Rumor Board
+          {t("🔮 Broker's Rumor Board")}
         </Button>
       </div>
       <IntelBanner
         game={game}
         tone="warn"
-        note="(a matching order is guaranteed at Orders, buy accordingly)."
+        note={t("(a matching order is guaranteed at Orders, buy accordingly).")}
       />
       {/* The offer leads, because it is the screen: each card answers for
           itself (it prices its own goods, marks what is a deal and what is
@@ -85,8 +87,10 @@ export function Purchase({
       <FoldRow
         tone="intel"
         icon="📊"
-        title="Market Readings"
-        gist="What the board is worth: usual prices, the best of the six, and how deep each good runs."
+        title={t("Market Readings")}
+        gist={t(
+          "What the board is worth: usual prices, the best of the six, and how deep each good runs.",
+        )}
         open={readingsOpen}
         onToggle={() => setReadingsOpen((v) => !v)}
         className="mb-4"
@@ -108,9 +112,11 @@ export function Purchase({
       {refitsOn(game.mode) && (
         <FoldRow
           tone="refit"
-          icon="🪡"
-          title="Refit Bench"
-          gist="A Loom captain's work: a garment put right in one leg, at a fee the two of you agree."
+          icon={ICONS.Rags}
+          title={t("Refit Bench")}
+          gist={t(
+            "A Loom captain's work: a garment put right in one leg, at a fee the two of you agree.",
+          )}
           open={benchOpen}
           onToggle={() => setBenchOpen((v) => !v)}
           className="mb-3.5"
@@ -126,7 +132,7 @@ export function Purchase({
       )}
       <div className="mt-5 text-center">
         <Button className="rounded-xl px-6" onClick={onContinue}>
-          ✅ Board Done, to the Artisan Bench
+          {t("✅ Board Done, to the Artisan Bench")}
         </Button>
       </div>
     </div>

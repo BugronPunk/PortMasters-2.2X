@@ -5,10 +5,11 @@ import type { GameState } from "@/lib/game/types";
 import type { PhaseClock } from "@/lib/phase-clock";
 import { phaseLabel } from "@/lib/game/engine";
 import { isGatedPhase } from "@/lib/game/checkpoint";
+import { t } from "@/lib/game/i18n";
 import { modeConfig } from "@/lib/game/mode";
 import { standingOrdersLive } from "@/lib/game/standing";
 import { readyLine } from "@/lib/use-phase-sync";
-import { HOST_ONLY_RESTART } from "@/lib/game/constants/copy";
+import { HOST_ONLY_RESTART, START_VOYAGE } from "@/lib/game/constants/copy";
 import { cn } from "@/lib/utils";
 import {
   BookOpen,
@@ -102,13 +103,13 @@ export function GameControlPanel({
   // emoji: each button already wears its own glyph from the icon set the
   // rest of the room speaks in, and the two together were one mark
   // competing with the other on the same line.
-  let startText = "Set Sail";
+  let startText = t("Set Sail");
   let startDisabled = true;
-  let nextText = "Continue";
+  let nextText = t("Continue");
   let nextDisabled = true;
 
   if (game.gameOver) {
-    startText = "Game Over";
+    startText = t("Game Over");
     startDisabled = true;
     nextDisabled = true;
   } else if (game.phase === "harbor") {
@@ -116,16 +117,16 @@ export function GameControlPanel({
     // ready vote, so there's no "waiting" state for this button. It's
     // either disabled (not host, or not enough captains yet) or armed.
     if (!isHost) {
-      startText = "Waiting for host…";
+      startText = t("Waiting for host…");
       startDisabled = true;
     } else if (harborCount < 1) {
-      startText = "Need one captain";
+      startText = t("Need one captain");
       startDisabled = true;
     } else if (harborCount === 1) {
-      startText = "Start Solo Practice";
+      startText = t("Start Solo Practice");
       startDisabled = false;
     } else {
-      startText = "Start the Voyage";
+      startText = t(START_VOYAGE);
       startDisabled = false;
     }
     nextDisabled = true;
@@ -137,11 +138,11 @@ export function GameControlPanel({
     // leaveRefusal exists to prevent. Like the boon draft above, the seat is
     // left by the table answering rather than by any button here: each step
     // turns over when every hand is in, and the settle walks the room on.
-    startText = "Drafting Paths...";
+    startText = t("Drafting Paths...");
     startDisabled = true;
     nextDisabled = true;
   } else if (game.phase === "dawn") {
-    startText = "Drafting Boon...";
+    startText = t("Drafting Boon...");
     startDisabled = true;
     nextDisabled = true;
   } else if (isGatedPhase(game.mode, game.phase)) {
@@ -154,12 +155,12 @@ export function GameControlPanel({
     // to a lap is a Next Phase step the day it lands, and a phase a mode does
     // not run is not a step at all, which it would be if this asked whether
     // the phase is leg work instead.
-    startText = "On Voyage...";
+    startText = t("On Voyage...");
     startDisabled = true;
-    nextText = "Next Phase";
+    nextText = t("Next Phase");
     nextDisabled = false;
   } else {
-    startText = "On Voyage...";
+    startText = t("On Voyage...");
     startDisabled = true;
     nextDisabled = true;
   }
@@ -177,8 +178,13 @@ export function GameControlPanel({
     // @/lib/use-phase-sync) with this bar's own tail, because the one
     // thing a captain pressing the button wants to know is how close the
     // room is to turning.
-    nextText = `⏳ ${readyLine(readyCount, requiredCount)} The phase turns when the rest do.`;
-    if (clock) nextText += ` · ${clock.label}`;
+    nextText = t("⏳ {readyLine} The phase turns when the rest do.", {
+      readyLine: readyLine(readyCount, requiredCount),
+    });
+    // The clock's tail keeps its leading space outside the read: the row
+    // covers the mark and the label, and the bar is what puts the gap in.
+    if (clock)
+      nextText += ` ${t("· {clock.label}", { "clock.label": clock.label })}`;
     nextDisabled = false;
   }
 
@@ -226,7 +232,7 @@ export function GameControlPanel({
           ) : (
             <Cloud className="h-3.5 w-3.5 text-gain" />
           )}
-          {saving ? "Saving…" : "Saved"}
+          {saving ? t("Saving…") : t("Saved")}
           <span className="text-muted-foreground">· {phaseLabel(game)}</span>
         </span>
         {/* [B3: standing orders] Lit only when the set would actually do
@@ -243,60 +249,60 @@ export function GameControlPanel({
               "rounded-lg",
               ordersLive && "text-standing hover:text-standing",
             )}
-            aria-label="Standing orders"
+            aria-label={t("Standing orders")}
             title={
               ordersLive
-                ? "Standing orders are written and on"
-                : "Write what your seat should do when the clock plays it"
+                ? t("Standing orders are written and on")
+                : t("Write what your seat should do when the clock plays it")
             }
             onClick={onStandingOrders}
           >
             <ScrollText className="h-4 w-4 sm:mr-1.5" />
-            <span className="hidden sm:inline">Standing orders</span>
+            <span className="hidden sm:inline">{t("Standing orders")}</span>
           </Button>
         )}
         <Button
           variant="ghost"
           size="sm"
           className="rounded-lg"
-          aria-label="Open the harbor guide"
+          aria-label={t("Open the harbor guide")}
           onClick={onGuide}
         >
           <BookOpen className="h-4 w-4 sm:mr-1.5" />
-          <span className="hidden sm:inline">Guide</span>
+          <span className="hidden sm:inline">{t("Guide")}</span>
         </Button>
         <Button
           variant="ghost"
           size="sm"
           className="rounded-lg"
-          aria-label="Save the voyage"
+          aria-label={t("Save the voyage")}
           onClick={onSave}
         >
           <Save className="h-4 w-4 sm:mr-1.5" />
-          <span className="hidden sm:inline">Save</span>
+          <span className="hidden sm:inline">{t("Save")}</span>
         </Button>
         <Button
           variant="ghost"
           size="sm"
           className="rounded-lg"
           disabled={!isHost}
-          aria-label="Restart the voyage"
+          aria-label={t("Restart the voyage")}
           title={
             isHost
-              ? "Restart the voyage for everyone in the harbor"
-              : HOST_ONLY_RESTART
+              ? t("Restart the voyage for everyone in the harbor")
+              : t(HOST_ONLY_RESTART)
           }
           onClick={onRestart}
         >
           <RotateCcw className="h-4 w-4 sm:mr-1.5" />
-          <span className="hidden sm:inline">Restart</span>
+          <span className="hidden sm:inline">{t("Restart")}</span>
         </Button>
         <Button
           variant="ghost"
           size="sm"
           className="rounded-lg hidden lg:inline-flex"
-          aria-label="Show all keyboard shortcuts"
-          title="Keyboard shortcuts"
+          aria-label={t("Show all keyboard shortcuts")}
+          title={t("Keyboard shortcuts")}
           onClick={onShortcuts}
         >
           <Keyboard className="h-4 w-4" />

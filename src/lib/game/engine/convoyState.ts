@@ -5,6 +5,7 @@
 // ../convoy.ts; this file is only the part that moves money.
 // =====================================================================
 import type { GameState } from "../types";
+import { t } from "@/lib/game/i18n";
 
 // [MANIFEST 04: Convoy Ventures] Escrows a contribution immediately, the
 // same moment barter posting escrows an offer (see postBarterOffer) rather
@@ -22,12 +23,15 @@ export function contributeToVenture(
   if (amount <= 0) return;
   if (state.money < amount) {
     logs.push(
-      `❌ Need ${amount} Gold to back that Venture, have ${state.money}`,
+      t("❌ Need {amount} Gold to back that Venture, have {state.money}", {
+        amount,
+        "state.money": state.money,
+      }),
     );
     return;
   }
   state.money -= amount;
-  logs.push(`⚓ Backed a Venture with ${amount} Gold`);
+  logs.push(t("⚓ Backed a Venture with {amount} Gold", { amount }));
 }
 
 // [MANIFEST 04: Convoy Ventures] The payout side, for any of three outcomes.
@@ -52,9 +56,14 @@ export function receiveVentureSettlement(
   state.money += amount;
   logs.push(
     outcome === "filled"
-      ? `⚓ Venture filled! Your share: ${amount} Gold`
+      ? t("⚓ Venture filled! Your share: {amount} Gold", { amount })
       : outcome === "failed"
-        ? `⚓ Venture missed its deadline. Partial refund: ${amount} Gold`
-        : `⚓ Venture canceled: another venture in the harbor already claimed this voyage's one chance. Full refund: ${amount} Gold`,
+        ? t("⚓ Venture missed its deadline. Partial refund: {amount} Gold", {
+            amount,
+          })
+        : t(
+            "⚓ Venture canceled: another venture in the harbor already claimed this voyage's one chance. Full refund: {amount} Gold",
+            { amount },
+          ),
   );
 }

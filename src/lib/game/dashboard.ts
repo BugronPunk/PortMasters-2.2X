@@ -24,9 +24,9 @@
 // dashboard can only ever be read only.
 //
 // The second is what the page owes a reader when a gate has no source.
-// Sixteen numbers are launch gates (goal I4) and most of them belong to
-// epics this tree has not read yet: the card gates are F and the
-// market gates are G. Every one of those appears below as a reading with no
+// Sixteen numbers are launch gates (goal I4) and most of them read what the
+// record does not carry yet: the card gates are F and the market gates are
+// G. Every one of those appears below as a reading with no
 // source and the epic it waits on beside it, never as a zero, because a
 // dashboard that prints 0.0% for something nobody has measured is the
 // instrument the plan warns about. What the record can already answer, it
@@ -89,6 +89,12 @@ import { SEAT_BANDS, seatBand } from "./objectives";
 // not sailed from.
 import { PATHS, type PathId } from "./paths";
 import type { TelemetryPayloads, TelemetryRecord } from "./telemetry";
+// The page is read by an operator, and the reading it prints is composed
+// here. Every sentence below is read at the moment it is built rather than
+// stored, so the line a language flip changes is the one this module hands
+// the page rather than a copy the page made earlier. The list joiner rides
+// beside the reader for the one row that prints a list.
+import { getLocale, listJoiner, tFor, type Locale } from "./i18n";
 
 // A finished voyage as this module reads one: the three columns the win
 // rates are read from, plus the one fact bankruptcy needs that the spine's
@@ -276,7 +282,10 @@ type BargeReadings = {
  * the Barge when nobody at it bought from the vendor, however many of the
  * captains aboard looked at the price.
  */
-function readBarge(records: readonly TelemetryRecord[]): BargeReadings {
+function readBarge(
+  records: readonly TelemetryRecord[],
+  locale: Locale,
+): BargeReadings {
   let voyages = 0;
   let without = 0;
   let food = 0;
@@ -311,28 +320,40 @@ function readBarge(records: readonly TelemetryRecord[]): BargeReadings {
   }
 
   const share: DashboardReadingLine = {
-    label: "Barge revenue share of all food spending",
+    label: tFor(locale, "Barge revenue share of all food spending"),
     value:
       voyages === 0
-        ? "no leg report from a provisions harbor"
+        ? tFor(locale, "no leg report from a provisions harbor")
         : food === 0
-          ? "no food bought in the window"
-          : `${ratePercent(barge / food)} of ${food} Gold over ${voyages} ${voyages === 1 ? "voyage" : "voyages"}`,
+          ? tFor(locale, "no food bought in the window")
+          : tFor(locale, "{rate} of {food} Gold over {voyages} {voyageWord}", {
+              rate: ratePercent(barge / food),
+              food,
+              voyages,
+              // The word is a plural form beside a count rather than a
+              // sentence of its own, so it travels raw and the pack drops
+              // it where Mandarin does not need it.
+              voyageWord: voyages === 1 ? "voyage" : "voyages",
+            }),
     // The plan sets no band on this number. It is the page's front page
     // figure and its early warning, and a threshold invented for it here
     // would be a gate the plan never made, which is why it reads measured
     // and unjudged rather than inside or outside anything.
-    target: "no threshold in the plan",
+    target: tFor(locale, "no threshold in the plan"),
     verdict: voyages === 0 ? "unplayed" : "ungated",
   };
   const rate = voyages === 0 ? null : Math.round((without / voyages) * 100);
   const withoutRow: DashboardReadingLine = {
-    label: "Lobbies that sailed without the Barge",
+    label: tFor(locale, "Lobbies that sailed without the Barge"),
     value:
       voyages === 0
-        ? "no leg report from a provisions harbor"
-        : `${sharePercent(without, voyages)} of ${voyages} ${voyages === 1 ? "lobby" : "lobbies"}`,
-    target: "above 70%",
+        ? tFor(locale, "no leg report from a provisions harbor")
+        : tFor(locale, "{share} of {voyages} {lobbyWord}", {
+            share: sharePercent(without, voyages),
+            voyages,
+            lobbyWord: voyages === 1 ? "lobby" : "lobbies",
+          }),
+    target: tFor(locale, "above 70%"),
     verdict: rate === null ? "unplayed" : rate < 70 ? "under" : "in",
   };
   return { share, without: withoutRow };
@@ -346,10 +367,24 @@ function readBarge(records: readonly TelemetryRecord[]): BargeReadings {
  * quietly reading a different set of voyages than its neighbour. What the
  * module does with them is arithmetic and prose.
  */
-export function readDashboard(input: DashboardInput): DashboardReading {
+export function readDashboard(
+  input: DashboardInput,
+  locale: Locale = getLocale(),
+): DashboardReading {
   const { records, outcomes } = input;
 
-  const captains = records.reduce((total, r) => total + r.captains.length, 0);
+  // Distinct captains, not captain lines: the same fleet sitting through
+  // the whole window would otherwise be counted once per voyage, and a
+  // page saying eighteen hundred captains over a three hundred voyage
+  // window is counting seats rather than people. The set is built from
+  // the lines the records already carry, so a fleet that changes between
+  // voyages reads at its true size while one captain sailing twice reads
+  // once.
+  const captains = new Set(
+    records.flatMap((record) =>
+      record.captains.map((captain) => captain.userId),
+    ),
+  ).size;
   const window: DashboardWindow = {
     voyages: records.length,
     captains,
@@ -368,16 +403,16 @@ export function readDashboard(input: DashboardInput): DashboardReading {
   // rather than read inside it: the first of them is also the page's front
   // page number, and one object reaching both places is what makes the two
   // the same reading rather than two readings that agree today.
-  const barge = readBarge(records);
+  const barge = readBarge(records, locale);
 
   return {
     frontPage: barge.share,
     window,
     panels: [
-      seatPanel(barge),
-      staplesPanel(records),
-      variancePanel(records, outcomes),
-      floorPanel(records, outcomes),
+      seatPanel(barge, locale),
+      staplesPanel(records, locale),
+      variancePanel(records, outcomes, locale),
+      floorPanel(records, outcomes, locale),
     ],
   };
 }
@@ -395,45 +430,55 @@ export function readDashboard(input: DashboardInput): DashboardReading {
 // captain when the draft settles, and this page does not reduce that event
 // into a pick rate or a share of the fleet yet. A slot says so rather than
 // printing a zero, which is the rule the whole page is built on.
-function seatPanel(barge: BargeReadings): DashboardPanel {
+function seatPanel(barge: BargeReadings, locale: Locale): DashboardPanel {
   const readings: DashboardReadingLine[] = [
     barge.share,
     barge.without,
     {
-      label: "Quartermaster fill",
-      value: NO_SOURCE,
-      target: "above 70%",
+      label: tFor(locale, "Quartermaster fill"),
+      value: tFor(locale, NO_SOURCE),
+      target: tFor(locale, "above 70%"),
       verdict: "unmeasured",
       gate: "quartermaster_fill",
     },
     {
-      label: "Path pick rate",
-      value: NO_SOURCE,
-      target: "12 to 28%",
+      label: tFor(locale, "Path pick rate"),
+      value: tFor(locale, NO_SOURCE),
+      target: tFor(locale, "12 to 28%"),
       verdict: "unmeasured",
       gate: "path_pick_rate",
     },
     {
-      label: "Free Captain pick rate",
-      value: NO_SOURCE,
-      target: "15 to 22%",
+      label: tFor(locale, "Free Captain pick rate"),
+      value: tFor(locale, NO_SOURCE),
+      target: tFor(locale, "15 to 22%"),
       verdict: "unmeasured",
       gate: "free_captain_pick_rate",
     },
   ];
   return {
     id: "seat",
-    title: "The Quartermaster seat",
-    question: "Is the Quartermaster seat healthy?",
+    title: tFor(locale, "The Quartermaster seat"),
+    question: tFor(locale, "Is the Quartermaster seat healthy?"),
     state: stateOf(readings),
     answer: summarize(
       readings,
-      "No reading yet: the seat's three readings are counts over an event the record carries and this page does not reduce. The Barge's own two numbers are read below.",
+      tFor(
+        locale,
+        "No reading yet: the seat's three readings are counts over an event the record carries and this page does not reduce. The Barge's own two numbers are read below.",
+      ),
+      locale,
     ),
     readings,
     gaps: [
-      "Three of the seat's readings are counts over an event the record already carries: the path each captain sailed is filed once per captain when the draft settles, with the seconds the table took to choose, and both the pick rate and the Quartermaster's share of the fleet are counted from it. The page does not reduce that event yet, so the three read as not measurable rather than as zeroes: a rate nobody computed is not a zero, and this is a reading to write rather than a source that is missing.",
-      "The Barge's two numbers are read from the leg reports: each captain files the voyage's running food spending and Barge spending with the leg, and the page takes the report at their greatest leg rather than adding the legs up, because the figures are the voyage's totals and counting them per leg would count every purchase once per leg it survived. A voyage whose captains filed no such pair was not playing the provisions layer, and it is left out of the sample rather than counted as a lobby that avoided the vendor.",
+      tFor(
+        locale,
+        "Three of the seat's readings are counts over an event the record already carries: the path each captain sailed is filed once per captain when the draft settles, with the seconds the table took to choose, and both the pick rate and the Quartermaster's share of the fleet are counted from it. The page does not reduce that event yet, so the three read as not measurable rather than as zeroes: a rate nobody computed is not a zero, and this is a reading to write rather than a source that is missing.",
+      ),
+      tFor(
+        locale,
+        "The Barge's two numbers are read from the leg reports: each captain files the voyage's running food spending and Barge spending with the leg, and the page takes the report at their greatest leg rather than adding the legs up, because the figures are the voyage's totals and counting them per leg would count every purchase once per leg it survived. A voyage whose captains filed no such pair was not playing the provisions layer, and it is left out of the sample rather than counted as a lobby that avoided the vendor.",
+      ),
     ],
   };
 }
@@ -446,7 +491,10 @@ function seatPanel(barge: BargeReadings): DashboardPanel {
 // spine holds: how many distinct goods a hold closes a leg carrying, which
 // is a staple signal at the count level, and the board's own volumes, which
 // say whether there is a board to staple on.
-function staplesPanel(records: readonly TelemetryRecord[]): DashboardPanel {
+function staplesPanel(
+  records: readonly TelemetryRecord[],
+  locale: Locale,
+): DashboardPanel {
   const legReports: TelemetryPayloads["leg_report"][] = [];
   const offers = { posted: 0, filled: 0, expired: 0 };
   // The charter takes, bucketed once for the two charter rows below. The
@@ -525,28 +573,44 @@ function staplesPanel(records: readonly TelemetryRecord[]): DashboardPanel {
 
   const readings: DashboardReadingLine[] = [
     {
-      label: "The top card's share of winning builds",
-      value: NO_SOURCE,
-      target: "no card above 35%",
+      label: tFor(locale, "The top card's share of winning builds"),
+      value: tFor(locale, NO_SOURCE),
+      target: tFor(locale, "no card above 35%"),
       verdict: "unmeasured",
       gate: "card_share",
     },
     {
-      label: "The top card pairing",
-      value: NO_SOURCE,
-      target: "no pair above 62% over 40 appearances",
+      label: tFor(locale, "The top card pairing"),
+      value: tFor(locale, NO_SOURCE),
+      target: tFor(locale, "no pair above 62% over 40 appearances"),
       verdict: "unmeasured",
       gate: "card_pairing",
     },
     {
-      label: "Charter split deviation",
+      label: tFor(locale, "Charter split deviation"),
       value:
         splitTakes === 0
-          ? "no charter taken in the window"
+          ? tFor(locale, "no charter taken in the window")
           : widest === null
-            ? `${splitTakes} ${splitTakes === 1 ? "take" : "takes"}, none past the ${CARD_CONVERSION_FLOOR} a path is read over`
-            : `${PATHS[widest.path].name}, ${widest.points} points off even over ${widest.takes} takes`,
-      target: "no deviation above 20%",
+            ? tFor(
+                locale,
+                "{splitTakes} {takeWord}, none past the {CARD_CONVERSION_FLOOR} a path is read over",
+                {
+                  splitTakes,
+                  takeWord: splitTakes === 1 ? "take" : "takes",
+                  CARD_CONVERSION_FLOOR,
+                },
+              )
+            : tFor(
+                locale,
+                "{pathName}, {widest.points} points off even over {widest.takes} takes",
+                {
+                  pathName: tFor(locale, PATHS[widest.path].name),
+                  "widest.points": widest.points,
+                  "widest.takes": widest.takes,
+                },
+              ),
+      target: tFor(locale, "no deviation above 20%"),
       // The plan judges one direction: an even split is the target and a
       // wide one is the failure, so a narrow split reads in band rather
       // than under it. The 20 stands beside the target string's own 20 the
@@ -558,16 +622,16 @@ function staplesPanel(records: readonly TelemetryRecord[]): DashboardPanel {
       gate: "charter_split",
     },
     {
-      label: "Distinct goods traded",
-      value: NO_SOURCE,
-      target: "above 60%",
+      label: tFor(locale, "Distinct goods traded"),
+      value: tFor(locale, NO_SOURCE),
+      target: tFor(locale, "above 60%"),
       verdict: "unmeasured",
       gate: "distinct_goods",
     },
     {
-      label: "Bourse fills",
-      value: NO_SOURCE,
-      target: "above 60%",
+      label: tFor(locale, "Bourse fills"),
+      value: tFor(locale, NO_SOURCE),
+      target: tFor(locale, "above 60%"),
       verdict: "unmeasured",
       gate: "bourse_fills",
     },
@@ -580,17 +644,21 @@ function staplesPanel(records: readonly TelemetryRecord[]): DashboardPanel {
     // has a take to divide by, since a rate over zero takes is the zero
     // the whole page refuses to print.
     {
-      label: "Cover charter take rate, by alignment",
+      label: tFor(locale, "Cover charter take rate, by alignment"),
       value:
         coverTakes === 0
-          ? "no charter taken in the window"
+          ? tFor(locale, "no charter taken in the window")
           : ROLE_ORDER.filter((role) => coverByRole[role].takes > 0)
               .map((role) => {
                 const { takes, cover } = coverByRole[role];
-                return `${roleCard(role).title} ${sharePercent(cover, takes)} of ${takes}`;
+                return tFor(locale, "{roleTitle} {share} of {takes}", {
+                  roleTitle: tFor(locale, roleCard(role).title),
+                  share: sharePercent(cover, takes),
+                  takes,
+                });
               })
-              .join(", "),
-      target: "no threshold in the plan",
+              .join(listJoiner(locale)),
+      target: tFor(locale, "no threshold in the plan"),
       verdict: coverTakes === 0 ? "unplayed" : "ungated",
     },
     // The nearest readings the window has. They are labelled for what
@@ -598,27 +666,40 @@ function staplesPanel(records: readonly TelemetryRecord[]): DashboardPanel {
     // closing a leg carrying two goods is a count, and the gate wants a
     // share of a pool it cannot see.
     {
-      label: "Distinct goods a hold closes a leg carrying, median",
+      label: tFor(
+        locale,
+        "Distinct goods a hold closes a leg carrying, median",
+      ),
       value:
         medianGoods === null
-          ? "no leg report in the window"
-          : `${medianGoods} over ${legReports.length} captain legs`,
-      target: "no gate yet",
+          ? tFor(locale, "no leg report in the window")
+          : tFor(
+              locale,
+              "{medianGoods} over {legReports.length} captain legs",
+              {
+                medianGoods,
+                "legReports.length": legReports.length,
+              },
+            ),
+      target: tFor(locale, "no gate yet"),
       verdict: medianGoods === null ? "unplayed" : "ungated",
     },
     {
-      label: "Captain legs closing on one good or none",
+      label: tFor(locale, "Captain legs closing on one good or none"),
       value:
         legReports.length === 0
-          ? "no leg report in the window"
-          : `${sharePercent(thinLegs, legReports.length)} over ${legReports.length} captain legs`,
-      target: "no gate yet",
+          ? tFor(locale, "no leg report in the window")
+          : tFor(locale, "{share} over {legReports.length} captain legs", {
+              share: sharePercent(thinLegs, legReports.length),
+              "legReports.length": legReports.length,
+            }),
+      target: tFor(locale, "no gate yet"),
       verdict: legReports.length === 0 ? "unplayed" : "ungated",
     },
     {
-      label: "Offer units posted, filled, expired",
+      label: tFor(locale, "Offer units posted, filled, expired"),
       value: `${offers.posted} / ${offers.filled} / ${offers.expired}`,
-      target: "no gate yet",
+      target: tFor(locale, "no gate yet"),
       verdict:
         offers.posted === 0 && offers.filled === 0 && offers.expired === 0
           ? "unplayed"
@@ -628,22 +709,35 @@ function staplesPanel(records: readonly TelemetryRecord[]): DashboardPanel {
 
   return {
     id: "staples",
-    title: "The staples",
-    question: "Is anything becoming a staple?",
+    title: tFor(locale, "The staples"),
+    question: tFor(locale, "Is anything becoming a staple?"),
     state: stateOf(readings),
     answer: summarize(
       readings,
-      "No gate yet: the card gates are Epic F's and the goods and Bourse gates are Epic G's, so four slots stand, and the charter gate has no path past its floor yet.",
+      tFor(
+        locale,
+        "No gate yet: the card gates and the goods and Bourse gates have no source on the record, so four slots stand, and the charter gate has no path past its floor yet.",
+      ),
+      locale,
     ),
     readings,
     gaps: [
-      "The card gates are Epic F's and the goods and Bourse gates are Epic G's, so the four gates above are slots until those epics ship.",
-      "The record keeps the count of goods a leg dealt and a hold closed with, never their names, so the share of goods traded the plan asks for has no source until an event carries the identity rather than the count.",
+      tFor(
+        locale,
+        "The card gates and the goods and Bourse gates have no source on the record, so the four gates above stand as slots rather than readings.",
+      ),
+      tFor(
+        locale,
+        "The record keeps the count of goods a leg dealt and a hold closed with, never their names, so the share of goods traded the plan asks for has no source until an event carries the identity rather than the count.",
+      ),
       // [F6] How the two charter rows were read, for whoever is on balance
       // duty when one of them moves: what the split is grouped by and why
       // a path has to earn its floor, and what the cover row is watching
       // for now that the plan's threshold is nothing at all.
-      "The two charter rows are the window's own takes, filed once per captain per voyage when the moment is answered at leg four. The split is read inside each path, because the plan's question is which of a path's two charters captains reach for, and a path is only judged once it holds the floor the card reader reads its own card statistics over; the value names the widest judged path, so the deviation it prints and the verdict over it are about the same path. The cover row is the plan's watch rather than a gate: a charter that only traitors take has stopped being cover, so the row reads how often the salvage charters were taken by each alignment, and it is left unjudged because the plan set no threshold on it.",
+      tFor(
+        locale,
+        "The two charter rows are the window's own takes, filed once per captain per voyage when the moment is answered at leg four. The split is read inside each path, because the plan's question is which of a path's two charters captains reach for, and a path is only judged once it holds the floor the card reader reads its own card statistics over; the value names the widest judged path, so the deviation it prints and the verdict over it are about the same path. The cover row is the plan's watch rather than a gate: a charter that only traitors take has stopped being cover, so the row reads how often the salvage charters were taken by each alignment, and it is left unjudged because the plan set no threshold on it.",
+      ),
     ],
   };
 }
@@ -669,55 +763,79 @@ const WIN_RATE_GATE: Record<GambitRole, GateId> = {
 function variancePanel(
   records: readonly TelemetryRecord[],
   outcomes: readonly DashboardOutcome[],
+  locale: Locale,
 ): DashboardPanel {
   const cells = readWinRates(outcomes);
   const cellLines: DashboardReadingLine[] = cells.map((cell) => ({
     // The deck's own name for the card, read from the table the cards
-    // are dealt from, so a role is never called two things.
-    label: `${roleCard(cell.alignment).title}, ${cell.band} seats`,
+    // are dealt from, so a role is never called two things. The seat
+    // band reads the same way: the band table in ./objectives keeps the
+    // English, and this row is where a captain reads it.
+    label: tFor(locale, "{roleTitle}, {cell.band} seats", {
+      roleTitle: tFor(locale, roleCard(cell.alignment).title),
+      "cell.band": tFor(locale, cell.band),
+    }),
     value:
       cell.rate === null
-        ? "no voyage played"
-        : `${ratePercent(cell.rate)} of ${cell.played}`,
-    target: `${WIN_RATE_TARGETS[cell.alignment].floor} to ${
-      WIN_RATE_TARGETS[cell.alignment].ceiling
-    }%`,
+        ? tFor(locale, "no voyage played")
+        : tFor(locale, "{rate} of {cell.played}", {
+            rate: ratePercent(cell.rate),
+            "cell.played": cell.played,
+          }),
+    target: tFor(locale, "{floor} to {ceiling}%", {
+      floor: WIN_RATE_TARGETS[cell.alignment].floor,
+      ceiling: WIN_RATE_TARGETS[cell.alignment].ceiling,
+    }),
     verdict: bandVerdict(cell.alignment, cell.rate),
     gate: WIN_RATE_GATE[cell.alignment],
   }));
   const swingLines: DashboardReadingLine[] = readSwings(cells).map((swing) => ({
-    label: `Swing across played bands, ${roleCard(swing.alignment).title}`,
+    label: tFor(locale, "Swing across played bands, {roleTitle}", {
+      roleTitle: tFor(locale, roleCard(swing.alignment).title),
+    }),
     value:
       swing.points === null
         ? swing.bands === 0
-          ? "no band played"
-          : "one played band at most"
-        : `${swing.points.toFixed(1)} points`,
-    target: "no threshold in the plan",
+          ? tFor(locale, "no band played")
+          : tFor(locale, "one played band at most")
+        : tFor(locale, "{MEND_POINTS} points", {
+            MEND_POINTS: swing.points.toFixed(1),
+          }),
+    target: tFor(locale, "no threshold in the plan"),
     verdict: swing.points === null ? "unplayed" : "ungated",
   }));
   const readings: DashboardReadingLine[] = [
     ...cellLines,
     ...swingLines,
-    sessionLength(records),
-    lobbyFill(records),
-    earlyEndings(records),
+    sessionLength(records, locale),
+    lobbyFill(records, locale),
+    earlyEndings(records, locale),
   ];
 
   return {
     id: "variance",
-    title: "The variance",
-    question: "Is the variance too swingy?",
+    title: tFor(locale, "The variance"),
+    question: tFor(locale, "Is the variance too swingy?"),
     state: stateOf(readings),
     answer: summarize(
       readings,
-      "No voyage in the window has a gate to read yet.",
+      tFor(locale, "No voyage in the window has a gate to read yet."),
+      locale,
     ),
     readings,
     gaps: [
-      "The swing has no threshold in the plan: its gate is that a rate does not move as the table grows, so the points beside each role are what moving would look like rather than a band to fail.",
-      "Session length is measured from the moment the harbor was charted to the moment the voyage closed, which is the plan's lobby to reveal, and only over voyages that concluded at five seats: a wiped or emptied voyage stopped early and its clock is not a session.",
-      "The lobby fill time has no threshold in the plan and is not one of the sixteen gates: it is read to decide whether six seats are worth supporting at all. When a session runs long the plan shortens the voyage before it shortens the phases, because the phases are where the conversation lives, and the knob for that is the mode's own voyageLegs (twelve for Ocean Gambit, the tier's ladder for Classic) rather than a round count written beside this row.",
+      tFor(
+        locale,
+        "The swing has no threshold in the plan: its gate is that a rate does not move as the table grows, so the points beside each role are what moving would look like rather than a band to fail.",
+      ),
+      tFor(
+        locale,
+        "Session length is measured from the moment the harbor was charted to the moment the voyage closed, which is the plan's lobby to reveal, and only over voyages that concluded at five seats: a wiped or emptied voyage stopped early and its clock is not a session.",
+      ),
+      tFor(
+        locale,
+        "The lobby fill time has no threshold in the plan and is not one of the sixteen gates: it is read to decide whether six seats are worth supporting at all. When a session runs long the plan shortens the voyage before it shortens the phases, because the phases are where the conversation lives, and the knob for that is the mode's own voyageLegs (twelve for Ocean Gambit, the tier's ladder for Classic) rather than a round count written beside this row.",
+      ),
     ],
   };
 }
@@ -748,6 +866,7 @@ function variancePanel(
 // than a centre, and the gate is a claim about the ordinary ship.
 function holdUtilization(
   records: readonly TelemetryRecord[],
+  locale: Locale,
 ): DashboardReadingLine {
   const fills: number[] = [];
   for (const record of records) {
@@ -760,18 +879,21 @@ function holdUtilization(
   const centre = median(fills);
   if (centre === null) {
     return {
-      label: "Median hold utilization",
-      value: "no leg report from a split hold",
-      target: "55 to 80%",
+      label: tFor(locale, "Median hold utilization"),
+      value: tFor(locale, "no leg report from a split hold"),
+      target: tFor(locale, "55 to 80%"),
       verdict: "unplayed",
       gate: "hold_utilization",
     };
   }
   const percent = Math.round(centre * 100);
   return {
-    label: "Median hold utilization",
-    value: `${ratePercent(centre)}, median of ${fills.length}`,
-    target: "55 to 80%",
+    label: tFor(locale, "Median hold utilization"),
+    value: tFor(locale, "{rate}, median of {fills.length}", {
+      rate: ratePercent(centre),
+      "fills.length": fills.length,
+    }),
+    target: tFor(locale, "55 to 80%"),
     verdict: percent < 55 ? "under" : percent > 80 ? "over" : "in",
     gate: "hold_utilization",
   };
@@ -784,6 +906,7 @@ function holdUtilization(
 function floorPanel(
   records: readonly TelemetryRecord[],
   outcomes: readonly DashboardOutcome[],
+  locale: Locale,
 ): DashboardPanel {
   // Retention is read off I2's mark on the captain lines, and only over
   // the voyages that closed with somebody standing: a harbor that emptied
@@ -800,12 +923,15 @@ function floorPanel(
 
   const readings: DashboardReadingLine[] = [
     {
-      label: "Marooned captains still standing at the close",
+      label: tFor(locale, "Marooned captains still standing at the close"),
       value:
         marooned.length === 0
-          ? "no maroon in the window"
-          : `${sharePercent(stayed, marooned.length)} of ${marooned.length}`,
-      target: "above 90%",
+          ? tFor(locale, "no maroon in the window")
+          : tFor(locale, "{share} of {marooned.length}", {
+              share: sharePercent(stayed, marooned.length),
+              "marooned.length": marooned.length,
+            }),
+      target: tFor(locale, "above 90%"),
       verdict:
         marooned.length === 0
           ? "unplayed"
@@ -815,12 +941,15 @@ function floorPanel(
       gate: "maroon_retention",
     },
     {
-      label: "Captains bankrupt at the reveal",
+      label: tFor(locale, "Captains bankrupt at the reveal"),
       value:
         outcomes.length === 0
-          ? "no chronicle row in the window"
-          : `${sharePercent(bankrupt, outcomes.length)} of ${outcomes.length}`,
-      target: "under 12%",
+          ? tFor(locale, "no chronicle row in the window")
+          : tFor(locale, "{share} of {outcomes.length}", {
+              share: sharePercent(bankrupt, outcomes.length),
+              "outcomes.length": outcomes.length,
+            }),
+      target: tFor(locale, "under 12%"),
       verdict:
         outcomes.length === 0
           ? "unplayed"
@@ -829,11 +958,11 @@ function floorPanel(
             : "in",
       gate: "bankruptcy",
     },
-    holdUtilization(records),
+    holdUtilization(records, locale),
     {
-      label: "Parley participation",
-      value: NO_SOURCE,
-      target: "above 66%",
+      label: tFor(locale, "Parley participation"),
+      value: tFor(locale, NO_SOURCE),
+      target: tFor(locale, "above 66%"),
       verdict: "unmeasured",
       gate: "parley_participation",
     },
@@ -841,18 +970,31 @@ function floorPanel(
 
   return {
     id: "floor",
-    title: "The floor",
+    title: tFor(locale, "The floor"),
     question: null,
     state: stateOf(readings),
     answer: summarize(
       readings,
-      "No voyage in the window has a gate to read yet: utilization needs a leg report from a harbor playing the split hold, and participation needs a talk line that names the phase.",
+      tFor(
+        locale,
+        "No voyage in the window has a gate to read yet: utilization needs a leg report from a harbor playing the split hold, and participation needs a talk line that names the phase.",
+      ),
+      locale,
     ),
     readings,
     gaps: [
-      "Hold utilization is read off the leg reports, and only off those whose voyage was playing the split hold: a leg filed by a harbor with the split switched off carries no slots and is not in the sample. Its denominator is the ship's two capacities at their full size, because the quarter a hungry crew costs the cargo is not something the report carries, so a captain on short rations reads against the hold they would have had.",
-      "Parley participation cannot be read off the record's talk line either, because that line carries the leg and not the phase, and talk is open through every phase of a leg: the record cannot separate Parley from the rest of the round.",
-      "Retention is read over the voyages that closed with somebody standing, at the resolution the record has, which is presence at the close rather than the length of one connection.",
+      tFor(
+        locale,
+        "Hold utilization is read off the leg reports, and only off those whose voyage was playing the split hold: a leg filed by a harbor with the split switched off carries no slots and is not in the sample. Its denominator is the ship's two capacities at their full size, because the quarter a hungry crew costs the cargo is not something the report carries, so a captain on short rations reads against the hold they would have had.",
+      ),
+      tFor(
+        locale,
+        "Parley participation cannot be read off the record's talk line either, because that line carries the leg and not the phase, and talk is open through every phase of a leg: the record cannot separate Parley from the rest of the round.",
+      ),
+      tFor(
+        locale,
+        "Retention is read over the voyages that closed with somebody standing, at the resolution the record has, which is presence at the close rather than the length of one connection.",
+      ),
     ],
   };
 }
@@ -868,6 +1010,7 @@ function floorPanel(
 // voyage.
 function sessionLength(
   records: readonly TelemetryRecord[],
+  locale: Locale,
 ): DashboardReadingLine {
   const minutes = records
     .filter((record) => record.outcome === "concluded" && record.seats === 5)
@@ -876,18 +1019,21 @@ function sessionLength(
   const centre = median(minutes);
   if (centre === null) {
     return {
-      label: "Session length at five captains, charted to reveal",
-      value: "no concluded voyage at five",
-      target: "62 to 74 min",
+      label: tFor(locale, "Session length at five captains, charted to reveal"),
+      value: tFor(locale, "no concluded voyage at five"),
+      target: tFor(locale, "62 to 74 min"),
       verdict: "unplayed",
       gate: "session_length",
     };
   }
   const whole = Math.round(centre);
   return {
-    label: "Session length at five captains, charted to reveal",
-    value: `${whole} min, median of ${minutes.length}`,
-    target: "62 to 74 min",
+    label: tFor(locale, "Session length at five captains, charted to reveal"),
+    value: tFor(locale, "{whole} min, median of {minutes.length}", {
+      whole,
+      "minutes.length": minutes.length,
+    }),
+    target: tFor(locale, "62 to 74 min"),
     verdict: whole < 62 ? "under" : whole > 74 ? "over" : "in",
     gate: "session_length",
   };
@@ -912,7 +1058,10 @@ function sessionLength(
 // carries no start to subtract from, and the positive filter below drops
 // it rather than seating it at zero minutes, which would read as a table
 // that filled instantly.
-function lobbyFill(records: readonly TelemetryRecord[]): DashboardReadingLine {
+function lobbyFill(
+  records: readonly TelemetryRecord[],
+  locale: Locale,
+): DashboardReadingLine {
   const bands = SEAT_BANDS.map((band) => {
     const minutes = records
       .filter((record) => seatBand(record.seats).min === band.min)
@@ -927,22 +1076,34 @@ function lobbyFill(records: readonly TelemetryRecord[]): DashboardReadingLine {
   const sailed = bands.filter((band) => band.centre !== null);
   if (sailed.length === 0) {
     return {
-      label: "Lobby fill time by table size, charted to set sail",
-      value: "no voyage in the window",
-      target: "no threshold in the plan",
+      label: tFor(locale, "Lobby fill time by table size, charted to set sail"),
+      value: tFor(locale, "no voyage in the window"),
+      target: tFor(locale, "no threshold in the plan"),
       verdict: "unplayed",
     };
   }
   return {
-    label: "Lobby fill time by table size, charted to set sail",
+    label: tFor(locale, "Lobby fill time by table size, charted to set sail"),
     value: bands
       .map((band) =>
         band.centre === null
-          ? `${band.label} seats none in the window`
-          : `${band.label} seats ${Math.round(band.centre)} min of ${band.count}`,
+          ? tFor(locale, "{band.label} seats none in the window", {
+              // The band table in ./objectives holds the English; the read
+              // sits here, where the label becomes part of the row.
+              "band.label": tFor(locale, band.label),
+            })
+          : tFor(
+              locale,
+              "{band.label} seats {medianMinutes} min of {band.count}",
+              {
+                "band.label": tFor(locale, band.label),
+                medianMinutes: Math.round(band.centre),
+                "band.count": band.count,
+              },
+            ),
       )
       .join("; "),
-    target: "no threshold in the plan",
+    target: tFor(locale, "no threshold in the plan"),
     verdict: "ungated",
   };
 }
@@ -954,18 +1115,27 @@ function lobbyFill(records: readonly TelemetryRecord[]): DashboardReadingLine {
 // pretend to know how many is too many.
 function earlyEndings(
   records: readonly TelemetryRecord[],
+  locale: Locale,
 ): DashboardReadingLine {
   const stopped = records.filter((record) => record.outcome !== "concluded");
   const centre = median(stopped.map((record) => record.endedAtLeg));
   return {
-    label: "Voyages that stopped before the reveal",
+    label: tFor(locale, "Voyages that stopped before the reveal"),
     value:
       records.length === 0
-        ? "no voyage in the window"
+        ? tFor(locale, "no voyage in the window")
         : centre === null
-          ? "none"
-          : `${stopped.length} of ${records.length}, stopping at leg ${Math.round(centre)} on the median`,
-    target: "no gate yet",
+          ? tFor(locale, "none")
+          : tFor(
+              locale,
+              "{stopped.length} of {records.length}, stopping at leg {medianLeg} on the median",
+              {
+                "stopped.length": stopped.length,
+                "records.length": records.length,
+                medianLeg: Math.round(centre),
+              },
+            ),
+    target: tFor(locale, "no gate yet"),
     verdict: records.length === 0 ? "unplayed" : "ungated",
   };
 }
@@ -1004,6 +1174,7 @@ function stateOf(readings: readonly DashboardReadingLine[]): QuestionState {
 function summarize(
   readings: readonly DashboardReadingLine[],
   whenNothing: string,
+  locale: Locale,
 ): string {
   const gated = readings.filter(isGated);
   const readable = gated.filter((reading) => reading.verdict !== "unplayed");
@@ -1012,11 +1183,23 @@ function summarize(
     (reading) => reading.verdict === "under" || reading.verdict === "over",
   );
   if (outside.length === 0) {
-    return `Every gate this window can read sits inside it, ${readable.length} of ${gated.length}.`;
+    return tFor(
+      locale,
+      "Every gate this window can read sits inside it, {readable.length} of {gated.length}.",
+      { "readable.length": readable.length, "gated.length": gated.length },
+    );
   }
-  return `${outside.length} of ${gated.length} gates sit outside theirs: ${outside
-    .map((reading) => `${reading.label}, ${reading.value}`)
-    .join("; ")}.`;
+  return tFor(
+    locale,
+    "{outside.length} of {gated.length} gates sit outside theirs: {list}.",
+    {
+      "outside.length": outside.length,
+      "gated.length": gated.length,
+      list: outside
+        .map((reading) => `${reading.label}, ${reading.value}`)
+        .join("; "),
+    },
+  );
 }
 
 // A share of a whole, written through the reader's own rate formatter, so

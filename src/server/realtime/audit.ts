@@ -21,7 +21,7 @@
 // the clients cannot rebuild, and it heals the same way the commission
 // does: the reveal lives on this map for the voyage, and a captain who
 // joins or reloads into a harbor that has already audited somebody is
-// handed it directly (see the room:join hand-out in ./wiring/room-join),
+// handed it directly (see the room:join handoff in ./wiring/room-join),
 // exactly as a joiner is handed the commission's board.
 //
 // Nothing about the phase belongs in here. The audit consumes the leg's
@@ -51,6 +51,8 @@ import { normalizeLarder, onShortRations } from "@/lib/game/larder";
 import { normalizeWorkerRoster } from "@/lib/game/types";
 import { survivalLayerOn } from "@/lib/game/flags";
 import { auditOpensAt, normalizeMode } from "@/lib/game/mode";
+import { tFor, type Locale } from "@/lib/game/i18n";
+import { roomChannel } from "./channel";
 import { activeRosterSet } from "./checkpoint";
 import { parseSave } from "./save";
 import { noteTelemetry } from "./telemetry";
@@ -75,8 +77,8 @@ type RoomAudit = {
 
 // One map per process, read only through the functions below. The
 // commission's map is exported because its mere presence is a question the
-// joiner hand-out asks of it; this one needs no such peek, since
-// auditRevealFor answers the question the hand-out actually has, so the
+// joiner handoff asks of it; this one needs no such peek, since
+// auditRevealFor answers the question the handoff actually has, so the
 // map stays inside the module that owns the vote.
 const roomAudits = new Map<string, RoomAudit>();
 
@@ -119,8 +121,18 @@ export function auditSpentLeg(roomId: string, round: number): boolean {
 // The five wires' sentences share this template and differ only in the
 // tail that names what reopens, so the template lives here beside its
 // predicate rather than being spelled out five times over.
-export function auditSpentReason(reopens: string): string {
-  return `The harbor spent this leg's Parley on the Manifest Audit. ${reopens} again next leg.`;
+//
+// Both halves are the pack's own rows and both are read through the
+// locale the caller names, which is the language of the captain whose
+// wire was refused: the tail arrives as the pack's English for what
+// reopens ("The exchange opens" and its four siblings), so it is read
+// here rather than composed at the wire.
+export function auditSpentReason(reopens: string, locale: Locale): string {
+  return tFor(
+    locale,
+    "The harbor spent this leg's Parley on the Manifest Audit. {reopens} again next leg.",
+    { reopens: tFor(locale, reopens) },
+  );
 }
 
 // Wipes a room's audit. Called on room:restart and when a room is deleted
@@ -267,8 +279,8 @@ async function revealFor(
  * counted three would be a card the room argued with instead of each
  * other.
  *
- * The book is re-derived here against the room that exists now, the same
- * way every nomination is re-judged at the door, so a nomination from a
+ * The book is derived again here against the room that exists now, the same
+ * way every nomination is judged again at the door, so a nomination from a
  * captain the room has stopped counting is out of the count and out of
  * the names at once (see pruneStaleVotes), and the captains still to
  * speak are the roster's own walk rather than a second subtraction.
@@ -295,7 +307,7 @@ function auditTallyFrame(
  * One accepted nomination, carried as far as it goes: the count the room is
  * owed, and the one reveal a voyage gets.
  *
- * The book is re-derived here against the room that exists now, which is a
+ * The book is derived again here against the room that exists now, which is a
  * second read rather than the door's: the door's roster was read before
  * this call and a captain can leave the harbor in the gap. What the two
  * reads buy is in the two branches below, and both of them are about a
@@ -307,7 +319,7 @@ function auditTallyFrame(
  * leaves the reveal with no name to print. Returning there would mean the
  * room had been shown the tally that carried the vote and nothing else
  * ever happened, which is a vote that visibly carried and left no record
- * of itself. The loop re-derives instead: the departed captain's
+ * of itself. The loop derives it again instead: the departed captain's
  * nominations come out of the book, the carry is decided again on what is
  * left, and the room is told whenever the count it is reading moves. The
  * loop turns at most once per nomination dropped, so it cannot spin.
@@ -327,7 +339,7 @@ function auditTallyFrame(
  *
  * The maroon's own settle is this walk's mirror rather than a call into
  * it (see src/server/realtime/maroon.ts), and everything before the commit
- * is shared rather than copied (the re-derived book and the walk that
+ * is shared rather than copied (the book derived again and the walk that
  * decides it, see pruneStaleVotes and carriedTarget above). What one
  * shared settle would have to take as parameters is everything after it:
  * this walk reads a reveal out of the target's own save, that one reads a
@@ -337,10 +349,10 @@ function auditTallyFrame(
  * 29 hold by frame count. A single function carrying all of that would put
  * that check further from the state it guards than the mirror costs.
  *
- * `tell` is the caller's answer to whether the room is owed a frame for
- * this pass: true for an accepted nomination, which is always news, and
- * false for the re-derive a refusal was made of, which tells the room only
- * when the book actually moved under it.
+ * The first pass is always told, because it follows an accepted
+ * nomination, which is always news; every pass after it is a recount a
+ * refusal prompted, and those tell the room only when the book actually
+ * moved under it.
  */
 async function settleAudit(
   io: Server,
@@ -348,20 +360,20 @@ async function settleAudit(
   round: number,
   voyageEpoch: number,
   state: RoomAudit,
-  tell: boolean,
 ): Promise<void> {
+  let tell = true;
   for (;;) {
     const roster = await activeRosterSet(roomId);
     const book = pruneStaleVotes(state.votes, roster);
     const moved = book.size !== state.votes.size;
     state.votes = book;
     if (tell || moved) {
-      io.to(`room:${roomId}`).emit(
+      io.to(roomChannel(roomId)).emit(
         "audit:tally",
         auditTallyFrame(roomId, round, roster, book),
       );
     }
-    // Every pass after this one is a re-derive rather than a nomination, so
+    // Every pass after this one recounts rather than nominates, so
     // only a count that actually moved is worth a second frame.
     tell = false;
     const carried = auditCarried(book, roster.size);
@@ -395,7 +407,7 @@ async function settleAudit(
       kind: "audit_carried",
       target: reveal.target.name,
     });
-    io.to(`room:${roomId}`).emit("audit:reveal", reveal);
+    io.to(roomChannel(roomId)).emit("audit:reveal", reveal);
     return;
   }
 }
@@ -410,7 +422,7 @@ async function settleAudit(
  * for a captain the room has stopped counting is refused rather than
  * dropped silently, because the arithmetic below divides by that roster
  * and a vote outside it would move a majority with nobody behind it, and
- * the same roster re-judges the votes already in the book, so a
+ * the same roster recounts the votes already in the book, so a
  * nomination the room has stopped counting stays out even if it was cast
  * while it still counted.
  *
@@ -428,7 +440,9 @@ async function settleAudit(
  * nomination was accepted, and a sentence for the captain who sent it
  * wherever it was refused. A refusal the caller cannot read is a refusal
  * that looks like the vote was taken, which is the reply a captain is
- * least able to act on.
+ * least able to act on. The sentence is composed in the language the
+ * caller names, which is the sender's own, because the sender is its one
+ * reader.
  *
  * The tally goes out after every vote including the last one, and the
  * reveal only ever goes out once. Both are broadcast, and neither carries
@@ -436,7 +450,7 @@ async function settleAudit(
  * count they are counted against, and the reveal is the manifest the room
  * voted to open. A refusal is the one case that does not tell the room
  * anything, and it is also the case where the room can be reading a count
- * that no longer holds: the room is told when the refusal's own re-derive
+ * that no longer holds: the room is told when the refusal's own recount
  * moved the book, and not otherwise, so a captain pressing twice cannot
  * move the count the table is arguing over.
  */
@@ -446,23 +460,28 @@ export async function recordAuditVote(
   voterId: string,
   round: number,
   targetUserId: string,
+  locale: Locale,
 ): Promise<string | null> {
   const gate = await auditRoomGate(roomId);
   // Silence where the room itself is wrong, which is the wiring's call as
   // much as this one's: a harbor with no manifest to open has nothing to
   // tell a captain who asked for one.
   if (!gate) return null;
-  if (round < gate.opensAt) return `The audit opens from leg ${gate.opensAt}.`;
+  if (round < gate.opensAt)
+    return tFor(locale, "The audit opens from leg {gate.opensAt}.", {
+      "gate.opensAt": gate.opensAt,
+    });
   const voyageEpoch = gate.voyageEpoch;
   const state = auditStateFor(roomId, round);
-  if (state.reveal) return "This voyage's audit has already carried.";
+  if (state.reveal)
+    return tFor(locale, "This voyage's audit has already carried.");
   const roster = await activeRosterSet(roomId);
-  // The book is re-derived against the room that exists now, not the room
+  // The book is derived again against the room that exists now, not the room
   // that existed when each nomination was cast. A vote from a captain who
   // has since gone bankrupt would otherwise sit under a shrunken roster
   // and carry a majority with nobody behind it, which is the same flaw the
   // door checks below close for fresh votes (see pruneStaleVotes). The
-  // re-derive runs before the door rather than after it so that a refusal
+  // The recount runs before the door rather than after it so that a refusal
   // made because a captain left still leaves the room with the count that
   // captain's leaving produced: a nomination the prune drops is the room's
   // news rather than this ballot's, and it goes out whether the ballot
@@ -470,23 +489,26 @@ export async function recordAuditVote(
   const book = pruneStaleVotes(state.votes, roster);
   const moved = book.size !== state.votes.size;
   state.votes = book;
-  // The room's count, owed only where the re-derive moved it: a refused
+  // The room's count, owed only where the recount moved it: a refused
   // ballot leaves the book alone otherwise, and the count the room is
   // already reading is still the count.
   const refuse = (sentence: string): string => {
     if (moved)
-      io.to(`room:${roomId}`).emit(
+      io.to(roomChannel(roomId)).emit(
         "audit:tally",
         auditTallyFrame(roomId, round, roster, state.votes),
       );
     return sentence;
   };
-  if (!roster.has(voterId)) return refuse(SEAT_NOT_COUNTED);
-  if (!roster.has(targetUserId)) return refuse(TARGET_NOT_COUNTED);
+  if (!roster.has(voterId)) return refuse(tFor(locale, SEAT_NOT_COUNTED));
+  if (!roster.has(targetUserId))
+    return refuse(tFor(locale, TARGET_NOT_COUNTED));
   // The one name a captain gets. Checked and written without a pause so
   // two presses in the same tick cannot both pass it.
   if (state.votes.has(voterId))
-    return refuse("Your name is already in for this leg's audit.");
+    return refuse(
+      tFor(locale, "Your name is already in for this leg's audit."),
+    );
   state.votes.set(voterId, targetUserId);
   // [I1: the telemetry spine] The nomination, recorded where the vote is
   // accepted and before the tally goes out, so a record and the room can
@@ -497,7 +519,7 @@ export async function recordAuditVote(
     actor: voterId,
     target: targetUserId,
   });
-  await settleAudit(io, roomId, round, voyageEpoch, state, true);
+  await settleAudit(io, roomId, round, voyageEpoch, state);
   return null;
 }
 

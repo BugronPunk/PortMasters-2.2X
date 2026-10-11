@@ -14,6 +14,7 @@ import {
 import { pathSwitchFee } from "@/lib/game/draft";
 import { pathSwitchBlocked } from "@/lib/game/engine";
 import { pathDraftOn } from "@/lib/game/flags";
+import { t } from "@/lib/game/i18n";
 import { PATH_IDS, pathConfig } from "@/lib/game/paths";
 import type { PathId } from "@/lib/game/paths";
 import type { GameState } from "@/lib/game/types";
@@ -91,10 +92,14 @@ export function PathChip({
       <div className="shrink-0">
         <p className="text-[11px] leading-relaxed text-muted-foreground">
           {inDeal
-            ? "No path yet. The deal is open: keep one of the cards dealt to you."
+            ? t(
+                "No path yet. The deal is open: keep one of the cards dealt to you.",
+              )
             : game.phase === "harbor"
-              ? "No path yet. A path is dealt when the voyage sails."
-              : "No path yet. The deal ran before you came aboard, so you sail this voyage without one."}
+              ? t("No path yet. A path is dealt when the voyage sails.")
+              : t(
+                  "No path yet. The deal ran before you came aboard, so you sail this voyage without one.",
+                )}
         </p>
       </div>
     );
@@ -121,34 +126,36 @@ export function PathChip({
         <PopoverTrigger asChild>
           <button
             type="button"
-            aria-label={`Your path is ${card.name}. Change your papers.`}
+            aria-label={t("Your path is {card.name}. Change your papers.", {
+              "card.name": t(card.name),
+            })}
             className="flex w-full items-center gap-2 rounded-lg border border-voyage/20 bg-voyage/[0.04] px-2.5 py-1.5 text-left transition hover:bg-voyage/[0.09]"
           >
             <span className="text-base leading-none">{card.crest}</span>
             <span className="min-w-0 flex-1 truncate font-display text-sm font-semibold">
-              {card.name}
+              {t(card.name)}
             </span>
             <Repeat className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
           </button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-[19rem] space-y-2">
           <div className="text-[10px] font-semibold uppercase tracking-wide text-voyage">
-            Your papers
+            {t("Your papers")}
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-lg leading-none">{card.crest}</span>
             <span className="font-display text-sm font-semibold">
-              {card.name}
+              {t(card.name)}
             </span>
           </div>
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            {card.signature}
+            {t(card.signature)}
           </p>
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Once a voyage, at a port in legs {PATH_SWITCH_FROM_ROUND} through{" "}
-            {PATH_SWITCH_TO_ROUND}, for {fee} Gold at your Renown. Unfulfilled
-            pathbound orders are forfeited, and the whole fleet sees the change
-            written into the voyage log.
+            {t(
+              "Once a voyage, at a port in legs {PATH_SWITCH_FROM_ROUND} through {PATH_SWITCH_TO_ROUND}, for {fee} Gold at your Renown. Unfulfilled pathbound orders are forfeited, and the whole fleet sees the change written into the voyage log.",
+              { PATH_SWITCH_FROM_ROUND, PATH_SWITCH_TO_ROUND, fee },
+            )}
           </p>
           {blocked !== null && (
             <p className="text-[11px] leading-relaxed text-alarm">{blocked}</p>
@@ -169,7 +176,7 @@ export function PathChip({
                   }}
                 >
                   <span className="mr-1.5">{other.crest}</span>
-                  {other.name}
+                  {t(other.name)}
                 </Button>
               );
             })}

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Crown, Star, Ship, Loader2 } from "lucide-react";
 import { api } from "@/lib/api";
+import { HOUSES } from "@/lib/game/engine";
 import { Avatar, Pill, RANK_MEDALS } from "./shared";
 import {
   ModalClose,
@@ -12,6 +13,12 @@ import {
   ModalSheet,
 } from "@/components/ui/modal-overlay";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/game/i18n";
+
+// The crest beside a captain's Renown, read off the House table the
+// Lobby's own picker draws, so a House that retunes its emblem moves both
+// screens at once rather than leaving a second copy here to drift.
+const HOUSE_ICON = new Map(HOUSES.map((h) => [h.id, h.icon]));
 
 type SortKey =
   "renownXP" | "seaMasterCrowns" | "bestScore" | "voyagesCompleted";
@@ -33,7 +40,7 @@ const SORT_OPTIONS: {
     label: "Renown",
     caption: "Renown XP",
     icon: Star,
-    format: (e) => `${e.renownXP} XP`,
+    format: (e) => t("{renownXP} XP", { renownXP: e.renownXP }),
   },
   {
     key: "seaMasterCrowns",
@@ -101,7 +108,10 @@ export function LeaderboardModal({
   });
 
   return (
-    <ModalOverlay onClose={() => onOpenChange(false)}>
+    <ModalOverlay
+      label={t("Harbor Leaderboard")}
+      onClose={() => onOpenChange(false)}
+    >
       <ModalSheet maxW="max-w-lg" maxH="max-h-[85vh]">
         {/* Header */}
         <div className="relative shrink-0 overflow-hidden border-b border-border/40 p-5">
@@ -118,15 +128,15 @@ export function LeaderboardModal({
               </div>
               <div>
                 <h2 className="font-display text-lg font-bold text-leaderboard">
-                  Harbor Leaderboard
+                  {t("Harbor Leaderboard")}
                 </h2>
                 <p className="text-[11px] text-muted-foreground">
-                  Top captains across all voyages
+                  {t("Top captains across all voyages")}
                 </p>
               </div>
             </div>
             <ModalClose
-              label="Close leaderboard"
+              label={t("Close leaderboard")}
               onClick={() => onOpenChange(false)}
             />
           </div>
@@ -146,7 +156,7 @@ export function LeaderboardModal({
               )}
             >
               <opt.icon className="h-3 w-3" />
-              {opt.label}
+              {t(opt.label)}
             </button>
           ))}
         </div>
@@ -160,9 +170,9 @@ export function LeaderboardModal({
           ) : sorted.length === 0 ? (
             <div className="flex h-32 items-center justify-center text-center">
               <p className="text-sm text-muted-foreground">
-                No captains have completed a voyage yet.
+                {t("No captains have completed a voyage yet.")}
                 <br />
-                Set sail to be the first on the board.
+                {t("Set sail to be the first on the board.")}
               </p>
             </div>
           ) : (
@@ -207,19 +217,15 @@ export function LeaderboardModal({
                         </span>
                         {isMe && (
                           <Pill tone="default" className="shrink-0">
-                            you
+                            {t("you")}
                           </Pill>
                         )}
                       </div>
                       <div className="text-[10px] text-muted-foreground">
-                        Renown {entry.renownLevel}
+                        {t("Renown {level}", { level: entry.renownLevel })}
                         {entry.houseId && (
                           <span className="ml-1.5">
-                            {entry.houseId === "jade_pavilion"
-                              ? "🪷"
-                              : entry.houseId === "vermilion_gate"
-                                ? "🏮"
-                                : "🏵️"}
+                            {HOUSE_ICON.get(entry.houseId)}
                           </span>
                         )}
                       </div>
@@ -230,7 +236,7 @@ export function LeaderboardModal({
                         {sort.format(entry)}
                       </div>
                       <div className="text-[9px] text-muted-foreground">
-                        {sort.caption}
+                        {t(sort.caption)}
                       </div>
                     </div>
                   </motion.div>

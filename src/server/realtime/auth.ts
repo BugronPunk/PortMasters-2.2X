@@ -10,16 +10,20 @@
 // =====================================================================
 import { PublicUser } from "@/types/realtime/presence";
 import type { Server, Socket } from "socket.io";
-import {
-  BANNED_ACCOUNT_ERROR,
-  getUserFromToken,
-  SESSION_COOKIE_NAME,
-} from "@/lib/auth";
+import { BANNED_ACCOUNT_ERROR, getUserFromToken } from "@/lib/auth";
 // The one picker of a row's four public fields, shared with the REST
 // routes. This layer used to carry a private copy of it; a second picker
 // is a second answer to what a wire user is.
 import { publicUser } from "@/lib/db";
+import { tFor } from "@/lib/game/i18n";
 import type { SocketState } from "./types";
+import { roomChannel } from "./channel";
+// The session cookie is sent automatically on same origin connections;
+// cross origin connections use an explicit token via the "auth" event
+// instead. The parse itself is shared with the language cookie beside it
+// (see ./cookies), because one raw header read twice is a walk that can
+// drift.
+import { readLocaleCookie, readSessionCookie } from "./cookies";
 import {
   sockets,
   userSockets,
@@ -28,18 +32,6 @@ import {
 } from "./presence";
 import { forgetStatusIfLastSocket } from "./status";
 import { emitRoomMembers } from "./chat";
-
-// Parse the pm_session cookie from a raw cookie header. The cookie is
-// sent automatically on same origin connections; cross origin
-// connections use an explicit token via the "auth" event instead.
-function readSessionCookie(cookieHeader: string | undefined): string | null {
-  if (!cookieHeader) return null;
-  for (const part of cookieHeader.split(";")) {
-    const [k, ...rest] = part.trim().split("=");
-    if (k === SESSION_COOKIE_NAME) return decodeURIComponent(rest.join("="));
-  }
-  return null;
-}
 
 // Authenticate a socket from its handshake cookie (auto) or an explicit
 // token (the "auth" event). On success, stamps the socket's state and
@@ -51,8 +43,16 @@ export async function authenticate(
 ): Promise<PublicUser | null> {
   const token =
     explicitToken ?? readSessionCookie(socket.handshake?.headers?.cookie);
+  // The three refusals below are read by the captain on the far end of
+  // this connection, so each goes out in that captain's language. The
+  // socket's state is the first answer and the handshake cookie the
+  // fallback, because authenticate can run before the connection was
+  // remembered.
+  const locale =
+    sockets.get(socket.id)?.locale ??
+    readLocaleCookie(socket.handshake?.headers?.cookie);
   if (!token) {
-    socket.emit("auth:fail", { error: "Missing session" });
+    socket.emit("auth:fail", { error: tFor(locale, "Missing session") });
     return null;
   }
   // The lookup is getUserFromToken's, shared with the REST API's
@@ -64,18 +64,22 @@ export async function authenticate(
   // has just closed the door on them.
   const account = await getUserFromToken(token);
   if (!account) {
-    socket.emit("auth:fail", { error: "Invalid or expired session" });
+    socket.emit("auth:fail", {
+      error: tFor(locale, "Invalid or expired session"),
+    });
     return null;
   }
   if (account.bannedAt) {
-    socket.emit("auth:fail", { error: BANNED_ACCOUNT_ERROR });
+    socket.emit("auth:fail", {
+      error: tFor(locale, BANNED_ACCOUNT_ERROR),
+    });
     return null;
   }
   const user = publicUser(account);
   const state = sockets.get(socket.id);
   if (!state) return null;
 
-  // If re authenticating as a different user, clean up old presence first.
+  // If authenticating again as a different user, clean up old presence first.
   if (state.authed && state.userId && state.userId !== user.id) {
     const oldSet = userSockets.get(state.userId);
     if (oldSet) {
@@ -83,7 +87,7 @@ export async function authenticate(
       if (oldSet.size === 0) userSockets.delete(state.userId);
     }
     if (state.roomId) {
-      socket.leave(`room:${state.roomId}`);
+      socket.leave(roomChannel(state.roomId));
       forgetStatusIfLastSocket(state.roomId, state.userId, userSockets);
       void emitRoomMembers(io, state.roomId);
     }
@@ -112,7 +116,11 @@ export async function authenticate(
 export function requireAuth(socket: Socket): SocketState | null {
   const s = sockets.get(socket.id);
   if (!s || !s.authed) {
-    socket.emit("auth:fail", { error: "Authenticate first" });
+    // A socket that failed this check may hold no state at all, so the
+    // language comes off the handshake cookie when it does not.
+    const locale =
+      s?.locale ?? readLocaleCookie(socket.handshake?.headers?.cookie);
+    socket.emit("auth:fail", { error: tFor(locale, "Authenticate first") });
     return null;
   }
   return s;

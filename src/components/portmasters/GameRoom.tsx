@@ -72,10 +72,12 @@ import { MessageCircle, Ship, LifeBuoy, Anchor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useColorPreference } from "@/lib/use-color-preference";
+import { useLanguage } from "@/lib/use-language-preference";
 import { usePanelPrefs } from "@/lib/use-panel-prefs";
 import { useSound } from "@/lib/use-sound";
 import { useRoomRoster } from "@/lib/use-room-roster";
 import { renownProgress } from "@/lib/game/legacy";
+import { t } from "@/lib/game/i18n";
 import {
   applyTidewatchSurge,
   claimWordOnTheDocksReward,
@@ -122,6 +124,11 @@ const RAIL_STUB =
 // press is refused rather than sent, so the captain who pressed it is owed the
 // reason: the room would otherwise hold a ready set no departure could carry
 // out, and the bar would say "ready" while the voyage stood still.
+//
+// The answers stay plain English the way the copy constants do; the press
+// that shows one wraps it through the pack (see handleNext), so the read
+// happens at the moment the captain is owed the reason rather than when
+// this module loaded.
 function leaveRefusal(phase: GameState["phase"]): string {
   switch (phase) {
     case "harbor":
@@ -268,7 +275,7 @@ export function GameRoom({
   //
   // Cleared before it is sent rather than after: a claim that the server
   // refuses, because the leg moved on or the contract is already claimed,
-  // is still a raid that happened, and re-sending it every render would only
+  // is still a raid that happened, and resending it every render would only
   // be a way to keep asking.
   useEffect(() => {
     const pending = state.game.pendingEscortClaim;
@@ -309,23 +316,36 @@ export function GameRoom({
         .catch(() => {});
       const mine = data.standings.find((s) => s.userId === me.id);
       if (mine?.crowned) {
-        toast.success("Crowned Sea Master!", {
-          description: `Highest Reputation in the harbor this voyage: ${mine.reputation}.`,
+        toast.success(t("Crowned Sea Master!"), {
+          description: t(
+            "Highest Reputation in the harbor this voyage: {mine.reputation}.",
+            {
+              "mine.reputation": mine.reputation,
+            },
+          ),
         });
         playSound("success");
       }
       if (mine?.brokersFavorUnlocked) {
-        toast.success("🤝 Broker's Favor unlocked!", {
-          description: `Renown Level ${BROKERS_FAVOR_UNLOCK_LEVEL} reached. The Broker owes you one, starting next voyage.`,
+        toast.success(t("🤝 Broker's Favor unlocked!"), {
+          description: t(
+            "Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL} reached. The Broker owes you one, starting next voyage.",
+            { BROKERS_FAVOR_UNLOCK_LEVEL },
+          ),
         });
       }
       for (const meritId of mine?.newMerits ?? []) {
         const merit = meritById(meritId);
         if (!merit) continue;
-        toast.success(`Captain's Merit earned: ${merit.name}`, {
-          description: merit.desc,
-          icon: <MeritIcon id={merit.id} className="h-4 w-4" />,
-        });
+        toast.success(
+          t("Captain's Merit earned: {merit.name}", {
+            "merit.name": t(merit.name),
+          }),
+          {
+            description: t(merit.desc),
+            icon: <MeritIcon id={merit.id} className="h-4 w-4" />,
+          },
+        );
         playSound("confirm");
       }
     };
@@ -412,26 +432,41 @@ export function GameRoom({
       if (data.roomId !== room.id) return;
       if (data.winnerId === me.id) {
         act((g, l) => claimWordOnTheDocksReward(g, l));
-        toast.success("📣 Word on the Docks!", {
-          description: `First to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage. +${data.reward} Gold.`,
+        toast.success(t("📣 Word on the Docks!"), {
+          description: t(
+            "First to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage. +{data.reward} Gold.",
+            { WORD_ON_THE_DOCKS_THRESHOLD, "data.reward": data.reward },
+          ),
         });
         notifications.push({
           icon: "📣",
-          title: "Word on the Docks!",
+          title: t("Word on the Docks!"),
           lines: [
-            `You won the race to ${WORD_ON_THE_DOCKS_THRESHOLD} orders. +${data.reward} Gold.`,
+            t(
+              "You won the race to {WORD_ON_THE_DOCKS_THRESHOLD} orders. +{data.reward} Gold.",
+              { WORD_ON_THE_DOCKS_THRESHOLD, "data.reward": data.reward },
+            ),
           ],
           category: "docks",
         });
       } else {
-        toast("📣 Word on the Docks", {
-          description: `${data.winnerName} was first to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage.`,
+        toast(t("📣 Word on the Docks"), {
+          description: t(
+            "{data.winnerName} was first to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage.",
+            { "data.winnerName": data.winnerName, WORD_ON_THE_DOCKS_THRESHOLD },
+          ),
         });
         notifications.push({
           icon: "📣",
-          title: "Word on the Docks",
+          title: t("Word on the Docks"),
           lines: [
-            `${data.winnerName} was first to ${WORD_ON_THE_DOCKS_THRESHOLD} orders.`,
+            t(
+              "{data.winnerName} was first to {WORD_ON_THE_DOCKS_THRESHOLD} orders.",
+              {
+                "data.winnerName": data.winnerName,
+                WORD_ON_THE_DOCKS_THRESHOLD,
+              },
+            ),
           ],
           category: "docks",
         });
@@ -450,16 +485,22 @@ export function GameRoom({
     const onSurge = (data: { roomId: string }) => {
       if (data.roomId !== room.id) return;
       act((g, l) => applyTidewatchSurge(g, l));
-      toast("🌊 Tidewatch Alert", {
-        description:
+      toast(t("🌊 Tidewatch Alert"), {
+        description: t(
           "The harbor takes notice of a bustling crew. One more cargo lot joins the Port Purchase board, every round, for the rest of this voyage.",
+        ),
       });
       notifications.push({
         icon: "🌊",
-        title: "Tidewatch Alert",
+        title: t("Tidewatch Alert"),
         lines: [
-          `The harbor crossed ${TIDEWATCH_SURGE_THRESHOLD} combined Reputation.`,
-          "One extra cargo lot joins every Port Purchase board, every round.",
+          t(
+            "The harbor crossed {TIDEWATCH_SURGE_THRESHOLD} combined Reputation.",
+            { TIDEWATCH_SURGE_THRESHOLD },
+          ),
+          t(
+            "One extra cargo lot joins every Port Purchase board, every round.",
+          ),
         ],
         category: "tidewatch",
       });
@@ -494,6 +535,10 @@ export function GameRoom({
   // Colorblind safe palette: threaded down to every panel that colors a
   // good's name. Stays client only.
   const { colorblindSafe, setColorblindSafe, colorFor } = useColorPreference();
+  // The captain's language. Read here for the settings pair and for the
+  // redraw the pick lands in: every string under this screen re-renders
+  // with it, which is the whole mechanism the pack needs.
+  const { locale, setLanguage } = useLanguage();
 
   const myDetail = useCallback(
     (): PlayerDetailData => ({
@@ -502,7 +547,6 @@ export function GameRoom({
       shipLevel: state.game.shipLevel,
       round: state.game.currentRound,
       phase: state.game.phase,
-      gameOver: state.game.gameOver,
       inventory: state.game.inventory,
       workers: state.game.workers,
       equippedModules: state.game.equippedModules,
@@ -714,7 +758,7 @@ export function GameRoom({
     if (lines.length === 0) return;
     notifications.push({
       icon: "📜",
-      title: "Captain's Ledger",
+      title: t("Captain's Ledger"),
       lines,
     });
   }, [state.newLines, state.loaded, notifications.push]);
@@ -750,7 +794,7 @@ export function GameRoom({
       if (data.roomId !== room.id || data.message.sender.id === me.id) return;
       notifications.push({
         icon: "⚓",
-        title: `${data.message.sender.displayName} · Harbor`,
+        title: `${data.message.sender.displayName} · ${t("Harbor")}`,
         lines: [data.message.content],
         onActivate: () => setChatTab("room"),
         category: "room",
@@ -760,7 +804,7 @@ export function GameRoom({
       if (message.sender.id === me.id) return;
       notifications.push({
         icon: "✉️",
-        title: `${message.sender.displayName} · Direct`,
+        title: `${message.sender.displayName} · ${t("Direct")}`,
         lines: [message.content],
         onActivate: () => {
           setChatTab("dm");
@@ -805,12 +849,12 @@ export function GameRoom({
   const handleSave = useCallback(async () => {
     try {
       await api.saveGameState(room.id, state.game);
-      toast.success("Progress saved", {
-        description: "Your voyage is recorded on the server.",
+      toast.success(t("Progress saved"), {
+        description: t("Your voyage is recorded on the server."),
       });
     } catch {
-      toast.error("Save failed", {
-        description: "Could not reach the Harbormaster.",
+      toast.error(t("Save failed"), {
+        description: t("Could not reach the Harbormaster."),
       });
     }
   }, [room.id, state.game]);
@@ -829,15 +873,15 @@ export function GameRoom({
     // and the captain is told why rather than left pressing a button that
     // looks like it worked.
     if (!phaseSync.markReady((g, l) => leavePhase(g, ctx, l))) {
-      toast.error("This seat is not left by pressing Next Phase", {
-        description: leaveRefusal(state.game.phase),
+      toast.error(t("This seat is not left by pressing Next Phase"), {
+        description: t(leaveRefusal(state.game.phase)),
       });
     }
   }, [phaseSync, ctx, state.game.phase]);
 
   const handleRestart = useCallback(() => {
     if (!isHost) {
-      toast.error(HOST_ONLY_RESTART);
+      toast.error(t(HOST_ONLY_RESTART));
       return;
     }
     setRestartConfirmOpen(true);
@@ -918,12 +962,14 @@ export function GameRoom({
         )
         .catch(() => {});
     },
-    [playerDetail],
+    // The press itself, not the hook's whole answer: the callback reads
+    // nothing else off it, and the answer moves whenever a peek resolves.
+    [playerDetail.requestDetail],
   );
 
   function copyCode() {
     navigator.clipboard?.writeText(room.code).then(
-      () => toast.success("Room code copied", { description: room.code }),
+      () => toast.success(t("Harbor code copied"), { description: room.code }),
       () => {},
     );
   }
@@ -939,7 +985,8 @@ export function GameRoom({
     return (
       <div className="pm-canvas min-h-screen flex items-center justify-center">
         <div className="text-muted-foreground flex items-center gap-2">
-          <Ship className="h-5 w-5 animate-pulse text-brand" /> Weighing anchor…
+          <Ship className="h-5 w-5 animate-pulse text-brand" />{" "}
+          {t("Weighing anchor…")}
         </div>
       </div>
     );
@@ -1115,7 +1162,7 @@ export function GameRoom({
             >
               <PanelHeader
                 icon={<Anchor className="h-3.5 w-3.5 text-harbor" />}
-                title="Captain"
+                title={t("Captain")}
                 collapsed={panelCollapsed.left}
                 onToggle={() => togglePanel("left")}
                 railLevel
@@ -1159,18 +1206,20 @@ export function GameRoom({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-harbor"
-                aria-label="Open the captain panel"
-                title="Open the captain panel"
+                aria-label={t("Open the captain panel")}
+                title={t("Open the captain panel")}
                 onClick={() => setPanelCollapsed("left", false)}
               >
                 <Anchor className="h-4 w-4" />
               </Button>
               <span
                 className="pb-1 text-[11px] font-semibold tabular-nums text-muted-foreground"
-                title={`Round ${state.game.currentRound}`}
+                title={t("Round {state.game.currentRound}", {
+                  "state.game.currentRound": state.game.currentRound,
+                })}
               >
                 {state.game.currentRound > 0
-                  ? `R${state.game.currentRound}`
+                  ? t("R{round}", { round: state.game.currentRound })
                   : "⚓"}
               </span>
             </div>
@@ -1225,7 +1274,7 @@ export function GameRoom({
                 is the difference between a bubble over the captain's
                 rail and a bubble over the table. It wraps the scroller
                 rather than positioning the column itself, because a
-                relative column would re-anchor every absolutely placed
+                relative column would reanchor every absolutely placed
                 board inside it. */}
             <div className="lg:relative lg:order-1 lg:flex lg:flex-col lg:flex-1 lg:min-h-0">
               <div className="@container space-y-3 lg:flex-1 lg:min-h-0 lg:overflow-y-auto pm-scroll lg:pr-1">
@@ -1393,7 +1442,9 @@ export function GameRoom({
                 <PanelHeader
                   className="px-3 pt-3"
                   icon={<MessageCircle className="h-3.5 w-3.5 text-chat" />}
-                  title={chatTab === "room" ? "Harbor chat" : "Direct messages"}
+                  title={
+                    chatTab === "room" ? t("Harbor chat") : t("Direct messages")
+                  }
                   collapsed={panelCollapsed.chat}
                   onToggle={() => togglePanel("chat")}
                 />
@@ -1404,10 +1455,12 @@ export function GameRoom({
                   )}
                 >
                   <TabsTrigger value="room">
-                    <MessageCircle className="h-3.5 w-3.5 mr-1.5" /> Harbor
+                    <MessageCircle className="h-3.5 w-3.5 mr-1.5" />{" "}
+                    {t("Harbor")}
                   </TabsTrigger>
                   <TabsTrigger value="dm">
-                    <MessageCircle className="h-3.5 w-3.5 mr-1.5" /> Direct
+                    <MessageCircle className="h-3.5 w-3.5 mr-1.5" />{" "}
+                    {t("Direct")}
                   </TabsTrigger>
                 </TabsList>
                 {/* Both channels stay mounted. The panel holds the lines it
@@ -1416,7 +1469,7 @@ export function GameRoom({
                     looking at the other one, and switching back would show
                     the log as it stood when the voyage started. The room's
                     history reaches this panel once, on join, so there is
-                    nothing to re seed it from. */}
+                    nothing to reseed it from. */}
                 <TabsContent
                   value="room"
                   forceMount
@@ -1479,8 +1532,8 @@ export function GameRoom({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-members"
-                aria-label="Open the Harbor Roster"
-                title="Open the Harbor Roster"
+                aria-label={t("Open the Harbor Roster")}
+                title={t("Open the Harbor Roster")}
                 onClick={() => setPanelCollapsed("roster", false)}
               >
                 <Ship className="h-4 w-4" />
@@ -1497,8 +1550,8 @@ export function GameRoom({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-chat"
-                aria-label="Open the chat"
-                title="Open the chat"
+                aria-label={t("Open the chat")}
+                title={t("Open the chat")}
                 onClick={() => setPanelCollapsed("chat", false)}
               >
                 <MessageCircle className="h-4 w-4" />
@@ -1517,8 +1570,8 @@ export function GameRoom({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-members"
-                aria-label="Open the Harbor Roster"
-                title="Open the Harbor Roster"
+                aria-label={t("Open the Harbor Roster")}
+                title={t("Open the Harbor Roster")}
                 onClick={() => setPanelCollapsed("roster", false)}
               >
                 <Ship className="h-4 w-4" />
@@ -1527,8 +1580,8 @@ export function GameRoom({
                 variant="ghost"
                 size="icon"
                 className="h-8 w-8 rounded-lg text-chat"
-                aria-label="Open the chat"
-                title="Open the chat"
+                aria-label={t("Open the chat")}
+                title={t("Open the chat")}
                 onClick={() => setPanelCollapsed("chat", false)}
               >
                 <MessageCircle className="h-4 w-4" />
@@ -1632,6 +1685,8 @@ export function GameRoom({
         onToggleColorblind={() => setColorblindSafe(!colorblindSafe)}
         volume={soundVolume}
         onVolumeChange={setSoundVolume}
+        locale={locale}
+        onSetLocale={setLanguage}
       />
 
       {/* Floating help when bankrupt / endgame */}
@@ -1642,7 +1697,7 @@ export function GameRoom({
           animate={{ opacity: 1, scale: 1 }}
           onClick={() => setTipsOpen(true)}
           className="fixed bottom-5 right-5 pm-grad-advisor rounded-full h-12 w-12 flex items-center justify-center shadow-lg z-40"
-          title="Strategy tips"
+          title={t("Strategy tips")}
         >
           <LifeBuoy className="h-5 w-5" />
         </motion.button>

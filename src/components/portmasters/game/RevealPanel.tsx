@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Avatar } from "../shared";
 import { ICONS } from "@/lib/game/constants/brand";
+import { t } from "@/lib/game/i18n";
 import { fulfillmentLine } from "@/lib/game/audit";
 import { flourishById, flourishLine, roleCard } from "@/lib/game/gambit";
 import { objectiveProgress } from "@/lib/game/objectives";
@@ -70,9 +71,9 @@ export function RevealPanel({
       <div className="rounded-xl border border-endgame/30 overflow-hidden">
         <div className="px-3 py-2 flex items-center gap-2 bg-endgame/[0.08]">
           <Eye className="h-3.5 w-3.5 text-endgame" />
-          <span className="text-xs font-semibold">🃏 The Reveal</span>
+          <span className="text-xs font-semibold">{t("🃏 The Reveal")}</span>
           <span className="text-[10px] text-muted-foreground">
-            Every card in this harbor, face up
+            {t("Every card in this harbor, face up")}
           </span>
         </div>
         <div className="divide-y divide-black/5 dark:divide-white/10">
@@ -87,7 +88,9 @@ export function RevealPanel({
         {visible < total && (
           <div className="px-3 py-2 flex items-center justify-between gap-2 bg-black/[0.02] dark:bg-white/[0.03]">
             <span className="text-[10px] text-muted-foreground">
-              {total - visible} still to turn over
+              {t("{unturned} still to turn over", {
+                unturned: total - visible,
+              })}
             </span>
             <Button
               size="sm"
@@ -95,7 +98,7 @@ export function RevealPanel({
               className="h-6 px-2 text-[11px]"
               onClick={() => setAllNow(true)}
             >
-              Show them all
+              {t("Show them all")}
             </Button>
           </div>
         )}
@@ -123,7 +126,7 @@ function RevealedCard({
   const flourish = captain.flourishId
     ? (flourishById(captain.flourishId) ?? null)
     : null;
-  const title = role ? roleCard(role).title : "No card dealt";
+  const title = role ? t(roleCard(role).title) : t("No card dealt");
   // The two cards that sail against the fleet, and the only two the ledger
   // sets apart. Not an accusation: both of them were playing the game they
   // were dealt, and half the table owes its evening to one of them.
@@ -146,7 +149,9 @@ function RevealedCard({
         <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
           <span className="text-sm font-medium truncate">
             {captain.displayName}
-            {mine && <span className="text-muted-foreground"> (you)</span>}
+            {mine && (
+              <span className="text-muted-foreground"> {t("(you)")}</span>
+            )}
           </span>
           <span
             className={cn(
@@ -168,10 +173,10 @@ function RevealedCard({
             )}
           >
             {captain.forged
-              ? "🚫 Ledger unreadable"
+              ? t("🚫 Ledger unreadable")
               : captain.won
-                ? "✅ Won the voyage"
-                : "❌ Did not win"}
+                ? t("✅ Won the voyage")
+                : t("❌ Did not win")}
           </span>
         </div>
 
@@ -179,24 +184,25 @@ function RevealedCard({
           {role ? (
             <>
               <span className="mr-1 text-[10px] font-semibold uppercase tracking-wide text-endgame">
-                Their card promised
+                {t("Their card promised")}
               </span>
               {victoryLine(role, flourish)}
             </>
           ) : (
             <>
               <span className="mr-1 text-[10px] font-semibold uppercase tracking-wide text-endgame">
-                No card
+                {t("No card")}
               </span>
-              This seat took a berth after the hand was drawn, so the voyage
-              wagered nothing on them and they won nothing from it.
+              {t(
+                "This seat took a berth after the hand was drawn, so the voyage wagered nothing on them and they won nothing from it.",
+              )}
             </>
           )}
         </p>
         {flourish && (
           <p className="mt-0.5 text-[11px] leading-relaxed text-muted-foreground">
             <span className="mr-1 text-[10px] font-semibold uppercase tracking-wide text-endgame">
-              Their own goal
+              {t("Their own goal")}
             </span>
             {flourishLine(flourish)}
           </p>
@@ -204,16 +210,20 @@ function RevealedCard({
 
         <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] tabular-nums text-muted-foreground">
           <span>
-            <Coins className="inline h-3 w-3 align-[-1px]" /> {captain.gold}{" "}
-            Gold
+            <Coins className="inline h-3 w-3 align-[-1px]" />{" "}
+            {t("{contract.fee} Gold", { "contract.fee": captain.gold })}
           </span>
-          <span>{captain.reputation} Rep</span>
+          <span>{t("{rep} Rep", { rep: captain.reputation })}</span>
           {role === "broker" && (
             <span className={captain.won ? "text-gain" : undefined}>
-              {captain.peerTradeProfit} Gold in peer trade
+              {t("{captain.peerTradeProfit} Gold in peer trade", {
+                "captain.peerTradeProfit": captain.peerTradeProfit,
+              })}
             </span>
           )}
-          {handed > 0 && <span>{handed} items to the commission</span>}
+          {handed > 0 && (
+            <span>{t("{handed} items to the commission", { handed })}</span>
+          )}
         </div>
       </div>
     </motion.div>
@@ -264,7 +274,9 @@ function ReplayLedger({
     <div className="rounded-xl border border-black/5 dark:border-white/10 overflow-hidden">
       <div className="px-3 py-2 flex items-center gap-2 bg-black/[0.03] dark:bg-white/[0.05]">
         <ScrollText className="h-3.5 w-3.5 text-endgame" />
-        <span className="text-xs font-semibold">📜 The Replay Ledger</span>
+        <span className="text-xs font-semibold">
+          {t("📜 The Replay Ledger")}
+        </span>
       </div>
 
       {/* The commission, leg by leg. The one number the whole table was
@@ -272,12 +284,14 @@ function ReplayLedger({
           anyone recorded. */}
       <div className="px-3 py-2 border-t border-black/5 dark:border-white/10">
         <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-          {objective.name}, leg by leg
+          {t(objective.name)}
+          {t(", leg by leg")}
         </div>
         {fleetTrace.length === 0 ? (
           <p className="text-[11px] text-muted-foreground">
-            No leg of this commission was recorded, so there is no curve to
-            draw.
+            {t(
+              "No leg of this commission was recorded, so there is no curve to draw.",
+            )}
           </p>
         ) : (
           <div className="space-y-0.5">
@@ -289,7 +303,7 @@ function ReplayLedger({
                   className="flex items-center gap-2 text-[11px] tabular-nums"
                 >
                   <span className="w-12 shrink-0 text-muted-foreground">
-                    Leg {entry.round}
+                    {t("Leg {leg}", { leg: entry.round })}
                   </span>
                   <span className="flex-1 truncate">
                     {objective.resources.map((row) => (
@@ -308,8 +322,11 @@ function ReplayLedger({
                     )}
                   >
                     {step.met
-                      ? "Filled"
-                      : `${step.delivered} of ${step.required}`}
+                      ? t("Filled")
+                      : t("{step.delivered} of {step.required}", {
+                          "step.delivered": step.delivered,
+                          "step.required": step.required,
+                        })}
                   </span>
                 </div>
               );
@@ -318,8 +335,10 @@ function ReplayLedger({
         )}
         <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground/80">
           {filled > 0
-            ? "The fleet handed over what its captains reported each leg, and the Emperor read the board when the voyage ended."
-            : "The fleet handed over nothing it reported."}
+            ? t(
+                "The fleet handed over what its captains reported each leg, and the Emperor read the board when the voyage ended.",
+              )
+            : t("The fleet handed over nothing it reported.")}
         </p>
       </div>
 
@@ -328,19 +347,20 @@ function ReplayLedger({
           when the voyage ended. */}
       <div className="px-3 py-2 border-t border-black/5 dark:border-white/10">
         <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-          What was traded on the record
+          {t("What was traded on the record")}
         </div>
         {tradeLegs.length === 0 ? (
           <p className="text-[11px] text-muted-foreground">
-            No order fulfillment survived the voyage, which happens when a
-            harbor buys and sells mostly through each other.
+            {t(
+              "No order fulfillment survived the voyage, which happens when a harbor buys and sells mostly through each other.",
+            )}
           </p>
         ) : (
           <div className="space-y-1.5">
             {tradeLegs.map(([round, rows]) => (
               <div key={round}>
                 <div className="text-[10px] font-semibold text-muted-foreground">
-                  Leg {round}
+                  {t("Leg {leg}", { leg: round })}
                 </div>
                 {rows.map((row, i) => (
                   <div

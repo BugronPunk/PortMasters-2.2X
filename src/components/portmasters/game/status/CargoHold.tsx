@@ -3,6 +3,7 @@
 import { basePriceRange } from "@/lib/game/engine";
 import { unlockedProducts, unlockedResources } from "@/lib/game/pools";
 import { SHORT_RATIONS_YIELD } from "@/lib/game/constants/supplies";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { itemColorResolver } from "@/lib/use-color-preference";
 import { Term } from "../../Term";
@@ -36,7 +37,7 @@ export function CargoHold({
   const cargoResources = unlockedResources(game.difficulty, game.currentRound);
   const cargoProducts = unlockedProducts(game.difficulty, game.currentRound);
   // Only what is aboard is drawn. A good a captain does not hold is a row
-  // their eye re-reads to learn nothing, and printing every unlocked good
+  // their eye reads again to learn nothing, and printing every unlocked good
   // at zero would be a column of nothing said eleven times on a rail that
   // counts its rows. The Hold Value estimator and the composition bar below
   // draw nothing at zero too, which is the same reading applied to the rows.
@@ -69,14 +70,15 @@ export function CargoHold({
           <div className="mb-2 rounded-lg border border-ship/15 bg-ship/[0.04] px-3 py-2 flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
               <Coins className="h-3 w-3 text-gold-ink" />
-              Hold Value
+              {t("Hold Value")}
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-muted-foreground">
-                {totalItems} items
+                {t("{count} items", { count: totalItems })}
               </span>
               <span className="font-display text-sm font-bold text-gold-ink tabular-nums">
-                ~{totalValue}g
+                ~{totalValue}
+                {t("g")}
               </span>
             </div>
           </div>
@@ -85,7 +87,7 @@ export function CargoHold({
       {heldResources.length > 0 && (
         <>
           <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mb-0.5">
-            ━━ Raw Materials ━━
+            {t("━━ Raw Materials ━━")}
           </div>
           {heldResources.map((r) => (
             <InvItem
@@ -102,7 +104,7 @@ export function CargoHold({
       {heldProducts.length > 0 && (
         <>
           <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mt-2 mb-0.5">
-            ━━ Finished Goods ━━
+            {t("━━ Finished Goods ━━")}
           </div>
           {heldProducts.map((p) => (
             <InvItem
@@ -118,13 +120,13 @@ export function CargoHold({
       )}
       {heldResources.length === 0 && heldProducts.length === 0 && (
         <p className="text-[10px] text-muted-foreground">
-          Nothing in the hold yet.
+          {t("Nothing in the hold yet.")}
         </p>
       )}
       {workerCount > 0 ? (
         <>
           <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mt-2 mb-0.5">
-            ━━ Artisans ━━
+            {t("━━ Artisans ━━")}
           </div>
           {roster
             .filter((r) => r.list.length > 0)
@@ -158,29 +160,37 @@ export function CargoHold({
         return (
           <div className="mt-2 rounded-lg border border-border/30 bg-black/[0.02] p-2 dark:bg-white/[0.02]">
             <div className="mb-1 flex items-center justify-between text-[9px] text-muted-foreground">
-              <span>Cargo Composition</span>
-              <span>{total} items</span>
+              <span>{t("Cargo Composition")}</span>
+              <span>{t("{count} items", { count: total })}</span>
             </div>
             <div className="flex h-2 overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
               <div
                 className="bg-sea transition-all duration-300"
                 style={{ width: `${rawPct}%` }}
-                title={`Raw Materials: ${rawCount} (${rawPct}%)`}
+                title={t("Raw Materials: {rawCount} ({rawPct}%)", {
+                  rawCount,
+                  rawPct,
+                })}
               />
               <div
                 className="bg-warn transition-all duration-300"
                 style={{ width: `${productPct}%` }}
-                title={`Finished Goods: ${productCount} (${productPct}%)`}
+                title={t("Finished Goods: {productCount} ({productPct}%)", {
+                  productCount,
+                  productPct,
+                })}
               />
             </div>
             <div className="mt-1 flex items-center justify-between text-[9px]">
               <span className="flex items-center gap-1">
                 <span className="inline-block h-2 w-2 rounded-full bg-sea" />
-                <span className="text-muted-foreground">Raw {rawCount}</span>
+                <span className="text-muted-foreground">
+                  {t("Raw {count}", { count: rawCount })}
+                </span>
               </span>
               <span className="flex items-center gap-1">
                 <span className="text-muted-foreground">
-                  Products {productCount}
+                  {t("Products {count}", { count: productCount })}
                 </span>
                 <span className="inline-block h-2 w-2 rounded-full bg-warn" />
               </span>
@@ -217,8 +227,11 @@ function InvItem({
         {icon}
       </span>
       <span className="flex-1" style={{ color: muted ? undefined : color }}>
+        {/* The printed name reads through the pack: a good has a row, and an
+            artisan's plural heading does not, which fails open to the English
+            the row never had. The popover keeps the English term as its key. */}
         <Term term={term ?? name} content={priceContent}>
-          {name}
+          {t(name)}
         </Term>
       </span>
       {skilled !== undefined && skilled > 0 && (
@@ -231,7 +244,14 @@ function InvItem({
              ledger lying about work the captain can count. The pace is
              the constant's own, the same percentage the larder's own
              short rations line carries. */
-          title={`${skilled} of ${count} trained: each produces 2 per round, working at ${Math.round(SHORT_RATIONS_YIELD * 100)}% pace while the crew goes hungry`}
+          title={t(
+            "{skilled} of {count} trained: each produces 2 per round, working at {pacePct}% pace while the crew goes hungry",
+            {
+              skilled,
+              count,
+              pacePct: Math.round(SHORT_RATIONS_YIELD * 100),
+            },
+          )}
         >
           ⭐{skilled}
         </span>

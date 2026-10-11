@@ -27,6 +27,17 @@ import { Button } from "@/components/ui/button";
 import { QuantityInput } from "@/components/ui/quantity-input";
 import { ICONS } from "@/lib/game/constants/brand";
 import {
+  OFFER_GIVE_AMOUNT_LABEL,
+  OFFER_GIVE_ITEM_LABEL,
+  OFFER_GIVE_LABEL,
+  OFFER_POST_LABEL,
+  OFFER_TARGET_LABEL,
+  OFFER_WANT_AMOUNT_LABEL,
+  OFFER_WANT_ITEM_LABEL,
+  offerOverdrawLine,
+  SAME_ITEM_OFFER,
+} from "@/lib/game/constants/copy";
+import {
   BARTER_ITEMS,
   FLEXIBLE_BARTER_UNLOCK_LEVEL,
 } from "@/lib/game/constants/goods";
@@ -36,12 +47,14 @@ import {
   getOwnedAmount,
   postBarterOffer,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import type { PublicUser } from "@/lib/api";
 import { itemColorResolver } from "@/lib/use-color-preference";
 import type { BarterOffer } from "@/lib/use-barter";
 import { cn } from "@/lib/utils";
 import { ItemIcon } from "../shared";
+import { AudienceSelect } from "./AudienceSelect";
 import { JustForChip, PathDeskRow } from "./phases/PhaseShared";
 import type { Barter } from "./phases/PhaseShared";
 
@@ -184,16 +197,16 @@ export function OfferCard({
   return (
     <PathDeskRow mine={mine} direct={isDirect} className={className}>
       <div className="flex items-center gap-1.5 flex-wrap">
-        <span className="font-medium">{mine ? "You" : offer.fromName}</span>
-        <span className="text-muted-foreground">offer</span>
+        <span className="font-medium">{mine ? t("You") : offer.fromName}</span>
+        <span className="text-muted-foreground">{t("offer")}</span>
         <span style={{ color: resolveColor(offer.offerItem) }}>
           <ItemIcon item={offer.offerItem} className="h-3.5 w-3.5" />{" "}
-          {offer.offerAmount} {offer.offerItem}
+          {offer.offerAmount} {t(offer.offerItem)}
         </span>
-        <span className="text-muted-foreground">for</span>
+        <span className="text-muted-foreground">{t("for")}</span>
         <span style={{ color: resolveColor(offer.requestItem) }}>
           <ItemIcon item={offer.requestItem} className="h-3.5 w-3.5" />{" "}
-          {offer.requestAmount} {offer.requestItem}
+          {offer.requestAmount} {t(offer.requestItem)}
         </span>
         {isDirect && <JustForChip forMe={!mine} name={offer.targetName} />}
       </div>
@@ -204,7 +217,7 @@ export function OfferCard({
           className="h-7 px-2.5 text-[10px] rounded shrink-0"
           onClick={() => barter.cancel(offer)}
         >
-          Cancel
+          {t("Cancel")}
         </Button>
       ) : (
         <Button
@@ -217,7 +230,7 @@ export function OfferCard({
           disabled={!canAccept}
           onClick={() => barter.accept(offer.id)}
         >
-          🤝 Trade
+          {t("🤝 Trade")}
         </Button>
       )}
     </PathDeskRow>
@@ -262,12 +275,22 @@ export function TradeComposer({
     const toGo = FLEXIBLE_BARTER_UNLOCK_LEVEL - game.renownLevel;
     return (
       <div className="w-80 space-y-1 p-3 text-xs text-muted-foreground">
-        <p className="font-medium text-foreground">🔒 Flexible bartering</p>
-        <p>
-          Unlocks at Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}, {toGo} level
-          {toGo === 1 ? "" : "s"} to go.
+        <p className="font-medium text-foreground">
+          {t("🔒 Flexible bartering")}
         </p>
-        <p>The Captain's Exchange at the Parley is open to you already.</p>
+        <p>
+          {t(
+            "Unlocks at Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}, {toGo} level{pluralS} to go.",
+            {
+              FLEXIBLE_BARTER_UNLOCK_LEVEL,
+              toGo,
+              pluralS: toGo === 1 ? "" : "s",
+            },
+          )}
+        </p>
+        <p>
+          {t("The Captain's Exchange at the Parley is open to you already.")}
+        </p>
       </div>
     );
   }
@@ -275,84 +298,86 @@ export function TradeComposer({
   return (
     <div className="w-80 space-y-2 p-3">
       <div className="flex items-center gap-1.5 text-xs">
-        <span className="w-12 shrink-0 text-muted-foreground">I'll give</span>
+        <span className="w-12 shrink-0 text-muted-foreground">
+          {t(OFFER_GIVE_LABEL)}
+        </span>
         <QuantityInput
           value={draft.offerAmount}
           onCommit={draft.setOfferAmount}
           min={1}
-          aria-label="Amount to offer"
+          aria-label={t(OFFER_GIVE_AMOUNT_LABEL)}
           className="h-8 w-14"
         />
         <Select
           value={draft.offerItem}
           onChange={(e) => draft.setOfferItem(e.target.value)}
           className="h-8 px-1.5 text-xs flex-1"
-          aria-label="Item to offer"
+          aria-label={t(OFFER_GIVE_ITEM_LABEL)}
         >
           {draft.items.map((it) => (
             <option key={it} value={it}>
-              {ICONS[it]} {it}
+              {ICONS[it]} {t(it)}
             </option>
           ))}
         </Select>
       </div>
       <div className="flex items-center gap-1.5 text-xs">
-        <span className="w-12 shrink-0 text-muted-foreground">I want</span>
+        <span className="w-12 shrink-0 text-muted-foreground">
+          {t("I want")}
+        </span>
         <QuantityInput
           value={draft.requestAmount}
           onCommit={draft.setRequestAmount}
           min={1}
-          aria-label="Amount to request"
+          aria-label={t(OFFER_WANT_AMOUNT_LABEL)}
           className="h-8 w-14"
         />
         <Select
           value={draft.requestItem}
           onChange={(e) => draft.setRequestItem(e.target.value)}
           className="h-8 px-1.5 text-xs flex-1"
-          aria-label="Item to request"
+          aria-label={t(OFFER_WANT_ITEM_LABEL)}
         >
           {draft.items.map((it) => (
             <option key={it} value={it}>
-              {ICONS[it]} {it}
+              {ICONS[it]} {t(it)}
             </option>
           ))}
         </Select>
       </div>
       {fixedTarget ? (
         <p className="text-[11px] text-muted-foreground">
-          Offered to {fixedTarget.displayName} alone.
+          {t("Offered to {name} alone.", { name: fixedTarget.displayName })}
         </p>
       ) : (
-        <Select
+        <AudienceSelect
           value={draft.targetUserId}
-          onChange={(e) => draft.setChosenTargetId(e.target.value)}
+          onChange={(id) => draft.setChosenTargetId(id)}
+          others={members.filter((m) => m.id !== me.id)}
+          label={t(OFFER_TARGET_LABEL)}
           className="h-8 px-1.5 text-xs w-full"
-          aria-label="Direct this offer to a specific captain"
-        >
-          <option value="">🌊 Anyone in the harbor</option>
-          {members
-            .filter((m) => m.id !== me.id)
-            .map((m) => (
-              <option key={m.id} value={m.id}>
-                🔒 {m.displayName} only
-              </option>
-            ))}
-        </Select>
+        />
       )}
       {draft.sameItem && (
-        <p className="text-[11px] text-alarm">
-          Pick two different items to barter.
-        </p>
+        <p className="text-[11px] text-alarm">{t(SAME_ITEM_OFFER)}</p>
       )}
       {!draft.sameItem && draft.offerAmount > draft.owned && (
         <p className="text-[11px] text-alarm">
-          You only have {draft.owned} {draft.offerItem}.
+          {offerOverdrawLine(draft.owned, draft.offerItem)}
         </p>
       )}
       <p className="text-[11px] text-muted-foreground">
         {draft.offersLeft === 0
-          ? "Every flexible trade this voyage allows you has been taken. You can still use the Captain's Exchange and accept any offer."
-          : `Others can still take ${draft.offersLeft} more offer${draft.offersLeft === 1 ? "" : "s"} from you this voyage.`}
+          ? t(
+              "Every flexible trade this voyage allows you has been taken. You can still use the Captain's Exchange and accept any offer.",
+            )
+          : t(
+              "Others can still take {draft.offersLeft} more offer{pluralS} from you this voyage.",
+              {
+                "draft.offersLeft": draft.offersLeft,
+                pluralS: draft.offersLeft === 1 ? "" : "s",
+              },
+            )}
       </p>
       <Button
         className={cn(
@@ -365,7 +390,7 @@ export function TradeComposer({
           if (draft.submit()) onPosted?.();
         }}
       >
-        🤝 Post Offer
+        {t(OFFER_POST_LABEL)}
       </Button>
     </div>
   );

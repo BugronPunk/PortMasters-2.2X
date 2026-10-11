@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { difficultyConfig } from "@/lib/game/difficulty";
 import { ESCORT_SHARE_RULE } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
 import {
   escortCost,
   escortCoverage,
@@ -50,19 +51,28 @@ export function PirateAttack({
     <div className="max-w-xl mx-auto text-center py-4">
       <div className="text-5xl mb-2">🏴‍☠️</div>
       <PhaseHeading layout="mb-1" tone="text-resolve" brush>
-        Pirate Waters Ahead
+        {t("Pirate Waters Ahead")}
       </PhaseHeading>
       <div className="mb-5 space-y-2">
         <p className="text-sm text-muted-foreground leading-relaxed">
           {cover
-            ? "Before this round's bills come due, your ship has to clear open water. Pirates that find you this round meet a shield you already paid for, so there is nothing here left to buy and nothing in your hold that is theirs."
-            : `Before this round's bills come due, your ship has to clear open water. There is a ${raidPct}% chance pirates find you and take every coin in your hold. Hire an escort to sail through safely, or risk it and save the Gold.`}
+            ? t(
+                "Before this round's bills come due, your ship has to clear open water. Pirates that find you this round meet a shield you already paid for, so there is nothing here left to buy and nothing in your hold that is theirs.",
+              )
+            : t(
+                "Before this round's bills come due, your ship has to clear open water. There is a {raidPct}% chance pirates find you and take every coin in your hold. Hire an escort to sail through safely, or risk it and save the Gold.",
+                { raidPct },
+              )}
         </p>
         {cover && (
           <p className="text-sm text-parley">
-            🛡️ {cover.sellerName} sold you this leg's cover. Their cannons beat
-            off {Math.round(escortCoverage() * 100)}% of a boarding party, and
-            their own hold answers for the rest.
+            {t(
+              "🛡️ {cover.sellerName} sold you this leg's cover. Their cannons beat off {coverPct}% of a boarding party, and their own hold answers for the rest.",
+              {
+                "cover.sellerName": cover.sellerName,
+                coverPct: Math.round(escortCoverage() * 100),
+              },
+            )}
           </p>
         )}
         {/* The leak note explains the odds printed under it, so it belongs
@@ -70,8 +80,9 @@ export function PirateAttack({
             explain, and the leak is cleared at the next Dawn's draft. */}
         {leak > 0 && !cover && (
           <p className="text-sm text-warn">
-            🕵️ A corrupt broker leaked your position this round, so the odds
-            above are already raised.
+            {t(
+              "🕵️ A corrupt broker leaked your position this round, so the odds above are already raised.",
+            )}
           </p>
         )}
       </div>
@@ -85,7 +96,7 @@ export function PirateAttack({
         <div className="max-w-md mx-auto mb-4 rounded-xl border border-border/40 bg-background/40 p-3.5">
           <SummaryHeading size="text-[10px]" tone="text-muted-foreground">
             <AlertTriangle className="h-3.5 w-3.5 text-warn" />
-            Risk Assessment
+            {t("Risk Assessment")}
           </SummaryHeading>
           <div className="grid grid-cols-3 gap-2">
             {/* Raid probability */}
@@ -99,19 +110,19 @@ export function PirateAttack({
                     ? "text-warn"
                     : "text-gain",
               )}
-              label="Raid Chance"
+              label={t("Raid Chance")}
             />
             {/* Gold at risk */}
             <StatTile
               value={game.money}
               valueClassName="tabular-nums text-alarm"
-              label="Gold at Risk"
+              label={t("Gold at Risk")}
             />
             {/* Expected loss */}
             <StatTile
               value={Math.round((game.money * raidPct) / 100)}
               valueClassName="tabular-nums text-warn"
-              label="Expected Loss"
+              label={t("Expected Loss")}
             />
           </div>
           {/* Recommendation */}
@@ -121,9 +132,10 @@ export function PirateAttack({
             if (!recommend) return null;
             return (
               <div className="mt-2 rounded-lg bg-gain/5 px-2.5 py-1.5 text-[10px] text-gain">
-                Escort costs {escortFee} Gold but expected loss is{" "}
-                {Math.round(expectedLoss)} Gold. Hiring the escort saves Gold on
-                average.
+                {t(
+                  "Escort costs {escortFee} Gold but expected loss is {expectedLoss} Gold. Hiring the escort saves Gold on average.",
+                  { escortFee, expectedLoss: Math.round(expectedLoss) },
+                )}
               </div>
             );
           })()}
@@ -145,8 +157,8 @@ export function PirateAttack({
             className="pm-grad-resolve rounded-xl h-14"
             onClick={() => act((g, l) => hireEscort(g, l))}
           >
-            <ShieldCheck className="h-5 w-5 mr-2" /> Hire Escort ({escortFee}{" "}
-            Gold)
+            <ShieldCheck className="h-5 w-5 mr-2" />{" "}
+            {t("Hire Escort ({fee} Gold)", { fee: escortFee })}
           </Button>
         )}
         <Button
@@ -156,7 +168,7 @@ export function PirateAttack({
           onClick={() => act((g, l) => resolvePirateAttack(g, l))}
         >
           <Skull className="h-5 w-5 mr-2" />{" "}
-          {cover ? "Sail On" : "Set Sail Anyway"}
+          {cover ? t("Sail On") : t("Set Sail Anyway")}
         </Button>
       </div>
       {/* The share the escort takes, in the guide's own words: one home
@@ -164,7 +176,7 @@ export function PirateAttack({
           @/lib/game/constants/copy), so a rewording lands on both pages. */}
       {!cover && (
         <p className="text-[11px] text-muted-foreground mt-3">
-          {ESCORT_SHARE_RULE}
+          {t(ESCORT_SHARE_RULE)}
         </p>
       )}
     </div>

@@ -70,6 +70,7 @@ import { survivalLayerOn } from "./flags";
 import { addLot, drawMeals, foodRoomMeals, reconcileLarder } from "./foods";
 import { pathCargoModifier } from "./paths";
 import { flatWorkerRoster, wholeStamp, type GameState } from "./types";
+import { t } from "@/lib/game/i18n";
 
 /**
  * The crew: the artisan roster, counted through the one helper that
@@ -189,12 +190,22 @@ export function feedCrew(state: GameState, logs: string[]): boolean {
     // sentence claims both because the engine applies both.
     const pace = Math.round(SHORT_RATIONS_YIELD * 100);
     logs.push(
-      `⚠️ Short rations! ${crew} aboard and the larder is empty: the crew works this leg at ${pace}% pace, and every line still brings home at least one item. The fleet can see it.`,
+      t(
+        "⚠️ Short rations! {crew} aboard and the larder is empty: the crew works this leg at {pace}% pace, and every line still brings home at least one item. The fleet can see it.",
+        { crew, pace },
+      ),
     );
     return true;
   }
   logs.push(
-    `🍲 The crew eats ${need} ${need === 1 ? "ration" : "rations"}. ${state.larder} left in the larder.`,
+    t(
+      "🍲 The crew eats {need} {rationWord}. {state.larder} left in the larder.",
+      {
+        need,
+        rationWord: need === 1 ? "ration" : "rations",
+        "state.larder": state.larder,
+      },
+    ),
   );
   return true;
 }
@@ -280,6 +291,34 @@ export function provisionAffordable(state: GameState): number {
   return leg === 0 ? 0 : Math.floor(state.money / leg);
 }
 
+// The full larder refusal, said once because two walks answer it: this
+// module's provisioning walk and the Supply Barge's own purchase (see
+// ./engine/barge). The smoke suites pin the sentence itself, so its words
+// move only with theirs.
+export const LARDER_FULL_LINE = "🧺 The larder is full.";
+// The empty deck refusal, said once for the same reason: both provisioning
+// walks open with it, this module's walk and the Supply Barge's own
+// purchase, and the smoke suites pin the sentence itself.
+const NO_CREW_LINE = "⚓ No crew aboard, so there is nothing to provision.";
+
+/**
+ * The guard both provisioning walks open with: nobody aboard means there is
+ * nothing to provision, and one sentence says so. Returns the crew size, or
+ * null once it has pushed the refusal, so neither walk carries its own copy
+ * of the check or its own spelling of the line.
+ */
+export function provisioningCrew(
+  state: GameState,
+  logs: string[],
+): number | null {
+  const crew = crewSize(state);
+  if (crew === 0) {
+    logs.push(t(NO_CREW_LINE));
+    return null;
+  }
+  return crew;
+}
+
 /**
  * Buys food for the crew, as many legs' worth as the stores have room for
  * and the purse can cover.
@@ -320,15 +359,12 @@ export function provisionFood(
   logs: string[],
 ): number {
   if (!survivalLayerOn(state.mode)) return 0;
-  const crew = crewSize(state);
-  if (crew === 0) {
-    logs.push("⚓ No crew aboard, so there is nothing to provision.");
-    return 0;
-  }
+  const crew = provisioningCrew(state, logs);
+  if (crew === null) return 0;
   reconcileLarder(state);
   const room = provisionRoom(state, food);
   if (room <= 0) {
-    logs.push("🧺 The larder is full.");
+    logs.push(t(LARDER_FULL_LINE));
     return 0;
   }
   const affordable = provisionAffordable(state);
@@ -336,7 +372,12 @@ export function provisionFood(
   if (wanted <= 0) {
     const cost = legRationCost(state);
     logs.push(
-      `❌ Not enough Gold to provision the crew: a leg of rations is ${cost} Gold.`,
+      t(
+        "❌ Not enough Gold to provision the crew: a leg of rations is {cost} Gold.",
+        {
+          cost,
+        },
+      ),
     );
     return 0;
   }
@@ -355,7 +396,17 @@ export function provisionFood(
   // between them is the plan's front page number.
   state.foodSpend += cost;
   logs.push(
-    `🧺 Provisioned ${rations} ${rations === 1 ? "ration" : "rations"} of ${food} for ${crew} aboard (${cost} Gold). ${state.larder} in the larder.`,
+    t(
+      "🧺 Provisioned {rations} {rationWord} of {food} for {crew} aboard ({cost} Gold). {state.larder} in the larder.",
+      {
+        rations,
+        rationWord: rations === 1 ? "ration" : "rations",
+        food: t(food),
+        crew,
+        cost,
+        "state.larder": state.larder,
+      },
+    ),
   );
   return wanted;
 }

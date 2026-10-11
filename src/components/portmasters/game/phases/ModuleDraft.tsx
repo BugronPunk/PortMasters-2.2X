@@ -9,6 +9,7 @@ import {
   moduleSwapPossible,
   swapModuleChoices,
 } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import { PanelNote } from "./PhasePanels";
 import {
   DraftCard,
@@ -50,16 +51,17 @@ export function ModuleDraft({
   return (
     <div className="max-w-4xl mx-auto text-center">
       <PhaseHeading layout="mb-1" tone="text-module-draft" brush>
-        🔧 Module Drafting
+        {t("🔧 Module Drafting")}
       </PhaseHeading>
       <p className="text-sm text-muted-foreground mb-4">
-        Choose a module to install or swap.
+        {t("Choose a module to install or swap.")}
       </p>
       <PhaseClockBar phaseSync={phaseSync} members={members} className="mb-4" />
       {picks.length === 0 ? (
         <div className="text-center text-muted-foreground text-sm py-8">
-          No module choices are on offer right now. A fresh set is rolled each
-          round.
+          {t(
+            "No module choices are on offer right now. A fresh set is rolled each round.",
+          )}
         </div>
       ) : (
         <>
@@ -68,14 +70,14 @@ export function ModuleDraft({
             onClick={() => act((g, l) => swapModuleChoices(g, l))}
           >
             {game.moduleSwapUsed
-              ? "✅ Choices Swapped This Round"
-              : "🎲 Swap Choices (1 use/round)"}
+              ? t("✅ Choices Swapped This Round")
+              : t("🎲 Swap Choices (1 use/round)")}
           </DraftSwapButton>
           {!game.moduleSwapUsed && !swapDealable && (
             <PanelNote className="text-center text-[11px] mb-3">
-              Nothing new to deal: every module the yard could offer this hull
-              is either on this table already or aboard. Take one of these, or
-              come back next leg.
+              {t(
+                "Nothing new to deal: every module the yard could offer this hull is either on this table already or aboard. Take one of these, or come back next leg.",
+              )}
             </PanelNote>
           )}
           <DraftGrid>
@@ -89,7 +91,7 @@ export function ModuleDraft({
                   name={text.name}
                   desc={text.desc}
                   actionLabel={
-                    moduleSlotsOpen(game) > 0 ? "✅ Install" : "🔄 Swap"
+                    moduleSlotsOpen(game) > 0 ? t("✅ Install") : t("🔄 Swap")
                   }
                   actionClassName="pm-grad-module-draft"
                   onSelect={() => act((g, l) => handleModuleSelect(g, i, l))}
@@ -105,7 +107,7 @@ export function ModuleDraft({
           className="rounded-xl"
           onClick={() => act((g, _l) => cancelModuleDraft(g))}
         >
-          ⬅️ Back to Shipyard
+          {t("⬅️ Back to Shipyard")}
         </Button>
       </div>
     </div>

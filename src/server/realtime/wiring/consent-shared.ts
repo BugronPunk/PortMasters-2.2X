@@ -9,6 +9,7 @@
 import { db } from "@/lib/db";
 import { TARGET_NOT_IN_HARBOR } from "@/lib/game/constants/copy";
 import { consentOfferStanding, type ConsentTerms } from "@/lib/game/engine";
+import { tFor, type Locale } from "@/lib/game/i18n";
 
 type NamedBuyer =
   | { ok: true; buyerUserId: string | null; buyerName: string | null }
@@ -18,12 +19,15 @@ type NamedBuyer =
 // refuses the aim. No target is a valid answer rather than a refusal: that
 // is the open offer the whole table can take. The self refusal is the
 // caller's sentence, because each market words its own version of it, and
-// the captain who is not in the harbor gets the one shared sentence.
+// the captain who is not in the harbor gets the one shared sentence, read
+// in the language the caller names: that refusal answers the seller whose
+// post it refused, so their socket's locale is the one it wants.
 export async function resolveNamedBuyer(
   roomId: string,
   sellerId: string,
   targetUserId: string | undefined,
   selfSentence: string,
+  locale: Locale,
 ): Promise<NamedBuyer> {
   if (!targetUserId) {
     return { ok: true, buyerUserId: null, buyerName: null };
@@ -36,7 +40,7 @@ export async function resolveNamedBuyer(
     select: { user: { select: { displayName: true } } },
   });
   if (!targetMember) {
-    return { ok: false, reason: TARGET_NOT_IN_HARBOR };
+    return { ok: false, reason: tFor(locale, TARGET_NOT_IN_HARBOR) };
   }
   return {
     ok: true,
@@ -47,15 +51,24 @@ export async function resolveNamedBuyer(
 
 // The refusal for a second offer to the same end, or null when the board
 // holds none. Open and direct offers are told apart in the sentence, the
-// same way the board's own bound tells them apart.
+// same way the board's own bound tells them apart. Both sentences are the
+// pack's own rows, read through the locale the caller names: the refusal
+// answers the seller whose post it refused, so that captain's language is
+// the one the caller's socket already holds.
 export function offerStandingRefusal<T extends ConsentTerms>(
   rows: T[],
   sellerId: string,
   buyerUserId: string | null,
   buyerName: string | null,
+  locale: Locale,
 ): string | null {
   if (!consentOfferStanding(rows, sellerId, buyerUserId)) return null;
   return buyerUserId === null
-    ? "You already have an offer standing for anyone at this table."
-    : `You already have an offer standing for ${buyerName}.`;
+    ? tFor(
+        locale,
+        "You already have an offer standing for anyone at this table.",
+      )
+    : tFor(locale, "You already have an offer standing for {buyerName}.", {
+        buyerName: buyerName ?? "",
+      });
 }

@@ -17,6 +17,10 @@
 // buy a corrected number for a screen that is not allowed to act on it.
 // =====================================================================
 
+// The words below are read at the moment they are composed, so the
+// countdown's phrase follows the language of the captain reading it.
+import { t } from "./game/i18n";
+
 /**
  * What a screen needs in order to draw the clock: how long is left, the words
  * for it, and how long the seat was given.
@@ -55,11 +59,16 @@ export function secondsRemaining(
  * sits on a stubborn 0:00 while the server is moving the room on.
  *
  * A whole number of seconds in, a sentence out. The caller draws the glyph
- * if it wants one; this is the words.
+ * if it wants one; this is the words. Both branches read through the pack;
+ * the digits frame (the zero padded seconds) is this file's own arithmetic
+ * and arrives as the row's {seconds} value.
  */
 export function phaseClockLabel(secondsLeft: number): string {
-  if (secondsLeft <= 0) return "the tide is turning";
+  if (secondsLeft <= 0) return t("the tide is turning");
   const minutes = Math.floor(secondsLeft / 60);
   const seconds = secondsLeft % 60;
-  return `${minutes}:${String(seconds).padStart(2, "0")} left`;
+  return t("{minutes}:{seconds} left", {
+    minutes,
+    seconds: String(seconds).padStart(2, "0"),
+  });
 }

@@ -74,7 +74,7 @@ type TelemetryFamily = "loop" | "market" | "social" | "business";
 // family: two events for one accept would have a reader adding the same
 // goods up twice.
 export interface TelemetryPayloads {
-  // ---- loop ----
+  // ==== loop ====
   // A round closed and the next one opened. This is the spine's clock:
   // every other event is placed by the leg it happened in, and this is
   // what says which legs a voyage actually reached.
@@ -90,18 +90,9 @@ export interface TelemetryPayloads {
   // Two of the proposal's market numbers are deliberately not here.
   // Chandler share and Bale usage are Epic G's, and they are absent for
   // that reason rather than because nobody got to them. The third, median
-  // hold utilization, used to be absent beside them and is not any more:
-  // it needed a hold with a size and this tree's hold was unbounded, which
-  // is what C4's split hold answered. The four fields below are that
-  // answer and the pantry reading that came with it.
-  //
-  // This paragraph used to explain the hold's absence by pointing at the
-  // audit's, which it described as refusing to print a Larder that C4 had
-  // not built. Both halves of that were wrong and the correction is worth
-  // the two lines: the Larder is C1's rather than C4's, and C1 has now
-  // landed it, so the audit prints one and the analogy has nothing left to
-  // stand on. The hold's reason was the hold's own, and the split hold has
-  // now landed the size that reason was waiting on.
+  // hold utilization, is read against the hold's own size, which is the one
+  // C4's split hold gave it. The four fields below are that answer and the
+  // pantry reading that came with it.
   //
   // The survival family is undeclared above, and this is where that is
   // answered rather than left as a gap for a reader to guess at. Four
@@ -319,7 +310,7 @@ export interface TelemetryPayloads {
     path: string;
     role: string;
   };
-  // ---- market ----
+  // ==== market ====
   // The barter board's three outcomes. All three count the same side of an
   // offer, the units its poster put up, so the three add up: what was
   // posted, less what was filled and what expired, is what is still
@@ -329,7 +320,7 @@ export interface TelemetryPayloads {
   offer_posted: { leg: number; actor: string; goods: number };
   offer_filled: { leg: number; actor: string; goods: number };
   offer_expired: { leg: number; goods: number };
-  // ---- social ----
+  // ==== social ====
   // One message in the harbor's own room chat. The lobby square and the
   // direct threads are account level rather than voyage level, so they
   // are not events in a voyage record.
@@ -360,7 +351,7 @@ export interface TelemetryPayloads {
   // to the table because a record that says a voyage was played with a
   // report in it has to be readable without the database that holds it.
   report_filed: { leg: number; actor: string; target: string };
-  // ---- business ----
+  // ==== business ====
   // A captain left a voyage that had started. The leg is the abandon
   // point the plan asks for, and it is recorded even when somebody else
   // finishes the voyage, because "abandon rate by leg" counts captains

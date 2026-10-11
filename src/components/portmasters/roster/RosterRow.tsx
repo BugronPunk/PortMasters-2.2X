@@ -5,10 +5,11 @@ import { GameStatusUpdate } from "@/types/realtime/status";
 import { motion } from "framer-motion";
 import type { Socket } from "socket.io-client";
 import type { PlayerDetailData } from "@/lib/use-player-detail";
-import { canSeeDetail } from "@/lib/game/engine";
+import { canSeeDetail, phaseLabel } from "@/lib/game/engine";
 import { hungryPillLine, hungryTooltip } from "@/lib/game/status-copy";
+import { t } from "@/lib/game/i18n";
 import { seatMarks } from "@/lib/seatMarks";
-import { cn } from "@/lib/utils";
+import { cn, memberRowClass } from "@/lib/utils";
 import { Avatar, OnlineDot, Pill } from "../shared";
 import { IconButton } from "./IconButton";
 import { PeekButton } from "./PeekButton";
@@ -82,8 +83,23 @@ export function RosterRow({
       whileHover={{ scale: 1.01, y: -1 }}
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.12, ease: "easeOut" }}
-      onClick={() => onSelectPlayer(member.id)}
+      onClick={() => {
+        // The whole line is the button, and everything in it that is not
+        // a control is the line: the name, the avatar and the pills are
+        // the natural places a captain presses to open their data. The
+        // real controls (the peek eye, the mute, the report) stop their
+        // own presses before they get here. A target guard once sat here
+        // as well, copied from the key guard below, and it quietly made
+        // every press on the name a dead one.
+        onSelectPlayer(member.id);
+      }}
       onKeyDown={(e) => {
+        // A keydown is not a click: one fired on a focused control
+        // inside the row still bubbles to the row, and Enter on the
+        // focused mute button both sent the mute and opened this
+        // captain's detail popup on top of it. Hence the guard on this
+        // half only.
+        if (e.target !== e.currentTarget) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onSelectPlayer(member.id);
@@ -91,9 +107,7 @@ export function RosterRow({
       }}
       className={cn(
         "w-full flex items-center gap-2.5 rounded-xl p-2 border text-left transition-colors cursor-pointer hover:bg-black/[0.03] dark:hover:bg-white/[0.05]",
-        isMe
-          ? "border-members/30 bg-members/[0.06]"
-          : "border-black/5 dark:border-white/10 bg-background/40",
+        memberRowClass(isMe),
       )}
     >
       <div className="relative shrink-0">
@@ -117,12 +131,12 @@ export function RosterRow({
           {isHost && <Crown className="h-3.5 w-3.5 text-gold-ink shrink-0" />}
           {isMe && (
             <Pill tone="default" className="!py-0">
-              you
+              {t("you")}
             </Pill>
           )}
           {isMuted && (
             <Pill tone="alarm" className="!py-0">
-              <VolumeX className="h-2.5 w-2.5" /> muted
+              <VolumeX className="h-2.5 w-2.5" /> {t("muted")}
             </Pill>
           )}
         </div>
@@ -136,7 +150,15 @@ export function RosterRow({
             of fact: what this captain's voyage currently reads as. */}
         <div className="mt-0.5 flex min-w-0 items-center gap-1.5">
           <span className="truncate text-[10px] text-muted-foreground">
-            {status ? status.phaseLabel : "loading…"}
+            {/* The chip is derived from the frame's own phase and round
+                rather than printed as the frame's pre-composed label, so
+                each captain reads it in their own language. */}
+            {status
+              ? phaseLabel({
+                  phase: status.phase,
+                  currentRound: status.round,
+                })
+              : t("loading…")}
           </span>
           {!isBankrupt && (
             <>
@@ -154,7 +176,7 @@ export function RosterRow({
       <div className="flex items-center gap-1.5 shrink-0">
         {isBankrupt && (
           <Pill tone="alarm">
-            <SkullIcon className="h-3 w-3" /> Bankrupt
+            <SkullIcon className="h-3 w-3" /> {t("Bankrupt")}
           </Pill>
         )}
         {/* A marooned captain still has real books, so the gold and
@@ -162,7 +184,7 @@ export function RosterRow({
             happened to the ship, not to the purse. */}
         {isMarooned && (
           <Pill tone="alarm">
-            <Anchor className="h-3 w-3" /> Ashore
+            <Anchor className="h-3 w-3" /> {t("Ashore")}
           </Pill>
         )}
         {/* [C1: the Larder and Short Rations] The plan asks for
@@ -214,7 +236,12 @@ export function RosterRow({
                 targetUserId: member.id,
               });
             }}
-            title={isMuted ? "Unmute this captain" : "Mute this captain"}
+            label={
+              isMuted
+                ? t("Unmute {name}", { name: member.displayName })
+                : t("Mute {name}", { name: member.displayName })
+            }
+            title={isMuted ? t("Unmute this captain") : t("Mute this captain")}
           >
             {isMuted ? (
               <Volume2 className="h-3.5 w-3.5" />
@@ -241,11 +268,15 @@ export function RosterRow({
                 targetUserId: member.id,
               });
             }}
-            label={`Report ${member.displayName}`}
+            label={t("Report {member.displayName}", {
+              "member.displayName": member.displayName,
+            })}
             title={
               reported
-                ? "You have reported this captain this voyage"
-                : `Report ${member.displayName}`
+                ? t("You have reported this captain this voyage")
+                : t("Report {member.displayName}", {
+                    "member.displayName": member.displayName,
+                  })
             }
             className="disabled:opacity-40 disabled:hover:bg-transparent"
           >

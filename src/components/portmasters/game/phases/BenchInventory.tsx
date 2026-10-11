@@ -1,15 +1,14 @@
 "use client";
 
 import { unlockedResources } from "@/lib/game/pools";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { itemColorResolver } from "@/lib/use-color-preference";
 import { ItemIcon } from "../../shared";
 import { HuePanel, PanelHeading, type PhasePanelProps } from "./PhaseShared";
 
 // One column of the inventory block: a heading and the goods under it, each
-// row a glyph, a name and the count, in the good's own colour. The block
-// above the bench had been written out twice with nothing but the heading
-// and the list differing between the two.
+// row a glyph, a name and the count, in the good's own colour.
 function InventoryColumn({
   title,
   items,
@@ -51,16 +50,16 @@ export function BenchInventory({
   const resolveColor = itemColorResolver(colorFor);
   return (
     <HuePanel tone="ship" className="p-4 mb-4">
-      <PanelHeading>📦 Current Inventory</PanelHeading>
+      <PanelHeading>{t("📦 Current Inventory")}</PanelHeading>
       <div className="grid grid-cols-2 gap-4">
         <InventoryColumn
-          title="Raw Materials:"
+          title={t("Raw Materials:")}
           items={unlockedResources(game.difficulty, game.currentRound)}
           inventory={game.inventory}
           colorFor={resolveColor}
         />
         <InventoryColumn
-          title="Finished Goods:"
+          title={t("Finished Goods:")}
           items={products}
           inventory={game.inventory}
           colorFor={resolveColor}

@@ -32,6 +32,7 @@ import { checkSave, describeFindings } from "@/lib/game/integrity";
 import type { ObjectiveTraceEntry } from "@/lib/game/types";
 import { clearBarter, clearFlexibleAccepted } from "../barter";
 import { clearBazaar } from "../bazaar";
+import { roomChannel } from "../channel";
 import { getCheckpoint } from "../checkpoint";
 import { escortContracts } from "../contracts";
 import { clearPathVoyage } from "../draft";
@@ -420,9 +421,8 @@ export function readForgedUsers(
     if (verdict.severity === "impossible") forgedUsers.add(f.userId);
   }
   // The marks themselves were read with the rest of the harbor's saves
-  // above, which is the same query this used to run a second time: one
-  // read of the room's rows, and this is the reader that turns them into
-  // disqualifications.
+  // above: one read of the room's rows, and this is the reader that turns
+  // them into disqualifications.
   for (const row of marked) {
     if (!forgedUsers.has(row.userId)) {
       console.warn(
@@ -462,7 +462,7 @@ export function publishStandings(
   winnerId: string | null,
   standings: StandingRow[],
 ): void {
-  io.to(`room:${roomId}`).emit("room:voyage_complete", {
+  io.to(roomChannel(roomId)).emit("room:voyage_complete", {
     roomId,
     winnerId,
     standings,

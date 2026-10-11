@@ -1,6 +1,7 @@
 "use client";
 
 import { Ship } from "lucide-react";
+import { t } from "@/lib/game/i18n";
 import { Pill } from "../shared";
 import { PanelHeader } from "../PanelHeader";
 
@@ -30,10 +31,16 @@ export function RosterHeader({
     <div className="px-4 py-3 border-b border-black/5 dark:border-white/10">
       <PanelHeader
         icon={<Ship className="h-3.5 w-3.5 text-members" />}
-        title="Harbor Roster"
+        title={t("Harbor Roster")}
         meta={
           <Pill tone="sea">
-            {memberCount} captain{memberCount !== 1 ? "s" : ""}
+            {/* The count and the plural ride the row: the pack's own
+                sentence takes the number and the suffix, so a language
+                that does not mark plurals simply drops the token. */}
+            {t("{count} captain{pluralS}", {
+              count: memberCount,
+              pluralS: memberCount === 1 ? "" : "s",
+            })}
           </Pill>
         }
         collapsed={collapsed}

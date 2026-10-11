@@ -143,7 +143,10 @@ type SeatBand = {
   factor: number;
   // What the band is called wherever a human reads it. Authored rather
   // than derived from the floor above, because "4 or fewer" is the sentence
-  // a report wants and "0 to 4" is a range.
+  // a report wants and "0 to 4" is a range. The English lives here, the way
+  // every shared constant does, and the rows that print it read the label
+  // through t() where the band becomes part of a sentence (see the rowed
+  // frames in ./dashboard).
   label: string;
 };
 

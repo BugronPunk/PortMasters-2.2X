@@ -6,8 +6,10 @@ import { PrivateOffer } from "@/components/portmasters/game/PrivateOffer";
 import type { PublicUser } from "@/lib/api";
 import {
   ESCORT_OFFER_DEATH,
+  LEG_ALREADY_COVERED,
   STALE_OFFER,
   consentFeeRule,
+  feeShortfallLine,
 } from "@/lib/game/constants/copy";
 import { CONSENT_FEE_MIN } from "@/lib/game/constants/paths";
 import {
@@ -20,18 +22,13 @@ import {
   type EscortContract,
 } from "@/lib/game/engine";
 import { escortContractsOn } from "@/lib/game/flags";
+import { t } from "@/lib/game/i18n";
 import { pathConfig } from "@/lib/game/paths";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { Term } from "../Term";
-import { Pill } from "../shared";
-import {
-  MarketBlock,
-  MarketEmpty,
-  MarketError,
-  MarketPanel,
-  OfferRow,
-} from "./OfferBoard";
+import { Pill, RefusalLine } from "../shared";
+import { MarketBlock, MarketEmpty, MarketPanel, OfferRow } from "./OfferBoard";
 import type { Escort } from "./phases/PhaseShared";
 
 // The selling path's own record, resolved once at module load rather than
@@ -126,21 +123,14 @@ export function EscortMarket({
     <MarketPanel
       title={
         <>
-          {SELLER_PATH.crest} {SELLER_PATH.name}{" "}
-          <Term term="Escort Market">Escort Market</Term>
+          {SELLER_PATH.crest} {t(SELLER_PATH.name)}{" "}
+          <Term term="Escort Market">{t("Escort Market")}</Term>
         </>
       }
-      intro={
-        <>
-          One leg of protection, sold by a Convoy captain at a price the two of
-          them agree. The buyer pays the fee at the handshake, and it is the
-          seller&apos;s cannons that answer the raid: {beatenOff} of it is
-          beaten off, and the remaining {eaten} is deducted from the
-          seller&apos;s Gold. The cover lasts the leg it was sold for and no
-          other, and a raid that never comes costs the seller nothing.{" "}
-          {ESCORT_OFFER_DEATH}
-        </>
-      }
+      intro={t(
+        "One leg of protection, sold by a Convoy captain at a price the two of them agree. The buyer pays the fee at the handshake, and it is the seller's cannons that answer the raid: {beatenOff} of it is beaten off, and the remaining {eaten} is deducted from the seller's Gold. The cover lasts the leg it was sold for and no other, and a raid that never comes costs the seller nothing. {ESCORT_OFFER_DEATH}",
+        { beatenOff, eaten, ESCORT_OFFER_DEATH: t(ESCORT_OFFER_DEATH) },
+      )}
     >
       {/* The posting form belongs to the path that sells the protection. A
           captain who holds no path reads the board below it and nothing
@@ -150,7 +140,7 @@ export function EscortMarket({
           <PrivateOffer
             lead={
               <span className="text-muted-foreground">
-                One leg of cover for
+                {t("One leg of cover for")}
               </span>
             }
             fee={fee}
@@ -158,30 +148,31 @@ export function EscortMarket({
             targetId={targetId}
             onTarget={setTargetId}
             others={others}
-            audienceLabel="Offer this contract to a specific captain"
-            deadline="before the Parley closes."
+            audienceLabel={t("Offer this contract to a specific captain")}
+            deadline={t("before the Parley closes.")}
             action={
               <Button
                 className={cn("rounded-lg pm-grad-parley")}
                 onClick={() => escort.post(fee, targetId || undefined)}
               >
-                {SELLER_PATH.crest} Offer Protection
+                {SELLER_PATH.crest} {t("Offer Protection")}
               </Button>
             }
           />
           <p className="text-center text-[11px] text-muted-foreground mt-1.5">
-            You are the seller here, so the price is yours to name: the buyer
-            pays it at the handshake, and your own Gold answers whatever your
-            guns do not beat off, which is {eaten} of a raid, down to the bottom
-            of your hold. {consentFeeRule()} An open offer is any captain&apos;s
-            to take, while a named one waits on the captain you named, and one
-            open offer plus one per captain named is the most this market holds
-            from you.
+            {t(
+              "You are the seller here, so the price is yours to name: the buyer pays it at the handshake, and your own Gold answers whatever your guns do not beat off, which is {eaten} of a raid, down to the bottom of your hold. {sellerRule} An open offer is any captain's to take, while a named one waits on the captain you named, and one open offer plus one per captain named is the most this market holds from you.",
+              { eaten, sellerRule: consentFeeRule() },
+            )}
           </p>
         </MarketBlock>
       )}
 
-      <MarketError error={escort.error} onDismiss={escort.clearError} />
+      <RefusalLine
+        className="text-center mb-2"
+        error={escort.error}
+        onDismiss={escort.clearError}
+      />
 
       {/* This captain's own seat at the market, which is the answer to
           "did my press land" as well as to "what am I waiting on": both are
@@ -194,8 +185,12 @@ export function EscortMarket({
       {escort.contracts.length === 0 ? (
         <MarketEmpty>
           {canSell
-            ? "Nothing is on the market yet. Name a price and post the first offer, or wait and let a buyer come to you."
-            : "No protection is on offer this Parley. Only a Convoy captain at this table can sell one leg of cover, so their offer is what you are waiting for. An offer aimed at one captain waits on that captain, and an offer aimed at the table is any captain's to take."}
+            ? t(
+                "Nothing is on the market yet. Name a price and post the first offer, or wait and let a buyer come to you.",
+              )
+            : t(
+                "No protection is on offer this Parley. Only a Convoy captain at this table can sell one leg of cover, so their offer is what you are waiting for. An offer aimed at one captain waits on that captain, and an offer aimed at the table is any captain's to take.",
+              )}
         </MarketEmpty>
       ) : (
         <div className="space-y-1.5">
@@ -266,11 +261,11 @@ function ContractRow({
   const blocked = !standing
     ? null
     : stale
-      ? STALE_OFFER
+      ? t(STALE_OFFER)
       : covered
-        ? "You are already covered for this leg."
+        ? t(LEG_ALREADY_COVERED)
         : !canPayFee(game, contract.fee)
-          ? `A fee is paid at the handshake and you hold ${hold} Gold: this offer costs ${contract.fee}.`
+          ? feeShortfallLine(hold, contract.fee)
           : null;
 
   return (
@@ -288,9 +283,9 @@ function ContractRow({
           : null
       }
       standing={standing}
-      acceptLabel={`${crest} Take Cover`}
+      acceptLabel={t("{crest} Take Cover", { crest })}
       acceptClassName="pm-grad-parley"
-      declineLabel="Turn It Down"
+      declineLabel={t("Turn It Down")}
       blocked={blocked}
       onCancel={() => escort.cancel(contract.id)}
       onDecline={isBuyer ? () => escort.decline(contract.id) : undefined}
@@ -329,42 +324,44 @@ function stateOf(
 ): { label: string; waits: boolean } {
   const mine = contract.sellerUserId === me.id;
   const isBuyer = contract.buyerUserId === me.id;
-  const who = contract.buyerName ?? "a captain";
+  const who = contract.buyerName ?? t("a captain");
   if (contract.status === "offered") {
     if (expired) {
-      return { label: "Expired with the leg", waits: false };
+      return { label: t("Expired with the leg"), waits: false };
     }
     if (mine) {
       return {
         label: contract.buyerUserId
-          ? `Waiting on ${who}`
-          : "Waiting on the table",
+          ? t("Waiting on {who}", { who })
+          : t("Waiting on the table"),
         waits: false,
       };
     }
     return {
-      label: isBuyer ? "Waiting on you" : "Open to the table",
+      label: isBuyer ? t("Waiting on you") : t("Open to the table"),
       waits: isBuyer,
     };
   }
   if (contract.status === "agreed") {
     return {
       label: mine
-        ? "Agreed: you are covering"
+        ? t("Agreed: you are covering")
         : isBuyer
-          ? "Agreed: you are covered"
-          : "Agreed",
+          ? t("Agreed: you are covered")
+          : t("Agreed"),
       waits: false,
     };
   }
   if (contract.status === "claimed") {
     return {
-      label: mine ? "Cover spent: your guns answered" : "Cover spent",
+      label: mine ? t("Cover spent: your guns answered") : t("Cover spent"),
       waits: false,
     };
   }
   return {
-    label: isBuyer ? "You turned it down" : `Turned down by ${who}`,
+    label: isBuyer
+      ? t("You turned it down")
+      : t("Turned down by {who}", { who }),
     waits: false,
   };
 }
@@ -415,7 +412,10 @@ function seatLine(
     (c) => c.status === "offered" && c.buyerUserId === me.id,
   );
   if (waiting) {
-    return `⏳ ${waiting.sellerName} offers you one leg of cover for ${waiting.fee} Gold. You are the one who answers: taking it pays the fee at the handshake, and turning it down leaves the row for them to read.`;
+    return t(
+      "⏳ {sellerName} offers you one leg of cover for {fee} Gold. You are the one who answers: taking it pays the fee at the handshake, and turning it down leaves the row for them to read.",
+      { sellerName: waiting.sellerName, fee: waiting.fee },
+    );
   }
   // The cover is read in its two moments rather than in one, because a
   // spent cover is not a standing one: the buyer of a claimed contract
@@ -425,13 +425,22 @@ function seatLine(
     (c) => c.buyerUserId === me.id && c.status === "claimed",
   );
   if (spent) {
-    return `✅ Your cover was spent this leg: ${spent.sellerName}'s guns answered the raid and your Gold stayed where it was.`;
+    return t(
+      "✅ Your cover was spent this leg: {spent.sellerName}'s guns answered the raid and your Gold stayed where it was.",
+      { "spent.sellerName": spent.sellerName },
+    );
   }
   const covered = forLeg.find(
     (c) => c.buyerUserId === me.id && c.status === "agreed",
   );
   if (covered) {
-    return `✅ You are covered this leg by ${covered.sellerName} for ${covered.fee} Gold, paid at the handshake. A raid on your hold meets their cannons, and what their guns do not beat off comes out of their Gold.`;
+    return t(
+      "✅ You are covered this leg by {covered.sellerName} for {covered.fee} Gold, paid at the handshake. A raid on your hold meets their cannons, and what their guns do not beat off comes out of their Gold.",
+      {
+        "covered.sellerName": covered.sellerName,
+        "covered.fee": covered.fee,
+      },
+    );
   }
   const carrying = forLeg.find(
     (c) =>
@@ -439,7 +448,13 @@ function seatLine(
       (c.status === "agreed" || c.status === "claimed"),
   );
   if (carrying) {
-    return `🛡️ You are covering ${carrying.buyerName ?? "a captain"} this leg for ${carrying.fee} Gold, already paid to you. Your Gold answers the raid their hold does not.`;
+    return t(
+      "🛡️ You are covering {buyerName} this leg for {carrying.fee} Gold, already paid to you. Your Gold answers the raid their hold does not.",
+      {
+        buyerName: carrying.buyerName ?? t("a captain"),
+        "carrying.fee": carrying.fee,
+      },
+    );
   }
   const standing = forLeg.filter(
     (c) => c.status === "offered" && c.sellerUserId === me.id,
@@ -447,17 +462,35 @@ function seatLine(
   if (standing.length === 1) {
     const [one] = standing;
     return one.buyerUserId
-      ? `🛡️ Your offer stands: ${one.fee} Gold for one leg of cover for ${one.buyerName ?? "a captain"}. It waits on them.`
-      : `🛡️ Your offer stands: ${one.fee} Gold for one leg of cover, open to every captain here. The first to take it gets it.`;
+      ? t(
+          "🛡️ Your offer stands: {one.fee} Gold for one leg of cover for {buyerName}. It waits on them.",
+          { "one.fee": one.fee, buyerName: one.buyerName ?? t("a captain") },
+        )
+      : t(
+          "🛡️ Your offer stands: {one.fee} Gold for one leg of cover, open to every captain here. The first to take it gets it.",
+          { "one.fee": one.fee },
+        );
   }
   if (standing.length > 1) {
-    return `🛡️ ${standing.length} offers of yours stand this Parley, the newest at ${standing[standing.length - 1].fee} Gold. Each waits on the captain it names, or on the first captain to take an open one.`;
+    return t(
+      "🛡️ {standing.length} offers of yours stand this Parley, the newest at {standingFee} Gold. Each waits on the captain it names, or on the first captain to take an open one.",
+      {
+        "standing.length": standing.length,
+        standingFee: standing[standing.length - 1].fee,
+      },
+    );
   }
   const refused = forLeg.find(
     (c) => c.status === "declined" && c.sellerUserId === me.id,
   );
   if (refused) {
-    return `🚫 ${refused.buyerName ?? "A captain"} turned down your offer of ${refused.fee} Gold. Nothing is owed either way, and the row stays until the leg turns.`;
+    return t(
+      "🚫 {buyerName} turned down your offer of {refused.fee} Gold. Nothing is owed either way, and the row stays until the leg turns.",
+      {
+        buyerName: refused.buyerName ?? t("A captain"),
+        "refused.fee": refused.fee,
+      },
+    );
   }
   return null;
 }
@@ -475,25 +508,38 @@ function seatLine(
 function contractLine(contract: EscortContract, me: PublicUser): string {
   const mine = contract.sellerUserId === me.id;
   const isBuyer = contract.buyerUserId === me.id;
-  const who = isBuyer ? "you" : (contract.buyerName ?? "a captain");
-  const other = contract.buyerName ?? "a captain";
-  const fee = `${contract.fee} Gold`;
+  const who = isBuyer ? t("you") : (contract.buyerName ?? t("a captain"));
+  const other = contract.buyerName ?? t("a captain");
+  const fee = t("{contract.fee} Gold", { "contract.fee": contract.fee });
   if (contract.status === "offered") {
     return mine
-      ? `You are selling one leg of cover for ${fee}`
-      : `${contract.sellerName} sells one leg of cover for ${fee}`;
+      ? t("You are selling one leg of cover for {fee}", { fee })
+      : t("{sellerName} sells one leg of cover for {fee}", {
+          sellerName: contract.sellerName,
+          fee,
+        });
   }
   if (contract.status === "agreed") {
     return mine
-      ? `You are covering ${other} for ${fee} this leg`
-      : `${contract.sellerName} is covering ${who} for ${fee} this leg`;
+      ? t("You are covering {other} for {fee} this leg", { other, fee })
+      : t("{contract.sellerName} is covering {who} for {fee} this leg", {
+          "contract.sellerName": contract.sellerName,
+          who,
+          fee,
+        });
   }
   if (contract.status === "claimed") {
     return mine
-      ? `Your guns answered a raid meant for ${other}`
-      : `${contract.sellerName}'s guns answered a raid meant for ${who}`;
+      ? t("Your guns answered a raid meant for {other}", { other })
+      : t("{contract.sellerName}'s guns answered a raid meant for {who}", {
+          "contract.sellerName": contract.sellerName,
+          who,
+        });
   }
   return mine
-    ? `${other} turned down your offer of ${fee}`
-    : `You turned down ${contract.sellerName}'s offer of ${fee}`;
+    ? t("{other} turned down your offer of {fee}", { other, fee })
+    : t("You turned down {contract.sellerName}'s offer of {fee}", {
+        "contract.sellerName": contract.sellerName,
+        fee,
+      });
 }

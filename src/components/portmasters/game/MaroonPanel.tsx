@@ -23,14 +23,14 @@
 import { MaroonResult, PortShiftNotice } from "@/types/realtime/maroon";
 import { useState } from "react";
 import type { PublicUser } from "@/lib/api";
+import { t } from "@/lib/game/i18n";
 import {
   MAROON_VOTE_SHARE,
-  PORT_SHIFT_FRACTION,
+  PORT_SHIFT_PERCENT,
   portShiftLine,
 } from "@/lib/game/maroon";
 import { modeConfig } from "@/lib/game/mode";
 import type { GameState } from "@/lib/game/types";
-import type { useMaroon } from "@/lib/use-maroon";
 import { nameCount, tallyRows } from "@/lib/voteTally";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -39,9 +39,9 @@ import {
   VoteSeatPicker,
   type Marks,
 } from "@/components/portmasters/game/VoteSeatPicker";
-import { VoteCardShell, VoteRefusal } from "./VoteCardShell";
-
-type Maroon = ReturnType<typeof useMaroon>;
+import { VoteCardShell } from "./VoteCardShell";
+import type { Maroon } from "./phases/PhaseShared";
+import { RefusalLine } from "../shared";
 
 /**
  * The two questions the Parley board asks about this vote, answered once
@@ -99,13 +99,14 @@ export function MaroonVoteCard({
   const rows = tallyRows(maroon.votes, members);
 
   return (
-    <VoteCardShell tone="alarm" icon="🏝️" title="Maroon">
+    <VoteCardShell tone="alarm" icon="🏝️" title={t("Maroon")}>
       {open ? (
         maroon.carried ? (
           <p className="text-xs text-muted-foreground leading-relaxed">
-            The harbor has already named {maroon.carried.name} this voyage. The
-            vote is spent: nothing more is asked of this table until a new
-            voyage.
+            {t(
+              "The harbor has already named {maroon.carried.name} this voyage. The vote is spent: nothing more is asked of this table until a new voyage.",
+              { "maroon.carried.name": maroon.carried.name },
+            )}
           </p>
         ) : (
           <>
@@ -114,13 +115,17 @@ export function MaroonVoteCard({
               carries, and the captain it names is still sitting here.
               "One vote a voyage" alone would leave a failed vote looking
               like a spent one. The share is quoted from its one home (see
-              MAROON_VOTE_SHARE), which is the same string the server's own
-              threshold is written beside. */}
+              MAROON_VOTE_SHARE) and read through the pack at each print
+              site; it is the same string the server's own threshold is
+              written beside. */}
             <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
-              {`${MAROON_VOTE_SHARE} of the captains still sailing, rounded up, can put one captain ashore. The vote is public. Once a vote carries it is spent for the whole voyage, a vote that falls short can be called again on a later leg, and the captain who loses it keeps their seat at the table.`}
+              {t(
+                "{MAROON_VOTE_SHARE} of the captains still sailing, rounded up, can put one captain ashore. The vote is public. Once a vote carries it is spent for the whole voyage, a vote that falls short can be called again on a later leg, and the captain who loses it keeps their seat at the table.",
+                { MAROON_VOTE_SHARE: t(MAROON_VOTE_SHARE) },
+              )}
             </p>
             <VoteSeatPicker
-              selectLabel="Captain to maroon"
+              selectLabel={t("Captain to maroon")}
               target={target}
               onPick={(id) => setPick({ round: game.currentRound, target: id })}
               members={members}
@@ -129,10 +134,14 @@ export function MaroonVoteCard({
               myVote={maroon.myVote !== null}
               canVote={maroon.canVote}
               onVote={() => maroon.vote(target)}
-              callLabel="Call the vote"
-              pickLabel={(name) => `Put ${name} ashore`}
+              callLabel={t("Call the vote")}
+              pickLabel={(name) => t("Put {name} ashore", { name })}
             />
-            <VoteRefusal error={maroon.error} onDismiss={maroon.clearError} />
+            <RefusalLine
+              className="mt-2"
+              error={maroon.error}
+              onDismiss={maroon.clearError}
+            />
             {/* The block below owns every word of the count, the captain's
                 own name and what the vote does with the names it needs:
                 a panel's own half of that reading would be a second
@@ -143,17 +152,30 @@ export function MaroonVoteCard({
               members={members}
               myVote={maroon.myVote}
               nextStep={(needed) =>
-                `${nameCount(needed)} on one captain puts that captain ashore and spends the vote for the voyage.`
+                t(
+                  "{namesNeeded} on one captain puts that captain ashore and spends the vote for the voyage.",
+                  { namesNeeded: nameCount(needed) },
+                )
               }
             />
             <p className="text-[10px] text-muted-foreground/80 mt-2">
-              {`${MAROON_VOTE_SHARE} of the captains still in the voyage carry it, rounded up, and the vote is public: every name behind a target is on this board.`}
+              {t(
+                "{MAROON_VOTE_SHARE} of the captains still in the voyage carry it, rounded up, and the vote is public: every name behind a target is on this board.",
+                { MAROON_VOTE_SHARE: t(MAROON_VOTE_SHARE) },
+              )}
             </p>
           </>
         )
       ) : (
         <p className="text-xs text-muted-foreground leading-relaxed">
-          {`This vote opens at leg ${rung}, and this is leg ${game.currentRound}. ${MAROON_VOTE_SHARE} of the captains still sailing, rounded up, then put one captain ashore: the ship and its hold go to the harbor, half their Gold stays aboard, and the Harbormaster's hand is theirs for the rest of the voyage. One vote can carry a voyage, and a vote that falls short can be called again on a later leg.`}
+          {t(
+            "This vote opens at leg {rung}, and this is leg {game.currentRound}. {MAROON_VOTE_SHARE} of the captains still sailing, rounded up, then put one captain ashore: the ship and its hold go to the harbor, half their Gold stays aboard, and the Harbormaster's hand is theirs for the rest of the voyage. One vote can carry a voyage, and a vote that falls short can be called again on a later leg.",
+            {
+              rung,
+              "game.currentRound": game.currentRound,
+              MAROON_VOTE_SHARE: t(MAROON_VOTE_SHARE),
+            },
+          )}
         </p>
       )}
     </VoteCardShell>
@@ -183,22 +205,25 @@ export function MaroonResultStrip({ result }: { result: MaroonResult | null }) {
           🏝️
         </span>
         <span className="text-[10px] font-semibold uppercase tracking-wide text-alarm">
-          Maroon · Leg {result.round}
+          {t("Maroon")} · {t("Leg {leg}", { leg: result.round })}
         </span>
         <span className="font-display text-sm font-semibold">
-          {result.target.name} put ashore
+          {t("{name} put ashore", { name: result.target.name })}
         </span>
         <button
           type="button"
           className="ml-auto text-muted-foreground hover:text-foreground"
           onClick={() => setDismissed(key)}
-          aria-label="Hide the vote"
+          aria-label={t("Hide the vote")}
         >
           ✕
         </button>
       </div>
       <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground/80">
-        {`Voted ashore by ${MAROON_VOTE_SHARE.toLowerCase()} of the harbor. The ship and everything on it went to the harbor, half their Gold stayed aboard, and the Harbormaster's hand is theirs for the rest of the voyage.`}
+        {t(
+          "Voted ashore by {voteShare} of the harbor. The ship and everything on it went to the harbor, half their Gold stayed aboard, and the Harbormaster's hand is theirs for the rest of the voyage.",
+          { voteShare: t(MAROON_VOTE_SHARE).toLowerCase() },
+        )}
       </p>
     </div>
   );
@@ -229,7 +254,7 @@ export function PortShiftStrip({
           🧭
         </span>
         <span className="text-[10px] font-semibold uppercase tracking-wide text-alarm">
-          Harbormaster · {landed ? "in force" : "called"}
+          {t("Harbormaster")} · {landed ? t("in force") : t("called")}
         </span>
         <span className="font-display text-sm font-semibold">
           {shift.by.name}
@@ -240,8 +265,14 @@ export function PortShiftStrip({
       </div>
       <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground/80">
         {landed
-          ? `Called in leg ${shift.round}. Every price at that port this leg was drawn against it.`
-          : `Called in leg ${shift.round}. The market that opens next leg is the one that answers it, and a later call in this leg replaces it.`}
+          ? t(
+              "Called in leg {shift.round}. Every price at that port this leg was drawn against it.",
+              { "shift.round": shift.round },
+            )
+          : t(
+              "Called in leg {shift.round}. The market that opens next leg is the one that answers it, and a later call in this leg replaces it.",
+              { "shift.round": shift.round },
+            )}
       </p>
     </div>
   );
@@ -273,22 +304,25 @@ export function HarbormasterConsole({
 
   return (
     <div className="rounded-xl border border-alarm/25 bg-alarm/[0.04] p-4 mb-4">
-      <h3 className="text-center font-semibold mb-1 text-sm">
-        🧭 The Harbormaster&apos;s Hand
-      </h3>
+      <h3
+        className="text-center font-semibold mb-1 text-sm"
+        dangerouslySetInnerHTML={{
+          __html: t("🧭 The Harbormaster&apos;s Hand"),
+        }}
+      />
       <p className="text-center text-xs text-muted-foreground mb-3 leading-relaxed">
-        The harbor put you ashore and left you its own lever: once a leg, name a
-        port and lean every price at it by{" "}
-        {Math.round(PORT_SHIFT_FRACTION * 100)} percent, up or down. The call is
-        public, and the market that opens next leg is the one that answers it.
+        {t(
+          "The harbor put you ashore and left you its own lever: once a leg, name a port and lean every price at it by {shiftPct} percent, up or down. The call is public, and the market that opens next leg is the one that answers it.",
+          { shiftPct: PORT_SHIFT_PERCENT },
+        )}
       </p>
       <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
         <Select
           value={port}
           onChange={(e) => setPort(e.target.value)}
-          aria-label="Port to lean"
+          aria-label={t("Port to lean")}
         >
-          <option value="">Choose a port</option>
+          <option value="">{t("Choose a port")}</option>
           {maroon.ports.map((p) => (
             <option key={p} value={p}>
               {p}
@@ -300,28 +334,29 @@ export function HarbormasterConsole({
           disabled={!port}
           onClick={() => maroon.callShift(port, 1)}
         >
-          Lean prices up
+          {t("Lean prices up")}
         </Button>
         <Button
           variant="outline"
           disabled={!port}
           onClick={() => maroon.callShift(port, -1)}
         >
-          Lean prices down
+          {t("Lean prices down")}
         </Button>
       </div>
-      <VoteRefusal
+      <RefusalLine
+        className="mt-2"
         error={maroon.shiftError}
         onDismiss={maroon.clearShiftError}
       />
       {pending && (
         <p className="text-center text-[11px] mt-2">
-          Your call stands for leg {pending.round + 1}:{" "}
+          {t("Your call stands for leg {leg}:", { leg: pending.round + 1 })}{" "}
           <span className="font-medium">{portShiftLine(pending)}</span>
         </p>
       )}
       <p className="text-center text-[10px] text-muted-foreground/80 mt-2">
-        A later call in this leg replaces this one.
+        {t("A later call in this leg replaces this one.")}
       </p>
     </div>
   );

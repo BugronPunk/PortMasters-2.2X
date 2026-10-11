@@ -5,6 +5,8 @@ import type { PublicUser } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CHAT_MESSAGE_MAX } from "@/lib/realtime-endpoint";
+import { MUTED_NOTICE } from "@/lib/game/constants/copy";
+import { t } from "@/lib/game/i18n";
 import {
   Popover,
   PopoverContent,
@@ -33,8 +35,8 @@ function TradeButton({
       <PopoverTrigger asChild>
         <button
           className="pm-pressable flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-muted-foreground dark:bg-white/10"
-          title="Offer a trade"
-          aria-label="Offer a trade"
+          title={t("Offer a trade")}
+          aria-label={t("Offer a trade")}
         >
           <Handshake className="h-4 w-4" />
         </button>
@@ -95,6 +97,21 @@ export function Composer({
   // than in a panel they may never open. The sentence is the frame's own,
   // carried through the hook and never rebuilt, and the dismissal is the
   // hook's own clearError.
+  //
+  // One name for the message field, worn twice: as the placeholder and as
+  // the name a screen reader reads it by. A placeholder is not an
+  // accessible name, and a field whose only description is placeholder
+  // text is announced as an empty box. The dm's name names the captain
+  // once there is one, and falls back to a plain noun before that rather
+  // than leaving the slot blank. The fallback is a pack fragment of its
+  // own, so the frame around the name reads in both languages.
+  const fieldName = {
+    room: t("Message the harbor"),
+    lobby: t("Message the lobby"),
+    dm: t("Message {recipientName}", {
+      recipientName: otherName ?? t("this captain"),
+    }),
+  }[mode];
   return (
     <div className="border-t border-black/5 dark:border-white/10">
       {trade?.barter.error && (
@@ -103,7 +120,7 @@ export function Composer({
           <button
             type="button"
             onClick={trade.barter.clearError}
-            aria-label="Dismiss trade error"
+            aria-label={t("Dismiss trade error")}
             className="pm-pressable shrink-0 rounded-full p-0.5"
           >
             <X className="h-3.5 w-3.5" />
@@ -113,7 +130,7 @@ export function Composer({
       <div className="p-2.5 flex items-center justify-center gap-2">
         {disabled ? (
           <p className="text-center text-xs text-muted-foreground">
-            The host has muted you in room chat for the rest of this voyage.
+            {t(MUTED_NOTICE)}
           </p>
         ) : (
           <>
@@ -125,8 +142,8 @@ export function Composer({
                   ? "bg-celadon/5 text-celadon"
                   : "bg-black/5 text-muted-foreground dark:bg-white/10",
               )}
-              title="Search messages"
-              aria-label="Search messages"
+              title={t("Search messages")}
+              aria-label={t("Search messages")}
             >
               <Search className="h-4 w-4" />
             </button>
@@ -139,13 +156,8 @@ export function Composer({
                   onSend();
                 }
               }}
-              placeholder={
-                {
-                  room: "Message the harbor…",
-                  lobby: "Message the lobby…",
-                  dm: `Message ${otherName ?? ""}…`,
-                }[mode]
-              }
+              placeholder={`${fieldName}…`}
+              aria-label={fieldName}
               className="h-9 rounded-full bg-black/5 dark:bg-white/10 border-0 text-sm"
               maxLength={CHAT_MESSAGE_MAX}
             />
@@ -153,6 +165,7 @@ export function Composer({
               size="icon"
               onClick={onSend}
               disabled={!input.trim()}
+              aria-label={t("Send message")}
               className="h-9 w-9 rounded-full pm-grad-chat shrink-0"
             >
               <SendHorizontal className="h-4 w-4" />

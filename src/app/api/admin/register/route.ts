@@ -19,29 +19,50 @@ import {
   USERNAME_TAKEN_ERROR,
   verifySetupCode,
 } from "@/lib/auth";
-import { signedInResponse } from "@/lib/api-auth";
+import { signedInResponse, requestLocale } from "@/lib/api-auth";
 import { readJson } from "@/lib/api-json";
+import { tFor } from "@/lib/game/i18n";
+import {
+  noteDoorAttempt,
+  SETUP_CODE_DOOR,
+  spendDoorBudget,
+} from "@/lib/auth-limit";
 
 // The captain's rule with the operator door's own field added to it, so
 // an operator account is held to exactly the name and password a captain
-// account is (see captainCredentials in lib/auth.ts).
+// account is (see captainCredentials in lib/auth.ts). The setup code's
+// sentence stays written here as the rule states it; the read of it, and
+// of the captain's rule beside it, happens where issues are read (see
+// readJson in lib/api-json.ts).
 const Schema = captainCredentials.extend({
   setupCode: z.string().min(1, "Enter the setup code").max(128),
 });
 
 export async function POST(req: NextRequest) {
+  // Both refusals below are sentences the operator reads, so the language
+  // is read once, here.
+  const locale = await requestLocale();
   const body = await readJson(req, Schema);
   if (!body.ok) return body.response;
   const { username, password, displayName, setupCode } = body.data;
 
+  // The door's budget, counted against the code itself rather than
+  // against the name in the body: the code is one secret for the whole
+  // process, so its misses are held under one key and cannot be rotated
+  // away by picking new names (see SETUP_CODE_DOOR in lib/auth-limit.ts).
+  const budget = spendDoorBudget(req, SETUP_CODE_DOOR, locale);
+  if (!budget.ok) return budget.response;
+
   // Asked first, before any account is looked up: nothing about this route
   // answers to anyone who is not holding the code.
   if (!verifySetupCode(setupCode)) {
+    noteDoorAttempt(SETUP_CODE_DOOR, false);
     return NextResponse.json(
-      { error: "That setup code is not correct." },
+      { error: tFor(locale, "That setup code is not correct.") },
       { status: 403 },
     );
   }
+  noteDoorAttempt(SETUP_CODE_DOOR, true);
 
   // The whole point of this route. Every other account is a captain.
   const account = await createAccountAndSession({
@@ -51,12 +72,18 @@ export async function POST(req: NextRequest) {
     role: "admin",
   });
   if (!account.created) {
-    return NextResponse.json({ error: USERNAME_TAKEN_ERROR }, { status: 409 });
+    return NextResponse.json(
+      { error: tFor(locale, USERNAME_TAKEN_ERROR) },
+      { status: 409 },
+    );
   }
 
-  return signedInResponse({
-    user: { ...publicUser(account.user), role: account.user.role },
-    token: account.token,
-    expiresAt: account.expiresAt,
-  });
+  return signedInResponse(
+    {
+      user: { ...publicUser(account.user), role: account.user.role },
+      token: account.token,
+      expiresAt: account.expiresAt,
+    },
+    req,
+  );
 }

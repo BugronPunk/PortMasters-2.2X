@@ -1,5 +1,6 @@
 "use client";
 
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { ItemIcon } from "../../shared";
@@ -141,9 +142,7 @@ export function HuePanel({
 
 /**
  * The small label a hue panel leads with: the glyph and the name in the
- * panel's own hue, with an optional plain sentence trailing it. Four of
- * them had been written out with the same five classes and a different
- * colour word each.
+ * panel's own hue, with an optional plain sentence trailing it.
  */
 export function PanelLabel({
   tone,
@@ -172,9 +171,6 @@ export function PanelLabel({
 
 /**
  * The heading of a summary block: a glyph and a name in the block's own hue.
- * The three Endgame blocks had been written out with the same five classes
- * and a different colour word each, and the risk box on the settle screen
- * with the same five at a size smaller.
  */
 export function SummaryHeading({
   size = "text-xs",
@@ -298,6 +294,58 @@ export function StatTile({
   );
 }
 
+/**
+ * The station strip, shared by the two panels that hold more than one
+ * board: Market's port board and artisan bench, and Parley's exchange and
+ * markets. One strip serves both because both wear it for the same
+ * reasons: a station the captain has finished stays reachable, so a
+ * captain who spent their gold at the board can go back and look at what
+ * they bought, and the strip locks while the ready vote is in flight,
+ * because at that point the harbor is being told this captain is done.
+ * The tone is the hue the panel's own header wears, so the strip and the
+ * board below it agree about which screen is open; the reasons the
+ * station is local state rather than a phase value or a saved field are
+ * written at the head of Market.tsx.
+ */
+export function StationStrip<T extends string>({
+  stations,
+  active,
+  onSelect,
+  waiting,
+  tone,
+}: {
+  stations: { id: T; label: string; icon: string }[];
+  active: T;
+  onSelect: (id: T) => void;
+  waiting: boolean;
+  tone: "market" | "parley";
+}) {
+  const here = {
+    market: "border-market/40 bg-market/[0.12] text-market",
+    parley: "border-parley/40 bg-parley/[0.12] text-parley",
+  }[tone];
+  return (
+    <div className="mb-3.5 flex items-center gap-1.5">
+      {stations.map((s, i) => (
+        <button
+          key={s.id}
+          type="button"
+          disabled={waiting}
+          onClick={() => onSelect(s.id)}
+          className={cn(
+            "flex-1 rounded-lg border px-3 py-1.5 text-xs font-medium transition disabled:opacity-60",
+            s.id === active
+              ? here
+              : "border-transparent bg-muted/30 text-muted-foreground hover:text-foreground",
+          )}
+        >
+          {s.icon} {i + 1} · {s.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // The broker's whispers wear the trade manifest's hue and the port board's,
 // read by name. It is the same banner either way and the sentence that
 // trails it is the only thing that differs, which is the one part each
@@ -330,7 +378,14 @@ export function IntelBanner({
         "px-3.5 py-2.5 mb-3.5 text-xs",
       )}
     >
-      <strong>🗣️ Broker&apos;s Whispers active this round:</strong>{" "}
+      {/* The banner's own line is one read of the row as HTML: the pack
+          carries the apostrophe as an entity, so the answer is handed back
+          to the renderer rather than printed as text. */}
+      <strong
+        dangerouslySetInnerHTML={{
+          __html: t("🗣️ Broker&apos;s Whispers active this round:"),
+        }}
+      />{" "}
       {game.revealedIntel.map((i, idx) => (
         <span key={idx}>
           {idx > 0 && ", "}
@@ -403,7 +458,12 @@ export function JustForChip({
 }) {
   return (
     <span className="rounded-full bg-sea/5 px-1.5 py-0.5 text-[9px] font-medium text-sea">
-      🔒 {forMe ? "Just for you" : `Just for ${name ?? "a captain"}`}
+      🔒{" "}
+      {forMe
+        ? t("Just for you")
+        : t("Just for {recipientName}", {
+            recipientName: name ?? t("a captain"),
+          })}
     </span>
   );
 }

@@ -9,7 +9,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
 import { DEFAULT_DIFFICULTY } from "@/lib/game/difficulty";
 import { DEFAULT_MODE } from "@/lib/game/mode";
 import {
@@ -18,6 +22,8 @@ import {
   snapshotFromSave,
 } from "@/lib/game/integrity";
 import { readJson } from "@/lib/api-json";
+import { tFor } from "@/lib/game/i18n";
+import { NOT_A_ROOM_MEMBER } from "@/lib/game/constants/copy";
 
 export async function GET(req: NextRequest) {
   const user = await getCurrentUser();
@@ -111,6 +117,9 @@ export async function PUT(req: NextRequest) {
   const body = await readJson(req, SaveSchema);
   if (!body.ok) return body.response;
   const { roomId, data } = body.data;
+  // Both refusals below are sentences the captain reads, so the language
+  // is read once, here.
+  const locale = await requestLocale();
 
   // Must be a member of the room to save state there.
   const member = await db.roomMember.findUnique({
@@ -118,7 +127,7 @@ export async function PUT(req: NextRequest) {
   });
   if (!member)
     return NextResponse.json(
-      { error: "Not a member of that room" },
+      { error: tFor(locale, NOT_A_ROOM_MEMBER) },
       { status: 403 },
     );
 
@@ -146,7 +155,7 @@ export async function PUT(req: NextRequest) {
   const json = JSON.stringify(data);
   if (json.length > SAVE_BODY_MAX) {
     return NextResponse.json(
-      { error: "That voyage save is too large to store." },
+      { error: tFor(locale, "That voyage save is too large to store.") },
       { status: 413 },
     );
   }

@@ -2,6 +2,7 @@
 
 import { MeritIcon } from "../shared";
 import { meritById } from "@/lib/game/merits";
+import { t } from "@/lib/game/i18n";
 import {
   Tooltip,
   TooltipContent,
@@ -12,11 +13,15 @@ import { SectionHeading } from "./SectionHeading";
 export function MeritsShowcase({ meritIds }: { meritIds: string[] }) {
   return (
     <div>
-      <SectionHeading>Merits ({meritIds.length} of 9)</SectionHeading>
+      <SectionHeading>
+        {t("Merits ({meritIds.length} of 9)", {
+          "meritIds.length": meritIds.length,
+        })}
+      </SectionHeading>
       <div className="flex flex-wrap gap-3">
         {meritIds.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            No merits earned yet. Complete voyages to earn them.
+            {t("No merits earned yet. Complete voyages to earn them.")}
           </p>
         )}
         {meritIds.map((id) => {
@@ -29,14 +34,16 @@ export function MeritsShowcase({ meritIds }: { meritIds: string[] }) {
                   <div className="pm-grad-profile flex h-10 w-10 items-center justify-center rounded-full">
                     <MeritIcon id={merit.id} className="h-5 w-5" />
                   </div>
+                  {/* The merit's own name and description are read where
+                      they are printed; the id above stays the icon's key. */}
                   <span className="text-[11px] font-medium leading-tight">
-                    {merit.name}
+                    {t(merit.name)}
                   </span>
                 </div>
               </TooltipTrigger>
               <TooltipContent className="max-w-xs">
-                <p className="font-semibold">{merit.name}</p>
-                <p className="text-xs text-muted-foreground">{merit.desc}</p>
+                <p className="font-semibold">{t(merit.name)}</p>
+                <p className="text-xs text-muted-foreground">{t(merit.desc)}</p>
               </TooltipContent>
             </Tooltip>
           );

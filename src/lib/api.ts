@@ -19,6 +19,7 @@ import type { Difficulty } from "@/lib/game/difficulty";
 import type { GameMode } from "@/lib/game/mode";
 import type { HouseId } from "@/lib/game/legacy";
 import type { UnlockId } from "@/lib/unlock";
+import { t } from "@/lib/game/i18n";
 
 // Forwarded so existing call sites that imported PublicUser from
 // "@/lib/api" keep compiling. The canonical home is @/types/realtime.
@@ -71,17 +72,29 @@ async function jfetch<T>(url: string, init?: RequestInit): Promise<T> {
       ...init,
     });
   } catch {
-    throw new Error("Cannot reach the server. It may be temporarily offline.");
+    throw new Error(
+      t("Cannot reach the server. It may be temporarily offline."),
+    );
   }
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;
   if (!res.ok) {
     const msg =
-      data?.error || `Server error (${res.status}). Please try again later.`;
+      data?.error ||
+      t("Server error ({res.status}). Please try again later.", {
+        "res.status": res.status,
+      });
     throw new Error(msg);
   }
   return data as T;
 }
+
+// The two 404 answers more than one route gives, each said once: a room
+// the caller named that is not there, and a captain the caller named that
+// is not there. Two routes answering one absence with two spellings is
+// how a caller learns to match on prose instead of on the absence.
+export const ROOM_NOT_FOUND = "Room not found";
+export const CAPTAIN_NOT_FOUND = "Captain not found";
 
 export const api = {
   // Auth
@@ -225,7 +238,7 @@ export const api = {
     ),
 
   // Daily Check In: claim today's reward. Returns claimed:false (not an
-  // error) when today was already claimed, so the caller can just re render.
+  // error) when today was already claimed, so the caller can just render as usual.
   checkIn: () =>
     jfetch<{
       claimed: boolean;

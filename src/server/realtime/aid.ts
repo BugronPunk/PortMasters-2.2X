@@ -13,6 +13,7 @@
 // =====================================================================
 import { AidRequest } from "@/types/realtime/boards";
 import type { Server } from "socket.io";
+import { roomChannel } from "./channel";
 import { roomCheckpoints } from "./checkpoint";
 
 const roomAidRequests = new Map<string, AidRequest[]>();
@@ -31,7 +32,7 @@ export function aidList(roomId: string): AidRequest[] {
 }
 
 function broadcastAid(io: Server, roomId: string): void {
-  io.to(`room:${roomId}`).emit("aid:update", {
+  io.to(roomChannel(roomId)).emit("aid:update", {
     roomId,
     requests: aidList(roomId),
   });

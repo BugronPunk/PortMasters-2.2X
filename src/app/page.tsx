@@ -1,19 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Anchor } from "lucide-react";
+import { PageSplash } from "@/components/ui/page-splash";
 import { api } from "@/lib/api";
 import { disconnectSocket, setAuthToken } from "@/lib/realtime";
 import type { PublicUser } from "@/lib/db";
 import { AuthScreen } from "@/components/portmasters/AuthScreen";
 import { Lobby } from "@/components/portmasters/Lobby";
 import { GameRoom } from "@/components/portmasters/GameRoom";
+import { t } from "@/lib/game/i18n";
+import { useLanguage } from "@/lib/use-language-preference";
 import type { RoomDetail } from "@/lib/rooms";
 import type { RoomSummary } from "@/lib/api";
 
 type Status = "loading" | "auth" | "lobby" | "game";
 
 export default function Home() {
+  // The shell this page draws above the two screens that subscribe for
+  // themselves: the splash line is this page's own, so the pick has to
+  // redraw here as well.
+  useLanguage();
   const [user, setUser] = useState<PublicUser | null>(null);
   const [status, setStatus] = useState<Status>("loading");
   const [room, setRoom] = useState<RoomDetail | null>(null);
@@ -77,18 +83,7 @@ export default function Home() {
   };
 
   if (status === "loading") {
-    return (
-      <main className="pm-canvas flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="pm-grad-brand flex h-16 w-16 items-center justify-center rounded-2xl shadow-lg">
-            <Anchor className="h-8 w-8" />
-          </div>
-          <p className="text-brand font-display text-lg">
-            Reading the tide tables...
-          </p>
-        </div>
-      </main>
-    );
+    return <PageSplash line={t("Reading the tide tables...")} badge />;
   }
 
   if (status === "auth" || !user) {

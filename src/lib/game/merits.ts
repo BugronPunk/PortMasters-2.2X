@@ -14,6 +14,7 @@
 import { MERCHANT_RATINGS } from "./constants/reputation";
 import { RENOWN_TITLES } from "./legacy";
 import { DIFFICULTIES, type Difficulty } from "./difficulty";
+import { t } from "@/lib/game/i18n";
 
 const topRating = MERCHANT_RATINGS[0];
 const topTitle = RENOWN_TITLES[RENOWN_TITLES.length - 1];
@@ -45,6 +46,17 @@ type MeritDef = { id: MeritId; name: string; desc: string };
 // minLevel/minScore below intentionally read from RENOWN_TITLES and
 // MERCHANT_RATINGS rather than repeating the numbers, so a future tier
 // added to either ladder can't silently leave this list one step behind.
+//
+// Five of the nine descriptions name a value this file already holds (the
+// score the top rating is read at, the rung of the Renown ladder, the
+// tier a voyage was sailed on), and the pack carries those five as frames
+// with the names left open. They compose through an accessor rather than
+// being baked into the record, because the record is built at import
+// time: a t() call written here would answer in whatever language the
+// process started in and stay there when a captain switches. Read
+// through the accessor, each one composes in the language on screen at
+// the moment a tooltip, a toast or the endgame prints it. The four
+// descriptions that stand alone stay plain strings.
 export const MERITS: MeritDef[] = [
   {
     id: "first_voyage",
@@ -59,12 +71,20 @@ export const MERITS: MeritDef[] = [
   {
     id: "king_of_silk_road",
     name: topRating.label,
-    desc: `End a single voyage with ${topRating.minScore}+ Reputation.`,
+    get desc(): string {
+      return t("End a single voyage with {minScore}+ Reputation.", {
+        minScore: topRating.minScore,
+      });
+    },
   },
   {
     id: "renown_legend",
     name: topTitle.title,
-    desc: `Reach Renown Level ${topTitle.minLevel}.`,
+    get desc(): string {
+      return t("Reach Renown Level {topTitle.minLevel}.", {
+        "topTitle.minLevel": topTitle.minLevel,
+      });
+    },
   },
   {
     id: "iron_hull",
@@ -78,17 +98,35 @@ export const MERITS: MeritDef[] = [
   {
     id: "open_water_captain",
     name: "Open Water Captain",
-    desc: `Finish an ${openWaters.name} voyage without going bankrupt.`,
+    get desc(): string {
+      return t("Finish an {openWaters.name} voyage without going bankrupt.", {
+        // The tier's name has a row of its own (difficulty.open_waters.name),
+        // read here so the sentence arrives whole.
+        "openWaters.name": t(openWaters.name),
+      });
+    },
   },
   {
     id: "storm_sovereign",
     name: "Storm Sovereign",
-    desc: `Get crowned Sea Master on a ${monsoon.name} voyage.`,
+    get desc(): string {
+      return t("Get crowned Sea Master on a {monsoon.name} voyage.", {
+        "monsoon.name": t(monsoon.name),
+      });
+    },
   },
   {
     id: "eye_of_the_storm",
     name: "Eye of the Storm",
-    desc: `Finish a ${monsoon.name} voyage with ${EYE_OF_THE_STORM_REPUTATION}+ Reputation.`,
+    get desc(): string {
+      return t(
+        "Finish a {monsoon.name} voyage with {EYE_OF_THE_STORM_REPUTATION}+ Reputation.",
+        {
+          "monsoon.name": t(monsoon.name),
+          EYE_OF_THE_STORM_REPUTATION,
+        },
+      );
+    },
   },
 ];
 

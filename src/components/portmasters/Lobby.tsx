@@ -13,6 +13,7 @@ import {
 } from "@/lib/api";
 import { useRealtime } from "@/lib/use-realtime";
 import { useColorPreference } from "@/lib/use-color-preference";
+import { useLanguage } from "@/lib/use-language-preference";
 import { useSound } from "@/lib/use-sound";
 import {
   DIFFICULTIES,
@@ -79,6 +80,7 @@ import {
   type HouseId,
 } from "@/lib/game/legacy";
 import { checkInStatus, type CheckInStatus } from "@/lib/game/checkin";
+import { t } from "@/lib/game/i18n";
 
 export function Lobby({
   me,
@@ -105,6 +107,9 @@ export function Lobby({
     onSessionLost,
   );
   const { colorblindSafe, setColorblindSafe } = useColorPreference();
+  // The captain's language, read here so the settings pair can switch it
+  // and this screen redraws through the same render the pick lands in.
+  const { locale, setLanguage } = useLanguage();
   const {
     enabled: soundOn,
     toggle: toggleSound,
@@ -135,6 +140,11 @@ export function Lobby({
   // asking its table to keep two different clocks. Starts on the founding
   // mode, which is the one a captain who never touches this control gets.
   const [mode, setMode] = useState<GameMode>(DEFAULT_MODE);
+  // Whether the captain has picked a mode of their own rather than leaving
+  // the Voyage cards untouched. The How to Play manual reads it: a captain
+  // who has chosen a voyage is answered by their choice, while one who has
+  // not is answered by the harbor they are browsing (see browsedMode).
+  const [modeChosen, setModeChosen] = useState(false);
   // [H9: the unlock code] What the host typed to open a sealed voyage, sent
   // only when the mode they picked takes a phrase. Cleared once a harbor is
   // opened with it, because a phrase that has already worked is not one the
@@ -144,11 +154,9 @@ export function Lobby({
   const [joining, setJoining] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  // Which half of the lobby panel is showing. One panel with a switch rather
-  // than two stacked cards, because the create form is the taller of the two
-  // by a wide margin, and stacked it pushes the room list a screen and a half
-  // down on the one screen whose whole job is showing rooms. Opens on browse,
-  // because the list is what a captain arrives wanting to see.
+  // Which half of the lobby panel is showing. Opens on browse, because the
+  // list is what a captain arrives wanting to see (the panel below holds the
+  // full reason it is a switch rather than stacked cards).
   const [view, setView] = useState<"browse" | "create">("browse");
 
   // [MANIFEST: Quick Start Match] While queued, the Quick Start button
@@ -238,24 +246,49 @@ export function Lobby({
       setLegacy(res.legacy);
       setCheckIn(res.checkIn);
       if (res.claimed) {
-        toast.success(`Day ${res.day} claimed: +${res.xpGained} Renown XP`, {
-          description: res.leveledUp
-            ? "Renown level up! A bigger start of voyage Gold bonus awaits."
-            : "Fair winds. Come back tomorrow for the next reward.",
-        });
+        toast.success(
+          t("Day {res.day} claimed: +{res.xpGained} Renown XP", {
+            "res.day": res.day ?? 0,
+            "res.xpGained": res.xpGained ?? 0,
+          }),
+          {
+            description: res.leveledUp
+              ? t(
+                  "Renown level up! A bigger start of voyage Gold bonus awaits.",
+                )
+              : t("Fair winds. Come back tomorrow for the next reward."),
+          },
+        );
       } else {
-        toast("Already checked in today", {
-          description: "Come back tomorrow for the next reward.",
+        toast(t("Already checked in today"), {
+          description: t("Come back tomorrow for the next reward."),
         });
       }
     } catch {
-      toast.error("Check in failed", {
-        description: "Could not reach the Harbormaster. Try again.",
+      toast.error(t("Check in failed"), {
+        description: t("Could not reach the Harbormaster. Try again."),
       });
     } finally {
       setClaiming(false);
     }
   }, []);
+
+  // What the gift button and the dialog read, re-derived rather than
+  // trusted as fetched.
+  //
+  // The status the server sends is a reading of the day it was sent:
+  // canClaimToday is false the moment today's claim is spent, and the turn
+  // of the UTC day is the one thing that makes it true again. The day math
+  // is pure and shared with the route that serves it (see
+  // src/lib/game/checkin), so the reading is taken again here on every
+  // render from the two persisted fields. The room list already redraws
+  // this panel every eight seconds, so a lobby left open across midnight
+  // lights the gift again on its own, where before it stayed dark until a
+  // reload.
+  const checkInToday = checkInStatus({
+    checkInCount: checkIn.claimedThisCycle,
+    lastCheckInDate: checkIn.lastCheckInDate,
+  });
 
   // Renown for every other captain currently shown in "Captains Online"
   // below, fetched as one batch rather than one request per captain (see
@@ -292,7 +325,7 @@ export function Lobby({
 
   // True between asking for a seat in the queue and hearing back. Held in
   // a ref rather than state because the socket listener and the unmount
-  // cleanup both read it, and neither should re run when it changes.
+  // cleanup both read it, and neither should rerun when it changes.
   const queuedForMatch = useRef(false);
 
   // [MANIFEST: Quick Start Match] Join the queue and wait to be paired.
@@ -309,7 +342,7 @@ export function Lobby({
     try {
       await api.quickStart({ difficulty });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Quick Start failed");
+      setError(e instanceof Error ? e.message : t("Quick Start failed"));
       setQuickStarting(false);
       return;
     }
@@ -318,7 +351,7 @@ export function Lobby({
     // goes nowhere at all and the button would spin until the timeout, so
     // a missing socket is refused here rather than waited on.
     if (!socket || !authed) {
-      setError("Still connecting to the harbor. Try again in a moment.");
+      setError(t("Still connecting to the harbor. Try again in a moment."));
       setQuickStarting(false);
       return;
     }
@@ -328,8 +361,8 @@ export function Lobby({
     // captain is the one who opens it; a captain seated into a harbor
     // that already exists sails at that harbor's tier instead.
     socket.emit("quickstart:join", { difficulty });
-    toast("Looking for a harbor", {
-      description: "Pairing you with the next captain who asks.",
+    toast(t("Looking for a harbor"), {
+      description: t("Pairing you with the next captain who asks."),
     });
 
     // A match is answered within a round trip, so a long silence means the
@@ -338,7 +371,7 @@ export function Lobby({
       if (!queuedForMatch.current) return;
       queuedForMatch.current = false;
       socket.emit("quickstart:leave");
-      setError("Quick Start timed out. Please try again.");
+      setError(t("Quick Start timed out. Please try again."));
       setQuickStarting(false);
     }, 15000);
   }, [difficulty, socket, authed]);
@@ -369,7 +402,7 @@ export function Lobby({
             .then(({ room }) => onEnterRoom(room))
             .catch(() => {
               toast.error(
-                "Quick Start matched a harbor, but it could not be reached.",
+                t("Quick Start matched a harbor, but it could not be reached."),
               );
               setQuickStarting(false);
             }),
@@ -381,7 +414,7 @@ export function Lobby({
     // coming.
     const onQueueError = (data: { error?: string }) => {
       queuedForMatch.current = false;
-      setError(data?.error ?? "Quick Start is unavailable right now.");
+      setError(data?.error ?? t("Quick Start is unavailable right now."));
       setQuickStarting(false);
     };
 
@@ -424,7 +457,7 @@ export function Lobby({
       // A refused phrase is the route's answer to a bad phrase rather than
       // a failure of the form, and its message already says which of the
       // two mistakes it was: nothing typed, or the wrong words.
-      setError(e instanceof Error ? e.message : "Failed to create room");
+      setError(e instanceof Error ? e.message : t("Failed to create room"));
     } finally {
       setBusy(false);
     }
@@ -432,7 +465,7 @@ export function Lobby({
 
   async function joinByCode() {
     if (joinCode.trim().length !== 6) {
-      setError("Room codes are 6 characters.");
+      setError(t("Harbor codes are 6 characters."));
       return;
     }
     setBusy(true);
@@ -442,7 +475,7 @@ export function Lobby({
       setJoinCode("");
       onEnterRoom(room);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to join room");
+      setError(e instanceof Error ? e.message : t("Failed to join room"));
     } finally {
       setBusy(false);
     }
@@ -455,7 +488,7 @@ export function Lobby({
       const { room: joined } = await api.joinRoomById(room.id);
       onEnterRoom(joined);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to enter room");
+      setError(e instanceof Error ? e.message : t("Failed to enter room"));
     } finally {
       setJoining(null);
     }
@@ -484,7 +517,7 @@ export function Lobby({
   // the clear, the loading flag and the request all belong to that one
   // click that changes the target, and the thread is fetched once.
 
-  // The square's backlog, read once on landing. Nothing re seeds it later,
+  // The square's backlog, read once on landing. Nothing reseeds it later,
   // and nothing needs to: this channel is written down rather than held in
   // the room's session log, so whatever was said while this captain was at
   // sea is simply part of the backlog they read on their next landing.
@@ -506,14 +539,14 @@ export function Lobby({
       .listChronicles()
       .then(({ chronicles }) => setChronicles(chronicles))
       .catch(() => {
-        toast.error("Could not load chronicles");
+        toast.error(t("Could not load chronicles"));
       })
       .finally(() => setChronicleLoading(false));
   }, []);
 
   // [MANIFEST: Great Houses] Fetch harbor wide standings plus the
   // captain's current pledge when the House dialog opens. myHouseId is
-  // re synced after a successful pledge so the chosen row stays marked.
+  // resynced after a successful pledge so the chosen row stays marked.
   const openHouse = useCallback(() => {
     setHouseOpen(true);
     setHouseLoading(true);
@@ -524,7 +557,7 @@ export function Lobby({
         if (hid !== undefined) setMyHouseId(hid);
       })
       .catch(() => {
-        toast.error("Could not load House standings");
+        toast.error(t("Could not load House standings"));
       })
       .finally(() => setHouseLoading(false));
   }, []);
@@ -535,12 +568,18 @@ export function Lobby({
       await api.pledgeHouse(houseId);
       setMyHouseId(houseId);
       const house = HOUSES.find((h) => h.id === houseId);
-      toast.success(`Pledged to ${house?.name ?? "House"}`, {
-        description: "Your House perk applies on your next fresh voyage.",
-      });
+      toast.success(
+        t("Pledged to {houseName}", {
+          houseName: t(house?.name ?? "House"),
+        }),
+        {
+          description: t("Your House perk applies on your next fresh voyage."),
+        },
+      );
     } catch (e) {
-      toast.error("Pledge failed", {
-        description: e instanceof Error ? e.message : "Try again in a moment.",
+      toast.error(t("Pledge failed"), {
+        description:
+          e instanceof Error ? e.message : t("Try again in a moment."),
       });
     } finally {
       setPledgingHouse(null);
@@ -548,6 +587,25 @@ export function Lobby({
   }, []);
 
   const totalOnline = onlineUsers.length;
+
+  // What the How to Play manual describes from this lobby. A captain who
+  // has picked a mode of their own is answered by their choice, because
+  // the pages they want next are the ones about the voyage they are
+  // charting. A captain who has chosen nothing is answered by the harbor
+  // they are browsing: on a board whose harbors all sail one voyage, that
+  // voyage is the only table they can enter from the page the guide
+  // button sits on, so the pages describe it rather than the founding
+  // voyage they are not about to play. A mixed board (or an empty one)
+  // names no single harbor being browsed, and the pages then fall to the
+  // founding voyage, whose own page is the manual every other mode is
+  // measured against (see voyagePage in ./HowToPlayModal).
+  const boardMode = rooms[0]?.mode;
+  const browsedMode: GameMode =
+    modeChosen ||
+    boardMode === undefined ||
+    !rooms.every((r) => r.mode === boardMode)
+      ? mode
+      : boardMode;
 
   return (
     <div className="pm-canvas min-h-screen w-full">
@@ -588,7 +646,7 @@ export function Lobby({
                 <span className="text-brand pm-truncate block">{APP_NAME}</span>
               </h1>
               <p className="pm-truncate text-[11px] leading-tight text-muted-foreground">
-                Maritime trade on the ancient Silk Road
+                {t("Maritime trade on the ancient Silk Road")}
               </p>
             </div>
 
@@ -601,34 +659,34 @@ export function Lobby({
               <button
                 onClick={openChronicle}
                 className="pm-tool pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="Voyage Chronicles"
-                aria-label="Voyage Chronicles"
+                title={t("Voyage Chronicles")}
+                aria-label={t("Voyage Chronicles")}
               >
                 <BookOpen className="h-3.5 w-3.5" />
-                <span className="hidden xl:inline">Chronicles</span>
+                <span className="hidden xl:inline">{t("Chronicles")}</span>
               </button>
               <button
                 onClick={openHouse}
                 className="pm-tool pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="Great Houses"
-                aria-label="Great Houses"
+                title={t("Great Houses")}
+                aria-label={t("Great Houses")}
               >
                 <Landmark className="h-3.5 w-3.5" />
-                <span className="hidden xl:inline">Houses</span>
+                <span className="hidden xl:inline">{t("Houses")}</span>
               </button>
               <button
                 onClick={() => setLeaderboardOpen(true)}
                 className="pm-tool pm-tool-icon pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="Harbor Leaderboard"
-                aria-label="Open harbor leaderboard"
+                title={t("Harbor Leaderboard")}
+                aria-label={t("Open harbor leaderboard")}
               >
                 <Trophy className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={() => setSettingsOpen(true)}
                 className="pm-tool pm-tool-icon pm-pressable bg-black/[0.05] text-foreground dark:bg-white/10"
-                title="Settings"
-                aria-label="Open settings"
+                title={t("Settings")}
+                aria-label={t("Open settings")}
               >
                 <Settings className="h-3.5 w-3.5" />
               </button>
@@ -636,16 +694,16 @@ export function Lobby({
                 onClick={() => setCheckInOpen(true)}
                 className={cn(
                   "pm-tool pm-pressable relative",
-                  checkIn.canClaimToday
+                  checkInToday.canClaimToday
                     ? "pm-grad-checkin text-white"
                     : "bg-black/[0.05] text-foreground dark:bg-white/10",
                 )}
-                title="Daily Check In"
-                aria-label="Daily Check In"
+                title={t("Daily Check In")}
+                aria-label={t("Daily Check In")}
               >
                 <Gift className="h-3.5 w-3.5" />
-                <span className="hidden xl:inline">Check In</span>
-                {checkIn.canClaimToday && (
+                <span className="hidden xl:inline">{t("Check In")}</span>
+                {checkInToday.canClaimToday && (
                   <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-alarm ring-2 ring-background" />
                 )}
               </button>
@@ -656,8 +714,8 @@ export function Lobby({
             <button
               onClick={() => setProfileOpen(true)}
               className="pm-tool pm-pressable gap-1.5 bg-black/[0.05] pl-0.5 pr-2.5 dark:bg-white/10"
-              title="View captain profile"
-              aria-label="View captain profile"
+              title={t("View captain profile")}
+              aria-label={t("View captain profile")}
             >
               <Avatar hue={me.avatarHue} name={me.displayName} size={24} ring />
               <span className="hidden max-w-32 truncate md:inline">
@@ -667,8 +725,8 @@ export function Lobby({
             <button
               onClick={onLogout}
               className="pm-tool pm-tool-icon pm-pressable bg-black/[0.05] text-muted-foreground dark:bg-white/10"
-              title="Sign out"
-              aria-label="Sign out"
+              title={t("Sign out")}
+              aria-label={t("Sign out")}
             >
               <LogOut className="h-3.5 w-3.5" />
             </button>
@@ -684,36 +742,36 @@ export function Lobby({
             <Gauge
               icon={Users}
               tone="text-captains"
-              label="Captains"
+              label={t("Captains")}
               value={totalOnline}
             />
             <GaugeRule />
             <Gauge
               icon={Ship}
               tone="text-harbors"
-              label="Open Harbors"
+              label={t("Open Harbors")}
               value={rooms.length}
             />
             <GaugeRule />
             <Gauge
               icon={Anchor}
               tone="text-sailing"
-              label="Sailing"
+              label={t("Sailing")}
               value={rooms.filter((r) => r.started).length}
             />
             <GaugeRule />
             <button
               onClick={() => setLegacyOpen(true)}
               className="-mx-1.5 flex items-center gap-1.5 rounded-full px-1.5 py-0.5 transition-colors hover:bg-black/5 dark:hover:bg-white/10"
-              title="Captain Legacy"
-              aria-label="View captain legacy"
+              title={t("Captain Legacy")}
+              aria-label={t("View captain legacy")}
             >
               <Star className="h-3.5 w-3.5 text-renown" />
               <span className="text-[11px] text-muted-foreground">
-                Your Renown
+                {t("Your Renown")}
               </span>
               <b className="text-[11px] tabular-nums">
-                Lv {renownProgress(legacy.renownXP).level}
+                {t("Lv {n}", { n: renownProgress(legacy.renownXP).level })}
               </b>
             </button>
 
@@ -721,7 +779,7 @@ export function Lobby({
               <span className="flex items-center gap-1.5">
                 <OnlineDot online={connected && authed} size={8} />
                 <span className="text-[11px] text-muted-foreground">
-                  {connected && authed ? "Online" : "Connecting"}
+                  {connected && authed ? t("Online") : t("Connecting")}
                 </span>
               </span>
               <div className="hidden md:block">
@@ -746,8 +804,8 @@ export function Lobby({
               <button
                 onClick={onDismissNotice}
                 className="-mr-1 -mt-0.5 shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:bg-black/5 dark:hover:bg-white/10"
-                title="Dismiss"
-                aria-label="Dismiss"
+                title={t("Dismiss")}
+                aria-label={t("Dismiss")}
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -773,10 +831,12 @@ export function Lobby({
             </div>
             <div className="min-w-0 flex-1">
               <div className="font-display text-sm font-semibold">
-                Quick Start
+                {t("Quick Start")}
               </div>
               <p className="text-[11px] leading-tight text-muted-foreground">
-                Match instantly with the next captain who hits Quick Start.
+                {t(
+                  "Match instantly with the next captain who hits Quick Start.",
+                )}
               </p>
             </div>
             {/* The vermilion seal, the same colour the harbor uses for a
@@ -790,11 +850,12 @@ export function Lobby({
             >
               {quickStarting ? (
                 <>
-                  <Loader2 className="mr-1 h-4 w-4 animate-spin" /> Waiting
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />{" "}
+                  {t("Waiting")}
                 </>
               ) : (
                 <>
-                  <Zap className="mr-1 h-4 w-4" /> Quick Start
+                  <Zap className="mr-1 h-4 w-4" /> {t("Quick Start")}
                 </>
               )}
             </Button>
@@ -834,14 +895,14 @@ export function Lobby({
                   className="text-muted-foreground data-[state=active]:text-foreground dark:data-[state=active]:bg-white/10"
                 >
                   <Ship className="text-harbors" />
-                  Open Harbors
+                  {t("Open Harbors")}
                 </TabsTrigger>
                 <TabsTrigger
                   value="create"
                   className="text-muted-foreground data-[state=active]:text-foreground dark:data-[state=active]:bg-white/10"
                 >
                   <Plus className="text-charter" />
-                  Chart a new harbor
+                  {t("Chart a new harbor")}
                 </TabsTrigger>
               </TabsList>
 
@@ -886,7 +947,7 @@ export function Lobby({
                       board. */}
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                     <p className="min-w-0 flex-1 text-[11px] leading-snug text-muted-foreground">
-                      Every harbor the fleet has open right now.
+                      {t("Every harbor the fleet has open right now.")}
                     </p>
                     {/* How to Play is a plain button rather than the Button
                         primitive: the ghost variant exists to be transparent
@@ -901,12 +962,14 @@ export function Lobby({
                     <button
                       onClick={() => setHowToPlayOpen(true)}
                       className="pm-tool pm-pressable pm-grad-guide text-white"
-                      title="How to Play"
-                      aria-label="How to Play"
+                      title={t("How to Play")}
+                      aria-label={t("How to Play")}
                     >
                       <BookOpen className="h-3.5 w-3.5" />
-                      <span className="sm:hidden">Guide</span>
-                      <span className="hidden sm:inline">How to Play</span>
+                      <span className="sm:hidden">{t("Guide")}</span>
+                      <span className="hidden sm:inline">
+                        {t("How to Play")}
+                      </span>
                     </button>
                     <Button
                       variant="ghost"
@@ -914,8 +977,8 @@ export function Lobby({
                       className="pm-tool pm-tool-icon rounded-full"
                       onClick={refreshRooms}
                       disabled={loadingRooms}
-                      title="Refresh harbors"
-                      aria-label="Refresh the harbor list"
+                      title={t("Refresh harbors")}
+                      aria-label={t("Refresh the harbor list")}
                     >
                       <RefreshCw
                         className={cn(
@@ -937,7 +1000,7 @@ export function Lobby({
                       className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground"
                     >
                       <KeyRound className="h-3.5 w-3.5" />
-                      Join by code
+                      {t("Join by code")}
                     </Label>
                     <Input
                       id="join-code"
@@ -955,20 +1018,13 @@ export function Lobby({
                       variant="secondary"
                       className="pm-field shrink-0"
                     >
-                      Join
+                      {t("Join")}
                     </Button>
                   </div>
                   {/* The board of harbors already open. A hairline divides it
                       from the two ways in above, so the list reads as its own
                       band rather than as one more control. */}
                   <div className="space-y-2 border-t border-black/[0.06] pt-3 dark:border-white/[0.08]">
-                    {/* Three placeholder rows in the shape of a harbor row,
-                        rather than a spinner on its own. The board is the one
-                        part of the lobby whose contents arrive late, and
-                        holding its layout open means nothing jumps when the
-                        list lands. The rows are hidden from assistive tech and
-                        the sentence they replace is kept, so the wait is
-                        announced once instead of three times. */}
                     <HarborBoard
                       rooms={rooms}
                       loading={loadingRooms}
@@ -1001,18 +1057,20 @@ export function Lobby({
                   className="space-y-3"
                 >
                   <p className="text-[11px] leading-snug text-muted-foreground">
-                    Name a room, pick its waters, and open it to the fleet.
+                    {t(
+                      "Name a harbor, pick its waters, and open it to the fleet.",
+                    )}
                   </p>
 
                   <div className="grid grid-cols-1 items-end gap-2 sm:grid-cols-[1fr_auto_auto]">
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground">
-                        Room name
+                        {t("Harbor name")}
                       </Label>
                       <Input
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
-                        placeholder="e.g. Silk Run · Voyage 1"
+                        placeholder={t("e.g. Silk Run · Voyage 1")}
                         maxLength={40}
                         className="pm-field"
                         onKeyDown={(e) => e.key === "Enter" && createRoom()}
@@ -1025,7 +1083,7 @@ export function Lobby({
                         id="pub"
                       />
                       <Label htmlFor="pub" className="cursor-pointer text-xs">
-                        Public
+                        {t("Public")}
                       </Label>
                     </div>
                     <Button
@@ -1037,7 +1095,7 @@ export function Lobby({
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <>
-                          <Plus className="mr-1 h-4 w-4" /> Create
+                          <Plus className="mr-1 h-4 w-4" /> {t("Create")}
                         </>
                       )}
                     </Button>
@@ -1048,19 +1106,27 @@ export function Lobby({
                       order they run in, where the tier only decides how
                       punishing they are. It is drawn the larger way for that
                       reason. */}
+                  {/* The cards print the words the mode record carries, so the
+                      three that are copy are read here, at the boundary where
+                      this form hands them over, and the cards keep printing
+                      whatever they are given. The icon is a glyph and the two
+                      flags are switches, so they travel untouched. */}
                   <VoyageCards
-                    label="Voyage"
+                    label={t("Voyage")}
                     options={MODE_ORDER.map((key) => ({
                       key,
                       icon: MODES[key].icon,
-                      badge: MODES[key].badge,
-                      tagline: MODES[key].tagline,
-                      summary: MODES[key].summary,
+                      badge: t(MODES[key].badge),
+                      tagline: t(MODES[key].tagline),
+                      summary: t(MODES[key].summary),
                       experimental: MODES[key].experimental,
                       sealed: MODES[key].sealed,
                     }))}
                     value={mode}
-                    onChange={setMode}
+                    onChange={(m) => {
+                      setMode(m);
+                      setModeChosen(true);
+                    }}
                   />
 
                   {/* [H9: the unlock code] The phrase, drawn under the cards
@@ -1076,35 +1142,41 @@ export function Lobby({
                         htmlFor="unlock-phrase"
                         className="text-xs text-muted-foreground"
                       >
-                        Unlock phrase
+                        {t("Unlock phrase")}
                       </Label>
                       <Input
                         id="unlock-phrase"
                         value={unlockPhrase}
                         onChange={(e) => setUnlockPhrase(e.target.value)}
-                        placeholder="The phrase the harbor asks for"
+                        placeholder={t("The phrase the harbor asks for")}
                         maxLength={120}
                         autoComplete="off"
                         spellCheck={false}
                         className="pm-field"
                         onKeyDown={(e) => e.key === "Enter" && createRoom()}
                       />
-                      <p className="text-[11px] leading-relaxed text-muted-foreground">
-                        A captain&apos;s tenth completed voyage hands them this
-                        phrase, and the guide keeps a copy for whoever goes
-                        looking. Anyone who has it can open the table, and every
-                        seat at that table sails the voyage it opens.
-                      </p>
+                      {/* The row carries the apostrophe as the entity the
+                          source spelled it with, so the read hands it over
+                          whole and the paragraph renders the answer as HTML:
+                          a text node would print "&apos;" on the screen. */}
+                      <p
+                        className="text-[11px] leading-relaxed text-muted-foreground"
+                        dangerouslySetInnerHTML={{
+                          __html: t(
+                            "A captain&apos;s tenth completed voyage hands them this phrase, and the guide keeps a copy for whoever goes looking. Anyone who has it can open the table, and every seat at that table sails the voyage it opens.",
+                          ),
+                        }}
+                      />
                     </div>
                   )}
 
                   <div>
                     <WatersScale
-                      label="Waters"
+                      label={t("Waters")}
                       options={DIFFICULTY_ORDER.map((key) => ({
                         key,
                         icon: DIFFICULTIES[key].icon,
-                        badge: DIFFICULTIES[key].badge,
+                        badge: t(DIFFICULTIES[key].badge),
                         // The length the voyage will actually run, not the
                         // tier's alone: a sealed mode pins its own (see
                         // voyageRoundsFor in src/lib/game/mode), and the
@@ -1115,7 +1187,7 @@ export function Lobby({
                       onChange={setDifficulty}
                     />
                     <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
-                      {DIFFICULTIES[difficulty].tagline}
+                      {t(DIFFICULTIES[difficulty].tagline)}
                     </p>
                     {/* Difficulty Advisor */}
                     <DifficultyAdvisor
@@ -1162,7 +1234,7 @@ export function Lobby({
       <CheckInDialog
         open={checkInOpen}
         onOpenChange={setCheckInOpen}
-        checkIn={checkIn}
+        checkIn={checkInToday}
         claiming={claiming}
         onClaim={claimCheckIn}
       />
@@ -1192,7 +1264,7 @@ export function Lobby({
       <HowToPlayModal
         open={howToPlayOpen}
         onOpenChange={setHowToPlayOpen}
-        mode={mode}
+        mode={browsedMode}
       />
       <SettingsModal
         open={settingsOpen}
@@ -1203,6 +1275,8 @@ export function Lobby({
         onToggleColorblind={() => setColorblindSafe(!colorblindSafe)}
         volume={soundVolume}
         onVolumeChange={setSoundVolume}
+        locale={locale}
+        onSetLocale={setLanguage}
       />
       <LeaderboardModal
         open={leaderboardOpen}

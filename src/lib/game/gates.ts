@@ -47,6 +47,12 @@ import {
   type GateId,
   type ReadingVerdict,
 } from "./dashboard";
+// The verdict is composed here for two surfaces, the page and the command
+// line report, and every sentence of it is read at the moment it is built:
+// the strip a captain on balance duty reads is drawn from these strings
+// rather than from a copy taken when the process started. The list joiner
+// rides beside the reader for the tally and the gate name lists.
+import { listJoiner, t } from "./i18n";
 
 // The plan's floor for the run: three hundred recorded voyages, which is
 // also the size of the window the operator surfaces read (see
@@ -180,16 +186,27 @@ export function readLaunchVerdict(reading: DashboardReading): LaunchVerdict {
   // run and a quiet one. The contradiction bucket is named only when it
   // has anything in it, since it can never have anything in it.
   const tally = [
-    `${gates.length - notInBand.length} of ${gates.length} gates inside ${
-      gates.length - notInBand.length === 1 ? "its band" : "their bands"
-    }`,
-    `${failing.length} out of band`,
-    `${unmeasured.length} with no source`,
-    `${unplayed.length} with no voyage to read`,
+    t("{inBand} of {gates.length} gates inside {bandWord}", {
+      inBand: gates.length - notInBand.length,
+      "gates.length": gates.length,
+      bandWord:
+        gates.length - notInBand.length === 1 ? "its band" : "their bands",
+    }),
+    t("{failing.length} out of band", { "failing.length": failing.length }),
+    t("{unmeasured.length} with no source", {
+      "unmeasured.length": unmeasured.length,
+    }),
+    t("{unplayed.length} with no voyage to read", {
+      "unplayed.length": unplayed.length,
+    }),
     ...(ungated.length > 0
-      ? [`${ungated.length} answering a reading with no threshold`]
+      ? [
+          t("{ungated.length} answering a reading with no threshold", {
+            "ungated.length": ungated.length,
+          }),
+        ]
       : []),
-  ].join(", ");
+  ].join(listJoiner());
 
   return {
     state,
@@ -324,66 +341,137 @@ function reasonsFor(input: {
   return [
     {
       applies: voyages < LAUNCH_MINIMUM_VOYAGES,
-      short: `the run stands at ${voyages} of ${LAUNCH_MINIMUM_VOYAGES} recorded voyages`,
-      gap: `The run stands at ${voyages} of ${LAUNCH_MINIMUM_VOYAGES} recorded voyages, and a gate read over fewer than ${LAUNCH_MINIMUM_VOYAGES} is a reading rather than evidence.`,
+      short: t(
+        "the run stands at {voyages} of {LAUNCH_MINIMUM_VOYAGES} recorded voyages",
+        {
+          voyages,
+          LAUNCH_MINIMUM_VOYAGES,
+        },
+      ),
+      gap: t(
+        "The run stands at {voyages} of {LAUNCH_MINIMUM_VOYAGES} recorded voyages, and a gate read over fewer than {LAUNCH_MINIMUM_VOYAGES} is a reading rather than evidence.",
+        { voyages, LAUNCH_MINIMUM_VOYAGES },
+      ),
     },
     {
       // A window recorded at a sample rate below one is a sample of the
       // run rather than the run, and the plan's floor is about voyages
       // that happened rather than voyages that were kept.
       applies: sampleRate < 1,
-      short: `the window was recorded at a sample rate of ${samplePercent}%, so it is a sample of the run rather than the run`,
-      gap: `The window was recorded at a sample rate of ${samplePercent}%, so these are readings of a sample of the run rather than of the run.`,
+      short: t(
+        "the window was recorded at a sample rate of {samplePercent}%, so it is a sample of the run rather than the run",
+        { samplePercent },
+      ),
+      gap: t(
+        "The window was recorded at a sample rate of {samplePercent}%, so these are readings of a sample of the run rather than of the run.",
+        { samplePercent },
+      ),
     },
     {
       applies: unmeasured.length > 0,
-      short: `${unmeasured.length} of the ${gates.length} gates ${
-        unmeasured.length === 1 ? "has" : "have"
-      } no source yet`,
-      gap: `${unmeasured.length} of the ${gates.length} gates ${
-        unmeasured.length === 1 ? "has" : "have"
-      } no source: ${names(unmeasured)}. ${
-        unmeasured.length === 1 ? "It waits" : "They wait"
-      } on the systems that would produce them, and the plan does not ship a mode on the gates that happen to be measurable.`,
+      short: t(
+        "{unmeasured.length} of the {gates.length} gates {haveWord} no source yet",
+        {
+          "unmeasured.length": unmeasured.length,
+          "gates.length": gates.length,
+          haveWord: unmeasured.length === 1 ? "has" : "have",
+        },
+      ),
+      gap: t(
+        "{unmeasured.length} of the {gates.length} gates {haveWord} no source: {gateNames}. {waitWord} on the systems that would produce them, and the plan does not ship a mode on the gates that happen to be measurable.",
+        {
+          "unmeasured.length": unmeasured.length,
+          "gates.length": gates.length,
+          haveWord: unmeasured.length === 1 ? "has" : "have",
+          gateNames: names(unmeasured),
+          waitWord: unmeasured.length === 1 ? "It waits" : "They wait",
+        },
+      ),
     },
     {
       applies: unplayed.length > 0,
-      short: `${unplayed.length} of the ${gates.length} gates ${
-        unplayed.length === 1 ? "has" : "have"
-      } no voyage to read`,
-      gap: `${unplayed.length} of the ${gates.length} gates ${
-        unplayed.length === 1 ? "has" : "have"
-      } no voyage to read: ${names(unplayed)}.`,
+      short: t(
+        "{unplayed.length} of the {gates.length} gates {haveWord} no voyage to read",
+        {
+          "unplayed.length": unplayed.length,
+          "gates.length": gates.length,
+          haveWord: unplayed.length === 1 ? "has" : "have",
+        },
+      ),
+      gap: t(
+        "{unplayed.length} of the {gates.length} gates {haveWord} no voyage to read: {gateNames}.",
+        {
+          "unplayed.length": unplayed.length,
+          "gates.length": gates.length,
+          haveWord: unplayed.length === 1 ? "has" : "have",
+          gateNames: names(unplayed),
+        },
+      ),
     },
     {
       applies: unreadable > 0,
-      short: `the window holds ${unreadable} ${unreadable === 1 ? "record" : "records"} that could not be read`,
-      gap: `The window holds ${unreadable} ${
-        unreadable === 1 ? "record" : "records"
-      } that could not be read, so it is that much smaller than the run it was taken from.`,
+      short: t(
+        "the window holds {unreadable} {recordWord} that could not be read",
+        {
+          unreadable,
+          recordWord: unreadable === 1 ? "record" : "records",
+        },
+      ),
+      gap: t(
+        "The window holds {unreadable} {recordWord} that could not be read, so it is that much smaller than the run it was taken from.",
+        {
+          unreadable,
+          recordWord: unreadable === 1 ? "record" : "records",
+        },
+      ),
     },
     {
       applies: truncated > 0,
-      short: `the window holds ${truncated} ${
-        truncated === 1 ? "record" : "records"
-      } that hit the event cap`,
-      gap: `The window holds ${truncated} ${
-        truncated === 1 ? "record" : "records"
-      } that hit the event cap, so some of what happened in those voyages was never kept and the gates read over them are floors rather than readings.`,
+      short: t(
+        "the window holds {truncated} {recordWord} that hit the event cap",
+        {
+          truncated,
+          recordWord: truncated === 1 ? "record" : "records",
+        },
+      ),
+      gap: t(
+        "The window holds {truncated} {recordWord} that hit the event cap, so some of what happened in those voyages was never kept and the gates read over them are floors rather than readings.",
+        {
+          truncated,
+          recordWord: truncated === 1 ? "record" : "records",
+        },
+      ),
     },
     {
       applies: ungated.length > 0,
-      short: `${ungated.length} of the ${gates.length} gates answer a reading the plan set no threshold on`,
-      gap: `${ungated.length} of the ${gates.length} gates answer readings the plan set no threshold on: ${names(
-        ungated,
-      )}. That is a contradiction in the page rather than a reading, and it is named here rather than passed over.`,
+      short: t(
+        "{ungated.length} of the {gates.length} gates answer a reading the plan set no threshold on",
+        {
+          "ungated.length": ungated.length,
+          "gates.length": gates.length,
+        },
+      ),
+      gap: t(
+        "{ungated.length} of the {gates.length} gates answer readings the plan set no threshold on: {gateNames}. That is a contradiction in the page rather than a reading, and it is named here rather than passed over.",
+        {
+          "ungated.length": ungated.length,
+          "gates.length": gates.length,
+          gateNames: names(ungated),
+        },
+      ),
     },
     {
       applies: failing.length > 0,
       short: null,
-      gap: `${failing.length} ${failing.length === 1 ? "gate sits" : "gates sit"} outside ${
-        failing.length === 1 ? "its" : "their"
-      } band: ${lines(failing)}.`,
+      gap: t(
+        "{failing.length} {sitsWord} outside {theirWord} band: {gateLines}.",
+        {
+          "failing.length": failing.length,
+          sitsWord: failing.length === 1 ? "gate sits" : "gates sit",
+          theirWord: failing.length === 1 ? "its" : "their",
+          gateLines: lines(failing),
+        },
+      ),
     },
   ];
 }
@@ -404,17 +492,27 @@ function answerFor(input: {
   const { state, reasons, failing, untradeable, voyages, total } = input;
 
   if (state === "clear") {
-    return `Clear to ship: all ${total} gates sit inside their bands over ${voyages} recorded voyages.`;
+    return t(
+      "Clear to ship: all {total} gates sit inside their bands over {voyages} recorded voyages.",
+      { total, voyages },
+    );
   }
 
   if (state === "held") {
-    const head = `Held by ${failing.length} of ${total} gates: ${lines(failing)}.`;
+    const head = t("Held by {failing.length} of {total} gates: {gateLines}.", {
+      "failing.length": failing.length,
+      total,
+      gateLines: lines(failing),
+    });
     // The priority rule is said only when the priority gate is one of the
     // gates holding the mode, which is the state the plan's tie break was
     // written for: there is a conflict, and one side of it is untouchable.
     return untradeable === null
       ? head
-      : `${head} ${untradeable.line.label} is the plan's own priority and cannot be traded against the others.`;
+      : t(
+          "{head} {untradeable.line.label} is the plan's own priority and cannot be traded against the others.",
+          { head, "untradeable.line.label": untradeable.line.label },
+        );
   }
 
   const first = reasons.find(
@@ -423,23 +521,27 @@ function answerFor(input: {
   // The fallback is unreachable while the reasons cover the verdicts the
   // gates can carry, and it is written as a withheld verdict rather than
   // an empty sentence in case they stop covering them.
-  return first === undefined
-    ? "No verdict yet: the reading leaves gates to read."
-    : `No verdict yet: ${first.short}.`;
+  if (first === undefined || first.short === null) {
+    return t("No verdict yet: the reading leaves gates to read.");
+  }
+  return t("No verdict yet: {first.short}.", { "first.short": first.short });
 }
 
-// The gates as a reader-facing list, used by the answer and the gaps: each
+// The gates as a list meant to be read, used by the answer and the gaps: each
 // gate as its label and its reading, which is what an operator has to look
 // up rather than a slug.
 function lines(gates: readonly LaunchGate[]): string {
   return gates
-    .map(
-      (gate) =>
-        `${gate.line.label}, ${gate.line.value} against ${gate.line.target}`,
+    .map((gate) =>
+      t("{gate.line.label}, {gate.line.value} against {gate.line.target}", {
+        "gate.line.label": gate.line.label,
+        "gate.line.value": gate.line.value,
+        "gate.line.target": gate.line.target,
+      }),
     )
     .join("; ");
 }
 
 function names(gates: readonly LaunchGate[]): string {
-  return gates.map((gate) => gate.line.label).join(", ");
+  return gates.map((gate) => gate.line.label).join(listJoiner());
 }

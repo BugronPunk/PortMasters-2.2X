@@ -2,17 +2,20 @@
 // Room join and leave: taking a seat at a table, and giving it up.
 // =====================================================================
 
-import { type ObjectiveProgress } from "@/types/realtime/objectives";
+import { type ObjectiveProgressPayload } from "@/types/realtime/objectives";
 import type { Server, Socket } from "socket.io";
 
 import { db } from "@/lib/db";
 import { normalizeMode } from "@/lib/game/mode";
+import { NOT_A_ROOM_MEMBER } from "@/lib/game/constants/copy";
+import { tFor } from "@/lib/game/i18n";
 import { aidList, removeUserAidRequest } from "../aid";
 import { auditRevealFor } from "../audit";
 import { requireAuth } from "../auth";
 import { boonLedgerFor } from "../boon-ledger";
 import { barterPayloadFor, removeUserBarterOffers } from "../barter";
 import { bazaarPayloadFor } from "../bazaar";
+import { roomChannel } from "../channel";
 import { directLogFor, emitRoomMembers, harborLog } from "../chat";
 import { getCheckpoint, readyStatePayload } from "../checkpoint";
 import { escortContracts } from "../contracts";
@@ -24,7 +27,7 @@ import {
   objectiveTotalFor,
   roomObjectiveTallies,
 } from "../objective";
-import { broadcastPresence, cancelDeparture } from "../presence";
+import { broadcastPresence, cancelDeparture, sockets } from "../presence";
 import { refitContracts } from "../refits";
 import { moduleTrades } from "../module-trades";
 import { revealFor } from "../reveal";
@@ -57,7 +60,7 @@ export function wireRoomJoin(
     if (!member) {
       socket.emit("room:error", {
         roomId,
-        error: "Not a member of that room",
+        error: tFor(s.locale, NOT_A_ROOM_MEMBER),
       });
       return;
     }
@@ -65,7 +68,7 @@ export function wireRoomJoin(
     // Leave previous room channel if any.
     if (s.roomId) {
       const previousRoomId = s.roomId;
-      socket.leave(`room:${previousRoomId}`);
+      socket.leave(roomChannel(previousRoomId));
       s.roomId = null;
       s.mode = null;
       // Unconditional, the same rule room:leave applies below and the
@@ -85,10 +88,21 @@ export function wireRoomJoin(
       // longer be told about, which credits the taker and never credits
       // them.
       removeUserBarterOffers(io, previousRoomId, s.userId);
-      io.to(`room:${previousRoomId}`).emit("room:system", {
-        roomId: previousRoomId,
-        content: `${s.user.displayName} set sail for another port`,
-      });
+      // The notice is read by the whole room, so it goes to every socket
+      // still in the old harbor, each in its captain's own language. The
+      // departing socket is already out of that room (roomId was cleared
+      // above), so the walk leaves it out.
+      for (const [socketId, state] of sockets) {
+        if (state.roomId !== previousRoomId) continue;
+        io.to(socketId).emit("room:system", {
+          roomId: previousRoomId,
+          content: tFor(
+            state.locale,
+            "{s.user.displayName} set sail for another port",
+            { "s.user.displayName": s.user.displayName },
+          ),
+        });
+      }
       void emitRoomMembers(io, previousRoomId);
     }
 
@@ -100,12 +114,23 @@ export function wireRoomJoin(
     // room's mode is read everywhere else: a room row written before modes
     // existed answers the founding mode.
     s.mode = normalizeMode(member.room.mode);
-    socket.join(`room:${roomId}`);
+    socket.join(roomChannel(roomId));
     if (!wasReconnecting) {
-      io.to(`room:${roomId}`).emit("room:system", {
-        roomId,
-        content: `${s.user.displayName} entered the harbor`,
-      });
+      // The room-wide rule again: every socket in the harbor reads the
+      // entry line in its own language, the joining socket included.
+      for (const [socketId, state] of sockets) {
+        if (state.roomId !== roomId) continue;
+        io.to(socketId).emit("room:system", {
+          roomId,
+          content: tFor(
+            state.locale,
+            "{s.user.displayName} entered the harbor",
+            {
+              "s.user.displayName": s.user.displayName,
+            },
+          ),
+        });
+      }
     }
     void emitRoomMembers(io, roomId);
     // Hydrate the joiner with everyone's last known game status, the
@@ -197,7 +222,7 @@ export function wireRoomJoin(
     if (roomObjectiveTallies.has(roomId)) {
       const objective = await objectiveForRoom(roomId);
       if (objective) {
-        const board: ObjectiveProgress = {
+        const board: ObjectiveProgressPayload = {
           roomId,
           total: objectiveTotalFor(roomId, objective),
         };
@@ -213,7 +238,7 @@ export function wireRoomJoin(
     // hand over: a harbor that has not audited anyone costs no frame.
     const audit = auditRevealFor(roomId);
     if (audit) io.to(socket.id).emit("audit:reveal", audit);
-    // [F5: public offers] The fleet's ledger rides the same hand-out and
+    // [F5: public offers] The fleet's ledger rides the same handoff and
     // is public for the plainer reason: the plan's own sentence, every
     // offer is public. A captain who reloads into the middle of a draft
     // has to see what the table has already kept, or the argument the
@@ -249,7 +274,7 @@ export function wireRoomJoin(
     if (!s) return;
     const roomId = payload?.roomId ?? s.roomId;
     if (!roomId) return;
-    socket.leave(`room:${roomId}`);
+    socket.leave(roomChannel(roomId));
     if (s.roomId === roomId) s.roomId = null;
     forgetStatus(roomId, s.userId);
     removeUserBarterOffers(io, roomId, s.userId);
@@ -269,10 +294,20 @@ export function wireRoomJoin(
     // it has already recorded, so the reap below cannot print this
     // twice.
     noteVoyageLogDeparture(io, roomId, s.userId, s.user.displayName);
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content: `${s.user.displayName} left the harbor`,
-    });
+    // The notice is read by the whole room, so it goes to every socket
+    // still in the harbor, each in its captain's own language: the same
+    // walk the set-sail notice above takes, and the departing socket is
+    // already out of the room (roomId was cleared above), so the walk
+    // leaves it out the way the old broadcast did.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(state.locale, "{s.user.displayName} left the harbor", {
+          "s.user.displayName": s.user.displayName,
+        }),
+      });
+    }
     void emitRoomMembers(io, roomId);
     void tearDownIfRoomGone(roomId);
     broadcastPresence(io);

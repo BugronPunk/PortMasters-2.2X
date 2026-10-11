@@ -14,7 +14,12 @@
 // own check is a convenience that keeps a captain from being shown a
 // dashboard, and this is the lock.
 import { NextResponse } from "next/server";
-import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
+import {
+  getCurrentUser,
+  requestLocale,
+  unauthorizedResponse,
+} from "@/lib/api-auth";
+import { tFor } from "@/lib/game/i18n";
 import { NOT_AN_ADMINISTRATOR } from "@/lib/game/constants/copy";
 import { readDashboard } from "@/lib/game/dashboard";
 import { readOperatorWindow } from "@/server/telemetry-window";
@@ -26,9 +31,18 @@ export async function GET() {
   // the shared constant rather than typed again, so the two surfaces cannot
   // describe one refusal two ways.
   if (me.role !== "admin") {
-    return NextResponse.json({ error: NOT_AN_ADMINISTRATOR }, { status: 403 });
+    const locale = await requestLocale();
+    return NextResponse.json(
+      { error: tFor(locale, NOT_AN_ADMINISTRATOR) },
+      { status: 403 },
+    );
   }
 
   const input = await readOperatorWindow();
-  return NextResponse.json({ reading: readDashboard(input) });
+  // The reading composes in the reader's own language: this route serves a
+  // captain's browser, so it hands readDashboard the request's locale rather
+  // than letting the process reader answer in English (the CLI report and
+  // the oracle call it without one and keep the process reader).
+  const locale = await requestLocale();
+  return NextResponse.json({ reading: readDashboard(input, locale) });
 }

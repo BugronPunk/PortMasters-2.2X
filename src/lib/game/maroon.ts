@@ -31,6 +31,7 @@
 // =====================================================================
 
 import { carriedTarget } from "./audit";
+import { t } from "@/lib/game/i18n";
 
 // The share of their Gold a marooned captain keeps. The rest goes to the
 // harbor with the ship, which is the price of the vote being real: a
@@ -43,6 +44,15 @@ export const MAROON_SHARE = 0.5;
 // rounding error, which is the same band the mode's other multipliers
 // work in (see the Harbor Pulse's own per good nudge).
 export const PORT_SHIFT_FRACTION = 0.1;
+
+// The same tenth as the whole number every line of copy prints, derived
+// rather than written beside the fraction so the figure a captain reads
+// and the figure the engine leans prices by cannot drift apart. The
+// rounding is what makes the derived value whole: a tenth of a hundred is
+// not arithmetically a whole number in this language, and
+// "10.000000000000002 percent" is a number no captain should ever be
+// shown.
+export const PORT_SHIFT_PERCENT = Math.round(PORT_SHIFT_FRACTION * 100);
 
 // The share of the roster a maroon vote carries, in the words the vote
 // card and the Harbormaster's hand state it in. It lives here, beside the
@@ -175,12 +185,19 @@ export function portShiftMultiplier(
  * landed yet, and a call made last leg is the one the market on screen was
  * priced against.
  *
- * The percent is rounded because a tenth of a hundred is not
- * arithmetically a whole number in this language, and "10.000000000000002
- * percent" is a clause no captain should ever be shown.
+ * The percent is read from PORT_SHIFT_PERCENT above, which is where its
+ * rounding is accounted for.
  */
 export function portShiftLine(shift: PortShift): string {
-  const percent = Math.round(PORT_SHIFT_FRACTION * 100);
-  const way = shift.direction > 0 ? "higher" : "lower";
-  return `${shift.port}: every price ${percent} percent ${way}`;
+  const percent = PORT_SHIFT_PERCENT;
+  // The way the price moves is the engine's direction, spelled as the two
+  // words the row names; each word carries its own row and is read here.
+  const way = t(shift.direction > 0 ? "higher" : "lower");
+  return t("{shift.port}: every price {percent} percent {way}", {
+    // The port has a row of its own (port.*), read here so the clause
+    // arrives whole.
+    "shift.port": t(shift.port),
+    percent,
+    way,
+  });
 }

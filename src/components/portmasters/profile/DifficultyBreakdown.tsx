@@ -1,8 +1,12 @@
 "use client";
 
 import type { CaptainLegacySummary } from "@/lib/game/legacy";
+import { t } from "@/lib/game/i18n";
 import { SectionHeading } from "./SectionHeading";
 
+// The tier names stay English here; each is read through the pack where the
+// tile prints it. The map parameter is named tier rather than t so the
+// reader stays reachable inside it.
 const TIERS = [
   { id: "fair_winds", name: "Fair Winds", icon: "🌤️" },
   { id: "open_waters", name: "Open Waters", icon: "🌊" },
@@ -16,9 +20,9 @@ export function DifficultyBreakdown({
 }) {
   return (
     <div>
-      <SectionHeading>By Difficulty</SectionHeading>
+      <SectionHeading>{t("By Difficulty")}</SectionHeading>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {TIERS.map((t) => {
+        {TIERS.map((tier) => {
           const s = (
             statsByDifficulty as
               | Record<
@@ -26,20 +30,23 @@ export function DifficultyBreakdown({
                   { crowns: number; bestScore: number } | undefined
                 >
               | undefined
-          )?.[t.id];
+          )?.[tier.id];
           return (
-            <div key={t.id} className="pm-glass pm-ink-hover rounded-2xl p-4">
+            <div
+              key={tier.id}
+              className="pm-glass pm-ink-hover rounded-2xl p-4"
+            >
               <div className="mb-2 flex items-center gap-2">
-                <span className="text-xl">{t.icon}</span>
-                <span className="text-sm font-medium">{t.name}</span>
+                <span className="text-xl">{tier.icon}</span>
+                <span className="text-sm font-medium">{t(tier.name)}</span>
               </div>
               <div className="space-y-1 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Crowns</span>
+                  <span className="text-muted-foreground">{t("Crowns")}</span>
                   <span className="font-semibold">{s?.crowns ?? 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Best Rep</span>
+                  <span className="text-muted-foreground">{t("Best Rep")}</span>
                   <span className="font-semibold">{s?.bestScore ?? 0}</span>
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import { lapPhases } from "@/lib/game/checkpoint";
 import { guideText, tutorialSteps } from "@/lib/game/constants/copy";
 import { tipsText } from "@/lib/game/constants/tips";
+import { tFor } from "@/lib/game/i18n";
 import type { GameMode } from "@/lib/game/mode";
 import { MODES, MODE_ORDER } from "@/lib/game/mode";
 import { isLegPhase, phaseFace } from "@/lib/game/phases";
@@ -150,6 +151,27 @@ export async function voyageBriefingsSuite(): Promise<void> {
       `every surface that teaches the ${play.badge} voyage prints the words the record states, so the tutorial, the guide and the advice cannot teach three versions of one rule`,
     );
   }
+  // The other half of that reading: the lines the surfaces print have to
+  // answer in the captain's language as well as print the record's words.
+  // The lines are data rather than literals, so nothing in the source
+  // spells them and the walk that holds every call site literal to the
+  // pack cannot see them; the readers fail open on purpose, which is the
+  // right behavior at runtime and the wrong thing to trust here, so an
+  // untranslated line would print its English on a Mandarin screen with
+  // nothing to say so. Each one is read the way a Mandarin screen reads
+  // it, through the readers themselves, and has to come back in Mandarin
+  // rather than as the English it was written in.
+  const CJK = /[㐀-䶿一-鿿豈-﫿]/;
+  const untranslated = MODE_ORDER.flatMap((mode) =>
+    MODES[mode].differences.filter((line) => {
+      const zh = tFor("zh", line);
+      return zh === line || !CJK.test(zh);
+    }),
+  );
+  check(
+    untranslated.length === 0,
+    "and every line a mode lists as a difference resolves in the language pack, read through the same readers the screens use while the language is Mandarin, so a difference authored onto a mode without its row is caught here rather than shown to the captain who reads the other column",
+  );
   for (const tier of ["fair_winds", "open_waters", "monsoon"] as const) {
     check(
       guideText("classic", tier) !== guideText("ocean_gambit", tier) &&

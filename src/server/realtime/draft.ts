@@ -69,11 +69,20 @@ import {
 } from "@/lib/game/draft";
 import { createRng } from "@/lib/game/rng";
 import { pathDraftOn } from "@/lib/game/flags";
+import { DEFAULT_LOCALE, tFor, type Locale } from "@/lib/game/i18n";
 import type { PathId } from "@/lib/game/paths";
-import { announceDraftComplete } from "./checkpoint";
+import { roomChannel } from "./channel";
+import { announceDraftComplete, disarmTimer } from "./checkpoint";
 import { emitToUser, userSockets } from "./presence";
 import { noteTelemetry } from "./telemetry";
 import { noteVoyageLog } from "./voyage-log";
+
+// The one sentence a pick off the board is refused with, said once because
+// the guard below answers it from two checks (the shape of the index and
+// the card it names), and the captain only ever reads whichever fired
+// first. The constant keeps its English, and the read below is what
+// translates it.
+const PICK_OFF_BOARD = "That is not one of the cards in front of you.";
 
 // One captain's seat in a live draft. The kept cards are the ones this
 // captain has already taken from the beats that are behind them, in the
@@ -130,11 +139,7 @@ const drafts = new Map<string, Draft>();
 const draftWatches = new Map<string, NodeJS.Timeout>();
 
 function disarmDraftWatch(roomId: string): void {
-  const timer = draftWatches.get(roomId);
-  if (timer !== undefined) {
-    clearTimeout(timer);
-    draftWatches.delete(roomId);
-  }
+  disarmTimer(draftWatches, roomId);
 }
 
 // Whether this seat's last socket is gone. The one reading of presence
@@ -178,7 +183,7 @@ function armDraftWatch(io: Server, roomId: string): void {
 // through: a laid card closes the step when it is the last one out, turns
 // the step over, and settles the draft when the turn was the last, so the
 // fire has no rules of its own to keep in step with the pick's. The loop
-// re-reads the step after every card because one fire can carry a table
+// reads the step again after every card because one fire can carry a table
 // through all three steps when everyone but a present handful is gone,
 // and it stops when there is no seat left to lay for. The bound is the
 // whole draft's worth of cards: three steps of one card a seat, which no
@@ -200,11 +205,15 @@ function fireDraftWatch(io: Server, roomId: string): void {
       draft.seats[seat].userId,
       DRAFT_AUTO_PICK,
       draft.step,
+      // The seat this lays for holds no socket, so no refusal this call
+      // could hand back has a reader; the shipped language stands in for
+      // the one nobody is here to name.
+      DEFAULT_LOCALE,
     );
     if (!drafts.has(roomId)) return;
   }
   // Unreachable while a draft is three steps of one card a seat, and the
-  // re-arm is here for the day that stops being true: a seat still gone
+  // arm below is here for the day that stops being true: a seat still gone
   // with its card still in front of it gets another window rather than
   // being dropped.
   armDraftWatch(io, roomId);
@@ -214,11 +223,11 @@ function fireDraftWatch(io: Server, roomId: string): void {
  * A draft seat's last socket has dropped: the room gives it a window to
  * come back, and the absence watch is that window.
  *
- * Called by the disconnect frame for every room-departing captain, which
+ * Called by the disconnect frame for every captain leaving the room, which
  * is why the test is written the way it is: most disconnects have nothing
  * to do with a draft, so the seat is looked up first and a captain who is
  * not in one (or has already laid their card for this step, or whose
- * draft has settled) arms nothing. The watch is fresh-sighted about
+ * draft has settled) arms nothing. The watch takes a fresh look at
  * presence rather than trusting this call, so a reconnect inside the
  * window needs no cancellation frame of its own: the fire simply finds
  * the socket alive and leaves the seat alone.
@@ -269,7 +278,7 @@ const pathsByRoom = new Map<string, Map<string, PathId>>();
  *
  * Dealt against the roster the departure pinned and nothing else, for the
  * reason the fleet's own size is pinned there (see voyageSeats in the
- * caller): membership can change mid voyage and a deck cannot be re dealt
+ * caller): membership can change mid voyage and a deck cannot be redealt
  * around it. A captain who joins a voyage already under way is therefore
  * not in this draft and sails pathless, which is the same reading the
  * harbor gives every pathbound card to a captain holding no path, and the
@@ -413,6 +422,10 @@ export function draftViewFor(roomId: string, userId: string): DraftView | null {
  * was answering (see keep in @/lib/use-path-draft), and the room's own
  * absence watch lays through this same door naming the step it is laying
  * for (see fireDraftWatch), so there is no pick anywhere without its step.
+ *
+ * The refused sentences are composed in the locale the caller names,
+ * which is the language of the captain whose press was refused: the
+ * caller passes the sender's own.
  */
 export function takeDraftPick(
   io: Server,
@@ -420,25 +433,26 @@ export function takeDraftPick(
   userId: string,
   pick: unknown,
   step: unknown,
+  locale: Locale,
 ): string | null {
   const draft = drafts.get(roomId);
-  if (!draft) return "The draft is not running.";
+  if (!draft) return tFor(locale, "The draft is not running.");
   const seat = draft.seats.findIndex((held) => held.userId === userId);
-  if (seat < 0) return "You are not in this draft.";
+  if (seat < 0) return tFor(locale, "You are not in this draft.");
   if (step !== draft.step) {
-    return "The table has moved past that step.";
+    return tFor(locale, "The table has moved past that step.");
   }
   if (draft.picks[seat] !== null) {
-    return "Your card is already laid down.";
+    return tFor(locale, "Your card is already laid down.");
   }
   // The type guard is the caller's rather than keepFrom's, and it is what
   // lets the index be stored as the number it was checked to be; keepFrom
   // repeats the check so the rule itself stays total for any caller.
   if (typeof pick !== "number" || !Number.isInteger(pick)) {
-    return "That is not one of the cards in front of you.";
+    return tFor(locale, PICK_OFF_BOARD);
   }
   if (keepFrom(draft.hands[seat], pick) === null) {
-    return "That is not one of the cards in front of you.";
+    return tFor(locale, PICK_OFF_BOARD);
   }
   draft.picks[seat] = pick;
   // A step closes when the last captain has answered, and that is the only
@@ -533,7 +547,7 @@ function advanceDraft(io: Server, draft: Draft): void {
 // The save is the last thing written and this module does not write it.
 // What a captain sails on is applied by their own client when it reads the
 // settled view (see applyDraftPath), which is the line every
-// client-authoritative fact in this build draws, and the reason the draft
+// client authoritative fact in this build draws, and the reason the draft
 // can end on a server that has never read a save.
 function settleDraft(
   io: Server,
@@ -630,7 +644,7 @@ export function recordPathSwitch(
     name: row.name,
     path: row.path,
   };
-  io.to(`room:${roomId}`).emit("path:switched", published);
+  io.to(roomChannel(roomId)).emit("path:switched", published);
   noteVoyageLog(io, roomId, {
     kind: "path_switched",
     captain: row.name,

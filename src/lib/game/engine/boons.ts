@@ -22,6 +22,7 @@
 // (see ./constants/cards and ../cards), so this file holds the two drafts
 // and the flow between them and nothing about any particular card.
 // =====================================================================
+import { t } from "@/lib/game/i18n";
 import {
   cardById,
   cardLead,
@@ -87,8 +88,16 @@ function applyBoon(state: GameState, card: CardRecord, logs: string[]) {
   state.modifierFlags = { ...card.effect.flags, ...heldFlagsOf(state) };
   if (card.effect.flags.instant_gold) {
     state.money += card.effect.flags.instant_gold;
+    // The durable half of the grant: the flag above rides the round's own
+    // record and the round ends, while the receipt the Financial Summary
+    // prints at the voyage's end outlives every round it was taken in
+    // (see boonGoldEarned in ../types). Written at the same line as the
+    // credit, so the tally and the purse cannot disagree.
+    state.boonGoldEarned += card.effect.flags.instant_gold;
     logs.push(
-      `💰 Boon applied: Gained ${card.effect.flags.instant_gold} Gold!`,
+      t("💰 Boon applied: Gained {card.effect.flags.instant_gold} Gold!", {
+        "card.effect.flags.instant_gold": card.effect.flags.instant_gold,
+      }),
     );
   }
 }
@@ -98,14 +107,16 @@ export function upgradeShip(state: GameState, logs: string[]) {
   const cost =
     state.shipUpgradeCost[state.shipLevel] + state.shipUpgradePenalty;
   if (state.money < cost) {
-    logs.push(`❌ Need ${cost} Gold to upgrade the ship`);
+    logs.push(t("❌ Need {cost} Gold to upgrade the ship", { cost }));
     return;
   }
   state.money -= cost;
   state.shipLevel++;
   logs.push(
-    `🎉 Ship Upgraded to Level ${state.shipLevel}! +1 Module Slot, ` +
-      `+${SHIP_DISCOUNT_PER_LEVEL} Discount`,
+    t(
+      "🎉 Ship Upgraded to Level {state.shipLevel}! +1 Module Slot, +{SHIP_DISCOUNT_PER_LEVEL} Discount",
+      { "state.shipLevel": state.shipLevel, SHIP_DISCOUNT_PER_LEVEL },
+    ),
   );
 }
 
@@ -157,7 +168,7 @@ const OVERDRIVE_PENALTY = 10;
 // The tally rides here rather than at the park: the draft's swap flow parks
 // a choice in _newModule and a captain can still back out of it, so
 // counting at the park would count cards that were never taken. It runs for
-// the swap branch and the install branch both, so a swapped-in module joins
+// the swap branch and the install branch both, so a module swapped in joins
 // the hull the same as a fresh one, and a module the trade delivered is
 // counted the same way because its branch calls this function too.
 export function installModuleAccounting(
@@ -206,13 +217,18 @@ function equipModule(
     const old = state.equippedModules[swapIdx];
     unequipModuleAccounting(state, old);
     state.equippedModules[swapIdx] = mod;
-    logs.push(`🔄 Swapped ${cardName(old.id)} for ${cardName(mod.id)}!`);
+    logs.push(
+      t("🔄 Swapped {oldCardName} for {newCardName}!", {
+        oldCardName: cardName(old.id),
+        newCardName: cardName(mod.id),
+      }),
+    );
   } else {
     if (moduleSlotsOpen(state) > 0) {
       state.equippedModules.push(mod);
-      logs.push(`✅ Installed ${cardName(mod.id)}!`);
+      logs.push(t("✅ Installed {cardName}!", { cardName: cardName(mod.id) }));
     } else {
-      logs.push("❌ No empty slots! Must swap.");
+      logs.push(t("❌ No empty slots! Must swap."));
       return;
     }
   }
@@ -267,8 +283,8 @@ export function startBoonDrafting(state: GameState, logs: string[]) {
   // agreed stops carrying the last leg's keys in every save it writes.
   resetEscortLeg(state);
   resetConsentLedger(state);
-  logs.push("\n🧭=== The Navigator's Compass ===");
-  logs.push("Choose a Boon to bend the rules of the upcoming voyage...");
+  logs.push(t("\n🧭=== The Navigator's Compass ==="));
+  logs.push(t("Choose a Boon to bend the rules of the upcoming voyage..."));
 }
 
 // Rerolls the current boon pool for BOON_SWAP_COST, once per round. The
@@ -279,17 +295,23 @@ export function startBoonDrafting(state: GameState, logs: string[]) {
 // equippable slots rather than a gold sink.
 export function swapBoonChoices(state: GameState, logs: string[]) {
   if (state.boonSwapUsed) {
-    logs.push("❌ You've already swapped your boon choices this round");
+    logs.push(t("❌ You've already swapped your boon choices this round"));
     return;
   }
   if (state.money < BOON_SWAP_COST) {
-    logs.push(`❌ Need ${BOON_SWAP_COST} Gold to swap boon choices`);
+    logs.push(
+      t("❌ Need {BOON_SWAP_COST} Gold to swap boon choices", {
+        BOON_SWAP_COST,
+      }),
+    );
     return;
   }
   state.money -= BOON_SWAP_COST;
   state.boonChoices = draftBoons(state);
   state.boonSwapUsed = true;
-  logs.push(`🔄 Swapped Boon Choices for ${BOON_SWAP_COST} Gold`);
+  logs.push(
+    t("🔄 Swapped Boon Choices for {BOON_SWAP_COST} Gold", { BOON_SWAP_COST }),
+  );
 }
 
 // Applies a boon. Returns whether one was actually applied, which is the
@@ -299,10 +321,9 @@ export function swapBoonChoices(state: GameState, logs: string[]) {
 // It used to end by starting the market phase by name, which both pinned the
 // draft to one voyage's leg and made the choice and the advance impossible
 // to separate.
-// The advance belongs to lockInBoon in ./lifecycle now, which is the one place
-// allowed to name where a phase leads. The GameContext it used to take went
-// with that call, since opening a phase is the only thing here that ever
-// needed one.
+// The advance belongs to lockInBoon in ./lifecycle, which is the one place
+// allowed to name where a phase leads. Opening a phase is the only thing
+// here that ever needed a GameContext, and the advance carries it.
 export function selectBoon(
   state: GameState,
   boonId: string,
@@ -310,7 +331,9 @@ export function selectBoon(
 ): boolean {
   const card = cardById(boonId);
   if (!card || card.kind !== "boon") return false;
-  logs.push(`🧭 Boon Locked In: ${cardLead(card.id)}`);
+  logs.push(
+    t("🧭 Boon Locked In: {boonLead}", { boonLead: cardLead(card.id) }),
+  );
   noteCardPick(state.cardTally, card);
   // [F5: public offers] The fleet's record of this pick, written from the
   // draft before it is dropped two lines down: the cleared list is the one
@@ -342,9 +365,9 @@ export function selectBoon(
 // taken: a card that only the cap refuses is a card this yard does not
 // offer, which is what keeps the screen whole without a blocked row on
 // it. Unlike the two moments' tables, this draw is stored rather than
-// re-derived (see startModuleDrafting), so filtering inside it cannot
+// derived again (see startModuleDrafting), so filtering inside it cannot
 // reshape a trio under a captain's eyes: the hull cannot change between
-// the roll and the pick except by a budget-guarded swap below, which
+// the roll and the pick except by a swap the budget guards below, which
 // never raises the held power.
 function rollModuleChoices(state: GameState): CardRecord[] {
   const pool = offerPool("module", state).filter(([card]) =>
@@ -367,7 +390,7 @@ function rollModuleChoices(state: GameState): CardRecord[] {
 // A reroll is a swap, so what it deals is what the round has not already
 // shown. Reading the candidates as the fitting pool less what the hull
 // already carries would give a full hull in a six module mode exactly
-// three cards and one possible draw: the swap would re-serve the batch it
+// three cards and one possible draw: the swap would serve the batch it
 // was pressed to replace, and the screen would promise a fresh batch while
 // the same three cards stayed on it. So the unheld cards the table does
 // not hold come first, drawn at the pool's own weights; where those
@@ -502,7 +525,10 @@ function powerRefusal(
   displaced: CardRecord | null,
 ): string {
   const total = powerAfterTaking(state, card, displaced);
-  return `❌ ${cardName(card.id)} would put your hull at ${total} power, and a hull carries at most ${HELD_POWER_CAP}.`;
+  return t(
+    "❌ {moduleName} would put your hull at {total} power, and a hull carries at most {HELD_POWER_CAP}.",
+    { moduleName: cardName(card.id), total, HELD_POWER_CAP },
+  );
 }
 
 /**
@@ -565,23 +591,25 @@ export function startModuleDrafting(state: GameState) {
 // its swap on.
 export function swapModuleChoices(state: GameState, logs: string[]) {
   if (state.moduleSwapUsed) {
-    logs.push("❌ You've already swapped your module choices this round");
+    logs.push(t("❌ You've already swapped your module choices this round"));
     return;
   }
   if (!state._draftChoices?.length) {
-    logs.push("❌ Nothing to swap, draft your modules first");
+    logs.push(t("❌ Nothing to swap, draft your modules first"));
     return;
   }
   const { fresh, carried } = swapCandidates(state);
   if (fresh.length === 0) {
     logs.push(
-      "❌ The yard has nothing new to deal this hull: every module it could offer is either aboard or already on the table. Take one of these, sell one at the table, or come back next leg.",
+      t(
+        "❌ The yard has nothing new to deal this hull: every module it could offer is either aboard or already on the table. Take one of these, sell one at the table, or come back next leg.",
+      ),
     );
     return;
   }
   state._draftChoices = rerollModuleChoices(state, fresh, carried);
   state.moduleSwapUsed = true;
-  logs.push("🔄 Swapped Module Choices for a fresh batch");
+  logs.push(t("🔄 Swapped Module Choices for a fresh batch"));
 }
 
 export function handleModuleSelect(
@@ -595,7 +623,7 @@ export function handleModuleSelect(
   // would pass the cap is refused with a sentence rather than installed,
   // and the phase is left where it stands so the captain can take
   // another seat or back out. The panel blocks these picks before the
-  // click, so this is the same defense in depth the no-empty-slots
+  // click, so this is the same defense in depth the full hull refusal
   // refusal below has always been.
   if (!moduleFitsHull(state, mod)) {
     logs.push(powerRefusal(state, mod, null));
@@ -645,11 +673,13 @@ export function finalizeModuleSwap(
   const displaced = state.equippedModules[slotIdx];
   if (!displaced) {
     logs.push(
-      "❌ That seat is no longer on your hull, so there is nothing there to replace. Back to Draft and take the card again: the yard fits it to the hull as it stands.",
+      t(
+        "❌ That seat is no longer on your hull, so there is nothing there to replace. Back to Draft and take the card again: the yard fits it to the hull as it stands.",
+      ),
     );
     return;
   }
-  // [F7: the power budget] The per-slot half of the yard's gate: the roll
+  // [F7: the power budget] The half of the yard's gate for one slot: the roll
   // only promised this card fits over SOME equipped module, and this is
   // the slot the captain chose, so the arithmetic runs against what that
   // slot frees. A refused row leaves the flow where it is (the picker
@@ -675,10 +705,10 @@ export function finalizeModuleSwap(
 // the half chosen swap target (`_newModule`).
 //
 // The round's table is kept, not cleared. The draw is stored rather than
-// re-derived precisely so that reopening the draft screen, including
+// derived again precisely so that reopening the draft screen, including
 // through this Back and then Draft again loop, reshows whatever the round
 // already has on offer (see startModuleDrafting above); clearing it here
-// would re-enable the unlimited free reroll that the once a round swap cap
+// would bring back the unlimited free reroll that the once a round swap cap
 // below exists to close, since startModuleDrafting rolls a fresh pool
 // whenever the table is empty. The half chosen swap target still goes,
 // because a captain who left the yard has not chosen anything, and the

@@ -1,9 +1,9 @@
 // =====================================================================
 // [F2: the card record, and the mode weighting field] The pool: every boon
 // and every module, written as one card record each (see ./cards for the
-// shape and the vocabulary). F1 put the tags here beside the id and the
-// prose because a card's tags are part of what the card is; F2 puts the
-// rest of the record here for the same reason, and the fields it adds are
+// shape and the vocabulary). The tags sit here beside the id and the
+// prose because a card's tags are part of what the card is, and the rest
+// of the record is here for the same reason; the fields it carries are
 // the ones that were previously nowhere or in the wrong place:
 //
 //   - The prose was a good's name in ten of these cards. Silk Winds named
@@ -86,7 +86,7 @@ export const BOONS_TIER0: CardRecord[] = [
         name: "Favorable Tides",
         desc: "Base freight is 4 Gold cheaper this round.",
       },
-      zh: { name: "顺流", desc: "本轮基础运费降低 4 金。" },
+      zh: { name: "顺风顺水", desc: "本轮基础运费降低4金币。" },
     },
   },
   {
@@ -110,7 +110,7 @@ export const BOONS_TIER0: CardRecord[] = [
         name: "Merchant's Charm",
         desc: "Port purchases cost 15% less this round.",
       },
-      zh: { name: "商人魅力", desc: "本轮港口采购降价 15%。" },
+      zh: { name: "商贾魅力", desc: "本轮港口采购降价 15%。" },
     },
   },
   {
@@ -134,7 +134,7 @@ export const BOONS_TIER0: CardRecord[] = [
         name: "Artisan's Inspiration",
         desc: "Every worker produces 1 extra item this round.",
       },
-      zh: { name: "匠人灵感", desc: "本轮所有工匠多产出 1 件。" },
+      zh: { name: "匠人灵感", desc: "本轮所有工匠多产出1件。" },
     },
   },
   {
@@ -154,8 +154,8 @@ export const BOONS_TIER0: CardRecord[] = [
         desc: `Gain ${EMERGENCY_LOAN_GOLD} Gold immediately. No strings attached.`,
       },
       zh: {
-        name: "应急借款",
-        desc: `立即获得 ${EMERGENCY_LOAN_GOLD} 金，无需偿还。`,
+        name: "紧急钱庄",
+        desc: `立即获得${EMERGENCY_LOAN_GOLD}金币，无需偿还。`,
       },
     },
   },
@@ -172,7 +172,7 @@ export const BOONS_TIER0: CardRecord[] = [
     modes: BOTH_MODES,
     strings: {
       en: { name: "Tax Shelter", desc: "Income tax is 5% this round." },
-      zh: { name: "避税账户", desc: "本轮所得税率降至 5%。" },
+      zh: { name: "免税令", desc: "本轮所得税率降至 5%。" },
     },
   },
   {
@@ -196,7 +196,7 @@ export const BOONS_TIER0: CardRecord[] = [
         name: "Bulk Monopoly",
         desc: "Bulk goods cost 2 Gold less per unit this round.",
       },
-      zh: { name: "大宗垄断", desc: "本轮大宗货物每单位便宜 2 金。" },
+      zh: { name: "大宗垄断", desc: "本轮散货每单位便宜2金币。" },
     },
   },
   {
@@ -215,7 +215,7 @@ export const BOONS_TIER0: CardRecord[] = [
         name: "Master's Apprentice",
         desc: "Hiring costs half this round.",
       },
-      zh: { name: "师徒相授", desc: "本轮雇佣工匠费用减半。" },
+      zh: { name: "学徒传承", desc: "本轮雇工费用减半。" },
     },
   },
 ];
@@ -236,7 +236,7 @@ export const BOONS_TIER1: CardRecord[] = [
     modes: BOTH_MODES,
     strings: {
       en: { name: "Farsight", desc: "One Broker's rumor is free this round." },
-      zh: { name: "远见", desc: "本轮免费获得一条中间人情报。" },
+      zh: { name: "远见", desc: "本轮免费获得一条掮客密语。" },
     },
   },
   {
@@ -291,7 +291,7 @@ export const BOONS_TIER1: CardRecord[] = [
         name: "Frontier Tariff Relief",
         desc: "VAT on finished goods is halved this round.",
       },
-      zh: { name: "边境减税", desc: "本轮成品增值税减半。" },
+      zh: { name: "关津减税", desc: "本轮成品增值税减半。" },
     },
   },
 ];
@@ -407,11 +407,11 @@ export const MILESTONE_BOONS: CardRecord[] = [
     strings: {
       en: {
         name: "Steady Watch",
-        desc: "The crew eats one fewer than their number each leg, for the voyage.",
+        desc: "The crew eats one fewer than their number each leg (never fewer than one), for the voyage.",
       },
       zh: {
         name: "守望",
-        desc: "本航程余下期间，船员每段航程少消耗一份口粮。",
+        desc: "本航程余下期间，船员每段少耗一份口粮（至少一份）。",
       },
     },
   },
@@ -433,7 +433,7 @@ export const MILESTONE_BOONS: CardRecord[] = [
       },
       zh: {
         name: "耐寒",
-        desc: "本航程余下期间，船员所穿御寒值提高 1。",
+        desc: "本航程余下期间，船员衣物的暖意多算 1 点。",
       },
     },
   },
@@ -454,8 +454,8 @@ export const MILESTONE_BOONS: CardRecord[] = [
         desc: "Orders that follow your path pay a quarter more, for the voyage.",
       },
       zh: {
-        name: "路线精通",
-        desc: "本航程余下期间，沿你路径的订单报酬增加四分之一。",
+        name: "商道精通",
+        desc: "本航程余下期间，沿你商道的订单，报酬多四分之一。",
       },
     },
   },
@@ -476,8 +476,8 @@ export const MILESTONE_BOONS: CardRecord[] = [
         desc: "Product sales dues are a quarter lower, for the voyage.",
       },
       zh: {
-        name: "港口信用",
-        desc: "本航程余下期间，商品销售税降低四分之一。",
+        name: "港湾信用",
+        desc: "本航程余下期间，成品销售的增值税降低四分之一。",
       },
     },
   },
@@ -498,8 +498,8 @@ export const MILESTONE_BOONS: CardRecord[] = [
         desc: "Raiders think twice: pirate risk is a quarter lower, for the voyage.",
       },
       zh: {
-        name: "舰队旗帜",
-        desc: "本航程余下期间，海盗来袭的风险降低四分之一。",
+        name: "船队旗帜",
+        desc: "海盗三思，本航程余下期间，劫掠风险降低四分之一。",
       },
     },
   },
@@ -542,7 +542,7 @@ export const MODULES_TIER0: CardRecord[] = [
         name: "Smuggler's Hold",
         desc: "Purchases cost 15% less. Income tax is 20% higher.",
       },
-      zh: { name: "走私货舱", desc: "采购成本降低 15%，所得税增加 20%。" },
+      zh: { name: "走私暗舱", desc: "采购成本降低15%，所得税提高20%。" },
     },
   },
   {
@@ -562,8 +562,8 @@ export const MODULES_TIER0: CardRecord[] = [
         desc: "Freight is 1 Gold less per item. Ship upgrades cost 15 Gold more.",
       },
       zh: {
-        name: "大宗货索具",
-        desc: "每件货物运费减 1 金，船只升级多花 15 金。",
+        name: "散货索具",
+        desc: "每件货物运费减1金币，船只升级费用增加15金币。",
       },
     },
   },
@@ -583,7 +583,7 @@ export const MODULES_TIER0: CardRecord[] = [
         name: "Artisan's Workshop",
         desc: "Workers produce 1 extra item. Wages are 20% higher.",
       },
-      zh: { name: "匠人作坊", desc: "工匠多产出 1 件，工资增加 20%。" },
+      zh: { name: "工匠工坊", desc: "工匠多产出1件，工钱多出20%。" },
     },
   },
   {
@@ -605,8 +605,8 @@ export const MODULES_TIER0: CardRecord[] = [
         desc: "Income tax and VAT are halved. A completed order has a 15% chance of a 20 Gold audit.",
       },
       zh: {
-        name: "逃税账簿",
-        desc: "所得税与增值税减半，订单完成时有 15% 概率损失 20 金。",
+        name: "避税账本",
+        desc: "所得税与增值税减半，每笔订单完成时有15%的概率被稽查，罚款20金币。",
       },
     },
   },
@@ -629,8 +629,8 @@ export const MODULES_TIER0: CardRecord[] = [
         desc: "Woven freight is free. Woven orders pay 20% more.",
       },
       zh: {
-        name: "织物专卖",
-        desc: "织物类货物运费为 0，织物类订单多付 20%。",
+        name: "织物垄断",
+        desc: "织物类运费为 0，织物类订单多付 20%。",
       },
     },
   },
@@ -651,8 +651,8 @@ export const MODULES_TIER0: CardRecord[] = [
         desc: "Intel costs 2 Gold and reveals 2 rumors.",
       },
       zh: {
-        name: "中间人网络",
-        desc: "情报花费 2 金，每次购买揭示 2 条传闻。",
+        name: "掮客人脉",
+        desc: "密语花费2金币，每次购买揭示2条。",
       },
     },
   },
@@ -672,7 +672,7 @@ export const MODULES_TIER0: CardRecord[] = [
         name: "Salvage Crane",
         desc: "A completed order has a 30% chance to refund its freight.",
       },
-      zh: { name: "打捞吊臂", desc: "订单完成时有 30% 概率返还运费。" },
+      zh: { name: "打捞起重机", desc: "订单完成时有30%的概率退还运费。" },
     },
   },
   {
@@ -691,7 +691,7 @@ export const MODULES_TIER0: CardRecord[] = [
         name: "Overdrive Engine",
         desc: "Freight is 5 Gold less. Maintenance costs 10 Gold more.",
       },
-      zh: { name: "超载引擎", desc: "运费减 5 金，维护费增加 10 金。" },
+      zh: { name: "超载引擎", desc: "运费降低5金币。维护费增加10金币。" },
     },
   },
 ];
@@ -733,7 +733,7 @@ export const MODULES_TIER1: CardRecord[] = [
         name: "Kiln Cellar",
         desc: "Bulk goods cost 2 Gold less per unit.",
       },
-      zh: { name: "窑窖", desc: "大宗货物每单位便宜 2 金。" },
+      zh: { name: "窑窖", desc: "散货每单位便宜2金币。" },
     },
   },
   {
@@ -752,7 +752,7 @@ export const MODULES_TIER1: CardRecord[] = [
         name: "Ocean Interpreter",
         desc: "Broker's Whisper reveals 1 extra rumor at no extra cost.",
       },
-      zh: { name: "通译", desc: "情报多揭示 1 条传闻，不额外收费。" },
+      zh: { name: "通译", desc: "掮客密语每次多揭示 1 条，不另收费。" },
     },
   },
 ];
@@ -774,7 +774,7 @@ export const MODULES_TIER2: CardRecord[] = [
         name: "Foreign Quarter Pass",
         desc: "Luxury goods cost 3 Gold less per unit.",
       },
-      zh: { name: "蕃坊通行证", desc: "奢侈品每单位便宜 3 金。" },
+      zh: { name: "蕃坊通行证", desc: "奢华货物每单位便宜3金币。" },
     },
   },
   {
@@ -793,7 +793,7 @@ export const MODULES_TIER2: CardRecord[] = [
         name: "Persian Dome Compass",
         desc: "Pirate raids are 30% less likely.",
       },
-      zh: { name: "波斯穹顶罗盘", desc: "海盗袭击风险降低 30%。" },
+      zh: { name: "波斯穹顶罗盘", desc: "海盗劫掠风险降低 30%。" },
     },
   },
   {
@@ -812,7 +812,7 @@ export const MODULES_TIER2: CardRecord[] = [
         name: "Fleet of Treasures",
         desc: "Freight on luxury orders is 3 Gold less per unit.",
       },
-      zh: { name: "珍宝船队", desc: "奢侈品订单每单位运费便宜 3 金。" },
+      zh: { name: "珍宝船队", desc: "奢华货物每单位运费便宜3金币。" },
     },
   },
 ];

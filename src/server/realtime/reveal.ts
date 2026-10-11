@@ -20,6 +20,7 @@
 
 import { VoyageReveal } from "@/types/realtime/voyage";
 import type { Server } from "socket.io";
+import { roomChannel } from "./channel";
 
 // One room's reveal, for as long as the finished voyage stands. There is
 // exactly one per room: a voyage concludes once, and only a restart, which
@@ -37,7 +38,7 @@ const roomReveals = new Map<string, VoyageReveal>();
  */
 export function recordReveal(io: Server, reveal: VoyageReveal): void {
   roomReveals.set(reveal.roomId, reveal);
-  io.to(`room:${reveal.roomId}`).emit("voyage:reveal", reveal);
+  io.to(roomChannel(reveal.roomId)).emit("voyage:reveal", reveal);
 }
 
 // The room's reveal, for a joiner to be handed. Null for a harbor whose

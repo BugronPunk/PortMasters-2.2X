@@ -16,6 +16,7 @@ import type { Socket } from "socket.io-client";
 import type { ChatMessage, PublicUser } from "@/lib/api";
 import { Avatar } from "../shared";
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/game/i18n";
 import { ChatPanel, type ChatTrade } from "../ChatPanel";
 import { MessageCircle } from "lucide-react";
 
@@ -58,7 +59,7 @@ export function DmTab({
             className="ml-auto h-7 px-2 text-[11px]"
             onClick={onClear}
           >
-            Switch
+            {t("Switch")}
           </Button>
         </div>
         <div className="flex-1 min-h-0">
@@ -78,14 +79,15 @@ export function DmTab({
   return (
     <div className="h-full flex flex-col">
       <div className="px-3 py-2 border-b border-black/5 dark:border-white/10 text-[11px] text-muted-foreground">
-        Pick a captain to message privately
+        {t("Pick a captain to message privately")}
       </div>
       <div className="pm-scroll flex-1 min-h-0 overflow-y-auto">
         <div className="p-2 space-y-1">
           {list.length === 0 ? (
             <p className="text-center text-xs text-muted-foreground py-6 px-4">
-              No other captains available right now. They will appear here once
-              they are online.
+              {t(
+                "No other captains available right now. They will appear here once they are online.",
+              )}
             </p>
           ) : (
             list.map((u) => (

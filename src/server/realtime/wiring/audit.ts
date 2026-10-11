@@ -39,6 +39,7 @@ export function wireAudit(io: Server, socket: Socket): void {
           s.userId,
           cp.round,
           targetUserId,
+          s.locale,
         );
         if (refused) socket.emit("audit:error", { roomId, error: refused });
       })();

@@ -6,6 +6,7 @@ import { QuantityInput } from "@/components/ui/quantity-input";
 import { PRODUCTS, RESOURCES } from "@/lib/game/constants/goods";
 import { BROKERS_FAVOR_UNLOCK_LEVEL } from "@/lib/game/constants/world";
 import { callBrokersFavor } from "@/lib/game/engine";
+import { t } from "@/lib/game/i18n";
 import { useLiveAmount } from "@/lib/use-live-amount";
 import { ItemIcon } from "../../shared";
 import { type PhasePanelProps } from "./PhaseShared";
@@ -50,12 +51,20 @@ export function BrokerFavor({
   return (
     <>
       {!favorUnlocked && (
+        // The shut panel says one sentence, and the pack carries it whole:
+        // the unlock level, this captain's level and the gap between them
+        // ride as tokens. The bold the old markup put on the Favor's name
+        // is gone with it, because the row is plain text; the words are
+        // the same words.
         <div className="rounded-lg border border-dashed border-favor/25 bg-favor/[0.04] px-3.5 py-2.5 mb-3.5 text-xs text-muted-foreground">
-          🔒 <strong className="text-foreground">Broker&apos;s Favor</strong>{" "}
-          unlocks at Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL}: call one in once
-          per voyage to summon a guaranteed buyer for a good already in your
-          hold. You are Renown Level {game.renownLevel} now,{" "}
-          {BROKERS_FAVOR_UNLOCK_LEVEL - game.renownLevel} to go.
+          {t(
+            "🔒 Broker's Favor unlocks at Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL}: call one in once per voyage to summon a guaranteed buyer for a good already in your hold. You are Renown Level {game.renownLevel} now, {levelsToGo} to go.",
+            {
+              BROKERS_FAVOR_UNLOCK_LEVEL,
+              "game.renownLevel": game.renownLevel,
+              levelsToGo: BROKERS_FAVOR_UNLOCK_LEVEL - game.renownLevel,
+            },
+          )}
         </div>
       )}
       {favorUnlocked && !game.brokersFavorUsed && (
@@ -63,22 +72,39 @@ export function BrokerFavor({
           {!favorOpen ? (
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <span>
-                <strong>🤝 Broker&apos;s Favor</strong> (once per voyage):
-                summon a guaranteed buyer for as much of a good as you choose
-                from your hold. The bigger the ask, the bigger the Broker&apos;s
-                cut.
+                {/* The glyph is the panel's and stays outside the read.
+                    Both halves carry the source's &apos; entity, so both
+                    are read as HTML and the browser decodes them to the
+                    apostrophe JSX used to print. */}
+                <strong>
+                  🤝{" "}
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: t("Broker&apos;s Favor"),
+                    }}
+                  />
+                </strong>{" "}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: t(
+                      "(once per voyage): summon a guaranteed buyer for as much of a good as you choose from your hold. The bigger the ask, the bigger the Broker&apos;s cut.",
+                    ),
+                  }}
+                />
               </span>
               <Button
                 size="sm"
                 className="pm-grad-orders font-semibold rounded-lg shrink-0"
                 onClick={() => setFavorOpen(true)}
               >
-                Call in a Favor
+                {t("Call in a Favor")}
               </Button>
             </div>
           ) : !favorItem ? (
             <div className="space-y-2">
-              <div className="font-semibold">🤝 Which good needs a buyer?</div>
+              <div className="font-semibold">
+                {t("🤝 Which good needs a buyer?")}
+              </div>
               {sellableGoods.length > 0 ? (
                 <div className="flex flex-wrap gap-1.5">
                   {sellableGoods.map((it) => (
@@ -92,15 +118,22 @@ export function BrokerFavor({
                         resetFavorAsk();
                       }}
                     >
-                      <ItemIcon item={it} className="h-3.5 w-3.5" /> {it} (
-                      {game.inventory[it]})
+                      {/* The good's name is data and reads at the
+                          print; the count in brackets beside it is the
+                          row's other token. */}
+                      <ItemIcon item={it} className="h-3.5 w-3.5" />{" "}
+                      {t("{name} ({count})", {
+                        name: t(it),
+                        count: game.inventory[it],
+                      })}
                     </Button>
                   ))}
                 </div>
               ) : (
                 <div className="text-muted-foreground">
-                  Your hold is empty, so there is nothing for the Broker to sell
-                  right now.
+                  {t(
+                    "Your hold is empty, so there is nothing for the Broker to sell right now.",
+                  )}
                 </div>
               )}
               <Button
@@ -109,7 +142,7 @@ export function BrokerFavor({
                 className="rounded-lg"
                 onClick={closeFavor}
               >
-                Cancel
+                {t("Cancel")}
               </Button>
             </div>
           ) : favorHeld <= 0 ? (
@@ -119,13 +152,17 @@ export function BrokerFavor({
             // and a button that can only refuse.
             <div className="space-y-2">
               <div className="font-semibold">
-                <ItemIcon item={favorItem} className="h-4 w-4" /> No {favorItem}{" "}
-                left in your hold
+                <ItemIcon item={favorItem} className="h-4 w-4" />{" "}
+                {/* The sentence rides as a token call; the good's name
+                    filled into it reads at the print. */}
+                {t("No {favorItem} left in your hold", {
+                  favorItem: t(favorItem),
+                })}
               </div>
               <p className="text-muted-foreground">
-                Your hold changed while this was open, so there is nothing here
-                for the Broker to sell now. Pick another good, or call the Favor
-                in later this voyage.
+                {t(
+                  "Your hold changed while this was open, so there is nothing here for the Broker to sell now. Pick another good, or call the Favor in later this voyage.",
+                )}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -134,7 +171,7 @@ export function BrokerFavor({
                   className="rounded-lg"
                   onClick={() => setFavorItem(null)}
                 >
-                  Pick another good
+                  {t("Pick another good")}
                 </Button>
                 <Button
                   size="sm"
@@ -142,15 +179,17 @@ export function BrokerFavor({
                   className="rounded-lg"
                   onClick={closeFavor}
                 >
-                  Cancel
+                  {t("Cancel")}
                 </Button>
               </div>
             </div>
           ) : (
             <div className="space-y-2">
               <div className="font-semibold">
-                <ItemIcon item={favorItem} className="h-4 w-4" /> How much{" "}
-                {favorItem} should the Broker sell?
+                <ItemIcon item={favorItem} className="h-4 w-4" />{" "}
+                {t("How much {favorItem} should the Broker sell?", {
+                  favorItem: t(favorItem),
+                })}
               </div>
               <div className="flex items-center gap-2">
                 <QuantityInput
@@ -158,17 +197,26 @@ export function BrokerFavor({
                   onCommit={commitFavorAsk}
                   min={1}
                   max={favorHeld}
-                  aria-label={`How much ${favorItem} to sell`}
+                  aria-label={t("How much {favorItem} to sell", {
+                    favorItem: t(favorItem),
+                  })}
                   className="w-20 h-9"
                 />
                 <span className="text-muted-foreground">
-                  of {favorHeld} in your hold
+                  {t("of {favorHeld} in your hold", { favorHeld })}
                 </span>
               </div>
-              <p className="text-muted-foreground">
-                A bigger ask pays out more, but the Broker&apos;s cut grows with
-                it too, so a single favor can never swing the whole voyage.
-              </p>
+              {/* The pack carries this sentence with the source's &apos;
+                  entity, so it is read as HTML and the browser decodes it
+                  to the same apostrophe JSX used to print. */}
+              <p
+                className="text-muted-foreground"
+                dangerouslySetInnerHTML={{
+                  __html: t(
+                    "A bigger ask pays out more, but the Broker&apos;s cut grows with it too, so a single favor can never swing the whole voyage.",
+                  ),
+                }}
+              />
               <div className="flex gap-2">
                 <Button
                   size="sm"
@@ -178,7 +226,7 @@ export function BrokerFavor({
                     closeFavor();
                   }}
                 >
-                  Call in the Favor
+                  {t("Call in the Favor")}
                 </Button>
                 <Button
                   size="sm"
@@ -186,7 +234,7 @@ export function BrokerFavor({
                   className="rounded-lg"
                   onClick={() => setFavorItem(null)}
                 >
-                  Back
+                  {t("Back")}
                 </Button>
               </div>
             </div>

@@ -13,15 +13,18 @@
 // captain's seeded market and orders keep their own personal draw while the
 // structure (how many cards, how likely a raid) stays consistent room wide.
 //
-// The "fair_winds" tier is calibrated to the game exactly as it played before
-// difficulty existed: 8 rounds, a flat 0.2 raid chance, a 0.1 escort fee, 6
-// cards on each board, no mandates and no corrupt brokers. Those numbers used
-// to be flat constants in ./constants; moving them here changed nothing for
-// the existing mode, and it is what lets the two richer tiers vary them. The
-// three tiers sit side by side in the README, under Difficulty tiers.
+// The "fair_winds" tier is the founding game: 8 rounds, a flat 0.2 raid
+// chance, a 0.1 escort fee, 6 cards on each board, no mandates and no
+// corrupt brokers. The two richer tiers vary those dials, which is why
+// they live in a record rather than as flat constants. The three tiers
+// sit side by side in the README, under Difficulty tiers.
 // =====================================================================
 
 import type { TagList } from "./constants/tags";
+// The odds label below is read at the moment it is composed, so the figure
+// the advisor and the welcome screen quote follows the language they print
+// in. The tier records themselves are data, read at their display sites.
+import { t } from "./i18n";
 
 export type Difficulty = "fair_winds" | "open_waters" | "monsoon";
 
@@ -332,7 +335,9 @@ export function pirateChanceFor(
 // whether that clause belongs in the sentence is the sentence's business.
 export function pirateOddsLabel(cfg: DifficultyConfig): string {
   const pcts = cfg.pirateChance.map((r) => Math.round(r * 100));
-  return pcts.length === 1 ? `${pcts[0]}%` : `${pcts[0]}% to ${pcts[1]}%`;
+  return pcts.length === 1
+    ? t("{lowPct}%", { lowPct: pcts[0] })
+    : t("{lowPct}% to {highPct}%", { lowPct: pcts[0], highPct: pcts[1] });
 }
 
 // The scheduled mandate template index for this round, or undefined if none

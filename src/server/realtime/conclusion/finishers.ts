@@ -14,6 +14,7 @@
 import { RevealedCaptain } from "@/types/realtime/voyage";
 import type { Server } from "socket.io";
 import { db } from "@/lib/db";
+import { tFor } from "@/lib/game/i18n";
 import {
   levelForRenownXP,
   parseStatsByDifficulty,
@@ -39,6 +40,7 @@ import { MAX_HELD_CARDS } from "@/lib/game/combinations";
 import { normalizeCharter, normalizeHeldBoons } from "@/lib/game/held-cards";
 import { unlockLineFor } from "@/lib/unlock";
 import { maroonResultFor } from "../maroon";
+import { sockets } from "../presence";
 import type { RivalStanding } from "../rival";
 import type { FinishedCaptain, VoyageRun } from "./voyage";
 // The standings row is declared with the wire shape it travels in; the
@@ -124,11 +126,14 @@ type CaptainRecord = {
 
 // Defensively extracts the chronicle's extras from a save blob already
 // parsed by parseSave. The score field IS the reputation, so it's used as
-// the peak figure (the heartbeat doesn't carry a separate peak). The
-// loansGiven and debts arrays are outstanding counts at save time,
-// which at endgame should be near zero after settleOutstandingDebts,
-// but they're the best lending indicator available without a new
-// schema field. Forged finishers get zeros across the board.
+// the peak figure (the heartbeat doesn't carry a separate peak), and the
+// largestTrade field is the captain's own running maximum, read as a
+// checked number for the same reason: it is the blob's to claim and the
+// chronicle's line prints it verbatim. The loansGiven and debts arrays are
+// outstanding counts at save time, which at endgame should be near zero
+// after settleOutstandingDebts, but they're the best lending indicator
+// available without a new schema field. Forged finishers get zeros across
+// the board.
 function extractChronicleExtras(
   data: Record<string, unknown> | null,
   forged: boolean,
@@ -163,7 +168,11 @@ function extractChronicleExtras(
       typeof data.score === "number" && Number.isFinite(data.score)
         ? data.score
         : fallbackReputation,
-    largestTrade: 0,
+    largestTrade:
+      typeof data.largestTrade === "number" &&
+      Number.isFinite(data.largestTrade)
+        ? data.largestTrade
+        : 0,
     lendCount: Array.isArray(data.loansGiven) ? data.loansGiven.length : 0,
     borrowCount: Array.isArray(data.debts) ? data.debts.length : 0,
     objectiveTrace: readObjectiveTrace(data.objectiveTrace),
@@ -681,7 +690,7 @@ type FinisherTally = {
 //
 // The fact this answers is about the fleet rather than about any one
 // client, so it is read the way the reveal ledger below reads it: every
-// non-forged finisher's own record of how the board stood, merged by max
+// honest finisher's own record of how the board stood, merged by max
 // per good per leg. A captain whose client missed the last leg is the one
 // this merge exists for. Read per captain, their row would have read
 // short while the ledger under it painted the commission filled, and the
@@ -763,17 +772,46 @@ function announceFinisher(
   rows: FinisherRows,
 ): void {
   if (rows.outcome.leveledUp) {
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content: `${f.user.displayName} reached Renown Level ${rows.outcome.newLevel}: ${renownTitleForLevel(rows.outcome.newLevel)}!`,
-    });
+    // The room reads this notice, so it goes to every socket in the
+    // harbor in that captain's own language rather than as one broadcast.
+    // The title is read per socket for the same reason: it is a name the
+    // client reads through the pack, so it has to land in the reader's
+    // language too.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(
+          state.locale,
+          "{f.user.displayName} reached Renown Level {rows.outcome.newLevel}: {renownTitle}!",
+          {
+            "f.user.displayName": f.user.displayName,
+            "rows.outcome.newLevel": rows.outcome.newLevel,
+            renownTitle: tFor(
+              state.locale,
+              renownTitleForLevel(rows.outcome.newLevel),
+            ),
+          },
+        ),
+      });
+    }
   }
   for (const meritId of rows.newMerits) {
     const merit = meritById(meritId);
     if (!merit) continue;
-    io.to(`room:${roomId}`).emit("room:system", {
-      roomId,
-      content: `${f.user.displayName} earned the Captain's Merit: ${merit.name}!`,
-    });
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId,
+        content: tFor(
+          state.locale,
+          "{f.user.displayName} earned the Captain's Merit: {merit.name}!",
+          {
+            "f.user.displayName": f.user.displayName,
+            "merit.name": merit.name,
+          },
+        ),
+      });
+    }
   }
 }

@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { Eye, Trophy, Coins, Anchor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { PublicUser } from "@/lib/api";
+import { t } from "@/lib/game/i18n";
+import { phaseLabel } from "@/lib/game/engine";
 import { leftTheVoyage } from "@/lib/seatMarks";
 import { PhaseHeading, type PhasePanelProps } from "./PhaseShared";
 import { Avatar, Pill } from "../../shared";
@@ -56,7 +58,7 @@ export function Bankruptcy({
       member: m,
       status: statuses[m.id],
     }))
-    // Stated as a type predicate rather than left to be re asserted at
+    // Stated as a type predicate rather than left to be reasserted at
     // every read below, so the standings can trust the status the filter
     // kept. The terminal test itself is the shared reader (see
     // leftTheVoyage in @/lib/seatMarks), the same question the roster
@@ -83,37 +85,41 @@ export function Bankruptcy({
         💥
       </motion.div>
       <PhaseHeading layout="mb-1" tone="text-alarm" brush>
-        Ship Fleet Bankrupt!
+        {t("Ship Fleet Bankrupt!")}
       </PhaseHeading>
       <p className="mb-4 text-sm text-muted-foreground">
         {game.money <= 0
-          ? "Funds depleted, unable to pay essential operational costs"
-          : "Insufficient funds to cover maintenance and wages"}
+          ? t("Funds depleted, unable to pay essential operational costs")
+          : t("Insufficient funds to cover maintenance and wages")}
       </p>
 
       {/* Final stats */}
       <div className="mx-auto my-4 grid max-w-sm grid-cols-2 gap-2 text-left text-sm">
-        <div className="text-muted-foreground">Rounds Completed:</div>
+        <div className="text-muted-foreground">{t("Rounds Completed:")}</div>
         <div>
           <b>
             {game.currentRound - 1}/{game.maxRounds}
           </b>
         </div>
-        <div className="text-muted-foreground">Final Funds:</div>
+        <div className="text-muted-foreground">{t("Final Funds:")}</div>
         <div>
-          <b>{game.money} Gold</b>
+          <b>{t("{contract.fee} Gold", { "contract.fee": game.money })}</b>
         </div>
-        <div className="text-muted-foreground">Final Reputation:</div>
+        <div className="text-muted-foreground">{t("Final Reputation:")}</div>
         <div>
           <b>{game.score}</b>
         </div>
-        <div className="text-muted-foreground">Ship Level:</div>
+        <div className="text-muted-foreground">{t("Ship Level:")}</div>
         <div>
           <b>{game.shipLevel}</b>
         </div>
-        <div className="text-muted-foreground">Taxes Paid:</div>
+        <div className="text-muted-foreground">{t("Taxes Paid:")}</div>
         <div>
-          <b>{game.vatPaid + game.incomeTaxPaid} Gold</b>
+          <b>
+            {t("{contract.fee} Gold", {
+              "contract.fee": game.vatPaid + game.incomeTaxPaid,
+            })}
+          </b>
         </div>
       </div>
 
@@ -121,11 +127,12 @@ export function Bankruptcy({
       {game.loansGiven.length > 0 && (
         <div className="mt-4 rounded-xl border border-gain/20 bg-gain/[0.04] px-4 py-3 text-left">
           <div className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground">
-            🤝 Silent Partner
+            {t("🤝 Silent Partner")}
           </div>
           <p className="mb-2.5 text-xs text-muted-foreground">
-            Gold you lent before the wreck is still out there, and it lands the
-            moment each captain repays it.
+            {t(
+              "Gold you lent before the wreck is still out there, and it lands the moment each captain repays it.",
+            )}
           </p>
           <div className="space-y-2">
             {game.loansGiven.map((l) => {
@@ -137,20 +144,20 @@ export function Bankruptcy({
                 <div key={l.id} className="space-y-1">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">
-                      Owed by{" "}
+                      {t("Owed by")}{" "}
                       <b className="text-foreground">{l.counterpartyName}</b>
                     </span>
                     <span className="font-bold text-gain">{l.amount}g</span>
                   </div>
                   {candidates.length > 0 && (
                     <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                      <span>Send repayment to</span>
+                      <span>{t("Send repayment to")}</span>
                       <select
                         value={live?.redirectToUserId ?? ""}
                         onChange={(e) => backing.redirect(l.id, e.target.value)}
                         className="rounded-md border border-black/10 bg-background/60 px-1.5 py-0.5 text-[11px] dark:border-white/15"
                       >
-                        <option value="">myself (default)</option>
+                        <option value="">{t("myself (default)")}</option>
                         {candidates.map((c) => (
                           <option key={c.id} value={c.id}>
                             {c.displayName}
@@ -176,11 +183,12 @@ export function Bankruptcy({
         >
           <div className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground">
             <Eye className="h-4 w-4 text-sea" />
-            Spectator Mode: Live Harbor Standings
+            {t("Spectator Mode: Live Harbor Standings")}
           </div>
           <p className="mb-3 text-xs text-muted-foreground">
-            Your voyage has ended, but the rest of the harbor is still sailing.
-            Watch their progress live below.
+            {t(
+              "Your voyage has ended, but the rest of the harbor is still sailing. Watch their progress live below.",
+            )}
           </p>
           <div className="space-y-1.5">
             {activeCaptains.map(({ member, status }, idx) => (
@@ -201,7 +209,13 @@ export function Bankruptcy({
                     {member.displayName}
                   </div>
                   <div className="text-[10px] text-muted-foreground">
-                    {status.phaseLabel}
+                    {/* Derived from the frame's own phase and round so the
+                        label reads in this captain's language, not the
+                        language of whoever reported it last. */}
+                    {phaseLabel({
+                      phase: status.phase,
+                      currentRound: status.round,
+                    })}
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
@@ -224,8 +238,9 @@ export function Bankruptcy({
         <div className="mt-4 rounded-xl border border-sea/15 bg-sea/[0.04] px-4 py-3 text-sm text-muted-foreground">
           {isHost ? (
             <>
-              Your voyage has ended, and the rest of the harbor has finished
-              too.
+              {t(
+                "Your voyage has ended, and the rest of the harbor has finished too.",
+              )}
               {/* The host's own restart, the call the control bar and the
                   Endgame screen make, drawn where a failed seat waits for
                   it: on a solo practice voyage the host is this captain. */}
@@ -234,21 +249,21 @@ export function Bankruptcy({
                 onClick={onRestart}
                 disabled={!onRestart}
               >
-                🔄 Restart Voyage
+                {t("🔄 Restart Voyage")}
               </Button>
             </>
           ) : (
             <>
-              Your voyage has ended, and the rest of the harbor has finished
-              too. Wait for the host to restart the voyage, or set out for a new
-              harbor now.
+              {t(
+                "Your voyage has ended, and the rest of the harbor has finished too. Wait for the host to restart the voyage, or set out for a new harbor now.",
+              )}
               {onLeave && (
                 <Button
                   variant="secondary"
                   className="mt-3 ml-1 rounded-xl px-8"
                   onClick={onLeave}
                 >
-                  ⚓ Sail Again
+                  {t("⚓ Sail Again")}
                 </Button>
               )}
             </>
@@ -258,8 +273,9 @@ export function Bankruptcy({
 
       <div className="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
         <Anchor className="h-3 w-3" />
-        Click any captain in the Harbor Roster to peek at their cargo and
-        workers
+        {t(
+          "Click any captain in the Harbor Roster to peek at their cargo and workers",
+        )}
       </div>
     </div>
   );

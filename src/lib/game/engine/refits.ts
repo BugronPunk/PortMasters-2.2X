@@ -34,6 +34,7 @@ import {
   REWEAVE_GOOD,
   REWEAVE_RAGS,
 } from "../constants/garments";
+import { ICONS } from "../constants/brand";
 import { RAGS } from "../constants/goods";
 import { flagOnFor } from "../flags";
 import {
@@ -47,6 +48,7 @@ import { cargoRoom } from "../larder";
 import type { PathId } from "../paths";
 import { createRng } from "../rng";
 import { wholeStamp, type GameState } from "../types";
+import { t } from "@/lib/game/i18n";
 import {
   consentPartyBusy,
   floorTallies,
@@ -212,20 +214,24 @@ export function ragsLeftAtPort(state: GameState): number {
 export function buyRag(state: GameState, logs: string[]): boolean {
   if (!refitsOn(state.mode)) return false;
   if (state.path !== REFIT_SELLER_PATH) {
-    logs.push("❌ Only a Loom captain buys rags off the harbor pile.");
+    logs.push(t("❌ Only a Loom captain buys rags off the harbor pile."));
     return false;
   }
   const left = ragsLeftAtPort(state);
   if (left < 1) {
-    logs.push("❌ The harbor has no rags left for you this leg.");
+    logs.push(t("❌ The harbor has no rags left for you this leg."));
     return false;
   }
   if (getOwnedAmount(state, "Gold") < RAG_SCRAP_VALUE) {
-    logs.push(`❌ ${RAG_SCRAP_VALUE} Gold buys a rag, and the purse is short.`);
+    logs.push(
+      t("❌ {RAG_SCRAP_VALUE} Gold buys a rag, and the purse is short.", {
+        RAG_SCRAP_VALUE,
+      }),
+    );
     return false;
   }
   if (cargoRoom(state) < 1) {
-    logs.push("❌ There is no room in the hold for another rag.");
+    logs.push(t("❌ There is no room in the hold for another rag."));
     return false;
   }
   addOwnedAmount(state, "Gold", -RAG_SCRAP_VALUE);
@@ -237,7 +243,14 @@ export function buyRag(state: GameState, logs: string[]): boolean {
   }
   state.ragsTaken += 1;
   logs.push(
-    `🪡 Bought a rag off the harbor pile for ${RAG_SCRAP_VALUE} Gold. ${left - 1} left for you this leg.`,
+    t(
+      "{ICONS.Rags} Bought a rag off the harbor pile for {RAG_SCRAP_VALUE} Gold. {scrapsLeft} left for you this leg.",
+      {
+        "ICONS.Rags": ICONS.Rags,
+        RAG_SCRAP_VALUE,
+        scrapsLeft: left - 1,
+      },
+    ),
   );
   return true;
 }
@@ -259,12 +272,16 @@ export function buyRag(state: GameState, logs: string[]): boolean {
 export function reweaveRags(state: GameState, logs: string[]): boolean {
   if (!refitsOn(state.mode)) return false;
   if (state.path !== REFIT_SELLER_PATH) {
-    logs.push("❌ Only a Loom captain knows how to work rags back into cloth.");
+    logs.push(
+      t("❌ Only a Loom captain knows how to work rags back into cloth."),
+    );
     return false;
   }
   if ((state.inventory[RAGS] ?? 0) < REWEAVE_RAGS) {
     logs.push(
-      `❌ A reweave takes ${REWEAVE_RAGS} rags and the hold has fewer.`,
+      t("❌ A reweave takes {REWEAVE_RAGS} rags and the hold has fewer.", {
+        REWEAVE_RAGS,
+      }),
     );
     return false;
   }
@@ -272,7 +289,10 @@ export function reweaveRags(state: GameState, logs: string[]): boolean {
   state.inventory[REWEAVE_GOOD] = (state.inventory[REWEAVE_GOOD] ?? 0) + 1;
   state.ragsRewoven += 1;
   logs.push(
-    `🧵 ${REWEAVE_RAGS} rags go back on the loom and come off as one ${REWEAVE_GOOD}.`,
+    t(
+      "🧵 {REWEAVE_RAGS} rags go back on the loom and come off as one {REWEAVE_GOOD}.",
+      { REWEAVE_RAGS, REWEAVE_GOOD: t(REWEAVE_GOOD) },
+    ),
   );
   return true;
 }
@@ -302,22 +322,28 @@ export function mendGarment(
   if (!refitsOn(state.mode)) return false;
   const spec = garmentSpec(good);
   if (!spec || typeof good !== "string") {
-    logs.push("❌ That is not something the harbor can put right.");
+    logs.push(t("❌ That is not something the harbor can put right."));
     return false;
   }
   if (state.mendRound === state.currentRound) {
     logs.push(
-      "❌ The harbor tailors have already worked on the crew this leg.",
+      t("❌ The harbor tailors have already worked on the crew this leg."),
     );
     return false;
   }
   if (garmentRoom(state, good) < 1) {
-    logs.push(`❌ The crew is wearing no worn ${good} for the harbor to mend.`);
+    logs.push(
+      t("❌ The crew is wearing no worn {good} for the harbor to mend.", {
+        good: t(good),
+      }),
+    );
     return false;
   }
   if (getOwnedAmount(state, "Gold") < MEND_GOLD_PER_POINT) {
     logs.push(
-      `❌ A mend costs ${MEND_GOLD_PER_POINT} Gold and the purse is short.`,
+      t("❌ A mend costs {MEND_GOLD_PER_POINT} Gold and the purse is short.", {
+        MEND_GOLD_PER_POINT,
+      }),
     );
     return false;
   }
@@ -327,7 +353,15 @@ export function mendGarment(
   state.mendsMade += 1;
   state.mendRound = state.currentRound;
   logs.push(
-    `🪡 The harbor tailor takes ${MEND_GOLD_PER_POINT} Gold for ${back} point of the ${good}.`,
+    t(
+      "{ICONS.Rags} The harbor tailor takes {MEND_GOLD_PER_POINT} Gold for {back} point of the {good}.",
+      {
+        "ICONS.Rags": ICONS.Rags,
+        MEND_GOLD_PER_POINT,
+        back,
+        good: t(good),
+      },
+    ),
   );
   return true;
 }
@@ -348,7 +382,7 @@ export function mendGarment(
  * charge the same fee twice.
  *
  * Returns whether the state changed, which is what the React layer reads to
- * decide whether it owes the captain a re-render.
+ * decide whether it owes the captain a fresh render.
  */
 export function applyRefitSide(
   state: GameState,
@@ -375,7 +409,14 @@ export function applyRefitSide(
     state.refitsBought += 1;
     state.refitFeesPaid += paid;
     logs.push(
-      `🤝 Refit: paid ${paid} Gold to ${contract.sellerName} for the ${contract.good} to be put right.`,
+      t(
+        "🤝 Refit: paid {paid} Gold to {seller} for the {good} to be put right.",
+        {
+          paid,
+          seller: contract.sellerName,
+          good: t(contract.good),
+        },
+      ),
     );
     const back = restoreGarment(state, contract.good, REFIT_POINTS, logs);
     if (back < 1) {
@@ -390,14 +431,22 @@ export function applyRefitSide(
       // card fails to resolve (see the buyer branch in ./modules). The
       // sentence is what the captain gets for the price, rather than
       // silence.
-      logs.push(`❌ There is no worn ${contract.good} left to work on.`);
+      logs.push(
+        t("❌ There is no worn {contract.good} left to work on.", {
+          "contract.good": t(contract.good),
+        }),
+      );
     }
   } else {
     addOwnedAmount(state, "Gold", contract.fee);
     state.refitsSold += 1;
     state.refitFeesEarned += contract.fee;
     logs.push(
-      `🤝 Refit: ${contract.buyerName ?? "A captain"} paid ${contract.fee} Gold for the ${contract.good} to be put right.`,
+      t("🤝 Refit: {buyer} paid {fee} Gold for the {good} to be put right.", {
+        buyer: contract.buyerName ?? t("A captain"),
+        fee: contract.fee,
+        good: t(contract.good),
+      }),
     );
   }
   markMovement(state, key);

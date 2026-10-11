@@ -2,6 +2,7 @@
 
 import { Handshake, Heart, Receipt } from "lucide-react";
 import { cardByFlag, cardText } from "@/lib/game/cards";
+import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { SummaryHeading } from "./PhaseShared";
@@ -42,8 +43,14 @@ function LedgerColumn({
             key={r.label}
             className="flex items-center justify-between text-[11px]"
           >
+            {/* One read for the whole line: the pack carries the glyph and
+                the label as a single template, and the label arrives
+                already read for this language. */}
             <span className="text-muted-foreground">
-              {r.icon} {r.label}
+              {t("{r.icon} {r.label}", {
+                "r.icon": r.icon,
+                "r.label": t(r.label),
+              })}
             </span>
             <span className={cn("font-semibold tabular-nums", r.tone)}>
               {sign}
@@ -64,9 +71,10 @@ function LedgerColumn({
  * shown at the end of a voyage so a captain can see where their Gold
  * came from and where it went.
  *
- * Income: totalRevenue (trade orders), plus any emergency loan boon
- * Gold if it was taken. Expenses: totalCosts (purchases, transport),
- * workerWages, maintenanceCosts, vatPaid, incomeTaxPaid.
+ * Income: totalRevenue (trade orders), plus the boon Gold the voyage was
+ * granted (game.boonGoldEarned, the Emergency Loan's grant today).
+ * Expenses: totalCosts (purchases, transport), workerWages,
+ * maintenanceCosts, vatPaid, incomeTaxPaid.
  *
  * The net figure should roughly track the final Gold minus the
  * starting Gold, though rounding and per round resets mean it is a
@@ -85,8 +93,13 @@ export function FinancialSummary({ game }: { game: GameState }) {
       tone: "text-gain",
     },
     {
+      // The figure is the voyage's own tally of the grants (see
+      // boonGoldEarned in the state), not the round flag the grant wrote:
+      // the flag is rebuilt away at every round's end, so this row used
+      // to vanish from the closing sheet of every voyage that took the
+      // loan before its final round.
       label: instantGold === null ? "Boon Gold" : cardText(instantGold).name,
-      value: game.modifierFlags.instant_gold ?? 0,
+      value: game.boonGoldEarned,
       icon: instantGold === null ? "💰" : instantGold.icon,
       tone: "text-due",
     },
@@ -133,29 +146,29 @@ export function FinancialSummary({ game }: { game: GameState }) {
     <div className="rounded-xl border border-border/40 bg-background/40 px-4 py-3 my-4 text-left">
       <SummaryHeading tone="text-muted-foreground">
         <Receipt className="h-3.5 w-3.5" />
-        Financial Summary
+        {t("Financial Summary")}
       </SummaryHeading>
       <div className="grid grid-cols-2 gap-3">
         {/* Income column */}
         <LedgerColumn
-          title="Income"
+          title={t("Income")}
           titleTone="text-gain"
           rows={income}
           sign="+"
-          empty="No income recorded"
+          empty={t("No income recorded")}
         />
         {/* Expenses column */}
         <LedgerColumn
-          title="Expenses"
+          title={t("Expenses")}
           titleTone="text-alarm"
           rows={expenses}
           sign="-"
-          empty="No expenses recorded"
+          empty={t("No expenses recorded")}
         />
       </div>
       {/* Net total */}
       <div className="mt-2 pt-2 border-t border-border/30 flex items-center justify-between">
-        <span className="text-xs font-semibold">Net Cash Flow</span>
+        <span className="text-xs font-semibold">{t("Net Cash Flow")}</span>
         <span
           className={cn(
             "font-display text-sm font-bold tabular-nums",
@@ -163,7 +176,7 @@ export function FinancialSummary({ game }: { game: GameState }) {
           )}
         >
           {net >= 0 ? "+" : ""}
-          {net} Gold
+          {t("{contract.fee} Gold", { "contract.fee": net })}
         </span>
       </div>
     </div>
@@ -210,7 +223,7 @@ function EconomyTile({
       >
         {amount}
         <span className="text-[10px] font-normal text-muted-foreground ml-0.5">
-          Gold
+          {t("Gold")}
         </span>
       </div>
       {note && (
@@ -243,28 +256,34 @@ export function PeerEconomySummary({ game }: { game: GameState }) {
     <div className="rounded-xl border border-intel/20 bg-intel/[0.03] px-4 py-3 my-3 text-left">
       <SummaryHeading tone="text-intel">
         <Handshake className="h-3.5 w-3.5" />
-        Peer Economy
+        {t("Peer Economy")}
       </SummaryHeading>
       <div className="grid grid-cols-2 gap-3">
         {/* Lending */}
         <EconomyTile
           tone="gain"
-          label="Lending"
+          label={t("Lending")}
           amount={totalLent}
           note={
             outstandingLent > 0
-              ? `${outstandingLent} loan${outstandingLent === 1 ? "" : "s"} still out`
+              ? t("{outstandingLent} loan{pluralS} still out", {
+                  outstandingLent,
+                  pluralS: outstandingLent === 1 ? "" : "s",
+                })
               : null
           }
         />
         {/* Borrowing */}
         <EconomyTile
           tone="due"
-          label="Borrowing"
+          label={t("Borrowing")}
           amount={totalBorrowed}
           note={
             outstandingBorrowed > 0
-              ? `${outstandingBorrowed} loan${outstandingBorrowed === 1 ? "" : "s"} still owed`
+              ? t("{outstandingBorrowed} loan{pluralS} still owed", {
+                  outstandingBorrowed,
+                  pluralS: outstandingBorrowed === 1 ? "" : "s",
+                })
               : null
           }
         />
@@ -273,16 +292,16 @@ export function PeerEconomySummary({ game }: { game: GameState }) {
         <div className="mt-2 pt-2 border-t border-intel/10 flex items-center justify-between text-[11px]">
           <span className="text-muted-foreground flex items-center gap-1">
             <Heart className="h-3 w-3" />
-            Helper Reputation earned
+            {t("Helper Reputation earned")}
           </span>
           <span className="font-bold text-favor">
-            +{Math.round(helperRep)} Rep
+            {t("+{rep} Rep", { rep: Math.round(helperRep) })}
           </span>
         </div>
       )}
       {game.defaultedDebt && (
         <div className="mt-1.5 text-[10px] text-alarm font-medium">
-          Loan defaulted, no Renown banked this voyage.
+          {t("Loan defaulted, no Renown banked this voyage.")}
         </div>
       )}
     </div>

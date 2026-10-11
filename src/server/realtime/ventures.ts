@@ -24,6 +24,8 @@ import {
   type VentureOutcome,
 } from "@/lib/game/convoy";
 import type { VentureSummary } from "@/types/realtime/ventures";
+import { roomChannel } from "./channel";
+import { sockets } from "./presence";
 
 function ventureSummary(v: {
   id: string;
@@ -90,7 +92,7 @@ export async function broadcastVentures(
 ): Promise<void> {
   const board = await ventureBoardFor(roomId);
   if (!board) return;
-  io.to(`room:${roomId}`).emit("venture:update", board);
+  io.to(roomChannel(roomId)).emit("venture:update", board);
 }
 
 // Two captains could otherwise post a venture, both instantly self fund
@@ -125,17 +127,26 @@ export async function settleVenture(
     where: { id: venture.id },
     data: { status: outcome, resolvedAt: new Date() },
   });
-  io.to(`room:${venture.roomId}`).emit("venture:settled", {
+  io.to(roomChannel(venture.roomId)).emit("venture:settled", {
     roomId: venture.roomId,
     ventureId: venture.id,
     outcome,
     settlements,
   });
   if (settlements.length) {
-    io.to(`room:${venture.roomId}`).emit("room:system", {
-      roomId: venture.roomId,
-      content: ventureAnnouncementFor(outcome),
-    });
+    // The settlement itself is the same fact for every captain, which is
+    // why the frame above can be one broadcast; the sentence about it is
+    // not the same fact, so it goes out one socket at a time, each in the
+    // language that socket presented. The walk is the departure notice's
+    // (see reapDeparture in ./presence), kept in the same shape so the
+    // two room wide notices cannot come apart in how they address a room.
+    for (const [socketId, state] of sockets) {
+      if (state.roomId !== venture.roomId) continue;
+      io.to(socketId).emit("room:system", {
+        roomId: venture.roomId,
+        content: ventureAnnouncementFor(state.locale, outcome),
+      });
+    }
   }
 }
 

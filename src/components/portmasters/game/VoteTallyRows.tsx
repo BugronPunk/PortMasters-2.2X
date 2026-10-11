@@ -40,6 +40,7 @@
 // maroon's own count).
 // =====================================================================
 
+import { t } from "@/lib/game/i18n";
 import {
   captainCount,
   captainName,
@@ -77,8 +78,16 @@ export function VoteTallyRows({
   if (!census || census.roster <= 0) {
     return (
       <p className="mt-3 text-[11px] text-muted-foreground">
-        The room&apos;s count has not arrived yet. It comes with this leg&apos;s
-        vote.
+        {/* The pack carries this row with the source's &apos; entities, so
+            it is read as HTML and the browser decodes them to the same
+            apostrophes JSX used to print. */}
+        <span
+          dangerouslySetInnerHTML={{
+            __html: t(
+              "The room&apos;s count has not arrived yet. It comes with this leg&apos;s vote.",
+            ),
+          }}
+        />
       </p>
     );
   }
@@ -90,26 +99,39 @@ export function VoteTallyRows({
   // threshold half moves with the threshold.
   const countLine =
     `${namedCountLine(named, census.roster)} ` +
-    `${nameCount(census.needed)} ${census.needed === 1 ? "carries" : "carry"} it.`;
+    t("{namesNeeded} {carryWord} it.", {
+      namesNeeded: nameCount(census.needed),
+      carryWord: census.needed === 1 ? "carries" : "carry",
+    });
 
   return (
     <div className="mt-3 space-y-1">
       <p className="text-[11px]">{countLine}</p>
       {leader === null ? (
         <p className="text-[11px] text-muted-foreground">
-          {`No name is in yet. ${nameCount(census.needed)} on one captain ${
-            census.needed === 1 ? "carries" : "carry"
-          } it.`}
+          {t(
+            "No name is in yet. {namesNeeded} on one captain {carryWord} it.",
+            {
+              namesNeeded: nameCount(census.needed),
+              carryWord: census.needed === 1 ? "carries" : "carry",
+            },
+          )}
         </p>
       ) : leader.short > 0 ? (
         <p className="text-[11px] text-muted-foreground">
-          {`${leader.name} needs ${
-            leader.short === 1 ? "1 more name" : `${leader.short} more names`
-          } to carry it.`}
+          {t("{leader.name} needs {namesShort} to carry it.", {
+            "leader.name": leader.name,
+            namesShort:
+              leader.short === 1
+                ? t("1 more name")
+                : t("{count} more names", { count: leader.short }),
+          })}
         </p>
       ) : (
         <p className="text-[11px] text-muted-foreground">
-          {leader.name} has every name the vote needs.
+          {t("{leader.name} has every name the vote needs.", {
+            "leader.name": leader.name,
+          })}
         </p>
       )}
       {rows.length > 0 && (
@@ -118,7 +140,10 @@ export function VoteTallyRows({
             <p key={row.targetId} className="text-[11px]">
               <span className="font-medium">{row.name}</span>{" "}
               <span className="text-muted-foreground">
-                has {nameCount(row.voters.length)}, from {nameList(row.voters)}.
+                {t("has {namesNeeded}, from {nameList}.", {
+                  namesNeeded: nameCount(row.voters.length),
+                  nameList: nameList(row.voters),
+                })}
               </span>
             </p>
           ))}
@@ -126,8 +151,11 @@ export function VoteTallyRows({
       )}
       <p className="text-[11px] text-muted-foreground">
         {myVote === null
-          ? "Your name is not in yet. Pick a captain and press the button."
-          : `Your name is in for ${captainName(members, myVote)}. Nothing else is asked of you this leg.`}
+          ? t("Your name is not in yet. Pick a captain and press the button.")
+          : t(
+              "Your name is in for {votedName}. Nothing else is asked of you this leg.",
+              { votedName: captainName(members, myVote) },
+            )}
       </p>
       {/* Who is still to act, said as a count and as names, and then what
           the vote does with the names it needs. The two are one line
@@ -135,10 +163,18 @@ export function VoteTallyRows({
           has to travel and who is still walking it. */}
       <p className="text-[11px] text-muted-foreground">
         {waiting.length > 0
-          ? `${captainCount(waiting.length)} ${
-              waiting.length === 1 ? "has" : "have"
-            } not named anyone: ${nameList(waiting)}. ${nextStep(census.needed)}`
-          : "Every captain still sailing has named someone, so nothing more can land this leg. A later leg can call this vote again."}
+          ? t(
+              "{captainTally} {haveWord} not named anyone: {nameList}. {nextStep}",
+              {
+                captainTally: captainCount(waiting.length),
+                haveWord: waiting.length === 1 ? "has" : "have",
+                nameList: nameList(waiting),
+                nextStep: nextStep(census.needed),
+              },
+            )
+          : t(
+              "Every captain still sailing has named someone, so nothing more can land this leg. A later leg can call this vote again.",
+            )}
       </p>
     </div>
   );

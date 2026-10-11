@@ -17,12 +17,20 @@
 import { useEffect, useState } from "react";
 import { api, type PublicUser } from "@/lib/api";
 import { disconnectSocket, setAuthToken } from "@/lib/realtime";
+import { t } from "@/lib/game/i18n";
+import { READING_THE_REGISTER } from "@/lib/use-admin";
+import { useLanguage } from "@/lib/use-language-preference";
 import { AdminGate } from "@/components/portmasters/AdminGate";
 import { AdminConsole } from "@/components/portmasters/AdminConsole";
+import { PageSplash } from "@/components/ui/page-splash";
 
 type Status = "loading" | "gate" | "console";
 
 export default function AdminPage() {
+  // This route renders outside the harbor room, so it subscribes to the
+  // captain's language at its own root: a flip redraws the splash and the
+  // console under it rather than waiting for the next route change.
+  useLanguage();
   const [status, setStatus] = useState<Status>("loading");
   const [me, setMe] = useState<PublicUser | null>(null);
   // Why the gate is showing rather than the console, when there is a
@@ -80,7 +88,7 @@ export default function AdminPage() {
     } catch {
       // best effort
     }
-    leave("Signed out of the operator console.");
+    leave(t("Signed out of the operator console."));
   };
 
   // Nothing to end here. The session either ran out or was ended already,
@@ -88,13 +96,7 @@ export default function AdminPage() {
   const handleConsoleLost = (message: string) => leave(message);
 
   if (status === "loading") {
-    return (
-      <main className="pm-canvas flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground font-display text-lg">
-          Reading the register...
-        </p>
-      </main>
-    );
+    return <PageSplash line={t(READING_THE_REGISTER)} />;
   }
 
   if (status === "console" && me) {

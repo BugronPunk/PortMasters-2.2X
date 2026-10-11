@@ -24,6 +24,7 @@
 import { AlertTriangle, KeyRound } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Pill } from "@/components/portmasters/shared";
+import { t } from "@/lib/game/i18n";
 import { cn } from "@/lib/utils";
 
 // The shape of one card, private to this file: it is the props contract
@@ -56,7 +57,7 @@ export function VoyageCards<T extends string>({
 }) {
   return (
     <>
-      <Label className="text-xs text-muted-foreground">{label}</Label>
+      <Label className="text-xs text-muted-foreground">{t(label)}</Label>
       {/* items-start, because a card should be the size of what it says. The
           grid stretches its cells to the tallest row by default, and the
           experimental card always runs longer than the shipped one, so the
@@ -95,11 +96,11 @@ export function VoyageCards<T extends string>({
                       active && "text-charter",
                     )}
                   >
-                    {option.badge}
+                    {t(option.badge)}
                   </span>
                   {option.experimental && (
                     <Pill tone="none" className="bg-warn/5 text-warn">
-                      Experimental
+                      {t("Experimental")}
                     </Pill>
                   )}
                   {/* [H9: the unlock code] The seal, beside the state above
@@ -108,16 +109,18 @@ export function VoyageCards<T extends string>({
                       and one is how a host gets into it. The key is the
                       same glyph the room card uses for the table it opened,
                       so the pair reads as one idea in two places. */}
-                  {option.sealed && <Pill tone="default">🔒 Sealed</Pill>}
+                  {option.sealed && (
+                    <Pill tone="default">{t("🔒 Sealed")}</Pill>
+                  )}
                 </span>
                 <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">
-                  {option.tagline}
+                  {t(option.tagline)}
                 </span>
                 {/* The summary shows on both cards, not only on the one that
                     carries a warning: it is what the voyage asks of a captain,
                     so it belongs to the choice rather than to the caution. */}
                 <span className="mt-1 block text-[11px] leading-snug text-muted-foreground/70">
-                  {option.summary}
+                  {t(option.summary)}
                 </span>
                 {/* A captain who walks into an unfinished mode without being
                     told has been misled rather than tested, so the warning
@@ -128,7 +131,7 @@ export function VoyageCards<T extends string>({
                 {option.experimental && (
                   <span className="mt-1.5 flex items-start gap-1.5 text-[11px] leading-snug text-warn">
                     <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
-                    <span>Still being built.</span>
+                    <span>{t("Still being built.")}</span>
                   </span>
                 )}
                 {/* Not a caution, so not the caution's colour: a sealed
@@ -138,7 +141,7 @@ export function VoyageCards<T extends string>({
                 {option.sealed && (
                   <span className="mt-1.5 flex items-start gap-1.5 text-[11px] leading-snug text-muted-foreground">
                     <KeyRound className="mt-0.5 h-3 w-3 shrink-0" />
-                    <span>Opens with a phrase.</span>
+                    <span>{t("Opens with a phrase.")}</span>
                   </span>
                 )}
               </span>

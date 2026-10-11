@@ -126,7 +126,7 @@ export function isCharterGood(item: string): boolean {
   );
 }
 
-// The finished goods of each charter wave, told apart.
+// The goods of each charter wave, told apart.
 //
 // The two boons that pay on a wave name it in their own text: Kiln and Forge
 // Guild pays on the first charter's goods, Exotic Treasures on the second's.
@@ -136,15 +136,29 @@ export function isCharterGood(item: string): boolean {
 // same boon, since a captain holds only one at a time (applyBoon replaces
 // modifierFlags wholesale) and whichever they held paid out on either wave.
 //
+// Each reader covers its whole wave, the raw goods and the finished ones
+// together, because that is what the card's word "goods" promises and what
+// the schedule actually brings: the first charter opens the clay and the ore
+// as well as the mirror and the celadon, and an order for the clay is an
+// order for the first charter's goods. The readers used to name the finished
+// list alone, so half of each wave paid nothing while the card promised the
+// wave.
+//
 // [F2: the card record, and the mode weighting field] These two readers stay
 // here rather than becoming tag reads, and that is the one place in the
 // engine F1's rule does not reach: which wave a good arrived with is the
 // schedule's fact and not the good's, so a tag would be the same good tagged
 // two ways in two rooms (see the same note in ./engine/orders).
-export function isTier1CharterProduct(item: string): boolean {
-  return (PRODUCTS_TIER1 as readonly string[]).includes(item);
+export function isTier1CharterGood(item: string): boolean {
+  return (
+    (RESOURCES_TIER1 as readonly string[]).includes(item) ||
+    (PRODUCTS_TIER1 as readonly string[]).includes(item)
+  );
 }
 
-export function isTier2CharterProduct(item: string): boolean {
-  return (PRODUCTS_TIER2 as readonly string[]).includes(item);
+export function isTier2CharterGood(item: string): boolean {
+  return (
+    (RESOURCES_TIER2 as readonly string[]).includes(item) ||
+    (PRODUCTS_TIER2 as readonly string[]).includes(item)
+  );
 }

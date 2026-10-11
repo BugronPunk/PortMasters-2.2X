@@ -6,8 +6,10 @@ import type { Server, Socket } from "socket.io";
 
 import { db } from "@/lib/db";
 import { roomMemberIds } from "@/lib/rooms";
+import { tFor } from "@/lib/game/i18n";
 import { gambitSystemsOn } from "@/lib/game/mode";
 import { seated } from "../auth";
+import { roomChannel } from "../channel";
 import { clearMutedUsers, emitRoomMembers } from "../chat";
 import {
   announceDraftComplete,
@@ -35,7 +37,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
     // database calls below, and both go on to move the room, open its
     // records and deal its table: a voyage announced twice, with the two
     // deals colliding on the alignment table's own key (see
-    // dealAlignments, whose re-read is the second line of defense here).
+    // dealAlignments, whose fresh read is the second line of defense here).
     // A claim is only a claim if it is taken before the first await, so
     // it is taken here, and everything it guards, the refusals included,
     // is answered inside the finally that releases it.
@@ -51,21 +53,21 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
           mode: true,
           difficulty: true,
           voyageEpoch: true,
-          createdAt: true,
+          lobbyOpenedAt: true,
         },
       });
       if (!room) return;
       if (room.started) {
         socket.emit("room:error", {
           roomId,
-          error: "This voyage has already set sail.",
+          error: tFor(s.locale, "This voyage has already set sail."),
         });
         return;
       }
       if (room.hostId !== s.userId) {
         socket.emit("room:error", {
           roomId,
-          error: "Only the host can start the voyage.",
+          error: tFor(s.locale, "Only the host can start the voyage."),
         });
         return;
       }
@@ -78,7 +80,10 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       if (roster.length < 1) {
         socket.emit("room:error", {
           roomId,
-          error: "Need at least one captain in the harbor to set sail.",
+          error: tFor(
+            s.locale,
+            "Need at least one captain in the harbor to set sail.",
+          ),
         });
         return;
       }
@@ -119,7 +124,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // this update just pinned, and synchronous so nothing a captain
       // hears below can arrive before the voyage it belongs to is being
       // recorded. A room the sampler passes over opens nothing, and
-      // every note below is then a no-op.
+      // every note below then does nothing.
       openVoyageTelemetry(room, roster);
       const cp = await getCheckpoint(roomId);
       cp.round = 1;
@@ -164,7 +169,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // lobby into a voyage, so a client that hears it can draw the right
       // board on the first render of one, and a reload is covered by the
       // same number on the state route.
-      io.to(`room:${roomId}`).emit("room:started", {
+      io.to(roomChannel(roomId)).emit("room:started", {
         roomId,
         seats: roster.length,
       });
@@ -182,7 +187,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // voyage that did not open. It is dealt against the roster this
       // departure pinned rather than against the members as they stand a
       // minute later, because membership can change mid voyage and a deck
-      // cannot be re dealt around it: a captain who joins a voyage under
+      // cannot be redealt around it: a captain who joins a voyage under
       // way sails pathless, which the harbor already has a reading for.
       const dealt = await dealPaths(io, roomId, roster, room.mode);
       // [W2: the path draft] A departure whose deal declined to seat

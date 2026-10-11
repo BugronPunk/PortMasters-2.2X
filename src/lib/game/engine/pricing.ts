@@ -24,6 +24,7 @@
 // that had already gone, and a second copy is where a drift would start.
 // =====================================================================
 import { cardByFlag, cardName, cardText, carriesTag } from "../cards";
+import { t } from "@/lib/game/i18n";
 import { WAGES } from "../constants/crew";
 import {
   COMMODITIES,
@@ -69,7 +70,10 @@ export type ExpectedPrice = {
 // prints for it are one string.
 function boonNameForModifierKey(key: string): string {
   const card = cardByFlag(key);
-  return card === null ? "Active boon" : cardText(card).name;
+  // The fallback is read where it is used, not at the module's scope: the
+  // tooltip that prints it is what decides the language, and this reader
+  // only hands the word onward.
+  return card === null ? t("Active boon") : cardText(card).name;
 }
 
 // ========== Transport ==========
@@ -77,6 +81,7 @@ export function calcTransportCost(
   state: GameState,
   totalItems: number,
   hasWoven = false,
+  luxuryUnits = 0,
 ): number {
   let base = totalItems * 2;
   let discount = state.shipLevel * SHIP_DISCOUNT_PER_LEVEL;
@@ -105,6 +110,15 @@ export function calcTransportCost(
   if (hasModule(state, "bulk_hauler")) cost = Math.max(0, cost - totalItems);
   if (hasModule(state, "overdrive_engine")) cost = Math.max(0, cost - 5);
   if (hasModule(state, "silk_monopoly") && hasWoven) cost = 0;
+  // The Fleet of Treasures, the luxury tag's freight rule: gold off each
+  // luxury unit, taken after every module above so it discounts the
+  // freight they have already brought down, and floored at zero like
+  // them. It used to live in the settlement alone (see completeOrder),
+  // which is how the board came to quote the pre discount freight while
+  // the fill charged the discounted one. The count arrives from the
+  // caller because this function is handed numbers, not a manifest (see
+  // fleetOfTreasuresUnits below for the count the callers use).
+  if (luxuryUnits > 0) cost = Math.max(0, cost - luxuryUnits * 3);
   return Math.max(0, cost);
 }
 
@@ -116,6 +130,7 @@ export function explainTransportCost(
   state: GameState,
   totalItems: number,
   hasWoven = false,
+  luxuryUnits = 0,
 ): PriceBreakdown {
   const steps: PriceStep[] = [];
   const base = totalItems * 2;
@@ -132,7 +147,7 @@ export function explainTransportCost(
   // reading the breakdown is asking where each Gold went.
   const floored = Math.max(5, cost);
   if (floored !== cost) {
-    steps.push({ label: "Minimum freight", delta: floored - cost });
+    steps.push({ label: t("Minimum freight"), delta: floored - cost });
     cost = floored;
   }
 
@@ -140,7 +155,9 @@ export function explainTransportCost(
   if (shipDiscount > 0) {
     const next = Math.max(5, cost - shipDiscount);
     steps.push({
-      label: `Ship Level ${state.shipLevel} discount`,
+      label: t("Ship Level {state.shipLevel} discount", {
+        "state.shipLevel": state.shipLevel,
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -151,7 +168,10 @@ export function explainTransportCost(
       cost - state.modifierFlags.transport_flat_discount,
     );
     steps.push({
-      label: `${boonNameForModifierKey("transport_flat_discount")} (down ${state.modifierFlags.transport_flat_discount}g)`,
+      label: t("{boonName} (down {down}g)", {
+        boonName: boonNameForModifierKey("transport_flat_discount"),
+        down: state.modifierFlags.transport_flat_discount,
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -162,7 +182,9 @@ export function explainTransportCost(
       Math.floor(cost * state.modifierFlags.transport_silk_discount),
     );
     steps.push({
-      label: `${boonNameForModifierKey("transport_silk_discount")} on woven goods`,
+      label: t("{boonName} on woven goods", {
+        boonName: boonNameForModifierKey("transport_silk_discount"),
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -174,7 +196,10 @@ export function explainTransportCost(
     const perLot = state.modifierFlags.transport_per_lot_discount;
     const next = Math.max(0, cost - Math.floor(totalItems * perLot));
     steps.push({
-      label: `${boonNameForModifierKey("transport_per_lot_discount")} (down ${perLot}g per lot)`,
+      label: t("{boonName} (down {perLot}g per lot)", {
+        boonName: boonNameForModifierKey("transport_per_lot_discount"),
+        perLot,
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -182,7 +207,7 @@ export function explainTransportCost(
   if (hasModule(state, "bulk_hauler")) {
     const next = Math.max(0, cost - totalItems);
     steps.push({
-      label: `${cardName("bulk_hauler")} module`,
+      label: t("{cardName} module", { cardName: cardName("bulk_hauler") }),
       delta: next - cost,
     });
     cost = next;
@@ -190,19 +215,50 @@ export function explainTransportCost(
   if (hasModule(state, "overdrive_engine")) {
     const next = Math.max(0, cost - 5);
     steps.push({
-      label: `${cardName("overdrive_engine")} module`,
+      label: t("{cardName} module", { cardName: cardName("overdrive_engine") }),
       delta: next - cost,
     });
     cost = next;
   }
   if (hasModule(state, "silk_monopoly") && hasWoven) {
     steps.push({
-      label: `${cardName("silk_monopoly")} module (woven freight waived)`,
+      label: t("{cardName} module (woven freight waived)", {
+        cardName: cardName("silk_monopoly"),
+      }),
       delta: -cost,
     });
     cost = 0;
   }
+  // The Fleet of Treasures, in the place the charge takes it: see the
+  // same rule in calcTransportCost above.
+  if (luxuryUnits > 0) {
+    const next = Math.max(0, cost - luxuryUnits * 3);
+    steps.push({
+      label: t("{cardName} module", {
+        cardName: cardName("fleet_of_treasures"),
+      }),
+      delta: next - cost,
+    });
+    cost = next;
+  }
   return { base, steps, final: Math.max(0, cost) };
+}
+
+// How many units on an order the Fleet of Treasures covers: the luxury
+// tagged lines' own counts, counted only while the module is bolted on,
+// so a call site cannot quote the discount off a hull that does not
+// carry it. The settlement, the board's freight line and the planner's
+// net all count their units through here, which is what keeps the count
+// that prices a run one count (see calcTransportCost above for the
+// arithmetic and completeOrder in ./orders for the receipt).
+export function fleetOfTreasuresUnits(
+  state: GameState,
+  resources: readonly { type: string; required?: number }[],
+): number {
+  if (!hasModule(state, "fleet_of_treasures")) return 0;
+  return resources
+    .filter((r) => carriesTag("good", r.type, "luxury"))
+    .reduce((sum, r) => sum + (r.required ?? 0), 0);
 }
 
 // ========== Taxes ==========
@@ -262,22 +318,38 @@ export function explainVAT(
   const workerCost = WAGES[recipe.worker_type];
   const taxable = sellingPrice - matCost - workerCost;
   const steps: PriceStep[] = [
-    { label: "Average material cost", delta: -matCost },
+    { label: t("Average material cost"), delta: -matCost },
     {
-      label: `${recipe.worker_type === "weaver" ? "Weaver" : recipe.worker_type === "master" ? "Master Weaver" : "Sachet Maker"} wage`,
+      // The artisan's name reads here because the tooltip prints it inside
+      // this label, the same reading the wage bill's lines take (see the
+      // singular arm in ./workers).
+      label: t("{workerLabel} wage", {
+        workerLabel: t(
+          recipe.worker_type === "weaver"
+            ? "Weaver"
+            : recipe.worker_type === "master"
+              ? "Master Weaver"
+              : "Sachet Maker",
+        ),
+      }),
       delta: -workerCost,
     },
   ];
   if (taxable <= 0) return { base: sellingPrice, steps, final: 0 };
   let vat = Math.floor(taxable * VAT_RATE);
   steps.push({
-    label: `${Math.round(VAT_RATE * 100)}% VAT on the margin`,
+    label: t("{vatPct}% VAT on the margin", {
+      vatPct: Math.round(VAT_RATE * 100),
+    }),
     delta: -vat,
   });
   if (state.modifierFlags.vat_discount) {
     const next = Math.floor(vat * (1 - state.modifierFlags.vat_discount));
     steps.push({
-      label: `${boonNameForModifierKey("vat_discount")} (down ${Math.round(state.modifierFlags.vat_discount * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("vat_discount"),
+        pct: Math.round(state.modifierFlags.vat_discount * 100),
+      }),
       delta: next - vat,
     });
     vat = next;
@@ -289,7 +361,10 @@ export function explainVAT(
   if (state.modifierFlags.harbor_credit) {
     const next = Math.floor(vat * (1 - state.modifierFlags.harbor_credit));
     steps.push({
-      label: `${boonNameForModifierKey("harbor_credit")} (down ${Math.round(state.modifierFlags.harbor_credit * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("harbor_credit"),
+        pct: Math.round(state.modifierFlags.harbor_credit * 100),
+      }),
       delta: next - vat,
     });
     vat = next;
@@ -303,7 +378,10 @@ export function explainVAT(
       vat * (1 - state.modifierFlags.voyage_dues_discount),
     );
     steps.push({
-      label: `${boonNameForModifierKey("voyage_dues_discount")} (down ${Math.round(state.modifierFlags.voyage_dues_discount * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("voyage_dues_discount"),
+        pct: Math.round(state.modifierFlags.voyage_dues_discount * 100),
+      }),
       delta: next - vat,
     });
     vat = next;
@@ -311,7 +389,9 @@ export function explainVAT(
   if (hasModule(state, "tax_evasion")) {
     const next = Math.floor(vat * 0.5);
     steps.push({
-      label: `${cardName("tax_evasion")} module (down 50%)`,
+      label: t("{cardName} module (down 50%)", {
+        cardName: cardName("tax_evasion"),
+      }),
       delta: next - vat,
     });
     vat = next;
@@ -330,13 +410,40 @@ export const INCOME_TAX_RATE = 0.1;
 // a captain reads while deciding whether to sell.
 export const VAT_RATE = 0.05;
 
+// The two module factors the tax reads: the Smuggler's Hold surcharge
+// and Tax Evasion's halving. Named so calcIncomeTax and incomeTaxRate
+// below fold the same pair; written out twice, a retune would move one
+// and leave the other, and a receipt that quotes a rate the charge no
+// longer takes is worse than the bare constant it replaced.
+const SMUGGLERS_HOLD_TAX_FACTOR = 1.2;
+const TAX_EVASION_FACTOR = 0.5;
+
 export function calcIncomeTax(state: GameState, preTax: number): number {
   if (preTax <= 0) return 0;
   const rate = state.modifierFlags.income_tax_override || INCOME_TAX_RATE;
   let tax = Math.floor(preTax * rate);
-  if (hasModule(state, "smugglers_hold")) tax = Math.floor(tax * 1.2);
-  if (hasModule(state, "tax_evasion")) tax = Math.floor(tax * 0.5);
+  if (hasModule(state, "smugglers_hold"))
+    tax = Math.floor(tax * SMUGGLERS_HOLD_TAX_FACTOR);
+  if (hasModule(state, "tax_evasion"))
+    tax = Math.floor(tax * TAX_EVASION_FACTOR);
   return tax;
+}
+
+// The rate as charged, for the one reader that has to print it: the
+// round's income tax receipt (see the Resolve step in ./lifecycle). The
+// same base calcIncomeTax charges from, with the same module factors
+// folded in, so the percentage the ledger prints and the Gold it takes
+// tell one story. Note this folds the factors on the rate rather than
+// reading them back out of the charge, because the charge floors after
+// each multiply and a rate written back out of two floors would be a
+// third number matching neither the base nor the coins. The receipt
+// used to read the base constant alone, so a Smuggler's Hold round
+// printed ten percent over a charge it took twelve of.
+export function incomeTaxRate(state: GameState): number {
+  let rate = state.modifierFlags.income_tax_override || INCOME_TAX_RATE;
+  if (hasModule(state, "smugglers_hold")) rate *= SMUGGLERS_HOLD_TAX_FACTOR;
+  if (hasModule(state, "tax_evasion")) rate *= TAX_EVASION_FACTOR;
+  return rate;
 }
 
 // ========== Market card pricing ==========
@@ -380,7 +487,10 @@ export function explainCardPrice(
   if (state.modifierFlags.purchase_discount) {
     const next = Math.floor(cost * (1 - state.modifierFlags.purchase_discount));
     steps.push({
-      label: `${boonNameForModifierKey("purchase_discount")} (down ${Math.round(state.modifierFlags.purchase_discount * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("purchase_discount"),
+        pct: Math.round(state.modifierFlags.purchase_discount * 100),
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -396,7 +506,10 @@ export function explainCardPrice(
       cost * (1 - state.modifierFlags.voyage_purchase_discount),
     );
     steps.push({
-      label: `${boonNameForModifierKey("voyage_purchase_discount")} (down ${Math.round(state.modifierFlags.voyage_purchase_discount * 100)}%)`,
+      label: t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("voyage_purchase_discount"),
+        pct: Math.round(state.modifierFlags.voyage_purchase_discount * 100),
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -417,7 +530,10 @@ export function explainCardPrice(
     );
     if (reduction > 0) {
       steps.push({
-        label: `${boonNameForModifierKey("hemp_price_reduction")} (down ${hempReduction}g per unit)`,
+        label: t("{hempBoon} (down {hempReduction}g per unit)", {
+          hempBoon: boonNameForModifierKey("hemp_price_reduction"),
+          hempReduction,
+        }),
         delta: -reduction,
       });
       cost -= reduction;
@@ -433,7 +549,13 @@ export function explainCardPrice(
     );
     if (reduction > 0) {
       steps.push({
-        label: `${cardName("kiln_cellar")} module (down ${KILN_CELLAR_PER_UNIT}g per unit)`,
+        label: t(
+          "{kilnCellarName} module (down {KILN_CELLAR_PER_UNIT}g per unit)",
+          {
+            kilnCellarName: cardName("kiln_cellar"),
+            KILN_CELLAR_PER_UNIT,
+          },
+        ),
         delta: -reduction,
       });
       cost -= reduction;
@@ -449,7 +571,10 @@ export function explainCardPrice(
     );
     if (reduction > 0) {
       steps.push({
-        label: `${cardName("foreign_quarter_pass")} module (down ${FOREIGN_QUARTER_PER_UNIT}g per unit)`,
+        label: t("{cardName} module (down {perUnit}g per unit)", {
+          cardName: cardName("foreign_quarter_pass"),
+          perUnit: FOREIGN_QUARTER_PER_UNIT,
+        }),
         delta: -reduction,
       });
       cost -= reduction;
@@ -458,7 +583,9 @@ export function explainCardPrice(
   if (hasModule(state, "smugglers_hold")) {
     const next = Math.floor(cost * 0.85);
     steps.push({
-      label: `${cardName("smugglers_hold")} module (down 15%)`,
+      label: t("{smugglersHoldName} module (down 15%)", {
+        smugglersHoldName: cardName("smugglers_hold"),
+      }),
       delta: next - cost,
     });
     cost = next;
@@ -466,7 +593,7 @@ export function explainCardPrice(
 
   const final = Math.max(0, cost);
   if (final !== cost)
-    steps.push({ label: "Floor at 0 Gold", delta: final - cost });
+    steps.push({ label: t("Floor at 0 Gold"), delta: final - cost });
   return { base: card.totalCost, steps, final };
 }
 
@@ -524,68 +651,95 @@ export function explainExpectedPrice(
   let [min, max] = basePriceRange(itemType) ?? [0, 100];
   const modifiers: string[] = [];
 
-  if (isResource) {
-    if (state.modifierFlags.purchase_discount) {
-      const factor = 1 - state.modifierFlags.purchase_discount;
-      min = Math.floor(min * factor);
-      max = Math.floor(max * factor);
-      modifiers.push(
-        `${boonNameForModifierKey("purchase_discount")} (down ${Math.round(state.modifierFlags.purchase_discount * 100)}%)`,
-      );
-    }
-    // [F6: charters at leg four] The Long Ledger, folded into the range
-    // exactly the way the round's own discount above is and in the same
-    // order the card charge takes the two (see explainCardPrice), so the
-    // preview and the charge cannot come to describe one purchase two
-    // ways.
-    if (state.modifierFlags.voyage_purchase_discount) {
-      const factor = 1 - state.modifierFlags.voyage_purchase_discount;
-      min = Math.floor(min * factor);
-      max = Math.floor(max * factor);
-      modifiers.push(
-        `${boonNameForModifierKey("voyage_purchase_discount")} (down ${Math.round(state.modifierFlags.voyage_purchase_discount * 100)}%)`,
-      );
-    }
-    if (
-      carriesTag("good", itemType, "bulk") &&
-      state.modifierFlags.hemp_price_reduction
-    ) {
-      min = Math.max(0, min - state.modifierFlags.hemp_price_reduction);
-      max = Math.max(0, max - state.modifierFlags.hemp_price_reduction);
-      modifiers.push(
-        `${boonNameForModifierKey("hemp_price_reduction")} (down ${state.modifierFlags.hemp_price_reduction}g per unit)`,
-      );
-    }
-    // The two per unit module discounts. Flat Gold off a single unit, so
-    // they come off the range the same way the Bulk Monopoly boon above
-    // does rather than scaling it. Applied in the order the card charge
-    // applies them (see explainCardPrice), since a percentage taken before
-    // a flat subtraction and one taken after settle on different numbers.
-    if (
-      hasModule(state, "kiln_cellar") &&
-      carriesTag("good", itemType, KILN_CELLAR_TAG)
-    ) {
-      min = Math.max(0, min - KILN_CELLAR_PER_UNIT);
-      max = Math.max(0, max - KILN_CELLAR_PER_UNIT);
-      modifiers.push(
-        `${cardName("kiln_cellar")} module (down ${KILN_CELLAR_PER_UNIT}g per unit)`,
-      );
-    }
-    if (
-      hasModule(state, "foreign_quarter_pass") &&
-      carriesTag("good", itemType, FOREIGN_QUARTER_TAG)
-    ) {
-      min = Math.max(0, min - FOREIGN_QUARTER_PER_UNIT);
-      max = Math.max(0, max - FOREIGN_QUARTER_PER_UNIT);
-      modifiers.push(
-        `${cardName("foreign_quarter_pass")} module (down ${FOREIGN_QUARTER_PER_UNIT}g per unit)`,
-      );
-    }
-    if (hasModule(state, "smugglers_hold")) {
-      min = Math.floor(min * 0.85);
-      max = Math.floor(max * 0.85);
-      modifiers.push(`${cardName("smugglers_hold")} module (down 15%)`);
-    }
+  // The chain below is read for both kinds of item. It used to sit
+  // inside an `if (isResource)` wrapper, and that wrapper was the whole
+  // difference between this preview and the card charge: a captain
+  // holding a purchase discount while hovering a finished good was told
+  // the good carried no discount at all, and then the market card went
+  // on to charge the discounted price. Every gate inside is already the
+  // narrower question (the boon's flag, the good's tag, the module), the
+  // same gates the charge reads, so the tags decide which lines a raw
+  // good and a product share and the wrapper only ever suppressed the
+  // product's.
+  if (state.modifierFlags.purchase_discount) {
+    const factor = 1 - state.modifierFlags.purchase_discount;
+    min = Math.floor(min * factor);
+    max = Math.floor(max * factor);
+    modifiers.push(
+      t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("purchase_discount"),
+        pct: Math.round(state.modifierFlags.purchase_discount * 100),
+      }),
+    );
+  }
+  // [F6: charters at leg four] The Long Ledger, folded into the range
+  // exactly the way the round's own discount above is and in the same
+  // order the card charge takes the two (see explainCardPrice), so the
+  // preview and the charge cannot come to describe one purchase two
+  // ways.
+  if (state.modifierFlags.voyage_purchase_discount) {
+    const factor = 1 - state.modifierFlags.voyage_purchase_discount;
+    min = Math.floor(min * factor);
+    max = Math.floor(max * factor);
+    modifiers.push(
+      t("{boonName} (down {pct}%)", {
+        boonName: boonNameForModifierKey("voyage_purchase_discount"),
+        pct: Math.round(state.modifierFlags.voyage_purchase_discount * 100),
+      }),
+    );
+  }
+  if (
+    carriesTag("good", itemType, "bulk") &&
+    state.modifierFlags.hemp_price_reduction
+  ) {
+    min = Math.max(0, min - state.modifierFlags.hemp_price_reduction);
+    max = Math.max(0, max - state.modifierFlags.hemp_price_reduction);
+    modifiers.push(
+      t("{hempBoon} (down {hempReduction}g per unit)", {
+        hempBoon: boonNameForModifierKey("hemp_price_reduction"),
+        hempReduction: state.modifierFlags.hemp_price_reduction,
+      }),
+    );
+  }
+  // The two per unit module discounts. Flat Gold off a single unit, so
+  // they come off the range the same way the Bulk Monopoly boon above
+  // does rather than scaling it. Applied in the order the card charge
+  // applies them (see explainCardPrice), since a percentage taken before
+  // a flat subtraction and one taken after settle on different numbers.
+  if (
+    hasModule(state, "kiln_cellar") &&
+    carriesTag("good", itemType, KILN_CELLAR_TAG)
+  ) {
+    min = Math.max(0, min - KILN_CELLAR_PER_UNIT);
+    max = Math.max(0, max - KILN_CELLAR_PER_UNIT);
+    modifiers.push(
+      t("{kilnCellarName} module (down {KILN_CELLAR_PER_UNIT}g per unit)", {
+        kilnCellarName: cardName("kiln_cellar"),
+        KILN_CELLAR_PER_UNIT,
+      }),
+    );
+  }
+  if (
+    hasModule(state, "foreign_quarter_pass") &&
+    carriesTag("good", itemType, FOREIGN_QUARTER_TAG)
+  ) {
+    min = Math.max(0, min - FOREIGN_QUARTER_PER_UNIT);
+    max = Math.max(0, max - FOREIGN_QUARTER_PER_UNIT);
+    modifiers.push(
+      t("{cardName} module (down {perUnit}g per unit)", {
+        cardName: cardName("foreign_quarter_pass"),
+        perUnit: FOREIGN_QUARTER_PER_UNIT,
+      }),
+    );
+  }
+  if (hasModule(state, "smugglers_hold")) {
+    min = Math.floor(min * 0.85);
+    max = Math.floor(max * 0.85);
+    modifiers.push(
+      t("{smugglersHoldName} module (down 15%)", {
+        smugglersHoldName: cardName("smugglers_hold"),
+      }),
+    );
   }
 
   return { min, max, isProduct: !isResource, modifiers };
@@ -598,7 +752,7 @@ export function explainExpectedPrice(
 // the number this returns is what Resolve actually charges for that
 // worker, so every place that shows or charges a wage, this function,
 // payWages, and the Pending Payroll preview in phases/WorkerMgmt.tsx,
-// must all read from here rather than re deriving the formula themselves.
+// must all read from here rather than derive the formula again themselves.
 // Root cause of the Master's Apprentice bug: payWages and that preview
 // used to hardcode WAGES[type] with only the Artisan's Workshop
 // surcharge, so hire_discount silently never reduced the actual wage
