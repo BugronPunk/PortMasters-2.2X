@@ -21,6 +21,7 @@ import { RECIPES } from "../constants/goods";
 import { onShortRations, shortRationsYield } from "../larder";
 import { newCrewIdentity } from "../crew";
 import { isFrostbitten } from "../garments";
+import { unlockedWorkerTypes } from "../pools";
 import {
   frozenAssignRefusal,
   frozenWorkLog,
@@ -379,9 +380,33 @@ export function wageBill(state: GameState): WageBillRow[] {
  * and Worker Management). The key is the engine's own id, which is also
  * what WORKER_TYPES and the roster share, so a missing row reads as a
  * type the roster does not know rather than a type with an unpaid wage.
+ * The join itself is unlockedWorkerRoster below, which both screens read.
  */
 export function payrollIndex(state: GameState): Map<WorkerTypeId, WageBillRow> {
   return new Map(wageBill(state).map((b) => [b.id, b]));
+}
+
+/**
+ * The unlocked roster, each type carrying its hands and the wage the next
+ * payroll run is due from it: the join the two screens that print the
+ * roster make (the status rail and Worker Management). Both of them used
+ * to write the join out themselves, the pledge story in the comment and
+ * all, so a roster change or a wage rule had two places to stay in step.
+ *
+ * The due reads off the engine's own bill (payrollIndex) rather than a
+ * hand count multiplied at the screen: a Jade Pavilion pledge waives a
+ * sponsored hand's first wage, and a screen that counted hands and
+ * multiplied overbilled a pledged captain by exactly one wage. A type
+ * outside the unlocked roster is one payWages does not charge either, so
+ * it takes no row here.
+ */
+export function unlockedWorkerRoster(state: GameState) {
+  const payroll = payrollIndex(state);
+  return unlockedWorkerTypes(state.difficulty, state.currentRound).map((w) => ({
+    ...w,
+    list: state.workers[w.id] ?? [],
+    due: payroll.get(w.id)?.due ?? 0,
+  }));
 }
 
 /**

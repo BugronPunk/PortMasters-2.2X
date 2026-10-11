@@ -18,6 +18,7 @@ import {
   calcTransportCost,
   canFillOrder,
   explainVAT,
+  fleetOfTreasuresUnits,
   getCardFinalCost,
   getHireCost,
   getIntelCost,
@@ -25,6 +26,7 @@ import {
   lockedBehind,
   maintenanceDue,
   moduleSlotsOpen,
+  orderRewardBonusSteps,
   wagesDue,
 } from "@/lib/game/engine";
 import { RECIPES } from "@/lib/game/constants/goods";
@@ -532,6 +534,7 @@ function analyzeOrders(game: GameState): Suggestion | null {
   // Find the most profitable completable order
   let bestOrder = null as (typeof orders)[0] | null;
   let bestProfit = -Infinity;
+  let bestReward = 0;
   for (const o of orders) {
     if (game.completedOrders.includes(o.id)) continue;
     // The engine's own reader rather than a second copy of the hold test,
@@ -542,8 +545,16 @@ function analyzeOrders(game: GameState): Suggestion | null {
     // in ./engine/orders).
     if (!canFillOrder(game, o)) continue;
     const hasWoven = cargoCarriesTag(o.resources, "woven");
-    const transport = calcTransportCost(game, o.totalItems, hasWoven);
+    // The freight through the same read the fill charges through, the
+    // Fleet of Treasures units included (see fleetOfTreasuresUnits).
+    const transport = calcTransportCost(
+      game,
+      o.totalItems,
+      hasWoven,
+      fleetOfTreasuresUnits(game, o.resources),
+    );
     let net = o.reward - transport;
+    let vatTotal = 0;
     if (o.isProductOrder) {
       // Charged exactly as completeOrder charges it, per unit, rather than
       // as a flat five percent of the reward. The real figure comes off the
@@ -558,17 +569,29 @@ function analyzeOrders(game: GameState): Suggestion | null {
       const productRef = o.resources[0];
       const required = productRef?.required ?? 0;
       if (productRef && required > 0) {
-        net -=
+        vatTotal =
           explainVAT(game, productRef.type, o.reward / required).final *
           required;
+        net -= vatTotal;
       }
     }
+    // The percentage bonuses the fill will credit, read through the
+    // settlement's own chain off the same post VAT reward it starts from
+    // (see orderRewardBonusSteps), so the sentence below names the Gold
+    // the fill actually lands rather than the face value.
+    const rewardWithBonuses = orderRewardBonusSteps(
+      game,
+      o,
+      o.reward - vatTotal,
+    ).reward;
+    net += rewardWithBonuses - (o.reward - vatTotal);
     if (o.isBrokerFavor) {
       net -= brokersFavorCommission(o.reward);
     }
     if (net > bestProfit) {
       bestProfit = net;
       bestOrder = o;
+      bestReward = rewardWithBonuses;
     }
   }
 
@@ -578,7 +601,7 @@ function analyzeOrders(game: GameState): Suggestion | null {
       title: t("Trade order #{id}", { id: bestOrder.id }),
       body: t(
         "This order pays {bestOrder.reward} Gold with an estimated net profit of {bestProfit} Gold after transport and taxes. It is the most profitable order you can complete right now.",
-        { "bestOrder.reward": bestOrder.reward, bestProfit },
+        { "bestOrder.reward": bestReward, bestProfit },
       ),
       tone: "gain",
     };

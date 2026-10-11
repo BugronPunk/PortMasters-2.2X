@@ -349,3 +349,15 @@ const CARDS: Record<GambitRole, RoleCard> = {
 export function roleCard(role: GambitRole): RoleCard {
   return CARDS[role];
 }
+
+// The line a dealt card reads, in the reader's own language. The server
+// writes it into the private entry at the send (see sendCard in
+// src/server/realtime/gambit), and both surfaces that print the entry
+// (the card under the controls and Dusk's private column) read it again
+// here at the print, so a captain who flips the pick mid voyage reads the
+// card again in the new language rather than keeping the sentence the old
+// one left behind. One function, so the sent line and the printed line
+// are the same copy read twice.
+export function dealtCardLine(role: GambitRole): string {
+  return t(roleCard(role).line);
+}

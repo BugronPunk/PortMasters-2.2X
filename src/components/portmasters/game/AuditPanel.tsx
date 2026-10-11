@@ -28,7 +28,6 @@ import {
 import { auditOpensAt } from "@/lib/game/mode";
 import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
-import type { useAudit } from "@/lib/use-audit";
 import { cn } from "@/lib/utils";
 import { nameCount, tallyRows } from "@/lib/voteTally";
 import { VoteTallyRows } from "@/components/portmasters/game/VoteTallyRows";
@@ -37,10 +36,9 @@ import {
   type Marks,
 } from "@/components/portmasters/game/VoteSeatPicker";
 import { VoteCardShell } from "./VoteCardShell";
+import type { Audit } from "./phases/PhaseShared";
 import { RefusalLine } from "../shared";
 import { Utensils } from "lucide-react";
-
-type Audit = ReturnType<typeof useAudit>;
 
 /**
  * The two questions the Parley board asks about this vote, answered once

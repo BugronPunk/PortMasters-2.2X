@@ -15,6 +15,7 @@ import { seated } from "../auth";
 import { clearBazaar } from "../bazaar";
 import { clearBoonLedger } from "../boon-ledger";
 import { clearBarter, clearFlexibleAccepted } from "../barter";
+import { roomChannel } from "../channel";
 import { clearMutedUsers, clearSessionChat, emitRoomMembers } from "../chat";
 import {
   broadcastReadyState,
@@ -206,7 +207,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
       // copy on this signal rather than showing talk from a voyage
       // that no longer exists.
       if (clearSessionChat(roomId))
-        io.to(`room:${roomId}`).emit("chat:cleared", { roomId });
+        io.to(roomChannel(roomId)).emit("chat:cleared", { roomId });
       if (clearMutedUsers(roomId)) void emitRoomMembers(io, roomId);
       // [B4: the log surfaces] A restarted voyage is a new voyage, so the
       // log that belonged to the old one goes with the conversation above.
@@ -234,7 +235,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
         "restarted",
         roomMembers(roomId).map((m) => m.id),
       );
-      io.to(`room:${roomId}`).emit("room:restarted", {
+      io.to(roomChannel(roomId)).emit("room:restarted", {
         roomId,
         voyageEpoch: restarted.voyageEpoch,
         difficulty: restarted.difficulty,

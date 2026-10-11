@@ -49,8 +49,11 @@ export type ModuleTrades = ReturnType<typeof useModuleTrades>;
 export type Bazaar = ReturnType<typeof useBazaarRumors>;
 type Aid = ReturnType<typeof useAid>;
 type Backing = ReturnType<typeof useBacking>;
-type Audit = ReturnType<typeof useAudit>;
-type Maroon = ReturnType<typeof useMaroon>;
+// Exported because the two vote panels that take them as props
+// (AuditPanel, MaroonPanel) name them rather than redeclaring the alias
+// locally.
+export type Audit = ReturnType<typeof useAudit>;
+export type Maroon = ReturnType<typeof useMaroon>;
 type Boons = ReturnType<typeof useBoonLedger>;
 type Roster = ReturnType<typeof useRoomRoster>;
 // [W2: the path draft] The deal's own board, threaded like every market
@@ -143,6 +146,14 @@ export type PhasePanelProps = {
   // drawn on is a seat of every dealing Gambit lap rather than a screen
   // that might be open (see the PathDraft case in ../GamePhasePanel).
   draft: Draft;
+};
+
+// The two boards of the Market (the port's purchase board and the
+// manifest's order board) take exactly this much of the phase panel: the
+// game, the act, and the cargo colour reader. Named once so the two board
+// signatures cannot drift apart.
+export type MarketBoardProps = Pick<PhasePanelProps, "game" | "act"> & {
+  colorFor: (item: string) => string | undefined;
 };
 
 /**

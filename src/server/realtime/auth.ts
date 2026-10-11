@@ -17,6 +17,7 @@ import { BANNED_ACCOUNT_ERROR, getUserFromToken } from "@/lib/auth";
 import { publicUser } from "@/lib/db";
 import { tFor } from "@/lib/game/i18n";
 import type { SocketState } from "./types";
+import { roomChannel } from "./channel";
 // The session cookie is sent automatically on same origin connections;
 // cross origin connections use an explicit token via the "auth" event
 // instead. The parse itself is shared with the language cookie beside it
@@ -86,7 +87,7 @@ export async function authenticate(
       if (oldSet.size === 0) userSockets.delete(state.userId);
     }
     if (state.roomId) {
-      socket.leave(`room:${state.roomId}`);
+      socket.leave(roomChannel(state.roomId));
       forgetStatusIfLastSocket(state.roomId, state.userId, userSockets);
       void emitRoomMembers(io, state.roomId);
     }

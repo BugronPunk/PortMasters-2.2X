@@ -10,6 +10,7 @@ import { TARGET_NOT_IN_HARBOR } from "@/lib/game/constants/copy";
 import { tFor } from "@/lib/game/i18n";
 import { CHAT_MESSAGE_MAX } from "@/lib/realtime-endpoint";
 import { requireAuth, seated } from "../auth";
+import { roomChannel } from "../channel";
 import {
   buildSessionMessage,
   emitRoomMembers,
@@ -52,7 +53,7 @@ export function wireChat(io: Server, socket: Socket): void {
     // The lobby square and the direct threads are not voyage talk and
     // are deliberately not counted; see the note on the event itself.
     noteTelemetry(roomId, "message_sent", { actor: s.userId });
-    io.to(`room:${roomId}`).emit("chat:room", { roomId, message });
+    io.to(roomChannel(roomId)).emit("chat:room", { roomId, message });
   });
 
   // The lobby's own channel, which is the harbor square rather than a

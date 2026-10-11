@@ -16,7 +16,7 @@ import {
 } from "@/lib/game/i18n";
 
 /** One named cookie's value out of a raw cookie header, or null. */
-export function readCookie(
+function readCookie(
   cookieHeader: string | undefined,
   name: string,
 ): string | null {

@@ -539,8 +539,8 @@
     },
     "card.steady_watch.name": { "en": "Steady Watch", "zh": "守望" },
     "card.steady_watch.desc": {
-      "en": "The crew eats one fewer than their number each leg, for the voyage.",
-      "zh": "本航程余下期间，船员每段少耗一份口粮。"
+      "en": "The crew eats one fewer than their number each leg (never fewer than one), for the voyage.",
+      "zh": "本航程余下期间，船员每段少耗一份口粮（至少一份）。"
     },
     "card.cold_hardened.name": { "en": "Cold Hardened", "zh": "耐寒" },
     "card.cold_hardened.desc": {

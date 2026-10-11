@@ -29,9 +29,10 @@ import { PrivateEntry } from "@/types/realtime/private-entry";
 import { PublicUser } from "@/types/realtime/presence";
 import type { Server } from "socket.io";
 import { db } from "@/lib/db";
-import { tFor } from "@/lib/game/i18n";
+import { DEFAULT_LOCALE, tFor, type Locale } from "@/lib/game/i18n";
 import { leaveRoomForUser } from "@/lib/rooms";
 import type { SocketState } from "./types";
+import { roomChannel } from "./channel";
 import { forgetStatus } from "./status";
 import { closeVoyageTelemetry, noteCaptainLeft } from "./telemetry";
 import { noteVoyageLogDeparture } from "./voyage-log";
@@ -62,13 +63,23 @@ export function emitToUser(
 // never into a broadcast. Everything hidden in this game rides this, so
 // the rule lives in one place that can be read at a glance rather than in
 // every handler that has a secret to deliver.
+//
+// The entry is built per socket rather than once for the user, because a
+// line can carry the reader's language and one captain can hold two tabs
+// in two of them. The builder is handed this socket's language and
+// returns the entry; a line that reads the same in every language goes
+// through the same shape, so the delivery of a secret has one form rather
+// than two.
 export function emitPrivate(
   io: Server,
   roomId: string,
   userId: string,
-  entry: PrivateEntry,
+  build: (locale: Locale) => PrivateEntry,
 ): void {
-  emitToUser(io, userId, "private:entry", { roomId, entry });
+  for (const sid of userSockets.get(userId) ?? []) {
+    const locale = sockets.get(sid)?.locale ?? DEFAULT_LOCALE;
+    io.to(sid).emit("private:entry", { roomId, entry: build(locale) });
+  }
 }
 
 // Abandoned seat cleanup. Keyed by "roomId:userId" since a user can
@@ -417,7 +428,7 @@ export function detachUser(io: Server, userId: string): string[] {
   for (const socketId of ids) {
     const state = sockets.get(socketId);
     if (!state?.roomId) continue;
-    io.sockets.sockets.get(socketId)?.leave(`room:${state.roomId}`);
+    io.sockets.sockets.get(socketId)?.leave(roomChannel(state.roomId));
     state.roomId = null;
   }
   return ids;
@@ -434,7 +445,7 @@ export function detachUser(io: Server, userId: string): string[] {
 export function emptyRoom(io: Server, roomId: string): void {
   for (const [socketId, state] of sockets) {
     if (state.roomId !== roomId) continue;
-    io.sockets.sockets.get(socketId)?.leave(`room:${roomId}`);
+    io.sockets.sockets.get(socketId)?.leave(roomChannel(roomId));
     state.roomId = null;
     // The account keeps its place in userSockets. The sockets here are
     // still connected and still registered: the map's documented meaning

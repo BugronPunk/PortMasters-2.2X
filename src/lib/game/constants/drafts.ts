@@ -407,11 +407,11 @@ export const MILESTONE_BOONS: CardRecord[] = [
     strings: {
       en: {
         name: "Steady Watch",
-        desc: "The crew eats one fewer than their number each leg, for the voyage.",
+        desc: "The crew eats one fewer than their number each leg (never fewer than one), for the voyage.",
       },
       zh: {
         name: "守望",
-        desc: "本航程余下期间，船员每段少耗一份口粮。",
+        desc: "本航程余下期间，船员每段少耗一份口粮（至少一份）。",
       },
     },
   },

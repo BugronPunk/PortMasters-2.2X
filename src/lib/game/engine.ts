@@ -93,6 +93,7 @@ export {
   explainExpectedPrice,
   explainTransportCost,
   explainVAT,
+  fleetOfTreasuresUnits,
   getCardFinalCost,
   getHireCost,
   getIntelCost,
@@ -161,8 +162,10 @@ export {
   completeOrder,
   lockedBehind,
   openOrderCount,
+  orderRewardBonusSteps,
   pathOrderOf,
   purchaseIntel,
+  type OrderRewardStep,
 } from "./engine/orders";
 
 // ========== The Free Captain's borrow ==========
@@ -269,6 +272,7 @@ export {
   payMaintenance,
   payWages,
   payrollIndex,
+  unlockedWorkerRoster,
   wageBill,
   wagesDue,
 } from "./engine/workers";

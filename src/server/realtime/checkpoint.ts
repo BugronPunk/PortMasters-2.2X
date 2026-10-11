@@ -56,6 +56,7 @@ import type {
   PhaseReadyFrame,
 } from "@/types/realtime/phase";
 import { bazaarList, broadcastBazaar } from "./bazaar";
+import { roomChannel } from "./channel";
 import { portShiftFor } from "./maroon";
 import { roomMembers, sockets } from "./presence";
 import { roomStatuses } from "./status";
@@ -260,7 +261,7 @@ export async function broadcastReadyState(
   roomId: string,
   cp: Checkpoint,
 ): Promise<void> {
-  io.to(`room:${roomId}`).emit(
+  io.to(roomChannel(roomId)).emit(
     "phase:ready_update",
     await readyStatePayload(roomId, cp),
   );
@@ -399,7 +400,7 @@ async function announceAdvance(
     ...(portShift !== undefined ? { portShift } : {}),
     ...(bazaarLean !== undefined ? { bazaarLean } : {}),
   };
-  io.to(`room:${roomId}`).emit("phase:advance", frame);
+  io.to(roomChannel(roomId)).emit("phase:advance", frame);
   // [D5: Aroma: the Bazaar Rumor] And the reveal, at the one instant it
   // is honest: the market that just opened on every client is the market
   // the standing rumors moved, so this is the leg the directions become

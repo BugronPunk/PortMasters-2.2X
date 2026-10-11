@@ -562,6 +562,11 @@ function refreshVoyageFacts(game: GameState, facts: LoadedSaveFacts): void {
   // carries no tally at all, and the first trade added to undefined
   // is NaN, which the Ledger Integrity Pass reads as impossible.
   game.peerTradeProfit = game.peerTradeProfit ?? 0;
+  // And once more for the boon Gold tally the Financial Summary prints:
+  // a save written before it existed carries no tally, and the first
+  // grant added to undefined would put a NaN on the voyage's closing
+  // sheet for a loan the captain actually took.
+  game.boonGoldEarned = game.boonGoldEarned ?? 0;
   // Old saves predate per voyage seeding; default their epoch to 0.
   // Their already generated cards restore from the blob untouched, so
   // only a future round would reseed, which is fine.

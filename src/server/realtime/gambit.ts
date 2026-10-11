@@ -41,6 +41,7 @@ import {
   type GambitCard,
   type GambitRole,
 } from "@/lib/game/gambit";
+import { tFor } from "@/lib/game/i18n";
 import { roomMemberIds } from "@/lib/rooms";
 import { isUniqueViolation } from "./chat";
 import { objectiveForRoom } from "./objective";
@@ -108,6 +109,13 @@ async function alliesFor(
 // One card, to the one captain it belongs to. The line comes from the
 // card record rather than being written here, so the sentence a captain
 // reads and the title above it are the same piece of copy.
+//
+// The sentence is read per socket in the language that socket presented:
+// the record holds the line as pack copy, and the card's own surface
+// reads the same record through the same door at the print, so the sent
+// line and the printed line are one piece of copy read twice, and a
+// captain who flips the pick mid voyage cannot end up reading the two of
+// them in two languages.
 function sendCard(
   io: Server,
   roomId: string,
@@ -115,13 +123,13 @@ function sendCard(
   card: GambitCard,
   ally: { userId: string; name: string } | null,
 ): void {
-  emitPrivate(io, roomId, userId, {
+  emitPrivate(io, roomId, userId, (locale) => ({
     kind: "card",
-    text: roleCard(card.role).line,
+    text: tFor(locale, roleCard(card.role).line),
     role: card.role,
     ...(card.flourishId ? { flourish: card.flourishId } : {}),
     ...(ally ? { ally } : {}),
-  });
+  }));
 }
 
 // A whole hand into the sockets it belongs to, one entry each.

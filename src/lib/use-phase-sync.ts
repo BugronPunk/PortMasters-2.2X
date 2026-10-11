@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import type { GameContext, GameState } from "@/lib/game/types";
 import {
@@ -570,30 +570,56 @@ export function usePhaseSync({
   // once, in one place.
   const secondsLeft =
     phaseEndsAt === null ? null : secondsRemaining(phaseEndsAt, clockNow);
-  const phaseClock: PhaseClock | null =
-    secondsLeft === null
-      ? null
-      : {
-          secondsLeft,
-          label: phaseClockLabel(secondsLeft),
-          // How long the seat was given, which is what a progress bar
-          // needs and a countdown does not. Null when the server did not
-          // publish one, which a screen reads as "no bar to draw" rather
-          // than as a full or an empty one.
-          total: ready?.phaseSeconds ?? null,
-        };
+  // Memoized for the reason the whole answer below is: callers hold these
+  // in dependency lists, and an object rebuilt every render re-runs their
+  // effects every render.
+  const phaseClock: PhaseClock | null = useMemo(
+    () =>
+      secondsLeft === null
+        ? null
+        : {
+            secondsLeft,
+            label: phaseClockLabel(secondsLeft),
+            // How long the seat was given, which is what a progress bar
+            // needs and a countdown does not. Null when the server did not
+            // publish one, which a screen reads as "no bar to draw" rather
+            // than as a full or an empty one.
+            total: ready?.phaseSeconds ?? null,
+          },
+    [secondsLeft, ready?.phaseSeconds],
+  );
 
-  return {
-    waiting,
-    ready,
-    readyCount,
-    requiredCount,
-    phaseClock,
-    markReady,
-    markChoiceReady,
-    cancelReady,
-    startGame,
-    restartVoyage,
-    startError,
-  };
+  // The hook's answer, held to one identity until something inside it
+  // changes. Consumers keep it in dependency lists (GameRoom's keyboard
+  // effect, and Parley's audit reveal above every other), and a fresh
+  // literal every render re-ran those on every render: Parley's reveal
+  // re-sent phase:ready once per render until the leg moved.
+  return useMemo(
+    () => ({
+      waiting,
+      ready,
+      readyCount,
+      requiredCount,
+      phaseClock,
+      markReady,
+      markChoiceReady,
+      cancelReady,
+      startGame,
+      restartVoyage,
+      startError,
+    }),
+    [
+      waiting,
+      ready,
+      readyCount,
+      requiredCount,
+      phaseClock,
+      markReady,
+      markChoiceReady,
+      cancelReady,
+      startGame,
+      restartVoyage,
+      startError,
+    ],
+  );
 }

@@ -273,6 +273,23 @@ export function Lobby({
     }
   }, []);
 
+  // What the gift button and the dialog read, re-derived rather than
+  // trusted as fetched.
+  //
+  // The status the server sends is a reading of the day it was sent:
+  // canClaimToday is false the moment today's claim is spent, and the turn
+  // of the UTC day is the one thing that makes it true again. The day math
+  // is pure and shared with the route that serves it (see
+  // src/lib/game/checkin), so the reading is taken again here on every
+  // render from the two persisted fields. The room list already redraws
+  // this panel every eight seconds, so a lobby left open across midnight
+  // lights the gift again on its own, where before it stayed dark until a
+  // reload.
+  const checkInToday = checkInStatus({
+    checkInCount: checkIn.claimedThisCycle,
+    lastCheckInDate: checkIn.lastCheckInDate,
+  });
+
   // Renown for every other captain currently shown in "Captains Online"
   // below, fetched as one batch rather than one request per captain (see
   // POST /api/legacy/batch). Keyed on the *set* of online ids, not the
@@ -677,7 +694,7 @@ export function Lobby({
                 onClick={() => setCheckInOpen(true)}
                 className={cn(
                   "pm-tool pm-pressable relative",
-                  checkIn.canClaimToday
+                  checkInToday.canClaimToday
                     ? "pm-grad-checkin text-white"
                     : "bg-black/[0.05] text-foreground dark:bg-white/10",
                 )}
@@ -686,7 +703,7 @@ export function Lobby({
               >
                 <Gift className="h-3.5 w-3.5" />
                 <span className="hidden xl:inline">{t("Check In")}</span>
-                {checkIn.canClaimToday && (
+                {checkInToday.canClaimToday && (
                   <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-alarm ring-2 ring-background" />
                 )}
               </button>
@@ -1217,7 +1234,7 @@ export function Lobby({
       <CheckInDialog
         open={checkInOpen}
         onOpenChange={setCheckInOpen}
-        checkIn={checkIn}
+        checkIn={checkInToday}
         claiming={claiming}
         onClaim={claimCheckIn}
       />

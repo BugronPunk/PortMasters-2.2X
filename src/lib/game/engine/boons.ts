@@ -88,6 +88,12 @@ function applyBoon(state: GameState, card: CardRecord, logs: string[]) {
   state.modifierFlags = { ...card.effect.flags, ...heldFlagsOf(state) };
   if (card.effect.flags.instant_gold) {
     state.money += card.effect.flags.instant_gold;
+    // The durable half of the grant: the flag above rides the round's own
+    // record and the round ends, while the receipt the Financial Summary
+    // prints at the voyage's end outlives every round it was taken in
+    // (see boonGoldEarned in ../types). Written at the same line as the
+    // credit, so the tally and the purse cannot disagree.
+    state.boonGoldEarned += card.effect.flags.instant_gold;
     logs.push(
       t("💰 Boon applied: Gained {card.effect.flags.instant_gold} Gold!", {
         "card.effect.flags.instant_gold": card.effect.flags.instant_gold,

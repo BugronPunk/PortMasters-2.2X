@@ -9,7 +9,7 @@ import { canSeeDetail, phaseLabel } from "@/lib/game/engine";
 import { hungryPillLine, hungryTooltip } from "@/lib/game/status-copy";
 import { t } from "@/lib/game/i18n";
 import { seatMarks } from "@/lib/seatMarks";
-import { cn } from "@/lib/utils";
+import { cn, memberRowClass } from "@/lib/utils";
 import { Avatar, OnlineDot, Pill } from "../shared";
 import { IconButton } from "./IconButton";
 import { PeekButton } from "./PeekButton";
@@ -83,18 +83,22 @@ export function RosterRow({
       whileHover={{ scale: 1.01, y: -1 }}
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.12, ease: "easeOut" }}
-      onClick={(e) => {
-        // The row's own surface only. The action buttons and the peek
-        // popover already stop their clicks, and this guard is the same
-        // rule stated where the row is: a press that landed on a control
-        // inside the row is the control's, not the row's. Enter on a
-        // focused mute button otherwise opened this captain's detail
-        // popup on top of the mute it had just sent, because the click
-        // stops at the button and the keydown does not.
-        if (e.target !== e.currentTarget) return;
+      onClick={() => {
+        // The whole line is the button, and everything in it that is not
+        // a control is the line: the name, the avatar and the pills are
+        // the natural places a captain presses to open their data. The
+        // real controls (the peek eye, the mute, the report) stop their
+        // own presses before they get here. A target guard once sat here
+        // as well, copied from the key guard below, and it quietly made
+        // every press on the name a dead one.
         onSelectPlayer(member.id);
       }}
       onKeyDown={(e) => {
+        // A keydown is not a click: one fired on a focused control
+        // inside the row still bubbles to the row, and Enter on the
+        // focused mute button both sent the mute and opened this
+        // captain's detail popup on top of it. Hence the guard on this
+        // half only.
         if (e.target !== e.currentTarget) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
@@ -103,9 +107,7 @@ export function RosterRow({
       }}
       className={cn(
         "w-full flex items-center gap-2.5 rounded-xl p-2 border text-left transition-colors cursor-pointer hover:bg-black/[0.03] dark:hover:bg-white/[0.05]",
-        isMe
-          ? "border-members/30 bg-members/[0.06]"
-          : "border-black/5 dark:border-white/10 bg-background/40",
+        memberRowClass(isMe),
       )}
     >
       <div className="relative shrink-0">

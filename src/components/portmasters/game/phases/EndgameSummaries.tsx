@@ -71,9 +71,10 @@ function LedgerColumn({
  * shown at the end of a voyage so a captain can see where their Gold
  * came from and where it went.
  *
- * Income: totalRevenue (trade orders), plus any emergency loan boon
- * Gold if it was taken. Expenses: totalCosts (purchases, transport),
- * workerWages, maintenanceCosts, vatPaid, incomeTaxPaid.
+ * Income: totalRevenue (trade orders), plus the boon Gold the voyage was
+ * granted (game.boonGoldEarned, the Emergency Loan's grant today).
+ * Expenses: totalCosts (purchases, transport), workerWages,
+ * maintenanceCosts, vatPaid, incomeTaxPaid.
  *
  * The net figure should roughly track the final Gold minus the
  * starting Gold, though rounding and per round resets mean it is a
@@ -92,8 +93,13 @@ export function FinancialSummary({ game }: { game: GameState }) {
       tone: "text-gain",
     },
     {
+      // The figure is the voyage's own tally of the grants (see
+      // boonGoldEarned in the state), not the round flag the grant wrote:
+      // the flag is rebuilt away at every round's end, so this row used
+      // to vanish from the closing sheet of every voyage that took the
+      // loan before its final round.
       label: instantGold === null ? "Boon Gold" : cardText(instantGold).name,
-      value: game.modifierFlags.instant_gold ?? 0,
+      value: game.boonGoldEarned,
       icon: instantGold === null ? "💰" : instantGold.icon,
       tone: "text-due",
     },

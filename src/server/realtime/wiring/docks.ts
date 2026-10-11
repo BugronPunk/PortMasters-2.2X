@@ -10,6 +10,7 @@ import { tFor } from "@/lib/game/i18n";
 import type { Server, Socket } from "socket.io";
 
 import { seated } from "../auth";
+import { roomChannel } from "../channel";
 import { hasDocksWinner, setDocksWinner } from "../docks";
 import { sockets } from "../presence";
 
@@ -20,7 +21,7 @@ export function wireDocks(io: Server, socket: Socket): void {
     const { roomId } = s;
     if (hasDocksWinner(roomId)) return;
     setDocksWinner(roomId, { userId: s.userId, name: s.user.displayName });
-    io.to(`room:${roomId}`).emit("docks:won", {
+    io.to(roomChannel(roomId)).emit("docks:won", {
       roomId,
       winnerId: s.userId,
       winnerName: s.user.displayName,

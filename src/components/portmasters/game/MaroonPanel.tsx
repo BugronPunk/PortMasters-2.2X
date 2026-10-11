@@ -31,7 +31,6 @@ import {
 } from "@/lib/game/maroon";
 import { modeConfig } from "@/lib/game/mode";
 import type { GameState } from "@/lib/game/types";
-import type { useMaroon } from "@/lib/use-maroon";
 import { nameCount, tallyRows } from "@/lib/voteTally";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -41,9 +40,8 @@ import {
   type Marks,
 } from "@/components/portmasters/game/VoteSeatPicker";
 import { VoteCardShell } from "./VoteCardShell";
+import type { Maroon } from "./phases/PhaseShared";
 import { RefusalLine } from "../shared";
-
-type Maroon = ReturnType<typeof useMaroon>;
 
 /**
  * The two questions the Parley board asks about this vote, answered once

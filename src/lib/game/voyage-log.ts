@@ -20,16 +20,28 @@
 // lines is the one place that knows how they read.
 //
 // The text is written here rather than assembled on the client, which is
-// the rule the private channel already follows: a surface prints what it
-// was sent instead of building the same sentence out of fields, so a line
-// cannot read one way on one screen and another way on the next.
+// the rule the private channel already follows: the server writes the
+// sentence, and a surface prints what it was sent instead of building the
+// same sentence out of fields, so a line cannot read one way on one screen
+// and another way on the next.
+//
+// What is stored anywhere in this pair is the fact, never the sentence.
+// A line is built at the moment it is read, and read means read for
+// someone: the server holds a voyage's facts and builds each sentence in
+// the language of the captain the frame is addressed to (see the two
+// doors below), so one harbor holding two languages reads one log in two
+// of them, and a captain who flips the pick mid voyage is handed the
+// whole log again rather than left reading half of it in the language
+// they just left.
 // =====================================================================
 
 import { cardName } from "./cards";
-// Every sentence below is read at the moment the line is built rather than
-// stored, so a line the log hands a screen follows the language that screen
-// prints in.
-import { t } from "./i18n";
+// Two doors into one set of sentences, and the difference is who is
+// reading. voyageLogLine reads in this process's own language, which is
+// the door for callers inside one language (the suite reads every kind
+// through it). voyageLogEntryFor reads in a named language, which is
+// the door the server uses at the send.
+import { getLocale, tFor, type Locale } from "./i18n";
 import { pathConfig, type PathId } from "./paths";
 import { phaseFace } from "./phases";
 import type { Phase } from "./types";
@@ -216,71 +228,83 @@ export type VoyageLogEntry = {
 // server and the client cannot disagree about how much is kept.
 export const VOYAGE_LOG_CAP = 240;
 
-// The sentence a fact becomes. One place, so a line reads the same
-// wherever it is printed, and exported so the suite can hold every kind
-// without opening a socket.
+// The sentence a fact becomes, read in a named language. One place, so a
+// line reads the same wherever it is printed. Both public doors stand on
+// this builder (voyageLogLine reads it in this process's own language,
+// voyageLogEntryFor at the server's send for a named reader), which is
+// why it is module private: the doors are the surface, not the builder.
+//
+// Every read inside the switch takes the locale too, the nested ones as
+// well as the outer sentence: a good's name and a path's name are
+// themselves entries the reader answers, so a line built for a zh reader
+// with an en good name planted in it would be the exact mixing this
+// reader exists to remove.
 //
 // The phase's name comes from its face in ./phases, which is the one
 // table that describes a phase, rather than from a second list of
 // names written out here.
-export function voyageLogLine(facts: VoyageLogFacts): string {
+function voyageLogLineFor(locale: Locale, facts: VoyageLogFacts): string {
   switch (facts.kind) {
     case "voyage_started":
-      return t("The voyage leaves the dock.");
+      return tFor(locale, "The voyage leaves the dock.");
     case "leg_advanced":
-      return t("The harbor weighs anchor for the {phaseName}.", {
-        phaseName: t(phaseFace(facts.phase).label),
+      return tFor(locale, "The harbor weighs anchor for the {phaseName}.", {
+        phaseName: tFor(locale, phaseFace(facts.phase).label),
       });
     case "offer_posted":
-      return t(
+      return tFor(
+        locale,
         "{facts.captain} posts {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}.",
         {
           "facts.captain": facts.captain,
           "facts.offerAmount": facts.offerAmount,
-          "facts.offerItem": t(facts.offerItem),
+          "facts.offerItem": tFor(locale, facts.offerItem),
           "facts.requestAmount": facts.requestAmount,
-          "facts.requestItem": t(facts.requestItem),
+          "facts.requestItem": tFor(locale, facts.requestItem),
         },
       );
     case "offer_filled":
-      return t(
+      return tFor(
+        locale,
         "{facts.taker} fills {facts.captain}'s offer of {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}.",
         {
           "facts.taker": facts.taker,
           "facts.captain": facts.captain,
           "facts.offerAmount": facts.offerAmount,
-          "facts.offerItem": t(facts.offerItem),
+          "facts.offerItem": tFor(locale, facts.offerItem),
           "facts.requestAmount": facts.requestAmount,
-          "facts.requestItem": t(facts.requestItem),
+          "facts.requestItem": tFor(locale, facts.requestItem),
         },
       );
     case "offer_expired":
-      return t(
+      return tFor(
+        locale,
         "{facts.captain}'s offer of {facts.offerAmount} {facts.offerItem} lapses with the leg.",
         {
           "facts.captain": facts.captain,
           "facts.offerAmount": facts.offerAmount,
-          "facts.offerItem": t(facts.offerItem),
+          "facts.offerItem": tFor(locale, facts.offerItem),
         },
       );
     case "leg_timed_out":
-      return t("The tide runs out on the {phaseName}.", {
-        phaseName: t(phaseFace(facts.phase).label),
+      return tFor(locale, "The tide runs out on the {phaseName}.", {
+        phaseName: tFor(locale, phaseFace(facts.phase).label),
       });
     case "audit_carried":
-      return t("The harbor audits {facts.target}.", {
+      return tFor(locale, "The harbor audits {facts.target}.", {
         "facts.target": facts.target,
       });
     case "maroon_carried":
-      return t("The harbor maroons {facts.target}.", {
+      return tFor(locale, "The harbor maroons {facts.target}.", {
         "facts.target": facts.target,
       });
     case "captain_left":
-      return t("{facts.captain} leaves the harbor.", {
+      return tFor(locale, "{facts.captain} leaves the harbor.", {
         "facts.captain": facts.captain,
       });
     case "contract_posted":
-      return t(
+      return tFor(
+        locale,
         "{facts.captain} offers one leg of protection for {facts.fee} Gold.",
         {
           "facts.captain": facts.captain,
@@ -288,7 +312,8 @@ export function voyageLogLine(facts: VoyageLogFacts): string {
         },
       );
     case "contract_agreed":
-      return t(
+      return tFor(
+        locale,
         "{facts.taker} buys a leg of protection from {facts.captain} for {facts.fee} Gold.",
         {
           "facts.taker": facts.taker,
@@ -297,64 +322,77 @@ export function voyageLogLine(facts: VoyageLogFacts): string {
         },
       );
     case "contract_claimed":
-      return t("Raiders bound for {facts.taker} met {facts.captain}'s guns.", {
-        "facts.taker": facts.taker,
-        "facts.captain": facts.captain,
-      });
+      return tFor(
+        locale,
+        "Raiders bound for {facts.taker} met {facts.captain}'s guns.",
+        {
+          "facts.taker": facts.taker,
+          "facts.captain": facts.captain,
+        },
+      );
     case "refit_posted":
-      return t(
+      return tFor(
+        locale,
         "{facts.captain} offers to put a {facts.good} right for {facts.fee} Gold.",
         {
           "facts.captain": facts.captain,
-          "facts.good": t(facts.good),
+          "facts.good": tFor(locale, facts.good),
           "facts.fee": facts.fee,
         },
       );
     case "refit_agreed":
-      return t(
+      return tFor(
+        locale,
         "{facts.taker} pays {facts.captain} {facts.fee} Gold to put the {facts.good} right.",
         {
           "facts.taker": facts.taker,
           "facts.captain": facts.captain,
           "facts.fee": facts.fee,
-          "facts.good": t(facts.good),
+          "facts.good": tFor(locale, facts.good),
         },
       );
     case "module_posted":
-      return t("{facts.captain} offers {moduleName} for {facts.fee} Gold.", {
-        "facts.captain": facts.captain,
-        moduleName: cardName(facts.module),
-        "facts.fee": facts.fee,
-      });
+      return tFor(
+        locale,
+        "{facts.captain} offers {moduleName} for {facts.fee} Gold.",
+        {
+          "facts.captain": facts.captain,
+          moduleName: cardName(facts.module, locale),
+          "facts.fee": facts.fee,
+        },
+      );
     case "module_sold":
-      return t(
+      return tFor(
+        locale,
         "{facts.taker} buys {moduleName} from {facts.captain} for {facts.fee} Gold.",
         {
           "facts.taker": facts.taker,
-          moduleName: cardName(facts.module),
+          moduleName: cardName(facts.module, locale),
           "facts.captain": facts.captain,
           "facts.fee": facts.fee,
         },
       );
     case "rumor_published":
-      return t(
+      return tFor(
+        locale,
         "{facts.captain} publishes a rumor about {facts.good} at the bazaar.",
         {
           "facts.captain": facts.captain,
-          "facts.good": t(facts.good),
+          "facts.good": tFor(locale, facts.good),
         },
       );
     case "path_taken":
-      return t("{facts.captain} takes up the {pathName} path.", {
+      return tFor(locale, "{facts.captain} takes up the {pathName} path.", {
         "facts.captain": facts.captain,
-        pathName: t(pathConfig(facts.path)!.name),
+        pathName: tFor(locale, pathConfig(facts.path)!.name),
       });
     case "path_switched":
-      return t(
+      return tFor(
+        locale,
         "{facts.captain} sets aside their old papers and takes up the {pathName} path.",
         {
           "facts.captain": facts.captain,
-          pathName: t(pathConfig(facts.path)!.name),
+          pathName: tFor(locale, pathConfig(facts.path)!.name),
         },
       );
   }
@@ -363,6 +401,14 @@ export function voyageLogLine(facts: VoyageLogFacts): string {
   // captain's log.
   const unhandled: never = facts;
   return unhandled;
+}
+
+// The same sentence read in this process's own language. This is the door
+// for callers that live inside one language, and it is the door the suite
+// holds every kind through, so its reading of a fact stays the reading
+// the sentences were authored with.
+export function voyageLogLine(facts: VoyageLogFacts): string {
+  return voyageLogLineFor(getLocale(), facts);
 }
 
 // A fact and the leg it happened on, as one line. The pair is stamped
@@ -374,6 +420,17 @@ export function voyageLogEntry(
   facts: VoyageLogFacts,
 ): VoyageLogEntry {
   return { round, kind: facts.kind, text: voyageLogLine(facts) };
+}
+
+// The same pair, read in a named language. The server's accumulator
+// keeps facts and builds its frames through this door, so the leg stamped
+// on a line and the language it is read in are decided at the same send.
+export function voyageLogEntryFor(
+  locale: Locale,
+  round: number,
+  facts: VoyageLogFacts,
+): VoyageLogEntry {
+  return { round, kind: facts.kind, text: voyageLogLineFor(locale, facts) };
 }
 
 // The one append rule, used by the server's accumulator and by the client

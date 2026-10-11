@@ -1,6 +1,6 @@
 "use client";
 
-import { maintenanceDue, payrollIndex } from "@/lib/game/engine";
+import { maintenanceDue, unlockedWorkerRoster } from "@/lib/game/engine";
 import { onShortRations } from "@/lib/game/larder";
 import { survivalLayerOn } from "@/lib/game/flags";
 import {
@@ -12,7 +12,6 @@ import {
 import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import type { WorkerType } from "@/lib/game/constants/crew";
-import { unlockedWorkerTypes } from "@/lib/game/pools";
 import { useConvoy } from "@/lib/use-convoy";
 import { VoyageTimeline } from "./VoyageTimeline";
 import { GameLogPanel } from "./GameLogPanel";
@@ -102,21 +101,13 @@ export function GameStatusPanel({
   const warmth = warmthScore(game);
   const shortWarmth = shortOfWarmth(game);
 
-  // Summed across the whole unlocked roster, not the three founding types,
-  // and priced off the engine's own bill (see payrollIndex) rather than a
-  // hand count multiplied here: the multiplication this replaces billed a
-  // Jade Pavilion captain one wage too many, which inflated the obligations
-  // figure this rail exists to show and could paint a solvent captain's
-  // rail in the alarm tone. A type outside the engine's roster is one
-  // payWages does not charge either, so a missing row reads as no wages
-  // due rather than as a second opinion about the same absence.
-  const payroll = payrollIndex(game);
-  const roster = unlockedWorkerTypes(game.difficulty, game.currentRound).map(
-    (w) => {
-      const list = game.workers[w.id] ?? [];
-      return { ...w, list, due: payroll.get(w.id)?.due ?? 0 };
-    },
-  );
+  // The whole unlocked roster, not the three founding types, each type
+  // with its hands and the wage it is due: the join lives in the engine
+  // now (see unlockedWorkerRoster), so this rail and Worker Management
+  // cannot come to disagree about who owes what. The obligations figure
+  // below is summed from it, which is what keeps the alarm tone off a
+  // solvent captain's rail.
+  const roster = unlockedWorkerRoster(game);
   const pendWages = roster.reduce((sum, r) => sum + r.due, 0);
   const pendMaint = maintenanceDue(game);
   const pendTotal = pendWages + pendMaint;

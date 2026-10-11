@@ -71,6 +71,7 @@ import { createRng } from "@/lib/game/rng";
 import { pathDraftOn } from "@/lib/game/flags";
 import { DEFAULT_LOCALE, tFor, type Locale } from "@/lib/game/i18n";
 import type { PathId } from "@/lib/game/paths";
+import { roomChannel } from "./channel";
 import { announceDraftComplete, disarmTimer } from "./checkpoint";
 import { emitToUser, userSockets } from "./presence";
 import { noteTelemetry } from "./telemetry";
@@ -643,7 +644,7 @@ export function recordPathSwitch(
     name: row.name,
     path: row.path,
   };
-  io.to(`room:${roomId}`).emit("path:switched", published);
+  io.to(roomChannel(roomId)).emit("path:switched", published);
   noteVoyageLog(io, roomId, {
     kind: "path_switched",
     captain: row.name,

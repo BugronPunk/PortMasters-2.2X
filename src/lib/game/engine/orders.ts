@@ -11,9 +11,19 @@
 // Crane can refund it, and the Broker's commission is taken last of all.
 // A past bug came from reordering exactly this sequence and paying every
 // crane refund out twice, which is why the cost ledger true up in the
-// middle carries the comment it does. Splitting it into tidy helpers
-// would make that ordering implicit rather than obvious, so it stays as
-// one readable top to bottom settlement.
+// middle carries the comment it does. Splitting the cross step ordering
+// into tidy helpers would make that ordering implicit rather than
+// obvious, so it stays as one readable top to bottom settlement.
+//
+// One block is the exception, and it is the one other surfaces have to
+// read: the percentage bonuses the reward carries live in
+// orderRewardBonusSteps above, because the board's quotes, the planner's
+// totals and the advisor's sentence have to price an order through the
+// same arithmetic the fill pays it through. The precedent is the freight
+// reader in ./pricing, which the settlement, the tooltip and every quote
+// come through as well; the ordering the paragraph above protects holds
+// inside that block too, and it stays written down there in its own
+// comment.
 //
 // The order generators come from ./market: Market and Orders draw from
 // the same seeded deck, so there is exactly one implementation of them.
@@ -24,7 +34,7 @@
 // demands (see pathOrderOf below), the same way the board derives the crest
 // and the lock line it prints.
 // =====================================================================
-import { cardLead, cargoCarriesTag, carriesTag } from "../cards";
+import { cardLead, cargoCarriesTag } from "../cards";
 import { ICONS } from "../constants/brand";
 import { t } from "@/lib/game/i18n";
 import { PRODUCTS, RESOURCES } from "../constants/goods";
@@ -45,8 +55,8 @@ import { pathOrdersOn } from "../flags";
 import { lockingPathFor, pathLockLine, type PathId } from "../paths";
 import {
   isCharterGood,
-  isTier1CharterProduct,
-  isTier2CharterProduct,
+  isTier1CharterGood,
+  isTier2CharterGood,
 } from "../pools";
 import { createRng, type Rng } from "../rng";
 import type { GameContext, GameState, OrderCard } from "../types";
@@ -69,6 +79,7 @@ import {
   brokersFavorCommission,
   calcTransportCost,
   calcVAT,
+  fleetOfTreasuresUnits,
   getIntelCost,
 } from "./pricing";
 
@@ -187,6 +198,112 @@ export function openOrderCount(state: GameState): number {
     .length;
 }
 
+// One step of the reward chain below, as the settle's log loop and any
+// reader that wants the itemized uplift consume it.
+export type OrderRewardStep = { cardId: string; pct: number; amount: number };
+
+// The percentage bonuses a completed order's reward carries, read as one
+// chain rather than at each surface that shows or pays the number.
+//
+// The settlement used to hold these arms inline and every quoting
+// surface (the board's Reward and Net figures, the planner's totals, the
+// advisor's sentence) priced the order off the face value, so a captain
+// holding any of these cards read one number on the board and was paid
+// another at the fill. The chain now lives here, completeOrder applies
+// it in one step, and the quoting surfaces call the same function, so
+// the number quoted and the number credited cannot drift apart again.
+//
+// The order inside the chain is the order the settlement has always
+// taken: the Woven Monopoly first, then the first charter's boon, the
+// Maritime Bureau Token between the charter boons, the second charter's,
+// the path quarter, and the two voyage long charters last, because a
+// voyage long charter scales the reward the voyage has actually built
+// rather than the face value a round card already grew.
+//
+// Each percentage arm pays `reward + floor(reward * pct)` rather than
+// `floor(reward * (1 + pct))`: the latter loses a coin to floating point
+// on common rates (100 * 1.15 is 114.999... in binary), so a stated 15%
+// quietly paid 14%. The Woven Monopoly keeps its own `floor(reward *
+// 1.2)` written out, the exact arithmetic it has always applied.
+//
+// The reward passed in is the reward after VAT, which is where the
+// settlement's first arm sits and what each arm scales in turn. The
+// gates are read here rather than passed in: the woven tag (the same
+// one the freight reads), the two charter waves (see the readers in
+// ../pools for why the wave scopes live there), the any wave test the
+// Bureau Token's text promises, and the path lock's own reader, which
+// holds the D2 switch at this end too, since with path orders off no
+// card is anyone's path order and no order pays the bonus. The pathless
+// captain is asked about before the comparison rather than through it,
+// since a null path matching a null derivation would pay a bonus for
+// following no path at all.
+export function orderRewardBonusSteps(
+  state: GameState,
+  order: OrderCard,
+  rewardIn: number,
+): { reward: number; steps: OrderRewardStep[] } {
+  let reward = rewardIn;
+  const steps: OrderRewardStep[] = [];
+  // Each arm reads as `pay(card, pct)`: floor the uplift off the running
+  // reward, add it, and record the step with its percentage as the whole
+  // number the log prints.
+  const pay = (cardId: string, pct: number) => {
+    const amount = Math.floor(reward * pct);
+    reward += amount;
+    steps.push({ cardId, pct: Math.round(pct * 100), amount });
+  };
+  const hasCharterGood = order.resources.some((r) => isCharterGood(r.type));
+  // [F2] The three charter reads are the one place in the engine F1's
+  // rule does not reach, and the reason is that they are not about what
+  // a good is but about when it arrived: a charter good is a good the
+  // voyage's schedule opened, and which wave opened it is the tier's
+  // fact rather than the good's. There is no tag for "arrived with the
+  // second charter" and there should not be one, because a tag that
+  // means a schedule would be the same good tagged differently in two
+  // rooms. So the cards name their scope in their text (the first
+  // charter's goods, the second charter's) and the scope is read off
+  // the pool the schedule unlocks.
+  //
+  // Each charter boon asks about its own wave, not the charter as a
+  // whole. The Bureau Token keeps the any wave test, which is what its
+  // text promises: it names charter goods without naming a tier.
+  const hasTier1Good = order.resources.some((r) => isTier1CharterGood(r.type));
+  const hasTier2Good = order.resources.some((r) => isTier2CharterGood(r.type));
+  const hasWoven = cargoCarriesTag(order.resources, "woven");
+  // [F4: boons at milestone moments] Route Mastery, the boon the first
+  // pathbound order deals: a quarter more on the orders that follow the
+  // captain's own path, which is what the card's text promises.
+  const followsPath =
+    state.path !== null && pathOrderOf(order, state.mode) === state.path;
+  if (hasModule(state, "silk_monopoly") && hasWoven) {
+    const next = Math.floor(reward * 1.2);
+    steps.push({ cardId: "silk_monopoly", pct: 20, amount: next - reward });
+    reward = next;
+  }
+  if (hasTier1Good && state.modifierFlags.charter_order_bonus)
+    pay("kiln_and_forge_guild", state.modifierFlags.charter_order_bonus);
+  if (hasCharterGood && hasModule(state, "bureau_token"))
+    pay("bureau_token", 0.1);
+  if (hasTier2Good && state.modifierFlags.exotic_order_bonus)
+    pay("exotic_treasures", state.modifierFlags.exotic_order_bonus);
+  if (followsPath && state.modifierFlags.route_mastery)
+    pay("route_mastery", state.modifierFlags.route_mastery);
+  // [F6: charters at leg four] The Standing Manifest and the Quality
+  // Mark, the two charters that pay on the reward itself, each taken as
+  // the same `reward + floor(reward * pct)` the arms above them take and
+  // landing last, because a voyage long charter scales the reward the
+  // voyage has actually built rather than the face value a round card
+  // already grew. The Manifest reads every completed order, which is its
+  // whole text; the Mark reads the same woven gate the Woven Monopoly
+  // reads above, so the mark and the cloth cannot come to disagree about
+  // what counts as woven.
+  if (state.modifierFlags.manifest_order_bonus)
+    pay("standing_manifest", state.modifierFlags.manifest_order_bonus);
+  if (hasWoven && state.modifierFlags.loom_sale_bonus)
+    pay("quality_mark", state.modifierFlags.loom_sale_bonus);
+  return { reward, steps };
+}
+
 export function completeOrder(
   state: GameState,
   orderId: number,
@@ -235,7 +352,19 @@ export function completeOrder(
   // class the good carries rather than a second list that has to be kept
   // beside them.
   const hasWoven = cargoCarriesTag(order.resources, "woven");
-  let transport = calcTransportCost(state, order.totalItems, hasWoven);
+  // The Fleet of Treasures discount is part of the freight read itself:
+  // its units are counted off this manifest and passed in (see
+  // fleetOfTreasuresUnits in ./pricing), so the Gold charged here and
+  // every quote of it are one arithmetic. The discount used to be
+  // subtracted from the quoted freight after the fact, which is how the
+  // board came to quote one number and this fill charge another.
+  const luxuryUnits = fleetOfTreasuresUnits(state, order.resources);
+  let transport = calcTransportCost(
+    state,
+    order.totalItems,
+    hasWoven,
+    luxuryUnits,
+  );
   // Read through the same absence the shortfall check above reads: a line
   // without a count takes nothing, rather than subtracting an undefined
   // and poisoning every number the hold reports for the rest of the
@@ -274,25 +403,28 @@ export function completeOrder(
     state.vatPaid += totalVat;
     logs.push(t("🧾 Product Sales VAT: {totalVat} Gold", { totalVat }));
   }
-  // Fleet of Treasures discount applied before money moves, so the captain
-  // is never charged the pre discount freight.
+  // The Fleet of Treasures receipt, read here so the line still lands
+  // before the money moves. It reports the Gold the discount actually
+  // took: the freight read again without the module's units, less the
+  // freight just quoted. The floor at zero can shrink the subtraction
+  // below the nominal per unit figure, so a line claiming the nominal
+  // amount would overstate the discount on a run whose freight the floor
+  // has already eaten; a receipt reports what moved.
   //
-  // [F2] The two goods it named are the luxury tag now, which is the class
-  // its own text promises, and the per unit number is the card's: it stays
-  // here because a module's payload is the hull's own arithmetic in this
-  // build (see CardEffect in ../constants/cards), so F2 moves the card's
-  // name and its scope into the record and leaves the numbers it applies to
-  // the engine that applies them.
-  if (hasModule(state, "fleet_of_treasures")) {
-    const luxuryItems = order.resources
-      .filter((r) => carriesTag("good", r.type, "luxury"))
-      .reduce((s, r) => s + (r.required ?? 0), 0);
-    if (luxuryItems > 0) {
-      transport = Math.max(0, transport - luxuryItems * 3);
+  // [F2] The two goods it named are the luxury tag now, which is the
+  // class its own text promises, and the per unit number is the card's:
+  // it sits in ./pricing beside the freight arithmetic it moves (see
+  // CardEffect in ../constants/cards), so F2 moves the card's name and
+  // its scope into the record and leaves the numbers it applies to the
+  // engine that applies them.
+  if (luxuryUnits > 0) {
+    const freightOff =
+      calcTransportCost(state, order.totalItems, hasWoven) - transport;
+    if (freightOff > 0) {
       logs.push(
         t("{fleetLead}: {freightOff}g off freight", {
           fleetLead: cardLead("fleet_of_treasures"),
-          freightOff: luxuryItems * 3,
+          freightOff,
         }),
       );
     }
@@ -301,117 +433,34 @@ export function completeOrder(
   state.roundCosts += transport;
   state.totalCosts += transport;
   const origTransport = transport;
-  if (hasModule(state, "silk_monopoly") && hasWoven) {
-    reward = Math.floor(reward * 1.2);
+  // The percentage bonuses the reward carries, applied as one shared
+  // chain: this settle and every surface that quotes the order read the
+  // same function (see orderRewardBonusSteps above), so the board's
+  // Reward and Net figures, the planner's totals, the advisor's sentence
+  // and the Gold actually credited here are one arithmetic. The log
+  // prints each step under the lead its arm has always named.
+  const bonus = orderRewardBonusSteps(state, order, reward);
+  reward = bonus.reward;
+  for (const step of bonus.steps) {
     logs.push(
       t("{lead}: +{pct}% Reward!", {
-        lead: cardLead("silk_monopoly"),
-        pct: 20,
+        lead: cardLead(step.cardId),
+        pct: step.pct,
       }),
     );
   }
-  // Charter lane payouts: the Kiln and Forge Guild boon and the Maritime
-  // Bureau Token both reward trading the goods a charter opened, so they only
-  // look at orders that actually involve them (see isCharterGood).
-  //
-  // [F2] These three reads are the one place in the engine F1's rule does
-  // not reach, and the reason is that they are not about what a good is but
-  // about when it arrived: a charter good is a good the voyage's schedule
-  // opened, and which wave opened it is the tier's fact rather than the
-  // good's. There is no tag for "arrived with the second charter" and there
-  // should not be one, because a tag that means a schedule would be the same
-  // good tagged differently in two rooms. So the cards name their scope in
-  // their text (the first charter's goods, the second charter's) and the
-  // scope is read here off the pool the schedule unlocks.
-  const hasCharterGood = order.resources.some((r) => isCharterGood(r.type));
-  // Each charter boon asks about its own wave, not the charter as a whole.
-  // The Bureau Token above keeps the any wave test, which is what its text
-  // promises: it names charter goods without naming a tier.
-  const hasTier1Good = order.resources.some((r) =>
-    isTier1CharterProduct(r.type),
-  );
-  const hasTier2Good = order.resources.some((r) =>
-    isTier2CharterProduct(r.type),
-  );
-  // Added as `reward + floor(reward * pct)` rather than `floor(reward * (1 +
-  // pct))`: the latter loses a coin to floating point on common rates (100 *
-  // 1.15 is 114.999... in binary), so a stated 15% quietly paid 14%.
-  if (hasTier1Good && state.modifierFlags.charter_order_bonus) {
-    const pct = state.modifierFlags.charter_order_bonus;
-    reward += Math.floor(reward * pct);
-    logs.push(
-      t("{lead}: +{pct}% Reward!", {
-        lead: cardLead("kiln_and_forge_guild"),
-        pct: Math.round(pct * 100),
-      }),
-    );
-  }
-  if (hasCharterGood && hasModule(state, "bureau_token")) {
-    reward += Math.floor(reward * 0.1);
-    logs.push(
-      t("{lead}: +{pct}% Reward!", { lead: cardLead("bureau_token"), pct: 10 }),
-    );
-  }
-  if (hasTier2Good && state.modifierFlags.exotic_order_bonus) {
-    const pct = state.modifierFlags.exotic_order_bonus;
-    reward += Math.floor(reward * pct);
-    logs.push(
-      t("{lead}: +{pct}% Reward!", {
-        lead: cardLead("exotic_treasures"),
-        pct: Math.round(pct * 100),
-      }),
-    );
-  }
-  // [F4: boons at milestone moments] Route Mastery, the boon the first
-  // pathbound order deals: a quarter more on the orders that follow the
-  // captain's own path, which is what the card's text promises. The gate
-  // is the lock's own reader rather than the card's raw marker, so the
-  // D2 switch is held at this end too (with path orders off no card is
+  // [F4: boons at milestone moments] The path question, read once here
+  // for the moment queue at the bottom of this function; the reward
+  // chain above asks the same question about the same card through
+  // orderRewardBonusSteps, which is the reader every surface shares. The
+  // gate is the lock's own reader rather than the card's raw marker, so
+  // the D2 switch is held at both ends (with path orders off no card is
   // anyone's path order and no order pays the bonus), and the pathless
   // captain is asked about before the comparison rather than through it,
   // since a null path matching a null derivation would pay a bonus for
-  // following no path at all. Read once here because the arm at the
-  // bottom of this function asks the same question about the same card.
+  // following no path at all.
   const followsPath =
     state.path !== null && pathOrderOf(order, state.mode) === state.path;
-  if (followsPath && state.modifierFlags.route_mastery) {
-    const pct = state.modifierFlags.route_mastery;
-    reward += Math.floor(reward * pct);
-    logs.push(
-      t("{lead}: +{pct}% Reward!", {
-        lead: cardLead("route_mastery"),
-        pct: Math.round(pct * 100),
-      }),
-    );
-  }
-  // [F6: charters at leg four] The Standing Manifest and the Quality Mark,
-  // the two charters that pay on the reward itself, each taken as the same
-  // `reward + floor(reward * pct)` the cards above them take and landing
-  // last, because a voyage long charter scales the reward the voyage has
-  // actually built rather than the face value a round card already grew.
-  // The Manifest reads every completed order, which is its whole text; the
-  // Mark reads the same woven gate the Woven Monopoly reads above, so the
-  // mark and the cloth cannot come to disagree about what counts as woven.
-  if (state.modifierFlags.manifest_order_bonus) {
-    const pct = state.modifierFlags.manifest_order_bonus;
-    reward += Math.floor(reward * pct);
-    logs.push(
-      t("{lead}: +{pct}% Reward!", {
-        lead: cardLead("standing_manifest"),
-        pct: Math.round(pct * 100),
-      }),
-    );
-  }
-  if (hasWoven && state.modifierFlags.loom_sale_bonus) {
-    const pct = state.modifierFlags.loom_sale_bonus;
-    reward += Math.floor(reward * pct);
-    logs.push(
-      t("{lead}: +{pct}% Reward!", {
-        lead: cardLead("quality_mark"),
-        pct: Math.round(pct * 100),
-      }),
-    );
-  }
   if (hasModule(state, "salvage_crane") && Math.random() < 0.3) {
     state.money += transport;
     logs.push(

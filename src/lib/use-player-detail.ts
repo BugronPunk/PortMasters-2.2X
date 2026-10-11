@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import type { GameState } from "@/lib/game/types";
 import type { CardRecord } from "@/lib/game/constants/cards";
@@ -154,5 +154,12 @@ export function usePlayerDetail(
     [socket, roomId, stopWaiting],
   );
 
-  return { detail, loading, requestDetail };
+  // Memoized so the hook's answer holds one identity until something in
+  // it changes: callers keep it in dependency lists (GameRoom's
+  // handleSelectPlayer above every other), and a fresh literal every
+  // render rebuilt their callbacks every render.
+  return useMemo(
+    () => ({ detail, loading, requestDetail }),
+    [detail, loading, requestDetail],
+  );
 }

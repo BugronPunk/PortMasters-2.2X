@@ -52,6 +52,7 @@ import { normalizeWorkerRoster } from "@/lib/game/types";
 import { survivalLayerOn } from "@/lib/game/flags";
 import { auditOpensAt, normalizeMode } from "@/lib/game/mode";
 import { tFor, type Locale } from "@/lib/game/i18n";
+import { roomChannel } from "./channel";
 import { activeRosterSet } from "./checkpoint";
 import { parseSave } from "./save";
 import { noteTelemetry } from "./telemetry";
@@ -367,7 +368,7 @@ async function settleAudit(
     const moved = book.size !== state.votes.size;
     state.votes = book;
     if (tell || moved) {
-      io.to(`room:${roomId}`).emit(
+      io.to(roomChannel(roomId)).emit(
         "audit:tally",
         auditTallyFrame(roomId, round, roster, book),
       );
@@ -406,7 +407,7 @@ async function settleAudit(
       kind: "audit_carried",
       target: reveal.target.name,
     });
-    io.to(`room:${roomId}`).emit("audit:reveal", reveal);
+    io.to(roomChannel(roomId)).emit("audit:reveal", reveal);
     return;
   }
 }
@@ -493,7 +494,7 @@ export async function recordAuditVote(
   // already reading is still the count.
   const refuse = (sentence: string): string => {
     if (moved)
-      io.to(`room:${roomId}`).emit(
+      io.to(roomChannel(roomId)).emit(
         "audit:tally",
         auditTallyFrame(roomId, round, roster, state.votes),
       );

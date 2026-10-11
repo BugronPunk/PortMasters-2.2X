@@ -14,7 +14,11 @@ import { Term } from "../../Term";
 import { ItemIcon } from "../../shared";
 import { PriceBreakdownTooltip, priceAwareTermContent } from "../PriceTooltips";
 import { PanelNote } from "./PhasePanels";
-import { TradeCard, type PhasePanelProps } from "./PhaseShared";
+import {
+  TradeCard,
+  type MarketBoardProps,
+  type PhasePanelProps,
+} from "./PhaseShared";
 
 type MarketCard = GameState["resourceCards"][number];
 
@@ -187,13 +191,7 @@ function PurchaseCard({
  * the goods rows want. The bottom margin is the panel rhythm the rest of
  * this screen keeps, because each panel here carries its own.
  */
-export function PurchaseBoard({
-  game,
-  act,
-  colorFor,
-}: Pick<PhasePanelProps, "game" | "act"> & {
-  colorFor: (item: string) => string | undefined;
-}) {
+export function PurchaseBoard({ game, act, colorFor }: MarketBoardProps) {
   return (
     <div className="mb-3.5 grid grid-cols-1 gap-3 @2xl:grid-cols-2 @5xl:grid-cols-3">
       {game.resourceCards.map((c) => (

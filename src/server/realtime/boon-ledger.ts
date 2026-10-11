@@ -37,6 +37,7 @@ import type { Server } from "socket.io";
 import { db } from "@/lib/db";
 import { gambitSystemsOn } from "@/lib/game/mode";
 import type { BoonRecord } from "@/lib/game/types";
+import { roomChannel } from "./channel";
 
 // One map per process, one entry per captain, read only through the
 // functions below. It stays inside this module because no other caller
@@ -97,5 +98,5 @@ export async function recordBoonReport(
   ledger.set(userId, entry);
   const frame = boonLedgerFor(roomId);
   if (!frame) return;
-  io.to(`room:${roomId}`).emit("boon:ledger", frame);
+  io.to(roomChannel(roomId)).emit("boon:ledger", frame);
 }

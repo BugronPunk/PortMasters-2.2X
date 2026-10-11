@@ -9,6 +9,7 @@ import { roomMemberIds } from "@/lib/rooms";
 import { tFor } from "@/lib/game/i18n";
 import { gambitSystemsOn } from "@/lib/game/mode";
 import { seated } from "../auth";
+import { roomChannel } from "../channel";
 import { clearMutedUsers, emitRoomMembers } from "../chat";
 import {
   announceDraftComplete,
@@ -168,7 +169,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // lobby into a voyage, so a client that hears it can draw the right
       // board on the first render of one, and a reload is covered by the
       // same number on the state route.
-      io.to(`room:${roomId}`).emit("room:started", {
+      io.to(roomChannel(roomId)).emit("room:started", {
         roomId,
         seats: roster.length,
       });

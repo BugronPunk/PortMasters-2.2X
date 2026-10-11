@@ -962,7 +962,9 @@ export function GameRoom({
         )
         .catch(() => {});
     },
-    [playerDetail],
+    // The press itself, not the hook's whole answer: the callback reads
+    // nothing else off it, and the answer moves whenever a peek resolves.
+    [playerDetail.requestDetail],
   );
 
   function copyCode() {

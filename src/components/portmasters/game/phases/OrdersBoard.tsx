@@ -9,6 +9,7 @@ import {
   completeOrder,
   explainTransportCost,
   explainVAT,
+  fleetOfTreasuresUnits,
   lockedBehind,
   opportunistBorrowsLeft,
   opportunistIsBorrower,
@@ -16,6 +17,7 @@ import {
   opportunistMayBorrow,
   opportunistPayout,
   opportunistUsesLine,
+  orderRewardBonusSteps,
   pathOrderOf,
   OPPORTUNIST_SPENT_LINE,
   type PriceBreakdown,
@@ -27,7 +29,11 @@ import { cn } from "@/lib/utils";
 import { Term } from "../../Term";
 import { ItemIcon } from "../../shared";
 import { PriceBreakdownTooltip } from "../PriceTooltips";
-import { TradeCard, type PhasePanelProps } from "./PhaseShared";
+import {
+  TradeCard,
+  type MarketBoardProps,
+  type PhasePanelProps,
+} from "./PhaseShared";
 
 type CustomerCard = GameState["customerCards"][number];
 
@@ -82,8 +88,20 @@ function OrderCard({
   const borrowSpent =
     opportunistIsBorrower(game) && opportunistBorrowsLeft(game) < 1;
   const hasWoven = cargoCarriesTag(o.resources, "woven");
-  const transport = calcTransportCost(game, o.totalItems, hasWoven);
-  const transportBreakdown = explainTransportCost(game, o.totalItems, hasWoven);
+  // The Fleet of Treasures units, counted through the engine's own reader
+  // (see fleetOfTreasuresUnits), and handed to the freight read the fill
+  // also charges through, so the freight line on this card and the Gold
+  // the fill takes are one number. The module's discount used to be
+  // subtracted inside completeOrder alone, which is how this line came to
+  // quote the pre discount freight on every card that carried it.
+  const fleetUnits = fleetOfTreasuresUnits(game, o.resources);
+  const transport = calcTransportCost(game, o.totalItems, hasWoven, fleetUnits);
+  const transportBreakdown = explainTransportCost(
+    game,
+    o.totalItems,
+    hasWoven,
+    fleetUnits,
+  );
   let netProfit = rewardBasis - transport;
   let totalVat = 0;
   let vatBreakdown: PriceBreakdown | null = null;
@@ -107,6 +125,18 @@ function OrderCard({
       netProfit -= totalVat;
     }
   }
+  // The percentage bonuses the fill will credit, read through the
+  // settlement's own chain (see orderRewardBonusSteps) off the same post
+  // VAT reward the settlement starts from, and shown on the reward figure
+  // and the net figure together. The card used to quote the face value,
+  // so a captain holding a charter boon, the Bureau Token or either of
+  // the long charters read one number here and was paid another at the
+  // fill.
+  const bonusUplift =
+    orderRewardBonusSteps(game, o, rewardBasis - totalVat).reward -
+    (rewardBasis - totalVat);
+  const quotedReward = rewardBasis + bonusUplift;
+  netProfit += bonusUplift;
   const brokerCommission = o.isBrokerFavor
     ? brokersFavorCommission(o.reward)
     : 0;
@@ -309,12 +339,12 @@ function OrderCard({
         )}
       >
         {t("💰 Reward: {reward} Gold 📊 Net: {net} Gold", {
-          reward: rewardBasis,
+          reward: quotedReward,
           net: netProfit,
         })}
         {(() => {
           const margin =
-            rewardBasis > 0 ? Math.round((netProfit / rewardBasis) * 100) : 0;
+            quotedReward > 0 ? Math.round((netProfit / quotedReward) * 100) : 0;
           return (
             <span
               className={cn(
@@ -378,13 +408,7 @@ function OrderCard({
  * window breakpoint deals for a width it does not have. See the note on
  * PurchaseBoard, which deals the same ladder off the same container.
  */
-export function OrdersBoard({
-  game,
-  act,
-  colorFor,
-}: Pick<PhasePanelProps, "game" | "act"> & {
-  colorFor: (item: string) => string | undefined;
-}) {
+export function OrdersBoard({ game, act, colorFor }: MarketBoardProps) {
   return (
     <div className="grid grid-cols-1 gap-3 @2xl:grid-cols-2 @5xl:grid-cols-3">
       {game.customerCards.map((o) => (

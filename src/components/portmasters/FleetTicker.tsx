@@ -4,7 +4,7 @@ import type { Socket } from "socket.io-client";
 import type { PublicUser } from "@/lib/api";
 import { useRoomRoster } from "@/lib/use-room-roster";
 import { Avatar } from "./shared";
-import { cn } from "@/lib/utils";
+import { cn, memberRowClass } from "@/lib/utils";
 import { Coins, Trophy, SkullIcon, Anchor, Utensils } from "lucide-react";
 import { seatMarks } from "@/lib/seatMarks";
 import { hungryPillLine, hungryTooltip } from "@/lib/game/status-copy";
@@ -61,9 +61,7 @@ export function FleetTicker({
               key={m.id}
               className={cn(
                 "flex items-center gap-1.5 rounded-xl px-2 py-1 border shrink-0",
-                isMe
-                  ? "border-members/30 bg-members/[0.06]"
-                  : "border-black/5 dark:border-white/10 bg-background/40",
+                memberRowClass(isMe),
               )}
             >
               <Avatar hue={m.avatarHue} name={m.displayName} size={20} />

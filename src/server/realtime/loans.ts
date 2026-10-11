@@ -21,6 +21,7 @@ import { LoanRecord } from "@/types/realtime/loans";
 import type { Server } from "socket.io";
 import { db } from "@/lib/db";
 import { computeBackingResolution } from "@/lib/game/backing";
+import { roomChannel } from "./channel";
 import { emitToUser } from "./presence";
 
 const roomOutstandingLoans = new Map<string, LoanRecord[]>();
@@ -30,7 +31,7 @@ export function loanList(roomId: string): LoanRecord[] {
 }
 
 export function broadcastLoans(io: Server, roomId: string): void {
-  io.to(`room:${roomId}`).emit("loans:update", {
+  io.to(roomChannel(roomId)).emit("loans:update", {
     roomId,
     loans: loanList(roomId),
   });

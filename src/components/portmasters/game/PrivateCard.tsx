@@ -4,6 +4,7 @@ import { PrivateEntry } from "@/types/realtime/private-entry";
 import { Compass } from "lucide-react";
 import {
   allyLine,
+  dealtCardLine,
   flourishById,
   flourishLine,
   roleCard,
@@ -23,8 +24,13 @@ import { BROKER_PAYOUT_TARGET, victoryLine } from "@/lib/game/victory";
 // Four things can be on it and only the first is on every card: the role,
 // the personal goal the majority of the table carries, the one other
 // Pirate a pair of them is told about, and how far a Broker has got. The
-// second and third are printed from what the server sent rather than
-// worked out here, so a card cannot disagree with the one in the drawer.
+// entry carries the identity behind each of those (a role, a flourish
+// id, an ally), and every sentence is read here, at the print, so the
+// card is written in whatever language its reader has picked rather than
+// in the language it happened to be written on the wire, and it is
+// written again the moment that pick moves. The card's own line is read
+// from the same record the server composed the entry from, so the sent
+// copy and the printed copy cannot drift apart.
 //
 // The win condition is drawn here rather than sent, from the same two
 // things the rest of the card is already printing: the rule that reads
@@ -62,7 +68,7 @@ export function PrivateCard({
           </span>
         </div>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-          {entry.text}
+          {dealtCardLine(entry.role)}
         </p>
         {flourish && (
           <p className="mt-1.5 text-xs leading-relaxed text-foreground">

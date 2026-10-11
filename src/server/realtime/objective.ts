@@ -57,6 +57,7 @@ import {
   objectiveSeed,
   type Objective,
 } from "@/lib/game/objectives";
+import { roomChannel } from "./channel";
 import { claimObjectiveRoom } from "./presence";
 
 // room -> captain -> what the commission has accepted from that captain,
@@ -246,7 +247,7 @@ function settleObjective(
     roomId,
     total: objectiveTotalFor(roomId, objective),
   };
-  io.to(`room:${roomId}`).emit("objective:progress", payload);
+  io.to(roomChannel(roomId)).emit("objective:progress", payload);
   return accepted;
 }
 

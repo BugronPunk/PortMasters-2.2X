@@ -32,6 +32,7 @@ import { checkSave, describeFindings } from "@/lib/game/integrity";
 import type { ObjectiveTraceEntry } from "@/lib/game/types";
 import { clearBarter, clearFlexibleAccepted } from "../barter";
 import { clearBazaar } from "../bazaar";
+import { roomChannel } from "../channel";
 import { getCheckpoint } from "../checkpoint";
 import { escortContracts } from "../contracts";
 import { clearPathVoyage } from "../draft";
@@ -461,7 +462,7 @@ export function publishStandings(
   winnerId: string | null,
   standings: StandingRow[],
 ): void {
-  io.to(`room:${roomId}`).emit("room:voyage_complete", {
+  io.to(roomChannel(roomId)).emit("room:voyage_complete", {
     roomId,
     winnerId,
     standings,

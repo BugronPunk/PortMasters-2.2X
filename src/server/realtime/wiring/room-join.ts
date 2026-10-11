@@ -15,6 +15,7 @@ import { requireAuth } from "../auth";
 import { boonLedgerFor } from "../boon-ledger";
 import { barterPayloadFor, removeUserBarterOffers } from "../barter";
 import { bazaarPayloadFor } from "../bazaar";
+import { roomChannel } from "../channel";
 import { directLogFor, emitRoomMembers, harborLog } from "../chat";
 import { getCheckpoint, readyStatePayload } from "../checkpoint";
 import { escortContracts } from "../contracts";
@@ -67,7 +68,7 @@ export function wireRoomJoin(
     // Leave previous room channel if any.
     if (s.roomId) {
       const previousRoomId = s.roomId;
-      socket.leave(`room:${previousRoomId}`);
+      socket.leave(roomChannel(previousRoomId));
       s.roomId = null;
       s.mode = null;
       // Unconditional, the same rule room:leave applies below and the
@@ -113,7 +114,7 @@ export function wireRoomJoin(
     // room's mode is read everywhere else: a room row written before modes
     // existed answers the founding mode.
     s.mode = normalizeMode(member.room.mode);
-    socket.join(`room:${roomId}`);
+    socket.join(roomChannel(roomId));
     if (!wasReconnecting) {
       // The room-wide rule again: every socket in the harbor reads the
       // entry line in its own language, the joining socket included.
@@ -273,7 +274,7 @@ export function wireRoomJoin(
     if (!s) return;
     const roomId = payload?.roomId ?? s.roomId;
     if (!roomId) return;
-    socket.leave(`room:${roomId}`);
+    socket.leave(roomChannel(roomId));
     if (s.roomId === roomId) s.roomId = null;
     forgetStatus(roomId, s.userId);
     removeUserBarterOffers(io, roomId, s.userId);

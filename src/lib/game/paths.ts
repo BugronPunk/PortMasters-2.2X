@@ -364,7 +364,7 @@ export function pathLockLine(id: PathId): string {
 // print the same rung plain. That is why the renown arm carries the rung's
 // title alone and the composition of "Renown to Navigator" belongs to the
 // surface rather than to this record.
-export type PathFact =
+type PathFact =
   | { kind: "hold"; percent: number }
   | { kind: "renown"; title: string }
   | { kind: "orders"; count: number };
@@ -391,7 +391,7 @@ export function pathFactText(fact: PathFact): string {
 
 // One path as the guide surfaces print it: the identity a card wears and
 // the few readings its numbers carry.
-export interface PathGuideEntry {
+interface PathGuideEntry {
   id: PathId;
   crest: string;
   name: string;

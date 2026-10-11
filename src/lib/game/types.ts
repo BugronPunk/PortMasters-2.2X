@@ -544,6 +544,16 @@ export type GameState = {
   // rather than per round because the design has to track it from leg one
   // and cannot reconstruct it later.
   peerTradeProfit: number;
+  // The boon Gold this voyage has been granted, tallied across every round
+  // it was granted in. The Emergency Loan's grant is the only one today,
+  // and the tally is written at the same line as the credit (see applyBoon
+  // in ./engine/boons) rather than read back off the round's flag: the
+  // flag is rebuilt at every round's end (see endRound in
+  // ./engine/lifecycle), and the Financial Summary that prints this figure
+  // renders once, at the voyage's end, when every round flag is already
+  // gone. Durable for the same reason peerTradeProfit above is: the design
+  // tracks it from the leg it lands on and cannot reconstruct it later.
+  boonGoldEarned: number;
   // [MANIFEST 02: Word on the Docks] Trade orders completed across the whole
   // voyage, never reset per round the way orderCount is, only by a fresh
   // voyage (createInitialGameState). completeOrder increments this alongside
@@ -1169,6 +1179,7 @@ export function createInitialGameState(setup: VoyageSetup = {}): GameState {
     orderCount: 0,
     helperReputationEarned: 0,
     peerTradeProfit: 0,
+    boonGoldEarned: 0,
     totalOrdersCompleted: 0,
     gameOver: false,
     // [H7: Maroon and the Harbormaster] A fresh voyage owes nobody

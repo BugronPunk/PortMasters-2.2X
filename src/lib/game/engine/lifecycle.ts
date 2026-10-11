@@ -45,7 +45,7 @@ import { completeMarket, startMarket } from "./market";
 import { noteSettlementMilestones } from "./milestones";
 import { startOrders } from "./orders";
 import { resolvePirateAttack } from "./pirates";
-import { calcIncomeTax, INCOME_TAX_RATE } from "./pricing";
+import { calcIncomeTax, incomeTaxRate } from "./pricing";
 import { failSeat } from "./seats";
 import { standingBoonId, workStandingOrders } from "./standing";
 import { payMaintenance, payWages, processProduction } from "./workers";
@@ -97,12 +97,15 @@ function endRound(state: GameState, logs: string[]) {
     state.money -= tax;
     state.incomeTaxPaid += tax;
     // The rate the ledger reports has to be the rate that was charged, so
-    // this reads the same constant calcIncomeTax does rather than repeating
-    // the number. Written out twice, the two agree right up until someone
-    // changes the tax, at which point the receipt starts lying about a
-    // charge that is still being taken.
-    const rate =
-      (state.modifierFlags.income_tax_override || INCOME_TAX_RATE) * 100;
+    // this reads the same reader calcIncomeTax charges through (see
+    // incomeTaxRate) rather than repeating the numbers. Written out
+    // twice, the two agree right up until someone changes the tax, at
+    // which point the receipt starts lying about a charge that is still
+    // being taken. The module factors are part of that rate: the receipt
+    // used to print the bare base, so a Smuggler's Hold round showed ten
+    // percent while the charge took twelve, and a Tax Evasion round
+    // showed ten while the charge took five.
+    const rate = incomeTaxRate(state) * 100;
     logs.push(
       t("🏛️ Income Tax Paid ({rate}%): {tax} Gold", {
         rate: rate.toFixed(0),

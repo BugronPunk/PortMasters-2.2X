@@ -50,6 +50,7 @@ import {
 import { modeConfig, voyageRoundsFor } from "@/lib/game/mode";
 import { unlockedPorts } from "@/lib/game/pools";
 import { writtenOff } from "@/lib/seatMarks";
+import { roomChannel } from "./channel";
 import { activeRosterSet } from "./checkpoint";
 import { roomStatuses } from "./status";
 import { noteCaptainMarooned, noteTelemetry } from "./telemetry";
@@ -254,7 +255,7 @@ async function settleMaroon(
     const moved = book.size !== state.votes.size;
     state.votes = book;
     if (tell || moved) {
-      io.to(`room:${roomId}`).emit(
+      io.to(roomChannel(roomId)).emit(
         "maroon:tally",
         maroonTallyFrame(
           roomId,
@@ -310,7 +311,7 @@ async function settleMaroon(
     // the result now, and leaving the tally standing would put the count
     // that got there on the same screen as the thing it did.
     state.votes.clear();
-    io.to(`room:${roomId}`).emit("maroon:result", result);
+    io.to(roomChannel(roomId)).emit("maroon:result", result);
     return;
   }
 }
@@ -386,7 +387,7 @@ export async function recordMaroonVote(
   // already reading is still the count.
   const refuse = (sentence: string): string => {
     if (moved)
-      io.to(`room:${roomId}`).emit(
+      io.to(roomChannel(roomId)).emit(
         "maroon:tally",
         maroonTallyFrame(
           roomId,
@@ -558,6 +559,6 @@ export async function recordPortShift(
     by: { userId, name: member.user.displayName },
   };
   state.shift = notice;
-  io.to(`room:${roomId}`).emit("maroon:shift", notice);
+  io.to(roomChannel(roomId)).emit("maroon:shift", notice);
   return null;
 }

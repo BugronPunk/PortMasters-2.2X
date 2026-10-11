@@ -5,7 +5,9 @@ import {
   brokersFavorCommission,
   calcTransportCost,
   explainVAT,
+  fleetOfTreasuresUnits,
   lockedBehind,
+  orderRewardBonusSteps,
 } from "@/lib/game/engine";
 import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
@@ -48,8 +50,17 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
         }
       }
       const hasWoven = cargoCarriesTag(o.resources, "woven");
-      const transport = calcTransportCost(game, o.totalItems, hasWoven);
+      // The freight comes through the same read the fill charges through,
+      // the Fleet of Treasures units included (see fleetOfTreasuresUnits),
+      // so this plan's net is the net the fill actually banks.
+      const transport = calcTransportCost(
+        game,
+        o.totalItems,
+        hasWoven,
+        fleetOfTreasuresUnits(game, o.resources),
+      );
       let net = o.reward - transport;
+      let vatTotal = 0;
       if (o.isProductOrder) {
         // The engine's own reading of the taxed line (see completeOrder):
         // a product card with no line, or a line with no count, adds no
@@ -63,9 +74,20 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
             productRef.type,
             o.reward / productUnits,
           );
-          net -= vat.final * productUnits;
+          vatTotal = vat.final * productUnits;
+          net -= vatTotal;
         }
       }
+      // The percentage bonuses the fill will credit, read through the
+      // settlement's own chain off the same post VAT reward it starts
+      // from (see orderRewardBonusSteps), so the totals this panel sums
+      // and the Gold a fill lands are one arithmetic.
+      const rewardWithBonuses = orderRewardBonusSteps(
+        game,
+        o,
+        o.reward - vatTotal,
+      ).reward;
+      net += rewardWithBonuses - (o.reward - vatTotal);
       if (o.isBrokerFavor) {
         net -= brokersFavorCommission(o.reward);
       }
@@ -74,7 +96,7 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
         ready: missing.length === 0,
         missingGoods: missing,
         netProfit: net,
-        reward: o.reward,
+        reward: rewardWithBonuses,
       };
     });
 

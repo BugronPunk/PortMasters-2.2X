@@ -23,7 +23,7 @@ import {
   CONVOY_VENTURE_PAYOUT_MULTIPLIER,
 } from "./constants/world";
 import { parseJsonObject } from "./json";
-import { t } from "@/lib/game/i18n";
+import { t, tFor, type Locale } from "@/lib/game/i18n";
 
 type VentureContribution = { name: string; amount: number };
 type VentureContributions = Record<string, VentureContribution>;
@@ -205,19 +205,31 @@ export function ventureAlreadySpentReason(): string {
 // Each arm is one row of the pack, read here; the paid reading names the
 // payout multiplier, which is the constant above rather than a number
 // written into the sentence.
-export function ventureAnnouncementFor(outcome: VentureOutcome): string {
+//
+// The read takes a language rather than reading this process's own,
+// because the announcement is a line the server sends: it goes to every
+// socket in the room (see settleVenture in src/server/realtime/ventures),
+// and one harbor can hold two languages, so the sentence is built once
+// per reader at the send.
+export function ventureAnnouncementFor(
+  locale: Locale,
+  outcome: VentureOutcome,
+): string {
   if (outcome === "filled") {
-    return t(
+    return tFor(
+      locale,
       "⚓ A Venture filled! Every contributor is paid their share, times {CONVOY_VENTURE_PAYOUT_MULTIPLIER}x. This harbor's one Venture chance for this voyage has now been used.",
       { CONVOY_VENTURE_PAYOUT_MULTIPLIER },
     );
   }
   if (outcome === "failed") {
-    return t(
+    return tFor(
+      locale,
       "⚓ A Venture missed its deadline. Every contributor gets back a partial refund.",
     );
   }
-  return t(
+  return tFor(
+    locale,
     "⚓ A Venture was canceled: another venture in the harbor already claimed this voyage's one chance. Every contributor gets back their full stake.",
   );
 }

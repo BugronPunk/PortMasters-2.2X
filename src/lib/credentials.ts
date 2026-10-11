@@ -46,7 +46,7 @@ export const DISPLAY_NAME_MAX = 24;
  * them: the rule's own numbers, taken from the constants above rather
  * than written again inside a sentence.
  */
-export const HINT_TOKENS: Params = {
+const HINT_TOKENS: Params = {
   USERNAME_MIN,
   USERNAME_MAX,
   PASSWORD_MIN,

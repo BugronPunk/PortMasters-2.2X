@@ -22,6 +22,7 @@ import { type Phase } from "@/lib/game/types";
 import { clearAid } from "../aid";
 import { requireAuth } from "../auth";
 import { barterList, clearBarter } from "../barter";
+import { roomChannel } from "../channel";
 import {
   armPhaseClock,
   broadcastReadyState,
@@ -78,7 +79,7 @@ export function wireStatusHeartbeat(io: Server, socket: Socket): void {
 
     const broadcast = buildStatusFrame(roomId, s.user, payload);
     rememberStatus(roomId, broadcast);
-    io.to(`room:${roomId}`).emit("game:status", broadcast);
+    io.to(roomChannel(roomId)).emit("game:status", broadcast);
 
     maybeAnnounceSurge(io, roomId);
 
@@ -291,7 +292,7 @@ function maybeAnnounceSurge(io: Server, roomId: string): void {
     return;
   }
   markSurged(roomId);
-  io.to(`room:${roomId}`).emit("tidewatch:surge", { roomId });
+  io.to(roomChannel(roomId)).emit("tidewatch:surge", { roomId });
   // The notice is read by the whole table, so it goes to every socket in
   // the harbor in that captain's own language rather than as one
   // broadcast. The tidewatch:surge frame above carries structure only, so

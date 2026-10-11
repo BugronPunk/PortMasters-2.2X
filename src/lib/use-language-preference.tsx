@@ -56,7 +56,7 @@ const LANGUAGE_KEY = "portmasters_language";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 /** The captain's stored pick, or the shipped language where none is stored. */
-export function readStoredLocale(): Locale {
+function readStoredLocale(): Locale {
   try {
     const stored = localStorage.getItem(LANGUAGE_KEY);
     if (isLocale(stored)) return stored;
@@ -75,7 +75,7 @@ export function readStoredLocale(): Locale {
  * colorblind write swallows them: the in memory reader above still
  * applies for the rest of the session even when nothing persists.
  */
-export function storeLocale(locale: Locale): void {
+function storeLocale(locale: Locale): void {
   setLocale(locale);
   try {
     localStorage.setItem(LANGUAGE_KEY, locale);
@@ -130,6 +130,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     storeLocale(stored);
     Promise.resolve().then(() => setLocaleState(stored));
   }, []);
+
+  // The document's own language follows the pick the moment it is made,
+  // the same attribute the root layout writes from the cookie on a fresh
+  // load (see src/app/layout.tsx). Without this, a captain who flips the
+  // pick with the tab open leaves the page declaring English to a screen
+  // reader and to the browser's own font fallback until the next reload.
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const setLanguage = useCallback((next: Locale) => {
     if (!isLocale(next)) return;

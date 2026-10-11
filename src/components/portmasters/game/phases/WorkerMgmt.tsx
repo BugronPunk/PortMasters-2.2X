@@ -6,11 +6,11 @@ import {
   getHireCost,
   hireWorker,
   leavePhase,
-  payrollIndex,
+  unlockedWorkerRoster,
 } from "@/lib/game/engine";
 import { t } from "@/lib/game/i18n";
 import { phaseFace } from "@/lib/game/phases";
-import { unlockedProducts, unlockedWorkerTypes } from "@/lib/game/pools";
+import { unlockedProducts } from "@/lib/game/pools";
 import { cn } from "@/lib/utils";
 import { Term } from "../../Term";
 import {
@@ -46,37 +46,22 @@ export function WorkerMgmt({
   // Coppersmith and Potter a charter brings are hirable, payable, and
   // assignable the moment they unlock, with no further edits here. Each
   // type's craftable goods are derived from the recipes that name it, which
-  // is also what keeps the Master's inherited weaver goods correct.
+  // is also what keeps the Master's inherited weaver goods correct. The
+  // hands and the wage due come off the engine's shared join (see
+  // unlockedWorkerRoster), so the wage this bench bills and the wage the
+  // status rail warns of are one reading; the pledge story lives there.
   const openProducts = unlockedProducts(game.difficulty, game.currentRound);
-  const payroll = payrollIndex(game);
-  const roster = unlockedWorkerTypes(game.difficulty, game.currentRound).map(
-    (w) => {
-      const list = game.workers[w.id] ?? [];
-      const cost = getHireCost(game, w.id);
-      return {
-        ...w,
-        list,
-        cost,
-        // The wage this type's hands are due, from the engine's own bill
-        // (see payrollIndex) rather than from a hand count multiplied
-        // here. A Jade Pavilion pledge waives a sponsored hand's first
-        // wage, and the multiplication this replaces counted that hand
-        // anyway: the payroll block below billed one wage too many and
-        // the efficiency ratio under it was divided by the inflated
-        // number. A type outside the engine's roster is one payWages does
-        // not charge either, which is why a missing row reads as no wages
-        // due rather than as a second opinion about the same absence.
-        due: payroll.get(w.id)?.due ?? 0,
-        // Every product has a recipe, which is what makes it a product,
-        // so this lookup is read straight. The other six reads of RECIPES
-        // in this project do the same.
-        tasks: openProducts.filter((p) => {
-          const owner = RECIPES[p].worker_type;
-          return owner === w.id || (w.id === "master" && owner === "weaver");
-        }),
-      };
-    },
-  );
+  const roster = unlockedWorkerRoster(game).map((r) => ({
+    ...r,
+    cost: getHireCost(game, r.id),
+    // Every product has a recipe, which is what makes it a product,
+    // so this lookup is read straight. The other six reads of RECIPES
+    // in this project do the same.
+    tasks: openProducts.filter((p) => {
+      const owner = RECIPES[p].worker_type;
+      return owner === r.id || (r.id === "master" && owner === "weaver");
+    }),
+  }));
   const totalWages = roster.reduce((sum, r) => sum + r.due, 0);
   const nW = roster.reduce((sum, r) => sum + r.list.length, 0);
   // The phase the wage bill lands in, named through its face rather than

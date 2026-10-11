@@ -219,12 +219,19 @@ export function Parley({
   // later leg: the reveal carries the leg it was made in, so a captain who
   // reloads in leg seven is shown the finding without being pushed out of
   // a Parley the harbor never voted to end.
+  // The dependency below is the press itself rather than the phaseSync
+  // record it came from. That record changes whenever anything in it does,
+  // waiting flipping true on the back of this very press included, and
+  // running the effect again there sent the vote a second time. The press
+  // changes only when the room, the round or the phase does, which is
+  // exactly when this effect should look again.
   const revealedRound = audit.reveal?.round;
+  const { markReady } = phaseSync;
   useEffect(() => {
     if (revealedRound === undefined) return;
     if (game.phase !== "parley" || game.currentRound !== revealedRound) return;
-    phaseSync.markReady((g, l) => leavePhase(g, ctx, l));
-  }, [revealedRound, game.phase, game.currentRound, phaseSync, ctx]);
+    markReady((g, l) => leavePhase(g, ctx, l));
+  }, [revealedRound, game.phase, game.currentRound, markReady, ctx]);
 
   return (
     <div className="max-w-3xl mx-auto">

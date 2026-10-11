@@ -2,6 +2,7 @@
 
 import { PrivateEntry } from "@/types/realtime/private-entry";
 import { useEffect, useRef } from "react";
+import { dealtCardLine } from "@/lib/game/gambit";
 import { t } from "@/lib/game/i18n";
 import type { VoyageLog } from "@/lib/use-voyage-log";
 
@@ -15,13 +16,16 @@ import type { VoyageLog } from "@/lib/use-voyage-log";
 // away what happened while they were gone and what happened to them in
 // particular.
 //
-// The private column prints the line each entry carries rather than
+// The private column prints the line each entry stands for rather than
 // drawing a second card. The card a captain holds is already drawn in
 // full under the controls, where it can be read at any phase rather than
 // only at Dusk, and this column is the record of what arrived rather than
 // a place to play from. It carries whatever the channel delivers, so the
 // reveal material the plan's own iteration note adds later lands here
-// without this component learning a second shape.
+// without this component learning a second shape. A dealt card's line is
+// read from the role the entry carries, the same read the card under the
+// controls makes, so the column follows the reader's language; an entry
+// with no role prints the text it was sent.
 //
 // The request goes out from this component for the same reason: the log is
 // drawn on one screen, so it is asked for on one screen. A captain who
@@ -119,7 +123,7 @@ export function VoyageLogPanel({
                 key={`${entry.kind}:${index}`}
                 className="text-[11px] leading-relaxed text-foreground break-words"
               >
-                {entry.text}
+                {entry.role ? dealtCardLine(entry.role) : entry.text}
               </div>
             ))
           )}

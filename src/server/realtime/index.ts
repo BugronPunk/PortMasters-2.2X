@@ -261,19 +261,26 @@ export function attachRealtime(httpServer: HttpServer): Server {
 
   // ========== Connection handling ==========
   io.on("connection", (socket: Socket) => {
+    // The captain's language, off the handshake the moment the socket
+    // is remembered rather than at authentication: the frames that
+    // read it (see tFor in @/lib/game/i18n) are captain facing the
+    // first time they are sent, and a connection that never
+    // authenticates has no captain to read for anyway.
+    const handshakeLocale = readLocaleCookie(socket.handshake?.headers?.cookie);
     rememberSocket(socket.id, {
       userId: "",
       user: { id: "", username: "", displayName: "", avatarHue: 0 },
       roomId: null,
       authed: false,
       mode: null,
-      // The captain's language, off the handshake the moment the socket
-      // is remembered rather than at authentication: the frames that
-      // read it (see tFor in @/lib/game/i18n) are captain facing the
-      // first time they are sent, and a connection that never
-      // authenticates has no captain to read for anyway.
-      locale: readLocaleCookie(socket.handshake?.headers?.cookie),
+      locale: handshakeLocale,
     });
+    // The same fact on the socket itself, kept in step by the one writer
+    // after this one (see ./wiring/locale). The voyage log's accumulator
+    // renders one frame per reader, and it reads the language off the
+    // socket rather than off the presence map so that it can stay out of
+    // that module's import graph (the presence module imports it).
+    socket.data.locale = handshakeLocale;
 
     // [J2: the mute and the report] The socket's own frame budget, put in
     // front of every handler below. It goes here, before the auto
