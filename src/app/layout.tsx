@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 const notoSerif = Noto_Serif_SC({
-  variable: "--font-display",
+  variable: "--font-display-family",
   subsets: ["latin"],
   weight: ["500", "700"],
 });

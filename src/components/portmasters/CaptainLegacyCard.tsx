@@ -37,7 +37,7 @@ type CaptainRival = {
 // right after a voyage concludes (see GamePhasePanel.tsx), where it
 // reflects the account *after* this voyage's Renown XP was applied.
 //
-// [MANIFEST] One extra line surfaces here: the Captain's Rival head to
+// One extra line surfaces here: the Captain's Rival head to
 // head record, drawn only when the caller names a rival and the record is
 // non null. The Endgame screen names whoever else sailed the voyage just
 // finished (see Endgame.tsx); the Lobby's card has nobody in particular to
@@ -244,7 +244,7 @@ export function CaptainLegacyCard({
         </>
       )}
 
-      {/* [MANIFEST] Captain's Rival: head to head line at the bottom,
+      {/* Captain's Rival: head to head line at the bottom,
           only when the caller names a rival. The line is a filled band in
           the panel's own colour, which is what marks it as a different
           surface from the cards above without giving a rival a colour of

@@ -24,7 +24,7 @@ import type { GameState } from "../types";
 import { ageBarterReputation } from "./ages";
 import { addOwnedAmount, getOwnedAmount } from "./core";
 
-// [MANIFEST 10: Ages of the Ledger] The Trader's Age lands Reputation on
+// The Trader's Age lands Reputation on
 // every completed trade, and a trade has two completing sides. Both call
 // this so the Age pays them the same: it is the trade that earns it, not
 // whichever captain happened to be the one posting the offer.
@@ -39,7 +39,7 @@ function awardBarterReputation(state: GameState, logs: LedgerLine[]) {
   );
 }
 
-// [H4: the Broker] The peer ledger: coin that changed hands with another
+// The peer ledger: coin that changed hands with another
 // captain, net of coin paid to them. The Broker's card is measured on this
 // and nothing else, which is why it is counted here rather than where the
 // trade is reported. Both sides of every completed trade run through
@@ -52,7 +52,7 @@ function awardBarterReputation(state: GameState, logs: LedgerLine[]) {
 // refunded moves Gold and is not a trade, so only settlement counts, and
 // the two counted sides read their amounts off the same trade: whatever
 // one captain counts as profit the other counts as loss. That zero sum
-// property is what the epic's evaluation leans on, and the smoke suite
+// property is what the evaluation leans on, and the smoke suite
 // asserts it rather than trusting this comment.
 //
 // Nothing is logged. A line naming this figure would put a Broker's
@@ -126,7 +126,7 @@ export function postBarterOffer(
 
 // Why an escrowed offer's goods are coming home. A withdrawal is the
 // departure the captain asked the board for, a sweep is the board dropping
-// an offer on its own when the leg moves on, a refusal is the harbor turning
+// an offer on its own when the round moves on, a refusal is the harbor turning
 // a post away, and a pre-load refund is one that arrived before this
 // captain's voyage had loaded and came home with it.
 type BarterRefundCause = "withdrawal" | "sweep" | "refusal" | "pre-load";
@@ -252,5 +252,5 @@ export function completeParley(logs: LedgerLine[]) {
   // the same two phases in the founding mode, but the experimental one runs
   // it after the manifest instead of before, so a hardcoded next phase would
   // be the one line in the engine that quietly pinned this board to one
-  // voyage's leg. See nextPhase in ./lifecycle.
+  // voyage's round. See nextPhase in ./lifecycle.
 }

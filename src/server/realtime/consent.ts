@@ -1,12 +1,12 @@
 // =====================================================================
 // Realtime layer: the board a consent market is held on.
 //
-// [D4: Loom: the Refit] A board is harbor state, because an agreement between
+// A board is harbor state, because an agreement between
 // two captains is an object no single client can be the authority over, and
 // the harbor keeps it while the two clients each apply their own side of it to
-// their own state. D3 wrote that module for the escort contract and D4's
-// refit needs the same one, so what D3 wrote is here once, as a factory, and
-// ./contracts and ./refits are two bindings of it.
+// their own state. The escort contract needed that module first and the refit
+// bench needs the same one, so it is here once, as a factory, and ./contracts
+// and ./refits are two bindings of it.
 //
 // What a binding supplies is the two things that differ between kinds: the
 // event a board broadcasts on and the shape of the payload it broadcasts,
@@ -39,9 +39,9 @@
 // matter are the ones both captains already agreed to. What the server does
 // is keep a row honest about its ordering: one term per agreement, only
 // against a row that was agreed, only from the captain whose name is on it,
-// and only in the leg it was sold for.
+// and only in the round it was sold for.
 //
-// Transient by the plan's own instruction: "Contracts are transient harbor
+// Transient by the design's own instruction: "Contracts are transient harbor
 // state rather than durable, so this rolls back cleanly." Nothing here is
 // written down, and a save never carries an agreement. It carries the tally
 // of what already settled and the ledger of movements already applied, both
@@ -89,8 +89,8 @@ type ConsentBoard<T extends ConsentTerms> = {
  * `pack` is the payload builder rather than a fixed shape because the two
  * kinds name their rows differently on the wire, and a wire field name is a
  * contract with every client already connected: `{roomId, contracts}` for
- * the market D3 shipped and `{roomId, refits}` for D4's bench, so a tab left
- * open across the deploy reads the same field it was built to read.
+ * the escort contract market and `{roomId, refits}` for the refit bench, so a
+ * tab left open across the deploy reads the same field it was built to read.
  */
 export function consentBoard<T extends ConsentTerms>(options: {
   event: string;
@@ -153,7 +153,7 @@ export function consentBoard<T extends ConsentTerms>(options: {
       // bought is read off this board and a board that still carried it
       // would leave them holding a promise from a captain who is no longer
       // in the harbor. What a departure therefore takes from the buyer is
-      // what they paid for, which is the plainest gap the plan means when it
+      // what they paid for, which is the plainest gap the design means when it
       // says betrayal lives in the gaps between contracts.
       //
       // And any offer addressed to the departed captain goes with them,

@@ -1,9 +1,9 @@
 // PortMasters 2.2 Parallel Release, smoke run: the Supply Barge.
 //
-// [E1] The anonymous vendor the plan builds as the fail safe for a table
-// that never took the Quartermaster: one lot a leg, eight of them at the
-// most, at a markup, drawn from the voyage's own numbers so the rule needs
-// no state that has to be kept in step. What is checked here is the rule,
+// The anonymous vendor is the fail safe for a table that never took the
+// Quartermaster: one lot a round, eight of them at the most, at a markup,
+// drawn from the voyage's own numbers so the rule needs no state that has
+// to be kept in step. What is checked here is the rule,
 // then the reading it feeds: the draw, the sale and its three ceilings,
 // the two tallies a voyage leaves behind, the heal that reads a save this
 // build did not write, the switch that takes the whole feature away, and
@@ -20,7 +20,7 @@ import { join } from "node:path";
 import { ratePercent } from "@/lib/game/balance";
 import {
   BARGE_PRICE_MULTIPLIER,
-  BARGE_RATIONS_PER_LEG,
+  BARGE_RATIONS_PER_ROUND,
   RATION_PRICE,
 } from "@/lib/game/constants/supplies";
 import { readDashboard } from "@/lib/game/dashboard";
@@ -28,7 +28,7 @@ import {
   bargeLeftAtPort,
   bargeLotAtPort,
   bargeOn,
-  bargePortAtLeg,
+  bargePortAtRound,
   bargeRationPrice,
   buyFromBarge,
   hireWorker,
@@ -79,8 +79,8 @@ export async function supplyBargeSuite(inputs: {
   };
 
   // ========== The vendor's price ==========
-  // The plan's own clause is a markup on the port's price, so the two
-  // numbers are read off each other rather than written down twice: a
+  // The rule is a markup on the port's price, so the two numbers are read
+  // off each other rather than written down twice: a
   // retune of either moves the vendor with it, and the premium is checked
   // to be a premium rather than taken on faith.
   check(
@@ -91,50 +91,50 @@ export async function supplyBargeSuite(inputs: {
 
   // ========== Where it stands, and how much it has ==========
   const state = bargeVoyage();
-  const firstPort = bargePortAtLeg(state);
+  const firstPort = bargePortAtRound(state);
   check(
     firstPort !== null &&
       unlockedPorts(state.difficulty, state.currentRound).includes(firstPort) &&
-      bargePortAtLeg({ ...state }) === firstPort,
-    "the vendor stands at a port the voyage can reach on that leg, and the same state draws the same quay, because what the plan asks for is a rule rather than a coin the server flips",
+      bargePortAtRound({ ...state }) === firstPort,
+    "the vendor stands at a port the voyage can reach on that round, and the same state draws the same quay, because what the design asks for is a rule rather than a coin the server flips",
   );
-  const legs = Array.from({ length: 12 }, (_, index) => index + 1);
-  const ports = legs.map((round) =>
-    bargePortAtLeg({ ...state, currentRound: round }),
+  const rounds = Array.from({ length: 12 }, (_, index) => index + 1);
+  const ports = rounds.map((round) =>
+    bargePortAtRound({ ...state, currentRound: round }),
   );
   check(
     ports.every(
       (port, index) =>
         port !== null &&
-        unlockedPorts(state.difficulty, legs[index]).includes(port),
+        unlockedPorts(state.difficulty, rounds[index]).includes(port),
     ),
-    "and every leg of a voyage draws a quay the table can actually sail to, so the fallback is never a harbor the ship cannot reach",
+    "and every round of a voyage draws a quay the table can actually sail to, so the fallback is never a harbor the ship cannot reach",
   );
   check(
     new Set(ports).size > 1,
-    "and it is not one harbor's vendor: the quay moves through the voyage with the leg it is drawn from",
+    "and it is not one harbor's vendor: the quay moves through the voyage with the round it is drawn from",
   );
-  const lots = legs.map((round) =>
+  const lots = rounds.map((round) =>
     bargeLotAtPort({ ...state, currentRound: round }),
   );
-  // The plan's own ceiling, said out loud here as the sentence the check
-  // below is about rather than as a number typed twice: the lot is read from
-  // the constant, and this is the promise it is being held to.
+  // The ceiling, said out loud here as the rule the check below is about
+  // rather than as a number typed twice: the lot is read from the
+  // constant, and this is the promise it is being held to.
   const PLAN_CEILING = 8;
   check(
     lots.every(
       (lot) =>
-        Number.isInteger(lot) && lot >= 1 && lot <= BARGE_RATIONS_PER_LEG,
-    ) && BARGE_RATIONS_PER_LEG === PLAN_CEILING,
-    "the lot is a whole count between one and the ceiling the plan names, so the promise of never more than eight a leg is a bound the rule cannot cross rather than a number the panel prints",
+        Number.isInteger(lot) && lot >= 1 && lot <= BARGE_RATIONS_PER_ROUND,
+    ) && BARGE_RATIONS_PER_ROUND === PLAN_CEILING,
+    "the lot is a whole count between one and the ceiling the design names, so the promise of never more than eight a round is a bound the rule cannot cross rather than a number the panel prints",
   );
   check(
     new Set(lots).size > 1,
-    "and the lot is drawn rather than fixed, so a table wanting all eight has legs where that is possible and legs where it is not",
+    "and the lot is drawn rather than fixed, so a table wanting all eight has rounds where that is possible and rounds where it is not",
   );
   check(
     bargeLeftAtPort(state) === bargeLotAtPort(state),
-    "and nothing has been bought on a fresh leg, so what is left of the lot is the lot",
+    "and nothing has been bought on a fresh round, so what is left of the lot is the lot",
   );
 
   // ========== The sale ==========
@@ -158,40 +158,40 @@ export async function supplyBargeSuite(inputs: {
       buyer.bargeSpend === price &&
       buyer.bargeTaken === 1 &&
       buyer.bargeRound === buyer.currentRound,
-    "and the Gold lands in both counters the page's share is divided from, stamped with the leg it was spent in",
+    "and the Gold lands in both counters the page's share is divided from, stamped with the round it was spent in",
   );
 
   // The ceiling that is the feature. A press for the whole lot buys the
-  // lot, and the leg's shelf is then empty however deep the purse is.
+  // lot, and the round's shelf is then empty however deep the purse is.
   const eager = bargeVoyage(10_000);
   const lot = bargeLotAtPort(eager);
   const eagerLines: LedgerLine[] = [];
-  const took = buyFromBarge(eager, BARGE_RATIONS_PER_LEG * 4, eagerLines);
+  const took = buyFromBarge(eager, BARGE_RATIONS_PER_ROUND * 4, eagerLines);
   const pressedAgain = buyFromBarge(eager, 1, eagerLines);
   check(
     took === lot &&
       bargeLeftAtPort(eager) === 0 &&
       pressedAgain === 0 &&
       ledgerSentences(eagerLines)[eagerLines.length - 1] ===
-        "⛵ The barge has nothing left for you this leg.",
-    "a press for more than a leg's lot buys the lot and stops there, and a second press in the same leg is told the vendor has nothing left rather than being sold a shelf the plan does not have",
+        "⛵ The barge has nothing left for you this round.",
+    "a press for more than a round's lot buys the lot and stops there, and a second press in the same round is told the vendor has nothing left rather than being sold a shelf the design does not have",
   );
 
-  // The stamp. A leg is the unit of the lot and of the tally, so the next
-  // leg is both a fresh shelf and a fresh count, which is the whole of the
+  // The stamp. A round is the unit of the lot and of the tally, so the next
+  // round is both a fresh shelf and a fresh count, which is the whole of the
   // state this feature added.
-  const perLeg = bargeVoyage(10_000);
-  buyFromBarge(perLeg, 1, []);
-  const firstLegTaken = perLeg.bargeTaken;
-  perLeg.currentRound += 1;
-  const freshLegLeft = bargeLeftAtPort(perLeg);
-  buyFromBarge(perLeg, 1, []);
+  const perRound = bargeVoyage(10_000);
+  buyFromBarge(perRound, 1, []);
+  const firstRoundTaken = perRound.bargeTaken;
+  perRound.currentRound += 1;
+  const freshRoundLeft = bargeLeftAtPort(perRound);
+  buyFromBarge(perRound, 1, []);
   check(
-    firstLegTaken === 1 &&
-      perLeg.bargeTaken === 1 &&
-      perLeg.bargeRound === perLeg.currentRound &&
-      freshLegLeft === bargeLotAtPort(perLeg),
-    "the tally is stamped with the leg it belongs to, so the next leg draws a fresh lot and starts the count again rather than leaving the quay bare for the rest of the voyage",
+    firstRoundTaken === 1 &&
+      perRound.bargeTaken === 1 &&
+      perRound.bargeRound === perRound.currentRound &&
+      freshRoundLeft === bargeLotAtPort(perRound),
+    "the tally is stamped with the round it belongs to, so the next round draws a fresh lot and starts the count again rather than leaving the quay bare for the rest of the voyage",
   );
 
   // ========== The ceilings a purchase is held to ==========
@@ -302,7 +302,7 @@ export async function supplyBargeSuite(inputs: {
       const sold = buyFromBarge(dark, 1, darkLines);
       return (
         !bargeOn(GAMBIT) &&
-        bargePortAtLeg(dark) === null &&
+        bargePortAtRound(dark) === null &&
         bargeLotAtPort(dark) === 0 &&
         bargeLeftAtPort(dark) === 0 &&
         sold === 0 &&
@@ -318,18 +318,18 @@ export async function supplyBargeSuite(inputs: {
   // ========== The page's two numbers ==========
   // Records shaped the way the spine writes one, through the builder the
   // dashboard's own suite hands on rather than through a second copy of
-  // the shape. Each captain files two legs, because the counters are the
+  // the shape. Each captain files two rounds, because the counters are the
   // voyage's running totals: the reader takes the report at their greatest
-  // leg, and the numbers below say which of the two rules was applied.
+  // round, and the numbers below say which of the two rules was applied.
   const report = (
     roomId: string,
     actor: string,
-    leg: number,
+    round: number,
     foodSpend: number,
     bargeSpend: number,
   ) =>
-    telemetryEvent("leg_report", voyageIdFor(roomId, 1), 0, {
-      leg,
+    telemetryEvent("round_report", voyageIdFor(roomId, 1), 0, {
+      round,
       actor,
       ordersDealt: 0,
       ordersFilled: 0,
@@ -354,8 +354,8 @@ export async function supplyBargeSuite(inputs: {
   // is a harbor that was not playing the provisions layer at all.
   const notPlaying = dashRecord("barge-dark", {
     events: [
-      telemetryEvent("leg_report", voyageIdFor("barge-dark", 1), 0, {
-        leg: 1,
+      telemetryEvent("round_report", voyageIdFor("barge-dark", 1), 0, {
+        round: 1,
         actor: "one",
         ordersDealt: 2,
         ordersFilled: 2,
@@ -378,19 +378,19 @@ export async function supplyBargeSuite(inputs: {
   check(
     shareRow.label === "Barge revenue share of all food spending" &&
       shareRow.value === `${ratePercent(60 / 750)} of 750 Gold over 2 voyages`,
-    "and the share is the vendor's Gold over the whole window's food spending, read at each captain's greatest leg rather than by adding their legs up, and over the two voyages that filed the pair rather than the three in the window",
+    "and the share is the vendor's Gold over the whole window's food spending, read at each captain's greatest round rather than by adding their rounds up, and over the two voyages that filed the pair rather than the three in the window",
   );
   check(
-    shareRow.target === "no threshold in the plan" &&
+    shareRow.target === "no threshold in the design" &&
       shareRow.verdict === "ungated",
-    "with the plan setting no band on it, so the page reads it as measured and unjudged rather than inventing a threshold the proposal never wrote",
+    "with the design setting no band on it, so the page reads it as measured and unjudged rather than inventing a threshold the design never wrote",
   );
   check(
     withoutRow?.label === "Lobbies that sailed without the Barge" &&
       withoutRow?.value === `${ratePercent(1 / 2)} of 2 lobbies` &&
       withoutRow?.target === "above 70%" &&
       withoutRow?.verdict === "under",
-    "while the number the plan does gate is the share of lobbies that sailed without the vendor, read over the tables rather than over the captains and judged under its own band",
+    "while the number the design does gate is the share of lobbies that sailed without the vendor, read over the tables rather than over the captains and judged under its own band",
   );
   check(
     window.panels[0]?.answer.startsWith("1 of 1 gates sit outside theirs") ===
@@ -401,9 +401,9 @@ export async function supplyBargeSuite(inputs: {
     "and the share of food spending is not one of the sixteen gates, so the panel counts the one gate it can read rather than two",
   );
 
-  // A window where every table avoided the vendor, which is the plan's own
-  // target met: the headline reads as the target held, and the share reads
-  // as no denominator rather than as a share of zero.
+  // A window where every table avoided the vendor is the target met: the
+  // headline reads as the target held, and the share reads as no
+  // denominator rather than as a share of zero.
   const avoided = readDashboard({
     records: [
       dashRecord("barge-none", {
@@ -421,17 +421,17 @@ export async function supplyBargeSuite(inputs: {
       avoided.panels[0]?.readings[1]?.verdict === "in" &&
       avoided.panels[0]?.answer ===
         "Every gate this window can read sits inside it, 1 of 1.",
-    "a window where nobody bought food reads as no denominator rather than as a share of zero, while a table that avoided the vendor is the plan's target met rather than a number the page hedges",
+    "a window where nobody bought food reads as no denominator rather than as a share of zero, while a table that avoided the vendor is the design's target met rather than a number the page hedges",
   );
 
   // And the window nothing has been played in, which is where the two rows
   // have to read as an absence rather than as a vendor that sold nothing.
   const empty = readDashboard({ records: [], outcomes: [], unreadable: 0 });
   check(
-    empty.frontPage.value === "no leg report from a provisions harbor" &&
+    empty.frontPage.value === "no round report from a provisions harbor" &&
       empty.frontPage.verdict === "unplayed" &&
       empty.panels[0]?.readings[1]?.value ===
-        "no leg report from a provisions harbor" &&
+        "no round report from a provisions harbor" &&
       empty.panels[0]?.readings[1]?.verdict === "unplayed",
     "and a window no voyage filed in reads as no report on both rows rather than as a vendor that sold nothing to nobody",
   );
@@ -460,7 +460,7 @@ export async function supplyBargeSuite(inputs: {
   check(
     panelCode.includes("Supply Barge") &&
       panelCode.includes("buyFromBarge") &&
-      panelCode.includes("bargePortAtLeg") &&
+      panelCode.includes("bargePortAtRound") &&
       panelCode.includes("bargeLeftAtPort") &&
       panelCode.includes("bargeRationPrice") &&
       panelCode.includes("RATION_PRICE") &&
@@ -470,8 +470,8 @@ export async function supplyBargeSuite(inputs: {
   check(
     !carriesADash("src/lib/game/engine/barge.ts") &&
       !carriesADash("src/lib/game/dashboard.ts") &&
-      !carriesADash("src/lib/use-leg-report.ts") &&
-      !carriesADash("src/server/realtime/wiring/leg-report.ts"),
+      !carriesADash("src/lib/use-round-report.ts") &&
+      !carriesADash("src/server/realtime/wiring/round-report.ts"),
     "with every file this feature lands in carrying the house rule in its comments as well as in its code",
   );
 }

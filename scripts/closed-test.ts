@@ -1,12 +1,11 @@
 /**
  * The closed test guard.
  *
- * [J1: the private information review] The review's other half is the
- * closed test: thirty players, none of them the people who built the
- * mode, on a database that has never held a real account. The plan's
- * discipline is that it runs on a separate database from anything with
- * real accounts, and the only part of that a script can check is the
- * name. So this checks the name, out loud, before anybody is invited.
+ * The closed test is thirty players, none of them the people who built the
+ * mode, on a database that has never held a real account. Its discipline is
+ * that it runs on a separate database from anything with real accounts, and
+ * the only part of that a script can check is the name. So this checks the
+ * name, out loud, before anybody is invited.
  *
  * One rule. The database this process resolves has to be a local file
  * whose name begins with closed-test. Everything else is refused: the

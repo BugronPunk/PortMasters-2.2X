@@ -1,15 +1,15 @@
 "use client";
 
 // =====================================================================
-// [F5: public offers] The Open Boons board: the fleet's ledger as a
+// The Open Boons board: the fleet's ledger as a
 // captain reads it.
 //
-// The plan's feature is one sentence, every offer is public, and this is
+// The design's feature is one sentence, every offer is public, and this is
 // the surface the sentence is about: one row per captain, the cards they
 // were shown, and the one they kept. It is drawn where the picks happen
 // (the Dawn draft, under the compass) and where the table argues about
 // them (Parley, under the two votes), because those are the two moments
-// the plan's evaluation names.
+// the design's evaluation names.
 //
 // It draws nothing at all in three cases and each one is deliberate: a
 // Classic harbor runs no ledger (the same mode gate the hook and the
@@ -94,7 +94,7 @@ export function OpenBoons({
               {record.moment
                 ? t(MILESTONE_MOMENTS[record.moment]?.title ?? "a moment")
                 : t("the dawn draw")}
-              {t(", leg {leg}", { leg: record.round })}
+              {t(", round {round}", { round: record.round })}
             </span>
             <span className="flex flex-wrap items-center gap-1">
               {record.shown.map((id) => {

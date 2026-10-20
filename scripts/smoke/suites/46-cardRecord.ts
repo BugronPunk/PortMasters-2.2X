@@ -1,11 +1,11 @@
 // PortMasters 2.2 Parallel Release, smoke run: the card record.
 //
-// [F2] The plan's sentence for this goal is one record shape under every
-// card, and then the single field that gives the base mode a tighter pool
-// and Ocean Gambit a wilder one. What is checked here is the shape half
-// first: the plan's ten fields on every record, both language strings
-// carried and actually written, and the three readers a card is named
-// through. Then the field itself, which is the half with teeth: both
+// Every card shares one record shape, and then the single field that gives
+// the base mode a tighter pool and Ocean Gambit a wilder one. What is
+// checked here is the shape half first: the ten fields on every record,
+// both language strings carried and actually written, and the three
+// readers a card is named through. Then the field itself, which is the
+// half with teeth: both
 // weightings authored on every card, the ceiling each mode runs, and the
 // pool a real captain is drafted from in each mode, because a mode weight
 // that nothing reads would pass a check about the records and change
@@ -108,9 +108,9 @@ const CJK = /\p{Script=Han}/u;
 
 export async function cardRecordSuite(): Promise<void> {
   // ========== The shape ==========
-  // The plan's ten fields, written here as the schedule lists them rather
-  // than read back off the interface the check is about, so a field that
-  // moved out of the record is a failed check and not a green one.
+  // The ten fields, written here as the record lists them rather than read
+  // back off the interface the check is about, so a field that moved out of
+  // the record is a failed check and not a green one.
   const PLAN_FIELDS = [
     "id",
     "kind",
@@ -130,7 +130,7 @@ export async function cardRecordSuite(): Promise<void> {
           (card as unknown as Record<string, unknown>)[field] !== undefined,
       ),
     ) && CARDS.every((card) => card.icon.trim().length > 0),
-    "every card carries the plan's ten fields, plus the glyph the record added as its eleventh: the icon is language neutral, so it sits beside the two strings rather than inside either, and a card without one is a card a draft cannot draw",
+    "every card carries the design's ten fields, plus the glyph the record added as its eleventh: the icon is language neutral, so it sits beside the two strings rather than inside either, and a card without one is a card a draft cannot draw",
   );
   check(
     CARDS.length === BOONS.length + MODULES.length + CHARTERS.length &&
@@ -149,7 +149,7 @@ export async function cardRecordSuite(): Promise<void> {
       cardsOfKind("boon").length === BOONS.length &&
       cardsOfKind("module").length === MODULES.length &&
       cardsOfKind("charter").length === CHARTERS.length,
-    "each card's kind is one of the plan's three and each card arrives at the draft its kind promises, read through the one map rather than off a field repeated per record, so a boon offered at the shipyard is a failed build rather than a card nobody can explain. A boon is the one kind whose arrival is a set rather than a point: the round draft or one of the five moments, read off the same table the moments are armed from, which is what lets a moment card ride the pool the round draft deals from without answering to a draft it never arrives at. The charter count reads off the catalogue F6 filled rather than off a number typed here, which is the shape and the reader the pool was built to take",
+    "each card's kind is one of the design's three and each card arrives at the draft its kind promises, read through the one map rather than off a field repeated per record, so a boon offered at the shipyard is a failed build rather than a card nobody can explain. A boon is the one kind whose arrival is a set rather than a point: the round draft or one of the five moments, read off the same table the moments are armed from, which is what lets a moment card ride the pool the round draft deals from without answering to a draft it never arrives at. The charter count reads off the charter catalogue rather than off a number typed here, which is the shape and the reader the pool was built to take",
   );
   check(
     CARDS.every((card) =>
@@ -162,7 +162,7 @@ export async function cardRecordSuite(): Promise<void> {
     ) &&
       SHIPPED_LANGUAGE === "en" &&
       cardText(cardOrThrow("silk_wind")).name === "Weaver's Winds",
-    "both strings are carried on every card and neither is empty, which is J3's evaluation read forward: the pool had to carry both from the beginning for the translation pass to be a pass rather than a rebuild, and the shipped language is named once so the day a captain picks one it is one value and not a second copy of the pool",
+    "both strings are carried on every card and neither is empty, which is the translation pass read forward: the pool had to carry both from the beginning for the translation pass to be a pass rather than a rebuild, and the shipped language is named once so the day a captain picks one it is one value and not a second copy of the pool",
   );
   check(
     CARDS.every((card) => {
@@ -200,7 +200,7 @@ export async function cardRecordSuite(): Promise<void> {
         typeof card.modes.classic === "number" &&
         typeof card.modes.ocean_gambit === "number",
     ),
-    "both mode weightings are authored on every card, which is the plan's own rollback: keeping both from the start is what makes switching a mode between the tight pool and the wild one a config change rather than a content pass, and a card that carried only its own mode would leave the other mode's reading to accident",
+    "both mode weightings are authored on every card, which is the design's own rollback: keeping both from the start is what makes switching a mode between the tight pool and the wild one a config change rather than a content pass, and a card that carried only its own mode would leave the other mode's reading to accident",
   );
   const MODES = Object.keys(MODE_POWER_CEILING) as GameMode[];
   check(
@@ -217,13 +217,29 @@ export async function cardRecordSuite(): Promise<void> {
   const aboveClassic = CARDS.filter(
     (card) => card.power > MODE_POWER_CEILING.classic,
   );
+  // The Classic pool is read off the records' own weights rather than a
+  // second arithmetic. The count used to be "every card not above the
+  // ceiling", which was true only while the five milestone boons falsely
+  // carried a Classic weight: they are below the ceiling, and the moment
+  // they were declared Gambit-only the old subtraction stopped describing
+  // the pool. A card is withheld either because its power sits above the
+  // ceiling or because its moment only runs in Gambit.
+  const withheldFromClassic = CARDS.filter(
+    (card) => (card.modes.classic ?? 0) === 0,
+  );
   check(
     pools.ocean_gambit.count === CARDS.length &&
-      pools.classic.count === CARDS.length - aboveClassic.length &&
+      pools.classic.count === CARDS.length - withheldFromClassic.length &&
+      withheldFromClassic.every(
+        (card) =>
+          card.power > MODE_POWER_CEILING.classic ||
+          card.kind === "charter" ||
+          (card.kind === "boon" && card.trigger !== "boon_draft"),
+      ) &&
       aboveClassic.every(
         (card) => card.modes.classic === 0 && card.modes.ocean_gambit > 0,
       ),
-    "the base mode runs a strictly smaller pool than Ocean Gambit and the difference is exactly the cards above the base mode's ceiling, which is the plan's sentence about the variance problem read as a fact about the records: the base competitive mode runs the lower ceiling because there a captain's good luck is somebody else's bad evening, while Ocean Gambit runs the wild pool because its headline objective is shared",
+    "the base mode runs a strictly smaller pool than Ocean Gambit and the difference is exactly the records that declare no Classic weight, which is the design's sentence about the variance problem read as a fact about the records: the base competitive mode runs the lower ceiling because there a captain's good luck is somebody else's bad evening, while Ocean Gambit runs the wild pool because its headline objective is shared. The cards withheld from the base mode are the ones above its ceiling, the charters its own moment never runs there, and the milestone boons that only Ocean Gambit's moments can grant",
   );
   check(
     MODE_POWER_CEILING.ocean_gambit > MODE_POWER_CEILING.classic &&
@@ -246,7 +262,7 @@ export async function cardRecordSuite(): Promise<void> {
   const classicBoons = idsOf(offerPool("boon", narrow));
   const classicModules = idsOf(offerPool("module", narrow));
   // Above Classic's ceiling now sit the drafted ladders' own tall cards
-  // and F6's ten charters. A charter is withheld from the base mode
+  // and the ten charters. A charter is withheld from the base mode
   // wholesale and arrives through its own moment rather than through
   // either drafted pool, so the read below holds the two ladders' own
   // withheld cards against the pools and names the charters' separate
@@ -281,7 +297,7 @@ export async function cardRecordSuite(): Promise<void> {
       earlyModules.length < gambitModules.length &&
       earlyBoons.every((id) => gambitBoons.includes(id)) &&
       earlyModules.every((id) => gambitModules.includes(id)),
-    "and the round's tier still gates the pool through this new path: a captain on the first leg is offered fewer cards than a voyage with every wave open, and every one of them is inside the wider pool, which is the regression this reader had to keep when it replaced the old table of weights",
+    "and the round's tier still gates the pool through this new path: a captain on the first round is offered fewer cards than a voyage with every wave open, and every one of them is inside the wider pool, which is the regression this reader had to keep when it replaced the old table of weights",
   );
   check(
     [
@@ -390,7 +406,7 @@ export async function cardRecordSuite(): Promise<void> {
         idsOf(offerPool("boon", pathless)).join(",") &&
       cardWeight(cardOrThrow("silk_wind"), loomCaptain) >
         cardWeight(cardOrThrow("silk_wind"), convoyCaptain),
-    "the lean weights and never filters, which is the plan's own sentence about the field: the same cards are on offer to a loom captain, a convoy captain and a captain with no path at all, and what the path moves is the chance of seeing each of them rather than the list. The ids come back in ladder order because the pool is built off the ladders rather than off the weights",
+    "the lean weights and never filters, which is the design's own sentence about the field: the same cards are on offer to a loom captain, a convoy captain and a captain with no path at all, and what the path moves is the chance of seeing each of them rather than the list. The ids come back in ladder order because the pool is built off the ladders rather than off the weights",
   );
   const rich = voyageState();
   rich.money = 100;
@@ -455,7 +471,7 @@ export async function cardRecordSuite(): Promise<void> {
     voyage.boonChoices.every(
       (card) => voyage.cardTally[card.id]?.offered === 1,
     ),
-    "and every card on the table is counted as offered at the moment it is put in front of the captain rather than when it is chosen, because the plan's measure is the pair and the denominator of that pair is the offer",
+    "and every card on the table is counted as offered at the moment it is put in front of the captain rather than when it is chosen, because the design's measure is the pair and the denominator of that pair is the offer",
   );
   const refused = voyageState();
   startBoonDrafting(refused, []);
@@ -510,7 +526,7 @@ export async function cardRecordSuite(): Promise<void> {
       yard.phase === "module_swap" &&
       yard._newModule?.id === parked.id &&
       (yard._draftChoices ?? []).length === CARDS_PER_OFFER,
-    "a module picked with no slot open is parked rather than installed: the leg moves to the swap, the choice waits in its own field, and the table still holds all three, so backing out with a look at the draft still shows every original option",
+    "a module picked with no slot open is parked rather than installed: the round moves to the swap, the choice waits in its own field, and the table still holds all three, so backing out with a look at the draft still shows every original option",
   );
   const hull = voyageState();
   hull.shipLevel = 1;
@@ -525,7 +541,7 @@ export async function cardRecordSuite(): Promise<void> {
       (hull.cardTally[chosen.id]?.picked ?? 0) === 1 &&
       offeredBefore === 1 &&
       (hull._draftChoices ?? []).every((card) => card.id !== chosen.id),
-    "while a module picked with a slot open installs, moves the leg on, drops out of the table since the pick is final, and is counted as taken where the card actually lands: a module parked for a swap can still be backed out of, and only a card that joined the hull is a card that was taken",
+    "while a module picked with a slot open installs, moves the round on, drops out of the table since the pick is final, and is counted as taken where the card actually lands: a module parked for a swap can still be backed out of, and only a card that joined the hull is a card that was taken",
   );
 
   // ========== Backing out is not a reroll ==========
@@ -593,7 +609,7 @@ export async function cardRecordSuite(): Promise<void> {
   );
   check(
     CARD_CONVERSION_FLOOR === 40,
-    "the floor a rate is read from is forty appearances, which is the plan's own two numbers read together and F7's combination floor as well, so the two instruments agree about what counts as evidence",
+    "the floor a rate is read from is forty appearances, which is the design's own two numbers read together and the power budget's combination floor as well, so the two instruments agree about what counts as evidence",
   );
   const measured = readCardConversion({
     silk_wind: { offered: 39, picked: 39 },
@@ -610,7 +626,7 @@ export async function cardRecordSuite(): Promise<void> {
       measured[1].rate === 0.05 &&
       measured[2].id === "silk_wind" &&
       measured[2].rate === null,
-    "one appearance below the floor is not a rate at all, even at a hundred percent, which is the plan's own warning about a high rate over nine appearances. The measurable cards come first and are ordered by rate, so the card worth looking at is the first row, and the row carries the card's name and kind rather than leaving a reader to look them up",
+    "one appearance below the floor is not a rate at all, even at a hundred percent, which is the design's own warning about a high rate over nine appearances. The measurable cards come first and are ordered by rate, so the card worth looking at is the first row, and the row carries the card's name and kind rather than leaving a reader to look them up",
   );
   check(
     readCardConversion({
@@ -643,7 +659,7 @@ export async function cardRecordSuite(): Promise<void> {
       !carriesTag("good", "Silk", "bulk") &&
       !carriesTag("food", "Grain", "bulk") &&
       !carriesTag("good", "no_such_good", "bulk"),
-    "the tag read answers true for a good carrying the tag, false for the same good under a tag it does not carry, false for a food key read as a good, and false rather than throwing for an id no catalogue holds, which is F1's null read as the false it means",
+    "the tag read answers true for a good carrying the tag, false for the same good under a tag it does not carry, false for a food key read as a good, and false rather than throwing for an id no catalogue holds, which is the tag rule's null read as the false it means",
   );
   const hold = voyageState();
   hold.inventory = { Hemp: 4, "Copper Ore": 3, Tea: 9 };
@@ -728,7 +744,7 @@ export async function cardRecordSuite(): Promise<void> {
         notAKind.some((finding) => finding.includes("arrives at"))
       );
     })(),
-    "and a kind outside the plan's three is caught twice over, once for the kind itself and once for the trigger that follows from it: a kind nothing can offer is a card the pool would carry forever without ever dealing it, and a record whose kind and trigger disagree is a record the validator refuses to read either half of on trust",
+    "and a kind outside the design's three is caught twice over, once for the kind itself and once for the trigger that follows from it: a kind nothing can offer is a card the pool would carry forever without ever dealing it, and a record whose kind and trigger disagree is a record the validator refuses to read either half of on trust",
   );
   check(
     sole(broken({ tags: [] as unknown as TagList }))?.includes(
@@ -740,7 +756,7 @@ export async function cardRecordSuite(): Promise<void> {
     sole(
       broken({ tags: ["woven", "luxury", "cold"] as unknown as TagList }),
     )?.includes("carries 3 tags") === true,
-    "a third tag on a card is caught, which is F1's ceiling asked of the pool the same way it is asked of every catalogue: every tag a card carries doubles the space a balance pass has to cover",
+    "a third tag on a card is caught, which is the tag rule's ceiling asked of the pool the same way it is asked of every catalogue: every tag a card carries doubles the space a balance pass has to cover",
   );
   check(
     sole(broken({ tags: ["woven", "woven"] as unknown as TagList }))?.includes(
@@ -752,7 +768,7 @@ export async function cardRecordSuite(): Promise<void> {
     sole(broken({ tags: ["silk"] as unknown as TagList }))?.includes(
       "is not one of the twelve tags",
     ) === true,
-    "and a tag outside the closed twelve is caught on the card itself, which is the reading F1's walk takes of every catalogue entry applied to a card shaped subject: a tag no effect will ever look up is a typo whether the pool it sits in is a catalogue or a deck",
+    "and a tag outside the closed twelve is caught on the card itself, which is the reading the tag walk takes of every catalogue entry applied to a card shaped subject: a tag no effect will ever look up is a typo whether the pool it sits in is a catalogue or a deck",
   );
   check(
     sole(broken({ power: 0 }))?.includes("at least one") === true &&
@@ -779,7 +795,7 @@ export async function cardRecordSuite(): Promise<void> {
     sole(broken({ pathWeight: { loom: 0 } }))?.includes(
       "a lean is never a lockout",
     ) === true,
-    "and a lean of zero is caught rather than treated as a filter, which is the plan's own sentence about this field: the draw is weighted so that a captain is never locked out of the rest of the pool, and a zero here would be exactly that lockout wearing a weight",
+    "and a lean of zero is caught rather than treated as a filter, which is the design's own sentence about this field: the draw is weighted so that a captain is never locked out of the rest of the pool, and a zero here would be exactly that lockout wearing a weight",
   );
   check(
     sole(
@@ -835,7 +851,7 @@ export async function cardRecordSuite(): Promise<void> {
     })?.includes("no card writes transport_silk_discount") === true,
     "while a key no card writes is caught in the other direction, because every key the vocabulary names has a read site in the engine: a renamed key on one side of that pair is a read site waiting on a flag that never arrives, and this clause is what fails the build the day the two sides part",
   );
-  // ========== F6's pairing clause ==========
+  // ========== The pairing clause ==========
   // The clause reads the charter id to path map rather than the records,
   // so its fixtures patch the map and the findings are read in pairs:
   // what the map itself got wrong, then the count that same mistake
@@ -888,7 +904,7 @@ export async function cardRecordSuite(): Promise<void> {
         } as unknown as CardRecord["strings"],
       }),
     )?.includes("carries no zh string") === true,
-    "a card missing a language is caught, which is J3 read forward as a gate rather than as a hope: the pool has to carry both strings from the beginning, so a card that arrives with one fails the build rather than the translation pass",
+    "a card missing a language is caught, which is the translation pass read forward as a gate rather than as a hope: the pool has to carry both strings from the beginning, so a card that arrives with one fails the build rather than the translation pass",
   );
   check(
     sole(
@@ -910,7 +926,7 @@ export async function cardRecordSuite(): Promise<void> {
         },
       }),
     )?.includes("the en text names Silk") === true,
-    "and a card whose text names a good is caught, which is the scan the plan puts in F1's evaluation and F2 carries into the build: the copy a captain reads is held to the same rule the effect is, because a card that names Silk while its tag says woven teaches the wrong lesson twice",
+    "and a card whose text names a good is caught, which is the scan the design puts in the tag evaluation and the card record carries into the build: the copy a captain reads is held to the same rule the effect is, because a card that names Silk while its tag says woven teaches the wrong lesson twice",
   );
   check(
     validateCards(

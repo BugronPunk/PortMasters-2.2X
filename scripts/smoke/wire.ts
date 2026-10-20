@@ -100,7 +100,7 @@ export type WireDelivery = {
   };
 };
 
-// [H8: the reveal and the replay ledger] One captain's card, face up, as
+// One captain's card, face up, as
 // far as these checks read it. The fields are the ones under test rather
 // than the whole payload, so an assertion here cannot come to depend on
 // something the frame never promised.

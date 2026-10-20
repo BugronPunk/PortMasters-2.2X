@@ -1,7 +1,7 @@
 // =====================================================================
 // Realtime layer: the inbound budget.
 //
-// [J2: the mute and the report] Every other part of this layer answers a
+// Every other part of this layer answers a
 // frame. This is the one part that decides whether to read one at all.
 // Nothing in the tree counted requests before it, which the private
 // information review recorded as a finding rather than fixed, and the

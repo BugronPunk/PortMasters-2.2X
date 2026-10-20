@@ -8,7 +8,7 @@
 // one harbor and into another must never see the last one's business on
 // the new one's screen.
 //
-//   The tally is the nominations for one leg, held as the whole frame the
+//   The tally is the nominations for one round, held as the whole frame the
 //   server sent rather than the map out of it, and replaced rather than
 //   merged, because the server sends the whole count every time and the
 //   whole count is the truth. It is also the count this side cannot work
@@ -29,12 +29,12 @@
 //   landed in the card's block would reach nobody on the one surface it
 //   belongs to.
 //
-//   The result is the vote that carried. It outlives the leg it happened
+//   The result is the vote that carried. It outlives the round it happened
 //   in, and it is the one broadcast in the game that changes the captain
 //   it names: the hook applies it to their own books, once, which is why
 //   this hook takes `act` where the audit's does not.
 //
-//   The shift is the Harbormaster's last call, stamped with the leg it was
+//   The shift is the Harbormaster's last call, stamped with the round it was
 //   called in, which is what lets a screen say whether it has landed yet.
 //   The market itself has already been priced by the time a screen could
 //   read this: the durable copy arrives on the phase advance (see
@@ -184,7 +184,7 @@ export function useMaroon(
       socket.off("maroon:shift:error", onShiftRefused);
       socket.off("room:restarted", onRestarted);
     };
-  }, [socket, roomId, myUserId]);
+  }, [socket, roomId, myUserId, setHeld, setPressed, onRefused, reset]);
 
   // The vote that carried, applied to the books it took.
   //
@@ -206,7 +206,7 @@ export function useMaroon(
   // The vote this voyage already had, when the frame says one carried.
   // The nominations die with the vote that carried, so without this a
   // state request answered after the carry would read exactly like a
-  // fresh leg: an empty book, a full waiting list and a button offering
+  // fresh round: an empty book, a full waiting list and a button offering
   // a press the server would refuse. Held off the frame rather than
   // derived, because the server's record is what the ask is about.
   const carried = live?.carried ?? null;
@@ -221,9 +221,9 @@ export function useMaroon(
   const clearShiftError = useCallback(() => setShiftError(null), []);
 
   // The Harbormaster's console is offered for the rest of the voyage, and
-  // the leg before the last one is where it stops: a call lands on the
-  // market that opens after it, so a call made in the closing leg would
-  // lean a market that never opens. The ports are the ones the coming leg
+  // the round before the last one is where it stops: a call lands on the
+  // market that opens after it, so a call made in the closing round would
+  // lean a market that never opens. The ports are the ones the coming round
   // has unlocked, which is the same list the server checks the call
   // against (see unlockedPorts and recordPortShift).
   const canShift =
@@ -240,11 +240,11 @@ export function useMaroon(
     [canShift, game.difficulty, game.currentRound],
   );
   // The notice is handed on as it arrived, stamped with the harbor and
-  // carrying the leg it was called in, because two surfaces read it in
-  // two tenses: a call made this leg has not opened a market yet, and a
-  // call made last leg is the one every price on screen is being read
+  // carrying the round it was called in, because two surfaces read it in
+  // two tenses: a call made this round has not opened a market yet, and a
+  // call made last round is the one every price on screen is being read
   // against. Which of the two a screen is looking at is a question about
-  // the leg, so it is answered where the leg is in hand.
+  // the round, so it is answered where the round is in hand.
   const liveShift = shift?.roomId === roomId ? shift : null;
 
   const callShift = useCallback(

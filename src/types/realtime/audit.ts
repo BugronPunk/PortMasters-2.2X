@@ -34,7 +34,7 @@ export type AuditVote = {
 };
 
 /**
- * The nominations so far this leg, broadcast after every vote including
+ * The nominations so far this round, broadcast after every vote including
  * the one that carries, and answered to the captain whose card asks (see
  * audit:state:request in src/server/realtime/wiring/audit.ts).
  *
@@ -63,7 +63,7 @@ export type AuditTally = {
   needed: number;
   /**
    * The captains the count is divided by who have not named anyone yet
-   * this leg, which is who the harbor is waiting on. Ids, so the reader
+   * this round, which is who the harbor is waiting on. Ids, so the reader
    * names them from the roster it already has.
    */
   awaiting: string[];
@@ -88,15 +88,15 @@ export type AuditReveal = {
   target: { userId: string; name: string };
   fulfillments: OrderFill[];
   /**
-   * [C1: the Larder and Short Rations] The audited captain's Larder, which
-   * the plan's audit clause opens alongside the sample.
+   * The audited captain's Larder, which
+   * the design's audit clause opens alongside the sample.
    *
    * It is on this frame and on no other, and that is the design rather than
    * an accident of where it was easy to read. The Larder count travels to
    * the server in the captain's own save, so the reveal can read it without
    * the harbor being handed it continuously: what the fleet sees all voyage
    * is whether a crew is hungry (see GameStatusUpdate.shortRations, which
-   * the plan does ask to be public), and the count itself is opened by the
+   * the design does ask to be public), and the count itself is opened by the
    * majority that voted for it. Servering it on the status frame instead
    * would have made this clause a number the harbor already had.
    *

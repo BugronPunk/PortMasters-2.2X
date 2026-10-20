@@ -313,6 +313,15 @@ export async function theBilingualHarborSuite(): Promise<void> {
     }
     scanned++;
   }
+  // A failure is useful only if it names the rows that are missing, so the
+  // walk prints them before the check records the failure.
+  if (missing.length > 0) {
+    console.log(`  missing (${missing.length}):`);
+    for (const entry of missing.slice(0, 40)) console.log(`    ${entry}`);
+    if (missing.length > 40) {
+      console.log(`    and ${missing.length - 40} more`);
+    }
+  }
   check(
     missing.length === 0,
     "and every string and id the tree hands the readers today exists in the book, so the completeness of the pack is a property of the source rather than a promise (" +
@@ -367,7 +376,7 @@ export async function theBilingualHarborSuite(): Promise<void> {
   // pack cannot see from inside itself.
   //
   // What the readers are given is prose, and what they are not is an
-  // id: the icon a card wears, the phase a leg names, the kind a
+  // id: the icon a card wears, the phase a round names, the kind a
   // briefing is, the tags a tier carries and the order a mode walks are
   // all read as ids and are named as such here, so a record that grows
   // a new kind of field is caught by the field name rather than by a

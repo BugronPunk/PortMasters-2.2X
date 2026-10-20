@@ -1,7 +1,7 @@
 // PortMasters 2.2 Parallel Release, smoke run: Three foods, spoilage
 // and the split hold.
 //
-// Goal C4: three foods of three densities, one of them never turning, the
+// Three foods of three densities, one of them never turning, the
 // order they are eaten in, and the two sizes the split hold is built out
 // of.
 //
@@ -69,7 +69,7 @@ import {
 export function thePantrySuite(): LedgerLine[] {
   // The lines this family writes, held for the run rather than read here.
   const survivalLines: LedgerLine[] = [];
-  // ========== [C4: three foods, spoilage and the split hold] ==========
+  // ========== three foods, spoilage and the split hold ==========
   // The catalogue first, because every number below is read off it: three
   // foods of three densities, one of them never turning, the order they
   // are eaten in, and the two sizes the split hold is built out of.
@@ -87,7 +87,7 @@ export function thePantrySuite(): LedgerLine[] {
       SHORT_RATIONS_CARGO === 0.75 &&
       PRESERVE_MEALS_IN === 3 &&
       PRESERVE_MEALS_OUT === 2,
-    "three foods of three densities and three clocks, eaten in the order the sea takes them back: produce turns after two legs, salt fish after six, grain never, and the split hold is thirty slots of cargo and the Larder's own sixty of stores",
+    "three foods of three densities and three clocks, eaten in the order the sea takes them back: produce turns after two rounds, salt fish after six, grain never, and the split hold is thirty slots of cargo and the Larder's own sixty of stores",
   );
 
   // The split's own switch, read through the same policy function the
@@ -133,7 +133,7 @@ export function thePantrySuite(): LedgerLine[] {
   withEnv("NEXT_PUBLIC_SPLIT_HOLD", "1", () => {
     const splitLines: LedgerLine[] = [];
     const rationCrew = 2;
-    const rationLeg = rationCrew * RATION_PRICE;
+    const rationRound = rationCrew * RATION_PRICE;
     const staff = (state: GameState) => {
       for (let hired = 0; hired < rationCrew; hired += 1) {
         hireWorker(state, "weaver", []);
@@ -142,10 +142,11 @@ export function thePantrySuite(): LedgerLine[] {
     };
 
     // ========== what a voyage leaves the pier with ==========
-    // The opening hold is grain, and it is the same twelve meals C1
-    // shipped, which is the continuity the whole split rests on: grain
-    // fills one slot with one meal, so the account and the plain number
-    // agree to the meal until a captain buys something else.
+    // The opening hold is grain, and it is the same twelve meals the
+    // Larder has always shipped, which is the continuity the whole split
+    // rests on: grain fills one slot with one meal, so the account and
+    // the plain number agree to the meal until a captain buys something
+    // else.
     const storeFresh = voyageState();
     check(
       storeFresh.larder === LARDER_START &&
@@ -168,13 +169,13 @@ export function thePantrySuite(): LedgerLine[] {
         foodRoomMeals(storeFresh, "Grain") === LARDER_MAX - LARDER_START &&
         foodRoomMeals(storeFresh, "Produce") ===
           (LARDER_MAX - LARDER_START) * 3,
-      "the stores are the Larder's old ceiling to the slot, so the same sixty slots hold sixty meals of grain, a hundred and twenty of salt fish or a hundred and eighty of produce, and what a captain can still buy is read in legs off the food they are buying",
+      "the stores are the Larder's old ceiling to the slot, so the same sixty slots hold sixty meals of grain, a hundred and twenty of salt fish or a hundred and eighty of produce, and what a captain can still buy is read in rounds off the food they are buying",
     );
 
     // ========== buying, by the food ==========
-    // Two legs of salt fish, twice, because the second purchase is the
+    // Two rounds of salt fish, twice, because the second purchase is the
     // one that would show a doubled lot or a count that drifted: the
-    // same food bought in the same leg merges into the lot already
+    // same food bought in the same round merges into the lot already
     // aboard, and the price of a meal does not move with the food.
     const buyFoods = voyageState();
     staff(buyFoods);
@@ -189,17 +190,17 @@ export function thePantrySuite(): LedgerLine[] {
         mealsOf(buyFoods, "Salt Fish") === 8 &&
         buyFoods.larderLots.filter((lot) => lot.food === "Salt Fish").length ===
           1 &&
-        buyFoods.money === 1000 - 4 * rationLeg &&
-        buyFoods.roundCosts === 4 * rationLeg &&
+        buyFoods.money === 1000 - 4 * rationRound &&
+        buyFoods.roundCosts === 4 * rationRound &&
         usedStoreSlots(buyFoods) === LARDER_START + 4 &&
         buyFoodLines.length === 2,
-      "salt fish buys at two meals a slot, four meals for two legs of a crew of two at the same price a meal of grain costs, and a second purchase in the same leg merges into the lot already aboard rather than starting a second one with the same age",
+      "salt fish buys at two meals a slot, four meals for two rounds of a crew of two at the same price a meal of grain costs, and a second purchase in the same round merges into the lot already aboard rather than starting a second one with the same age",
     );
 
     // ========== the order the sea takes things back ==========
-    // One meal a leg for a crew of one, out of a pantry holding all
-    // three foods, walked leg by leg so a reader sees which food fed
-    // which leg: produce first because it turns soonest, then salt
+    // One meal a round for a crew of one, out of a pantry holding all
+    // three foods, walked round by round so a reader sees which food fed
+    // which round: produce first because it turns soonest, then salt
     // fish, then the grain nothing can be wrong about.
     const eatOrder = voyageState();
     eatOrder.money = 1000;
@@ -225,7 +226,7 @@ export function thePantrySuite(): LedgerLine[] {
         mealsOf(eatOrder, "Grain") === 10 &&
         mealsOf(eatOrder, "Produce") === 0 &&
         mealsOf(eatOrder, "Salt Fish") === 0,
-      "the crew eats what spoils first, one meal a leg: three legs of produce, then two of salt fish, then grain, and the count follows the account down whichever food the meal came out of",
+      "the crew eats what spoils first, one meal a round: three rounds of produce, then two of salt fish, then grain, and the count follows the account down whichever food the meal came out of",
     );
 
     // The draw read for what it returns rather than for what it was
@@ -240,12 +241,12 @@ export function thePantrySuite(): LedgerLine[] {
       "a draw for more meals than the pantry holds takes what is there rather than conjuring the difference, and a fraction of a meal is not a meal",
     );
 
-    // ========== spoilage, stamped once a leg ==========
-    // Produce bought at one market is food for that leg and the one
-    // after it and is gone at the second Dusk, counted from the leg it
-    // was bought in. The stamp is what makes "once a leg" true rather
+    // ========== spoilage, stamped once a round ==========
+    // Produce bought at one market is food for that round and the one
+    // after it and is gone at the second Dusk, counted from the round it
+    // was bought in. The stamp is what makes "once a round" true rather
     // than hopeful, the same way the meal's own stamp does, and the
-    // second tick in the same leg is written out because that is the
+    // second tick in the same round is written out because that is the
     // shape of the defect it prevents.
     const turnPot = voyageState();
     turnPot.larder = 18;
@@ -278,11 +279,11 @@ export function thePantrySuite(): LedgerLine[] {
           "6 rations of Produce turned at sea",
         ) &&
         ledgerSentences(turnLines)[0].includes("12 left in the larder"),
-      "produce is food for the leg it arrived in and the one after it, and on the second Dusk it turns: the count comes down with the account in the same statement, and a second tick in the same leg is not a second loss",
+      "produce is food for the round it arrived in and the one after it, and on the second Dusk it turns: the count comes down with the account in the same statement, and a second tick in the same round is not a second loss",
     );
 
     // Salt fish lasts six, so the same walk one food over turns on the
-    // seventh leg rather than the third, and grain is never asked at
+    // seventh round rather than the third, and grain is never asked at
     // all: a food whose keeping is null is a lot no Dusk can touch.
     const keepPot = voyageState();
     keepPot.larder = 4;
@@ -299,7 +300,7 @@ export function thePantrySuite(): LedgerLine[] {
         keepPot.larder === 0 &&
         keepPotLines.length === 1 &&
         ledgerSentences(keepPotLines)[0].includes("🐟"),
-      "salt fish keeps six legs from the market it was bought at and turns on the seventh, which is the long clock a preserve buys",
+      "salt fish keeps six rounds from the market it was bought at and turns on the seventh, which is the long clock a preserve buys",
     );
     const everGrain = voyageState();
     everGrain.currentRound = 40;
@@ -309,11 +310,11 @@ export function thePantrySuite(): LedgerLine[] {
       everLines.length === 0 &&
         everGrain.larder === LARDER_START &&
         larderMeals(everGrain) === LARDER_START,
-      "and grain is never asked: a food that keeps forever is a lot no leg, however long the voyage, can take back",
+      "and grain is never asked: a food that keeps forever is a lot no round, however long the voyage, can take back",
     );
 
     // The pantry as a screen reads it, which is the number the market's
-    // own keeping line is built from: what is aboard and how many legs
+    // own keeping line is built from: what is aboard and how many rounds
     // the oldest of it has left.
     const lotScreen = voyageState();
     lotScreen.larder = 3;
@@ -332,10 +333,10 @@ export function thePantrySuite(): LedgerLine[] {
         atFive[0].legsLeft === 1 &&
         atSix[0].legsLeft === 0 &&
         atNine[0].legsLeft === 0,
-      "the pantry a captain reads says what is aboard and how many legs the oldest of it has left, floored at the Dusk it turns rather than counting into the past",
+      "the pantry a captain reads says what is aboard and how many rounds the oldest of it has left, floored at the Dusk it turns rather than counting into the past",
     );
 
-    // ========== preserving, at the plan's own ratio ==========
+    // ========== preserving, at the catalogue's ratio ==========
     // Three meals of produce into two of salt fish at the same slot and
     // the same price, so the third meal is what a captain pays for a
     // fresh clock. The trade is about keeping rather than quantity, and
@@ -366,34 +367,35 @@ export function thePantrySuite(): LedgerLine[] {
     );
 
     // ========== the ceiling, reached rather than overshot ==========
-    // A captain who asks for more legs than the stores have room for
+    // A captain who asks for more rounds than the stores have room for
     // buys the room exactly, and the next meal of grain is the purchase
-    // that finds them full, which is the line C1 shipped and the reason
-    // the ration purchase kept its old name: a captain buying rations
-    // without naming a food is buying the food that never turns.
+    // that finds them full, which is the line the Larder has always
+    // shipped and the reason the ration purchase kept its old name: a
+    // captain buying rations without naming a food is buying the food
+    // that never turns.
     const fullPot = voyageState();
     staff(fullPot);
     const fullPotLines: LedgerLine[] = [];
-    const fillLegs = provisionFood(fullPot, "Produce", 999, fullPotLines);
+    const fillRounds = provisionFood(fullPot, "Produce", 999, fullPotLines);
     const fullRoom = foodRoomMeals(fullPot, "Grain");
     const overfill = provisionFood(fullPot, "Grain", 1, fullPotLines);
     splitLines.push(...fullPotLines);
     check(
-      fillLegs === 72 &&
+      fillRounds === 72 &&
         fullPot.larder === LARDER_START + 144 &&
         usedStoreSlots(fullPot) === STORES_SLOTS &&
         fullRoom === 0 &&
         overfill === 0 &&
         ledgerSentences(fullPotLines)[1] === "🧺 The larder is full.",
-      "the stores are reached rather than overshot: a captain asking for more legs than fit buys the hold exactly full of the food that fills it densest, and the next purchase is told the larder is full in the words C1 shipped",
+      "the stores are reached rather than overshot: a captain asking for more rounds than fit buys the hold exactly full of the food that fills it densest, and the next purchase is told the larder is full in the words the Larder shipped",
     );
 
     // ========== the quarter a hungry crew costs the cargo ==========
-    // C1's own clause, landed on the single capacity read: a quarter off
-    // the cargo while the crew is on short rations, and nothing at all
-    // when the hold has no size. The card below is refused by the
-    // market rather than by the hold, because the market is the door
-    // that sells, and the same card buys without complaint one meal
+    // The short rations clause, landed on the single capacity read: a
+    // quarter off the cargo while the crew is on short rations, and
+    // nothing at all when the hold has no size. The card below is refused
+    // by the market rather than by the hold, because the market is the
+    // door that sells, and the same card buys without complaint one meal
     // later, which is what makes the shortage a cost rather than a wall.
     const hungryShip = voyageState();
     staff(hungryShip);
@@ -473,7 +475,7 @@ export function thePantrySuite(): LedgerLine[] {
         normalizeLarderSpoilRound(undefined) === 0 &&
         normalizeLarderSpoilRound(-2) === 0 &&
         normalizeLarderSpoilRound(3.9) === 3,
-      "a pantry read off a save drops the lots the catalogue does not know, floors what a portion is and what leg it was bought at, keeps the sixty four lots a voyage can legitimately carry, and reads a missing stamp as a leg no voyage has",
+      "a pantry read off a save drops the lots the catalogue does not know, floors what a portion is and what round it was bought at, keeps the sixty four lots a voyage can legitimately carry, and reads a missing stamp as a round no voyage has",
     );
     check(
       normalizeLarder(180, GAMBIT) === 180 &&
@@ -511,9 +513,9 @@ export function thePantrySuite(): LedgerLine[] {
     );
 
     // ========== the tick through the engine's own lap ==========
-    // The plan puts spoilage on the deterministic resolve step rather
-    // than on a clock, so the check walks the phase every captain
-    // already walks: a leg ends, the settlement tick reads the pantry,
+    // Spoilage belongs on the deterministic resolve step rather than on a
+    // clock, so the check walks the phase every captain
+    // already walks: a round ends, the settlement tick reads the pantry,
     // and the produce the voyage carried through it is gone.
     const spoilWalk = voyageState();
     spoilWalk.money = 1000;
@@ -542,12 +544,12 @@ export function thePantrySuite(): LedgerLine[] {
         ledgerSentences(spoilWalkLines).some((line) =>
           line.includes("turned at sea"),
         ),
-      "the settlement tick is where the sea takes its food back, in the phase every captain already walks and on the leg number rather than on any clock",
+      "the settlement tick is where the sea takes its food back, in the phase every captain already walks and on the round number rather than on any clock",
     );
 
     // ========== the switch, off ==========
-    // The rollback the plan asks for is one switch, and with it off this
-    // feature is not running at all: no meal, no rot, no purchase, no
+    // The rollback is one switch, and with it off this feature is not
+    // running at all: no meal, no rot, no purchase, no
     // conversion, no stamp written and no mark left, and the room reads
     // the Larder's own ceiling again rather than the stores'.
     check(
@@ -604,11 +606,11 @@ export function thePantrySuite(): LedgerLine[] {
     !carriesADash("src/lib/game/engine/market.ts") &&
       !carriesADash("src/lib/game/dashboard.ts") &&
       !carriesADash("src/lib/game/integrity.ts") &&
-      !carriesADash("src/lib/use-leg-report.ts") &&
+      !carriesADash("src/lib/use-round-report.ts") &&
       !carriesADash("src/types/realtime") &&
       !carriesADash("src/server/realtime/index.ts") &&
       !carriesADash("src/components/portmasters/game/phases/Purchase.tsx"),
-    "and the four screens and the wire the split reaches, the market that refuses a lot for room, the dashboard that reads the hold, the integrity note, the leg report and its server side, and the Provisions panel a captain buys from, hold it too",
+    "and the four screens and the wire the split reaches, the market that refuses a lot for room, the dashboard that reads the hold, the integrity note, the round report and its server side, and the Provisions panel a captain buys from, hold it too",
   );
 
   return survivalLines;

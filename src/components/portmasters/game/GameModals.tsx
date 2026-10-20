@@ -19,7 +19,7 @@ import { t } from "@/lib/game/i18n";
 import { useLanguage } from "@/lib/use-language-preference";
 // The two modals below that quote a voyage's length take the mode as well
 // as the tier, because the length is the voyage's rather than the tier's
-// alone (see voyageLegs in src/lib/game/mode). The caller reads both off
+// alone (see voyageRounds in src/lib/game/mode). The caller reads both off
 // the state the captain is sailing, which is what keeps the copy and the
 // voyage it describes the same voyage.
 import type { GameMode } from "@/lib/game/mode";
@@ -178,7 +178,7 @@ export function NotificationHistoryModal({
           </DialogTitle>
           <DialogDescription className="sr-only">
             {t(
-              "Every ledger update, harbor message, and direct message this session",
+              "Every ledger update, harbor message, and direct message from this voyage",
             )}
           </DialogDescription>
         </DialogHeader>
@@ -256,7 +256,7 @@ export function RumorBoardModal({
             {t("Broker's Rumor Board")}
           </DialogTitle>
           <DialogDescription>
-            {t("Spend gold to reveal what Orders will ask for!")}
+            {t("Spend Gold to reveal what Orders will ask for!")}
           </DialogDescription>
         </DialogHeader>
         {/* The button greys outside Market because the engine refuses the
@@ -295,7 +295,7 @@ export function RumorBoardModal({
           ) : (
             <div className="text-muted-foreground text-center py-5 text-sm">
               {t(
-                "✨ No rumors revealed yet... Spend gold to listen to the Broker's whispers.",
+                "✨ No rumors revealed yet... Spend Gold to listen to the Broker's whispers.",
               )}
             </div>
           )}
@@ -402,7 +402,7 @@ export function RestartConfirmModal({
       icon={RotateCcw}
       title={t("Restart the voyage?")}
       description={t(
-        "Every captain currently in this harbor goes back to round one: gold, cargo, workers, and ship upgrades all reset. The harbor also reopens, so new captains can join again. This can't be undone.",
+        "Every captain currently in this harbor goes back to round one: Gold, cargo, artisans, and hull upgrades all reset. The harbor also reopens, so new captains can join again. This can't be undone.",
       )}
       confirmLabel={t("Restart for Everyone")}
       onConfirm={onConfirm}
@@ -432,7 +432,7 @@ export function LeaveConfirmModal({
       icon={DoorOpen}
       title={t("Leave the voyage?")}
       description={t(
-        "The harbor sails on without you: your seat is written off, and the gold and cargo you were carrying go with it. You can start or join a new harbor right away. This can't be undone.",
+        "The harbor sails on without you: your seat is written off, and the Gold and cargo you were carrying go with it. You can start or join a new harbor right away. This can't be undone.",
       )}
       confirmLabel={t("Leave the Voyage")}
       onConfirm={onConfirm}
@@ -447,17 +447,13 @@ export function TutorialModal({
   difficulty,
 }: VoyageReadingProps) {
   const [step, setStep] = useState(0);
-  // The step copy is composed for the language in force when it is built
-  // (see tutorialSteps), so the language is part of the memo's own key: a
-  // flip rebuilds the steps rather than leaving the last one on screen.
-  // The language is read through the provider rather than through the
-  // module reader, because the module reader is a plain read and the
-  // memo would keep the steps it built for the language before the flip.
   const { locale } = useLanguage();
-  const steps = useMemo(
-    () => tutorialSteps(mode, difficulty),
-    [mode, difficulty, locale],
-  );
+  // tutorialSteps composes its copy through t(), so a locale change must
+  // rebuild the steps. The reference below makes that dependency explicit.
+  const steps = useMemo(() => {
+    void locale;
+    return tutorialSteps(mode, difficulty);
+  }, [mode, difficulty, locale]);
   const total = steps.length;
   const s = steps[step];
   const pct = Math.round(((step + 1) / total) * 100);

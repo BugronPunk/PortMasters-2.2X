@@ -1,7 +1,7 @@
 // =====================================================================
 // Realtime layer: Quick Start queue.
 //
-// [MANIFEST 16] A captain who just wants to play, without rounding up
+// A captain who just wants to play, without rounding up
 // a harbor code or waiting for a friend, joins the Quick Start queue.
 // matchQueuedCaptains pairs them into an existing open public harbor that
 // hasn't set sail yet (the first one with a free seat), or creates a

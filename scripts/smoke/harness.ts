@@ -96,8 +96,8 @@ export function carriesADash(relative: string): boolean {
  * ask for.
  *
  * One helper rather than one per feature, because the survival layer is
- * two switches over one family (the Larder in C1, crew loss in C2) and a
- * second copy of this try/finally is how one of them ends up restoring the
+ * two switches over one family (the Larder and crew loss) and a second
+ * copy of this try/finally is how one of them ends up restoring the
  * wrong value. The variable name is passed in rather than closed over for
  * the same reason: the check that reads a switch has to name the one it is
  * actually testing.
@@ -164,7 +164,7 @@ export function withEnv<T>(
   }
 }
 
-// [H9: the unlock code] The phrase every sealed harbor in this file is
+// The phrase every sealed harbor in this file is
 // opened with, read out of the table rather than typed here. A suite that
 // spelled the words itself would be testing its own copy of them rather
 // than the one a host types, and would go on passing after the table had
@@ -375,7 +375,7 @@ export function openAuthedSocket(captain: Captain): Promise<Socket> {
 }
 
 /**
- * [J1: the private information review] The shapes a hidden field takes on
+ * The shapes a hidden field takes on
  * the wire, and the sweep that reads for them.
  *
  * The private information sections used to look for the one hidden card's

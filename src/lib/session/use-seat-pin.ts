@@ -16,7 +16,7 @@ import type { Socket } from "socket.io-client";
 
 export type SeatPin = { roomId: string; seats: number };
 
-// [H5: the quota rung] How many captains the voyage now under way was
+// How many captains the voyage now under way was
 // dealt to, as the harbor pinned it at departure, stamped with the harbor it
 // belongs to exactly as the private log and the commission board are. It
 // is the second input to the public commission (see ../game/objectives.ts)
@@ -83,5 +83,5 @@ export function useSeatPinFrames({
       socket.off("room:started", onStarted);
       socket.off("room:restarted", onRestarted);
     };
-  }, [enabled, socket, roomId]);
+  }, [enabled, socket, roomId, setSeatPin]);
 }

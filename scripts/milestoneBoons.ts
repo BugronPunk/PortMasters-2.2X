@@ -1,28 +1,26 @@
 /**
  * The milestone boons report.
  *
- * [F4: boons at milestone moments] The plan's evaluation of this feature
- * has two halves: "track boon pick rate against voyage outcome so it is
- * visible whether boons cluster on voyages that were already winning".
+ * The reading has two halves: whether boons cluster on voyages that were
+ * already winning, and retention.
  * The pick rate half is the card tally's, and it is already read by
  * npm run report:cards, which walks every save's tally without knowing or
  * caring which cards are boons, so the five milestone boons appear there
  * the moment they are dealt and no second counter is kept here. What is
  * here is the outcome half: retention, read the way the dashboard reads
- * I2's maroon retention, as a pass over the captain lines of the
+ * the maroon retention, as a pass over the captain lines of the
  * window's records rather than a join. It is the same window the balance
  * dashboard and report:gates read (src/server/telemetry-window.ts), one
  * reader for every operator number.
  *
  * The two cohorts partition the captains of the voyages that closed with
  * somebody standing: the captains whose voyage lost a hand, read off the
- * crewLost mark F4 writes on a captain's line at the same call that keeps
- * the leg report carrying the count, and the captains whose voyage lost
+ * crewLost mark written on a captain's line at the same call that keeps
+ * the round report carrying the count, and the captains whose voyage lost
  * none. What is compared is the share of each cohort that was still in
  * the harbor when their voyage closed. A boon that cushions the voyages
  * that were already in trouble is a lost a hand row that climbs toward
- * the row beneath it, and the plan's question is answered by the gap
- * between the two.
+ * the row beneath it, and the gap between the two is the answer.
  *
  * Voyages that emptied are left out, on the dashboard's own rule and for
  * the dashboard's own reason: a harbor that emptied has nobody left to be
@@ -58,7 +56,7 @@ function cohortOf(
 // captains is not a reading of zero, and printing 0% for it would read as
 // a cohort that all walked out.
 //
-// The share is printed through the formatter the dashboard prints I2's
+// The share is printed through the formatter the dashboard prints its
 // maroon row with, because this report is that same reading: the cohort
 // of captains who lost a hand against the cohort who lost none, both
 // measured at the close of their voyage. One number, one way to print it,
@@ -121,7 +119,7 @@ async function main(): Promise<void> {
   console.log(
     closing.length === 0
       ? "\nNo voyage that closed with somebody standing is in the window yet, so the cohorts await their first reading."
-      : `\n${lines.length} captain line(s) read. The plan's sentence is the comparison: a boon that cushions the voyages already in trouble shows as the lost a hand row climbing toward the row beneath it, and the boon pick rate that names which boon is read by npm run report:cards.`,
+      : `\n${lines.length} captain line(s) read. The comparison to read: a boon that cushions the voyages already in trouble shows as the lost a hand row climbing toward the row beneath it, and the boon pick rate that names which boon is read by npm run report:cards.`,
   );
 }
 

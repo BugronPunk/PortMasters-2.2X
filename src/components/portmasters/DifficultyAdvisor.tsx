@@ -67,11 +67,11 @@ function getAdvice(
   let reason = "";
   let caution: string | undefined;
 
-  // [I5: session length, and table size] The length the voyage will run,
+  // The length the voyage will run,
   // not the tier's own ladder: a mode that pins its length sails the same
-  // number of legs on every tier, and the advice below is read while the
+  // number of rounds on every tier, and the advice below is read while the
   // host is choosing both. The mandate list is filtered to the same number
-  // for the same reason, since a mandate scheduled past the last leg is a
+  // for the same reason, since a mandate scheduled past the last round is a
   // promise the voyage cannot keep. Classic filters nothing, because its
   // ladder is the tier's and every scheduled mandate already falls inside
   // it, which is what keeps this sentence byte for byte what it was there.

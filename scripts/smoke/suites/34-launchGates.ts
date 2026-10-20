@@ -1,10 +1,10 @@
 // PortMasters 2.2 Parallel Release, smoke run: The launch gates.
 //
-// Goal I4's ship decision, over the readings the dashboard has just
-// built. The verdict is a reduction with no database behind it, so what
-// is checked here is that it withholds the decision in every way the
-// plan says it must and gives it only over the whole of what the plan
-// asks for. The last two checks are the run's own window, over the wire.
+// The ship decision, over the readings the dashboard has just built. The
+// verdict is a reduction with no database behind it, so what is checked
+// here is that it withholds the decision in every way it must and gives it
+// only over the whole of what it asks for. The last two checks are the
+// run's own window, over the wire.
 //
 // This article was one file of 2,305 lines that held the four survival
 // families as well as the gate verdict. It is now a run of articles, one
@@ -53,21 +53,21 @@ export async function launchGatesSuite(inputs: {
     liveReading,
     telHome,
   } = inputs;
-  // Goal I4's ship decision, over the readings the dashboard has just
-  // built. The verdict is a reduction with no database behind it, so what
-  // is checked here is that it withholds the decision in every way the
-  // plan says it must and gives it only over the whole of what the plan
-  // asks for. The last two checks are the run's own window, over the wire.
+  // The ship decision, over the readings the dashboard has just built. The
+  // verdict is a reduction with no database behind it, so what is checked
+  // here is that it withholds the decision in every way it must and gives
+  // it only over the whole of what it asks for. The last two checks are
+  // the run's own window, over the wire.
   const emptyVerdict = readLaunchVerdict(emptyReading);
   check(
     emptyVerdict.gates.length === LAUNCH_GATE_IDS.length &&
       emptyVerdict.gates.map((gate) => gate.id).join(",") ===
         LAUNCH_GATE_IDS.join(","),
-    "the verdict reads the plan's sixteen gates in the plan's order, whatever state each one is in",
+    "the verdict reads the design's sixteen gates in the design's order, whatever state each one is in",
   );
   check(
     LAUNCH_GATE_IDS.every((id) => gateLines.some((line) => line.gate === id)),
-    "and every one of them is carried by a row on the page, so a gate the plan lists and the page forgets cannot leave the decision short by one",
+    "and every one of them is carried by a row on the page, so a gate the design lists and the page forgets cannot leave the decision short by one",
   );
   check(
     emptyVerdict.state === "unjudged" &&
@@ -119,7 +119,7 @@ export async function launchGatesSuite(inputs: {
       `No verdict yet: the run stands at ${
         LAUNCH_MINIMUM_VOYAGES - 1
       } of ${LAUNCH_MINIMUM_VOYAGES} recorded voyages.`,
-    "and one voyage short of the plan's three hundred withholds it, because a gate read over fewer is a reading rather than evidence",
+    "and one voyage short of the design's three hundred withholds it, because a gate read over fewer is a reading rather than evidence",
   );
   // The three window facts that make a window a sample of the run rather
   // than the run: a rate below one, a record that hit the event cap, and a
@@ -162,7 +162,7 @@ export async function launchGatesSuite(inputs: {
       heldByPriority.failing.length === 1 &&
       heldByPriority.untradeable?.id === "free_captain_pick_rate" &&
       heldByPriority.answer.includes("cannot be traded against the others"),
-    "a gate out of band holds the mode, and a failure in the plan's own priority is named as the gate that cannot be traded away when two of them conflict",
+    "a gate out of band holds the mode, and a failure in the design's own priority is named as the gate that cannot be traded away when two of them conflict",
   );
   const heldByOther = heldBy("The top card's share of winning builds", "over");
   check(
@@ -193,9 +193,9 @@ export async function launchGatesSuite(inputs: {
   // reader on balance duty should not have to work out which it is
   // talking about. Three wait here, each for its own reason: retention,
   // since the voyage in the window had nobody put ashore; utilization,
-  // since no captain of it filed a leg report from a split hold; and the
+  // since no captain of it filed a round report from a split hold; and the
   // charter split, since no captain of it took a charter at the fourth
-  // leg.
+  // round.
   const oneUnplayed = readLaunchVerdict(
     readDashboard({
       records: [dashRecord("dash-lone")],
@@ -212,9 +212,9 @@ export async function launchGatesSuite(inputs: {
   );
 
   // A gate whose row stopped carrying it. It cannot happen while the page
-  // and the plan's list agree, which is checked above, and the verdict
-  // fails closed on the day they stop: a decision taken over fifteen gates
-  // is not the decision the plan asks for.
+  // and the gate list agree, which is checked above, and the verdict fails
+  // closed on the day they stop: a decision taken over fifteen gates is
+  // not the decision the list asks for.
   const droppedGate = readLaunchVerdict({
     ...fullRun,
     panels: fullRun.panels.map((panel) => ({
@@ -230,7 +230,7 @@ export async function launchGatesSuite(inputs: {
     droppedGate.state === "unjudged" &&
       droppedGate.unmeasured.length === 1 &&
       droppedGate.gaps.some((gap) => gap.includes("free_captain_pick_rate")),
-    "and a gate the page stopped carrying withholds the decision rather than being skipped out of it, failing closed on the day the page and the plan disagree",
+    "and a gate the page stopped carrying withholds the decision rather than being skipped out of it, failing closed on the day the page and the design disagree",
   );
 
   // ========== The run's own window ==========

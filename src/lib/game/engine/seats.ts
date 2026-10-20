@@ -1,5 +1,5 @@
 // =====================================================================
-// [H7: Maroon and the Harbormaster] What happens to a seat that fails.
+// What happens to a seat that fails.
 //
 // Two ways to fail a voyage stop a captain from winning it, and this is
 // the one place either of them is applied. The harbor votes a captain
@@ -109,7 +109,7 @@ export function maroonSeat(state: GameState, logs: LedgerLine[]): void {
   );
   logs.push(
     line(
-      "🧭 The Harbormaster's hand: once a leg, one port's prices answer to this captain.",
+      "🧭 The Harbormaster's hand: once a round, one port's prices answer to this captain.",
     ),
   );
 }

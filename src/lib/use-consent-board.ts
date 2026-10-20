@@ -11,9 +11,9 @@ import { guardedRefusalHandler } from "@/lib/refusals";
  *
  * A channel is event names and a field name rather than a callback that
  * parses a board, because both kinds receive the same shape on the wire and
- * only call it different things: `{roomId, contracts}` for the market D3
- * shipped and `{roomId, refits}` for D4's bench, each named once on the
- * server where it is packed (see consentBoard in src/server/realtime). The
+ * only call it different things: `{roomId, contracts}` for the escort
+ * contract market and `{roomId, refits}` for the refit bench, each named once
+ * on the server where it is packed (see consentBoard in src/server/realtime). The
  * field name is a contract with every client already connected, so it is
  * read here as the string the server sent rather than inferred from the
  * kind.

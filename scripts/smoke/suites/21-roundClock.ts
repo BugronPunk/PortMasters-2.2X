@@ -1,4 +1,4 @@
-// PortMasters 2.2 Parallel Release, smoke run: The leg clock.
+// PortMasters 2.2 Parallel Release, smoke run: The round clock.
 
 import {
   checkpointRank,
@@ -11,9 +11,9 @@ import {
 import { MODES, MODE_ORDER } from "@/lib/game/mode";
 import {
   ENTRY_PHASE,
-  LEG_PHASE_ORDER,
+  ROUND_PHASE_ORDER,
   PHASE_FACES,
-  isLegPhase,
+  isRoundPhase,
   normalizePhase,
   phaseFace,
   seatOf,
@@ -22,9 +22,9 @@ import type { Phase } from "@/lib/game/types";
 import { pathDraftOn } from "@/lib/game/flags";
 import { CARRIES_A_DASH, check, withEnv } from "../harness";
 
-export async function legClockSuite(): Promise<void> {
-  // [B1: the six phase leg, as data] What the release changed, held to
-  // what it has to be rather than to what it was. Three separate claims
+export async function roundClockSuite(): Promise<void> {
+  // The six phase round, as data: what the release changed, held to what it
+  // has to be rather than to what it was. Three separate claims
   // have to hold at once, and the compiler cannot see any of them: the
   // modes run the same six phases in different orders, the ready check
   // gates those six and nothing else, and a voyage that was already
@@ -37,17 +37,17 @@ export async function legClockSuite(): Promise<void> {
   for (const mode of MODE_ORDER) {
     const badge = MODES[mode].badge;
     const lap = lapPhases(mode);
-    const legs = lap.filter(isLegPhase);
+    const rounds = lap.filter(isRoundPhase);
     check(
       lap[0] === ENTRY_PHASE &&
-        legs.length === LEG_PHASE_ORDER.length &&
-        LEG_PHASE_ORDER.every((phase) => legs.includes(phase)),
-      `the ${badge} lap opens at the pier and visits every phase of the leg, once each`,
+        rounds.length === ROUND_PHASE_ORDER.length &&
+        ROUND_PHASE_ORDER.every((phase) => rounds.includes(phase)),
+      `the ${badge} lap opens at the pier and visits every phase of the round, once each`,
     );
     check(
-      lap.filter((phase) => !isLegPhase(phase)).length ===
+      lap.filter((phase) => !isRoundPhase(phase)).length ===
         (pathDraftOn(mode) ? 2 : 1),
-      "and carries nothing on it that is not a phase of the leg, beyond the pier and the draft's own seat where the deal is on",
+      "and carries nothing on it that is not a phase of the round, beyond the pier and the draft's own seat where the deal is on",
     );
     // Where a round actually opens, which is not the pier: the lap opens
     // there so the harbor has a lobby, and the first entry after it is what
@@ -67,8 +67,8 @@ export async function legClockSuite(): Promise<void> {
       isGatedPhase(mode, phase),
     );
     check(
-      gated.length === LEG_PHASE_ORDER.length + (pathDraftOn(mode) ? 1 : 0) &&
-        LEG_PHASE_ORDER.every((phase) => gated.includes(phase)),
+      gated.length === ROUND_PHASE_ORDER.length + (pathDraftOn(mode) ? 1 : 0) &&
+        ROUND_PHASE_ORDER.every((phase) => gated.includes(phase)),
       `the ${badge} ready check gates every seat of its own lap but the pier and nothing else`,
     );
     // Where a round closes, which is a property of the lap rather than of
@@ -85,8 +85,8 @@ export async function legClockSuite(): Promise<void> {
     );
   }
 
-  // [W2: the path draft] The draft's seat is configuration rather than
-  // content, so the fold is read here the way a rolled back build reads
+  // The draft's seat is configuration rather than content, so the fold is
+  // read here the way a rolled back build reads
   // it: with the deal switched off a dealing mode's lap is the founding
   // seven again and the round opens at Dawn, which is the voyage this
   // tree sailed before the feature existed. Read through withEnv rather
@@ -132,7 +132,7 @@ export async function legClockSuite(): Promise<void> {
     "every phase value an older build wrote is placed at the phase it means now",
   );
   check(
-    LEG_PHASE_ORDER.every((phase) => normalizePhase(phase) === phase),
+    ROUND_PHASE_ORDER.every((phase) => normalizePhase(phase) === phase),
     "and a phase named the way this build names it is left where it is",
   );
   check(
@@ -173,7 +173,7 @@ export async function legClockSuite(): Promise<void> {
   // Where a captain stands and where the harbor waits are two questions, and
   // the release keeps them apart on purpose. A captain inside the shipyard's
   // draft or swap is standing in Dusk: the rail has folded both screens into
-  // Dusk since the six phase leg landed, the engine leaves Dusk when a
+  // Dusk since the six phase round landed, the engine leaves Dusk when a
   // departure walks out of a draft, and folding the two onto Dusk is what
   // lets the harbor place a captain against itself at all. Their screen is not
   // a seat the ready check gates, and that pair is the shape of the stall

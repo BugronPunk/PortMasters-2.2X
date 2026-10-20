@@ -90,7 +90,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // Where a voyage opens is the mode's business, not this handler's,
       // so it is read from the lap rather than written as "5" here.
       const opening = openingPhase(room.mode);
-      // [H5: the quota rung] The fleet's size, pinned to the roster that
+      // The fleet's size, pinned to the roster that
       // was actually dealt in at departure. Written before the harbor is
       // told the voyage is under way, so no client can be playing a
       // commission drawn from a size this row has not recorded yet, and
@@ -105,20 +105,20 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
           voyageSeats: roster.length,
         },
       });
-      // [J2: the mute and the report] A voyage leaves the dock with an
+      // A voyage leaves the dock with an
       // empty mute list, whatever the lobby was carrying. This is the
       // clear that was missing, and its absence was the whole of the
       // defect: mutes were dropped at restart and at teardown, so a
       // silence the host set before departure rode into the voyage, and
       // a mute that outlives the table it was set at is not the per
-      // voyage mute the plan asks for. It goes here rather than beside
+      // voyage mute the design asks for. It goes here rather than beside
       // the other two clears because a voyage has exactly one beginning
       // and the other two are not it: restart reopens a harbor that has
       // been sailed, and teardown ends one. A host who mutes in the
       // lobby and starts a voyage has made a judgement about a lobby.
       // If it is still true in the voyage, it can be made again.
       if (clearMutedUsers(roomId)) void emitRoomMembers(io, roomId);
-      // [I1: the telemetry spine] The voyage is under way, so the spine
+      // The voyage is under way, so the spine
       // opens on it. Here rather than at the end of the handler because
       // the record's header is read from the row above and the roster
       // this update just pinned, and synchronous so nothing a captain
@@ -136,9 +136,9 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // the same reason: a new voyage's first seat carries no hold spent
       // by a harbor that has not sailed yet.
       cp.yardHeld = false;
-      // [B4: the log surfaces] The voyage's log opens with it, and it
-      // opens on the leg and the seat the checkpoint was just pinned to
-      // rather than on a leg of its own choosing. Placed here, after the
+      // The voyage's log opens with it, and it
+      // opens on the round and the seat the checkpoint was just pinned to
+      // rather than on a round of its own choosing. Placed here, after the
       // round is set and before anything is broadcast, so the first line
       // a captain can read belongs to the voyage it is about and no
       // captain hears about a seat before the log they will read it in
@@ -157,7 +157,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       if (gambitSystemsOn(room.mode)) {
         openVoyageLog(io, roomId, cp.round, cp.phase);
       }
-      // [B2: hard timers, the server as timekeeper] The voyage's first
+      // The voyage's first
       // clock. A departure is the one seat that is never entered by a
       // report, so this is the one place the clock is armed from something
       // other than the checkpoint moving, and it is armed here rather than
@@ -180,7 +180,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // process and is not carried anywhere. A Classic harbor is sent
       // nothing, which is the mode guard inside the deal itself.
       await dealAlignments(io, roomId, room.mode);
-      // [D7: the draft, and switching] And the path cards, in the same
+      // And the path cards, in the same
       // breath and after the harbor has been told the voyage is under way,
       // for the reasons the deal above states: the seed is minted in this
       // process and carried nowhere, and a hand can never arrive for a
@@ -190,7 +190,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // cannot be redealt around it: a captain who joins a voyage under
       // way sails pathless, which the harbor already has a reading for.
       const dealt = await dealPaths(io, roomId, roster, room.mode);
-      // [W2: the path draft] A departure whose deal declined to seat
+      // A departure whose deal declined to seat
       // anybody would otherwise be a table standing forever at the draft's
       // seat: the seat is left by the settle, and a deal that never dealt
       // has no settle in front of it. It takes an account deleted in the

@@ -28,7 +28,7 @@ import { makeFail, marketOffRefusal } from "./fail";
 
 export function wireBazaar(io: Server, socket: Socket): void {
   //
-  // [D5: Aroma: the Bazaar Rumor] The desk's two frames, and the shape of
+  // The desk's two frames, and the shape of
   // the feature shows in what this server is and is not authoritative
   // about.
   //
@@ -42,7 +42,7 @@ export function wireBazaar(io: Server, socket: Socket): void {
   // It is authoritative about the four things a row has to be true about
   // for the feature to work at all. A rumor is spoken at the Parley, so
   // the table hears it and so the market it moves is the next one. It is
-  // spoken in a leg that has a leg after it, so the market it names is one
+  // spoken in a round that has a round after it, so the market it names is one
   // this voyage opens rather than a settlement that never comes. It
   // names a good the coming market actually trades, so a lean always lands
   // on a price rather than on nothing. And it respects the cooldown, which
@@ -104,7 +104,7 @@ export function wireBazaar(io: Server, socket: Socket): void {
       // The order between the two reads is part of that rule rather than
       // an accident of how the handler grew. The room's row is read first
       // because it is the read that waits on the database, and the
-      // checkpoint is read last because its leg and its phase are what
+      // checkpoint is read last because its round and its phase are what
       // every check below judges and what the row gets written with: a
       // checkpoint read before the wait would be a checkpoint a phase
       // change could have moved during it, and the refusal below would
@@ -125,9 +125,9 @@ export function wireBazaar(io: Server, socket: Socket): void {
         );
         return;
       }
-      // The one leg a rumor has nothing to land on. A row is a claim about
-      // the port one leg ahead, so a row written in the closing leg would
-      // lean a market this voyage never opens: the settlement the plan's
+      // The one round a rumor has nothing to land on. A row is a claim about
+      // the port one round ahead, so a row written in the closing round would
+      // lean a market this voyage never opens: the settlement the design's
       // own Rollback note asks to be skipped cleanly rather than left half
       // applied, paid for with the publisher's whole cooldown. Read off the
       // voyage's length rather than off the tier, because the two answer
@@ -161,7 +161,7 @@ export function wireBazaar(io: Server, socket: Socket): void {
         direction,
         round: cp.round,
       });
-      // [B4: the log surfaces] The harbor's line, which carries the good and
+      // The harbor's line, which carries the good and
       // the captain and deliberately not the direction: the log is public
       // the instant it is written, and the direction is not public until
       // the market answers the row (see VoyageLogFacts for this kind).

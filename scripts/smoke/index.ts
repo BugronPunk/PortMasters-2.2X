@@ -13,7 +13,7 @@
 //   PHASE_CLOCK=1 npm run test:smoke
 //
 // PHASE_CLOCK=1 is set on both lines on purpose: the clock suites need
-// the server under test to be timing its legs, and the run reads the
+// the server under test to be timing its rounds, and the run reads the
 // same variable to know which clock it is checking, so one shell
 // exports it for both.
 //
@@ -59,7 +59,7 @@ import { actingOnASelectionSuite } from "./suites/17-actingOnASelection";
 import { privateInformationSpineSuite } from "./suites/18-privateInformationSpine";
 import { victoryRulesSuite } from "./suites/19-victoryRules";
 import { voyageBriefingsSuite } from "./suites/20-voyageBriefings";
-import { legClockSuite } from "./suites/21-legClock";
+import { roundClockSuite } from "./suites/21-roundClock";
 import { voyageEndToEndSuite } from "./suites/22-voyageEndToEnd";
 import { harborClockSuite } from "./suites/23-harborClock";
 import { standingOrdersSuite } from "./suites/24-standingOrders";
@@ -113,6 +113,7 @@ import { theHousesAndTheAgesSuite } from "./suites/65-theHousesAndTheAges";
 import { theCrewAndTheLarderSuite } from "./suites/66-theCrewAndTheLarder";
 import { theBilingualHarborSuite } from "./suites/67-theBilingualHarbor";
 import { theLedgerReadsInYourLanguageSuite } from "./suites/68-theLedgerReadsInYourLanguage";
+import { thePriceAndThePromiseSuite } from "./suites/69-thePriceAndThePromise";
 
 async function main(): Promise<void> {
   console.log(`\nSmoke testing ${BASE}\n`);
@@ -302,9 +303,9 @@ async function main(): Promise<void> {
     await victoryRulesSuite();
     console.log("\nThe voyage briefings");
     await voyageBriefingsSuite();
-    console.log("\nThe leg clock");
-    await legClockSuite();
-    console.log("\nA voyage end to end on the six phase leg");
+    console.log("\nThe round clock");
+    await roundClockSuite();
+    console.log("\nA voyage end to end on the six phase round");
     await voyageEndToEndSuite(run);
     console.log("\nThe harbor clock");
     await harborClockSuite(run);
@@ -474,22 +475,22 @@ async function main(): Promise<void> {
     // own, so no table has to be sitting for any of it.
     console.log("\nThe milestone boons");
     await milestoneBoonsSuite();
-    // [F5] The public offers' article follows the record suite it extends
+    // The public offers' article follows the record suite it extends
     // (the two pick sites its first half walks are the ones the milestone
     // boons' own article armed), and unlike it the wire half needs a real
     // harbor with live sockets, which is why it opens one of its own
     // rather than joining the group above that needs no table.
     console.log("\nPublic offers");
     await publicOffersSuite(run, { gambitHost, gambitSecond });
-    // [F6] The charters' article joins the group above that needs no
+    // The charters' article joins the group above that needs no
     // harbor, and it is the milestone boons' sibling in the tree as well
     // as in the run: both walk one moment off a state in process, and the
-    // one half that touches the database (the take the leg report files)
+    // one half that touches the database (the take the round report files)
     // opens no harbor of its own. It sits after the public offers because
     // it is the newer article and the ready check stays last.
     console.log("\nThe charters");
     await chartersSuite();
-    // [F7] The power budget's article is the charters' sibling in the
+    // The power budget's article is the charters' sibling in the
     // tree as well as in the run: both hold one derived table against a
     // state in process, and the instrument half reads fixture rows
     // through a pure reduction, so no harbor is opened here either. It
@@ -527,14 +528,14 @@ async function main(): Promise<void> {
     await theDoorsAndTheLoadSuite();
     console.log("\nThe mirror and the charge");
     await theMirrorAndTheChargeSuite();
-    // [W3] The status convention's article joins the pure cluster above:
+    // The status convention's article joins the pure cluster above:
     // the registry is static data and its validator is a pure function,
     // so nothing here needs a harbor. It sits after the correctness
     // articles because it is the newer article and the ready check stays
     // last.
     console.log("\nThe status convention");
     await theStatusConventionSuite();
-    // [W3] The mutes and the keys' article is the convention's sibling:
+    // The mutes and the keys' article is the convention's sibling:
     // it reads the preference functions through a storage stub and walks
     // src for the three key literals, so it opens no harbor either. It
     // sits last of the pure cluster because the ready check stays last
@@ -547,24 +548,22 @@ async function main(): Promise<void> {
     // same reason the two above it do.
     console.log("\nThe way out");
     await theWayOutSuite();
-    // [W5] The first voyage's article is the fourth of the pure cluster:
+    // The first voyage's article is the fourth of the pure cluster:
     // the surfaces a new captain meets before the first market are read as
     // records and source rather than as harbor state, so it opens nothing
     // either and sits with them ahead of the ready check.
     console.log("\nThe first voyage");
     await theFirstVoyageSuite();
-    // [HYG-5] The houses' article is the first of the two coverage
-    // articles the audit's hygiene finding asked for: it signs up one
-    // captain of its own for the account level pledge and reads the two
-    // boards through their routes, so it sits apart from the pure cluster
-    // above, and the ready check stays last.
+    // The houses' article is the first of the two coverage articles: it
+    // signs up one captain of its own for the account level pledge and
+    // reads the two boards through their routes, so it sits apart from the
+    // pure cluster above, and the ready check stays last.
     console.log("\nThe Houses and the Ages");
     await theHousesAndTheAgesSuite(run);
-    // [HYG-5] The crew and the Larder's article is the finding's second
-    // half and the wage article's sibling: one state walked in process
-    // from its first hire to its last dismissal, so it opens no harbor
-    // either, and it sits beside the houses because the two close the one
-    // finding together ahead of the ready check.
+    // The crew and the Larder's article is the wage article's sibling:
+    // one state walked in process from its first hire to its last
+    // dismissal, so it opens no harbor either, and it sits beside the
+    // houses ahead of the ready check.
     console.log("\nThe crew and the Larder");
     await theCrewAndTheLarderSuite();
     // The Bilingual Harbor's article is the language pack's own: the book
@@ -583,6 +582,13 @@ async function main(): Promise<void> {
     // the ledger is the reader's.
     console.log("\nThe ledger reads in your language");
     await theLedgerReadsInYourLanguageSuite();
+    // The purchase stack's article opens no harbor either: it walks the
+    // market catalogue and the card charge in process, because the rule it
+    // holds is arithmetic rather than a screen. It sits last among the
+    // price articles because it is the one that reads the charge and the
+    // hover through the same door.
+    console.log("\nThe price and the promise");
+    await thePriceAndThePromiseSuite();
     // The ready check's article is the one that needs a harbor and a wall
     // clock rather than a table: its cure is a grace the harbor has to be
     // watched through, so it is the last thing the run does and it opens a

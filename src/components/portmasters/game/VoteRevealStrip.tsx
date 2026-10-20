@@ -4,7 +4,7 @@
 // The strip a carried vote leaves behind, drawn once for the two votes.
 //
 // The audit's finding and the maroon's result are the same shape on
-// screen: the vote's name, the leg it was made in, the captain it names,
+// screen: the vote's name, the round it was made in, the captain it names,
 // and a cross to put it away. The two strips were written out twice, and
 // a strip is what the harbor reads for the rest of the voyage once a vote
 // has landed, so two copies of it are two ways to read one finding.
@@ -39,7 +39,7 @@ const STRIP_TONES = {
  * The strip a carried vote leaves on the table.
  *
  * The finding is the vote's own, and only the two things the frame needs
- * are read off it: the leg it was made in and the captain it was made
+ * are read off it: the round it was made in and the captain it was made
  * of. Everything the frame prints about the finding is the finding's
  * own wording, handed in.
  */
@@ -90,7 +90,7 @@ export function VoteRevealStrip({
             STRIP_TONES[tone].ink,
           )}
         >
-          {title} · {t("Leg {leg}", { leg: finding.round })}
+          {title} · {t("Round {round}", { round: finding.round })}
         </span>
         <span className="font-display text-sm font-semibold">{headline}</span>
         <button

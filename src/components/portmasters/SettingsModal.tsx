@@ -204,7 +204,7 @@ export function SettingsModal({
                 />
               </Section>
 
-              {/* Notifications. [W3: the status convention] The "room"
+              {/* Notifications. The "room"
                   category has exactly one writer, the harbor chat push in
                   GameRoom (see the chat:room handler), so the description
                   names that one thing. The label matches the panel the

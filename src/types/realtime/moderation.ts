@@ -1,7 +1,7 @@
 // =====================================================================
 // PortMasters 2.2 Parallel Release: the mute list and the report row.
 //
-// [J2: the mute and the report] The moderation surface on the wire.
+// The moderation surface on the wire.
 //
 // Two shapes, one each way. The roster frame carries the mute list, and
 // the answer to a report travels back to the captain who filed it.

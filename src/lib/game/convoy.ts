@@ -1,5 +1,5 @@
 // =====================================================================
-// [MANIFEST 04: Convoy Ventures] Pure decision logic, split out of
+// Pure decision logic for Convoy Ventures, split out of
 // src/server/realtime/index.ts for the same reason computeHarborPulse was split
 // out into harborPulse.ts: this is real Gold math and the one exploit
 // prevention rule (one filled venture per voyage, harbor wide) that a
@@ -36,15 +36,13 @@ type VentureContributions = Record<string, VentureContribution>;
 // reached "filled" first and claimed the one shared chance before this one
 // got the chance to.
 //
-// [D3: Convoy: the Escort Contract] One naming note, and it is the only
-// thing this file's copy has in common with that feature. The label a
-// captain reads moved from Convoy Venture to Venture when the Convoy path
-// landed, because the two are different institutions wearing one word: the
-// path sells protection, and this is the harbor's pooled investment. The
-// plan's own section keeps the name it was written under, every identifier
-// here keeps it too (a persisted model's name is a migration rather than a
-// copy change), and what moved is the sentence a captain reads. See the
-// matching note in ./paths.ts.
+// One naming note. The label a captain reads moved from Convoy Venture to
+// Venture when the Convoy path landed, because the two are different
+// institutions wearing one word: the path sells protection, and this is
+// the harbor's pooled investment. Every identifier here keeps the old name
+// (a persisted model's name is a migration rather than a copy change), and
+// what moved is the sentence a captain reads. See the matching note in
+// ./paths.ts.
 export type VentureOutcome = "filled" | "failed" | "destroyed";
 
 // One contributor's share of however a venture ended, as the settlement
@@ -79,7 +77,7 @@ export function ventureTotal(contributions: VentureContributions): number {
   return Object.values(contributions).reduce((sum, c) => sum + c.amount, 0);
 }
 
-// [MANIFEST 04 fix] Two caps stack here, both bounding the same
+// Two caps stack here, both bounding the same
 // contribution request from above:
 //
 // The overflow cap: a contribution can never push a venture's pooled total
@@ -160,7 +158,7 @@ export function computeSettlements(
   }));
 }
 
-// [MANIFEST 04 fix] The valid deadline window for a fresh post: never
+// The valid deadline window for a fresh post: never
 // sooner than CONVOY_VENTURE_MIN_ROUNDS_AHEAD, and never later than either
 // CONVOY_VENTURE_MAX_ROUNDS_AHEAD rounds out or one round short of the
 // voyage's own final round, whichever is sooner. A venture that filled on

@@ -125,7 +125,7 @@ export function SettlementBills({
           {t("⏳ Bills Due This Round")}
         </h3>
         <BillRow
-          label={t("👥 Worker Wages ({count} worker{pluralS})", {
+          label={t("👥 Artisan Wages ({count} artisan{pluralS})", {
             count: nWorkers,
             pluralS: nWorkers !== 1 ? "s" : "",
           })}
@@ -160,9 +160,19 @@ export function SettlementBills({
             {t("{contract.fee} Gold", { "contract.fee": maintCost })}
           </span>
         </BillRow>
+        {(game.modifierFlags.voyage_dues_discount ?? 0) > 0 && (
+          <div className="text-[11px] text-muted-foreground pl-2.5">
+            {t(
+              "↳ {card} halves the Dues this round: wages and maintenance both",
+              {
+                card: cardName("quiet_account"),
+              },
+            )}
+          </div>
+        )}
         {game.maintenancePenalty > 0 && (
           <div className="text-[11px] text-muted-foreground pl-2.5">
-            {t("↳ Base {base}g + {card} penalty {penalty}g", {
+            {t("↳ Base {base} Gold + {card} penalty {penalty} Gold", {
               base: game.fixedCost,
               card: cardName("overdrive_engine"),
               penalty: game.maintenancePenalty,
@@ -182,7 +192,7 @@ export function SettlementBills({
 
       <div className="rounded-xl bg-resolve/[0.03] border border-resolve/15 p-3.5 my-3.5">
         <h3 className="font-semibold mb-2">{t("💹 Balance Summary")}</h3>
-        <BillRow label={t("Current Funds")}>
+        <BillRow label={t("Current Gold")}>
           <span className="text-gain font-bold">
             {t("{contract.fee} Gold", { "contract.fee": game.money })}
           </span>

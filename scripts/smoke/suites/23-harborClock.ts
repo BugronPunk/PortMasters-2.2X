@@ -24,7 +24,7 @@ import type { Socket } from "socket.io-client";
 import type { SmokeRun } from "../run";
 
 export async function harborClockSuite(run: SmokeRun): Promise<void> {
-  // [B2: hard timers, the server as timekeeper] A leg is a segment of real
+  // Hard timers, the server as timekeeper: a round is a segment of real
   // time, and a table is not held hostage to a captain who closed a
   // laptop. Five harbors go through one window at once, because the
   // window is real time and a fact each would otherwise cost a minute of
@@ -35,11 +35,11 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   // A, B, Q and Y differ in is who is still working when the clock runs
   // out:
   //
-  //   A: two captains, both aboard, and the leg seat answered by neither:
+  //   A: two captains, both aboard, and the round seat answered by neither:
   //      the clock is the only thing in the harbor that can end it.
-  //   B: two captains and one of them gone once the leg is under way, so
+  //   B: two captains and one of them gone once the round is under way, so
   //      the harbor is not hostage to the laptop that closed.
-  //   Q: one captain who reports onto the leg seat and then leaves,
+  //   Q: one captain who reports onto the round seat and then leaves,
   //      because an empty harbor is not a table waiting on a straggler and
   //      its clock does not move it.
   //   Y: one captain standing in the yard's own screen when Dusk's clock
@@ -49,14 +49,14 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   //   C: one captain under way in the founding mode, which the clock does
   //      not reach at all, on a server that is timing the others.
   //
-  // [W2: the path draft] And all four Gambit harbors are dealt their
+  // And all four Gambit harbors are dealt their
   // paths first, because that is where a Gambit voyage opens now: the
   // departure pins each harbor to the draft's seat, every seat lays its
   // first card the moment it is dealt (the keeper wired into
   // openClockRoom below), and the settle announces the seat's own
   // departure like any other move. The draft's seat carries no clock and
   // is shown none, which is the point of it, so the seats this section
-  // times are the ones the leg owns: the first of them opens the moment
+  // times are the ones the round owns: the first of them opens the moment
   // the harbor reports itself off the deal, which is the report below every
   // client sends after the settle's frame.
   //
@@ -65,7 +65,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   // sockets with no engine behind them, so the frame is all this side of
   // the wire can see; the auto commit that frame draws out of a client is
   // held by the browser check, where a page that never clicks still leaves
-  // the leg.
+  // the round.
   //
   // The budget is read from the phase table and the server's own scale
   // rather than typed in, for the same reason the lap walk reads the lap
@@ -75,7 +75,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   // the wrong moment would pass.
   if (loadServerConfig().phaseClockScale <= 0) {
     throw new Error(
-      "The clock checks need the server under test to be timing its legs, so PHASE_CLOCK must be a number above zero.\n" +
+      "The clock checks need the server under test to be timing its rounds, so PHASE_CLOCK must be a number above zero.\n" +
         "It is off unless it is asked for, and the section below is the asking, so start the server and this script with the same value, or run them in the same shell.",
     );
   }
@@ -97,7 +97,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   // reclaimed after thirty seconds (DEPARTURE_GRACE_MS in
   // src/server/realtime/presence.ts), and a harbor whose last seat is
   // taken is deleted with its voyage closed, which ends a clock for a
-  // reason that has nothing to do with this slice.
+  // reason other than the budget running out.
   const GRACE_SECONDS = 30;
   if (dawnSeconds >= GRACE_SECONDS) {
     throw new Error(
@@ -217,8 +217,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
           });
         },
       );
-      // [W2: the path draft] The deal's own answer, driven the way a
-      // captain drives it: a card laid whenever a step this seat has not
+      // The deal's own answer, driven the way a captain drives it: a card laid whenever a step this seat has not
       // answered is put in front of it. The card is the seat's own first
       // (DRAFT_AUTO_PICK), which is the card the harbor would lay for a seat
       // that went silent, and one keep per step is the honest count: a
@@ -338,7 +337,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   );
   // The founding mode, on the same server, read beside the checks above
   // rather than on its own, because all three together are the claim: one
-  // server, timing its legs, hands a clock to the seats of the leg and
+  // server, timing its rounds, hands a clock to the seats of the round and
   // none to the pier, to the deal, or to a harbor in the founding mode,
   // and the last two differences are the seat's and the mode's rather
   // than anything the operator set.
@@ -354,7 +353,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
     "a harbor in the founding mode opens straight at Dawn with no clock on it, on a server that is timing the other three",
   );
 
-  // [W2: the path draft] And the deal's own end, on the wire rather than
+  // And the deal's own end, on the wire rather than
   // in the harbor: every seat has laid its card, the settle walks the table
   // off the seat with the same frame a ready set or a run out clock
   // announces, and the frame names the seat the harbor is leaving. The
@@ -458,7 +457,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
     "and reporting into the draft itself neither moves the harbor nor touches the clock that is already running",
   );
 
-  // A stands at the leg's first seat, and the same report is what starts
+  // A stands at the round's first seat, and the same report is what starts
   // the seat's countdown: a clock is armed by the move rather than by the
   // departure, so the moment the report is sent is the moment the bound
   // below is anchored to.
@@ -478,10 +477,10 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
       typeof aDawn.endsAt === "number" &&
       aDawn.endsAt > aArmedAt &&
       aDawn.endsAt <= aArmedAt + dawnSeconds * 1000 + 2000,
-    `the report that follows the settle lands the harbor on the first seat of the leg and starts its countdown there (${dawnSeconds}s of Dawn)`,
+    `the report that follows the settle lands the harbor on the first seat of the round and starts its countdown there (${dawnSeconds}s of Dawn)`,
   );
 
-  // B takes the same two frames, and then the laptop closes: with the leg
+  // B takes the same two frames, and then the laptop closes: with the round
   // under way rather than before it, because what this harbor holds down
   // is the clock's account of an absent captain, and an absence from
   // before the voyage began would be the departure grace's story rather
@@ -512,7 +511,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   // The long wait, and the only one this section spends: every clock
   // above was armed within a couple of seconds of the others, so the
   // window A needs covers all three. The frame read is the advance that
-  // names the leg's first seat rather than the first advance on the
+  // names the round's first seat rather than the first advance on the
   // socket, because the deal's settle is an advance as well and it is a
   // long way behind by now. The settle afterwards is for B, whose clock
   // was armed a second or two later than A's and has to be given that
@@ -565,7 +564,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
         frame.round === 1 &&
         frame.phase === "dawn",
     ),
-    "a captain who closed a laptop mid leg does not hold the harbor to their socket",
+    "a captain who closed a laptop mid round does not hold the harbor to their socket",
   );
   // And the announcement is an announcement rather than a move. The
   // server still runs no game rules: the room's row is where the last
@@ -603,7 +602,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
 
   // The empty harbor, read off the voyage it leaves behind. It is closed
   // as an emptied one when its last seat is reclaimed, which is the only
-  // record a harbor nobody is sitting in can have, and the leg its clock
+  // record a harbor nobody is sitting in can have, and the round its clock
   // ran out on is not in it: the fire found no one to move and wrote
   // nothing, so a harbor the clock had moved would be readable here as the
   // tally it never wrote.
@@ -614,9 +613,9 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   );
   check(
     (abandoned?.record?.events ?? []).every(
-      (event) => event.name !== "leg_timed_out",
+      (event) => event.name !== "round_timed_out",
     ),
-    "and no leg of it was timed out, because a harbor nobody is sitting in is not moved by its clock",
+    "and no round of it was timed out, because a harbor nobody is sitting in is not moved by its clock",
   );
 
   // Harbor A's own record, flushed the way a host flushes one: restarting
@@ -630,14 +629,14 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   );
   const timedOut = await clockRecord(clockA.roomId);
   const tally = (timedOut?.record?.events ?? []).find(
-    (event) => event.name === "leg_timed_out",
+    (event) => event.name === "round_timed_out",
   );
   check(
-    tally?.name === "leg_timed_out" &&
-      tally.leg === 1 &&
+    tally?.name === "round_timed_out" &&
+      tally.round === 1 &&
       tally.ready === 0 &&
       tally.required === 2,
-    "the leg the clock ended is on the record with the harbor it found (0 of 2 ready)",
+    "the round the clock ended is on the record with the harbor it found (0 of 2 ready)",
   );
 
   // [field report, 2026-10-03] And the yard held the fire. Y's captain has
@@ -705,7 +704,7 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
     "with the tide line said once, at the fire that ended the seat rather than at the one that was held",
   );
 
-  // And the same harbor's record, flushed the way A's was: the leg the
+  // And the same harbor's record, flushed the way A's was: the round the
   // second fire ended is on it once, for the one captain the harbor waited
   // on, because the held fire wrote no record at all.
   clockY.crew[0].socket.emit("room:restart", { roomId: clockY.roomId });
@@ -716,11 +715,11 @@ export async function harborClockSuite(run: SmokeRun): Promise<void> {
   );
   const yRecord = await clockRecord(clockY.roomId);
   const yTimedOuts = (yRecord?.record?.events ?? []).filter(
-    (event) => event.name === "leg_timed_out" && event.leg === 1,
+    (event) => event.name === "round_timed_out" && event.round === 1,
   );
-  const yTally = yTimedOuts.find((event) => event.name === "leg_timed_out");
+  const yTally = yTimedOuts.find((event) => event.name === "round_timed_out");
   check(
     yTimedOuts.length === 1 && yTally?.ready === 0 && yTally?.required === 1,
-    "and the leg the second fire ended is on the record once, for the harbor the hold kept waiting (0 of 1 ready)",
+    "and the round the second fire ended is on the record once, for the harbor the hold kept waiting (0 of 1 ready)",
   );
 }

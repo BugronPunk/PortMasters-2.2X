@@ -7,11 +7,10 @@
 // round's waters, so hiring an escort after the roll is refused and rolling
 // again after an escort cannot happen.
 //
-// [D3: Convoy: the Escort Contract] There are three ways a raid can meet a
-// captain now rather than two, and the third is the one this feature added:
-// a raider can find a hold covered by a contract sold to its owner. The
-// roll itself is untouched, since a contract does not change the odds of a
-// raid arriving, only what the raid takes when it does; the branch below is
+// There are three ways a raid can meet a captain now rather than two: a
+// raider can find a hold covered by a contract sold to its owner. The roll
+// itself is untouched, since a contract does not change the odds of a raid
+// arriving, only what the raid takes when it does; the branch below is
 // read after the roll and before the Gold moves, which is the only place
 // the two answers about one raid can be told apart.
 //
@@ -67,14 +66,14 @@ export function pirateChance(state: GameState): number {
   if (state.housePerks.goldenPirateBump) chance = Math.min(1, chance * 1.05);
   if (state.modifierFlags.pirate_risk_discount)
     chance *= 1 - state.modifierFlags.pirate_risk_discount;
-  // [F4: boons at milestone moments] Fleet Colors, the boon the shared
+  // Fleet Colors, the boon the shared
   // commission deals: raiders think twice, the risk a quarter lower for
   // the voyage. It takes the same multiplication the round's own
   // discount takes and lands right after it, ahead of the Compass's flat
   // thirty, so a captain holding both softens the odds twice.
   if (state.modifierFlags.fleet_color)
     chance *= 1 - state.modifierFlags.fleet_color;
-  // [F6: charters at leg four] The Gun Charter, the Convoy pair's first
+  // The Gun Charter, the Convoy pair's first
   // rule: sailed armed, and raiders think harder about closing. The same
   // multiplication Fleet Colors takes and the next landing after it,
   // ahead of the Compass's flat thirty, so a captain holding every
@@ -89,11 +88,38 @@ export function pirateChance(state: GameState): number {
 // on the same reasoning as pirateChance above: the panel quoted the plain
 // tier rate while the charge applied the Escort Pact, so the button offered
 // one price and took another.
+/**
+ * The Gold a raid is expected to take, chance and salvage in one number:
+ * the odds of a hit times what a hit would actually cost after the
+ * Letter of Marque's recovery. The raid screen used to multiply the
+ * purse by the chance alone, so a captain holding the marque was shown a
+ * loss the salvage clause would never hand over, and the escort advice
+ * beside it weighed a fee against a fright rather than against a cost.
+ * The recovery is floored exactly as resolvePirateAttack floors it, so
+ * the figure quoted here and the Gold the raid leaves behind are one
+ * reading of one rule.
+ */
+// The Gold a raid would actually take, after the salvage a Letter of
+// Marque returns. The one reading of the exposure: the expected loss below
+// multiplies it by the odds, and the risk screen's own tile prints it
+// rather than the purse, so the two numbers on that screen describe the
+// same raid. A tile reading the raw purse over an expected loss that had
+// already given the salvage back was the two halves of one sentence
+// disagreeing about what a raid costs.
+export function raidGoldAtRisk(state: GameState): number {
+  const salvage = state.modifierFlags.marque_salvage || 0;
+  return Math.max(0, state.money - Math.floor(state.money * salvage));
+}
+
+export function expectedRaidLoss(state: GameState): number {
+  return pirateChance(state) * raidGoldAtRisk(state);
+}
+
 export function escortCost(state: GameState): number {
   let rate = difficultyConfig(state.difficulty).escortCostRate;
   if (state.modifierFlags.escort_discount)
     rate *= 1 - state.modifierFlags.escort_discount;
-  // [F6: charters at leg four] The Standing Escort, the Convoy pair's
+  // The Standing Escort, the Convoy pair's
   // second rule: a cutter keeps station, so the hire below costs half.
   // The same multiplication the Escort Pact takes, landing after it, so
   // a captain holding both pays the product of the two.
@@ -106,7 +132,7 @@ export function resolvePirateAttack(state: GameState, logs: LedgerLine[]) {
   if (state.pirateAttackResolved) return;
   state.pirateAttackResolved = true;
   if (Math.random() < pirateChance(state)) {
-    // [D3] The contract's one moment. The cover is read after the roll and
+    // The contract's one moment. The cover is read after the roll and
     // before the Gold moves, because the roll is what decides whether there
     // is a raid at all and the cover is what decides who pays for it. A
     // covered hit leaves the captain's Gold exactly where it stands and
@@ -139,15 +165,14 @@ export function resolvePirateAttack(state: GameState, logs: LedgerLine[]) {
       return;
     }
     const lost = state.money;
-    // [F6: charters at leg four] The Letter of Marque, the plan's own
-    // design case: a warrant that pays whoever holds it, honest captain
-    // and raider alike, so taking it never reads as an accusation, and
-    // the card's text promises exactly this read. The quarter comes back
-    // here because this is the one site a raid takes gold, so "anything
-    // raiders take from you" is measured against the raid itself rather
-    // than against a table of losses nobody keeps. A hold with nothing
-    // in it salvages nothing and reads as every captain's empty hold
-    // reads, which is the honest floor of a percentage rule.
+    // The Letter of Marque, a warrant that pays whoever holds it, honest
+    // captain and raider alike, so taking it never reads as an accusation,
+    // and the card's text promises exactly this read. The quarter comes
+    // back here because this is the one site a raid takes gold, so
+    // "anything raiders take from you" is measured against the raid itself
+    // rather than against a table of losses nobody keeps. A hold with
+    // nothing in it salvages nothing and reads as every captain's empty
+    // hold reads, which is the honest floor of a percentage rule.
     const salvaged = Math.floor(
       lost * (state.modifierFlags.marque_salvage || 0),
     );

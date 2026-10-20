@@ -21,7 +21,7 @@ import { SystemNotices, type SystemNotice } from "./roster/SystemNotices";
  * gold, reputation, and whether they're still in the run. Click a row to
  * open the full detail popup (cargo, workers, log) in PlayerDetailModal.tsx.
  *
- * [MANIFEST: Partial Sight] Each non self row carries an eye button that
+ * Each non self row carries an eye button that
  * opens a small popover showing a banded cargo read of the target captain.
  * The bands come straight from bandFor in engine/partialSight: "none", "a
  * few", "some", "plenty", "a haul". The peek is gated by canSeeDetail, so
@@ -76,7 +76,7 @@ export function MembersPanel({
   // state update, so a redraw that replays the update cannot spend a
   // number twice.
   const nextNoticeId = useRef(0);
-  // [J2: the mute and the report] The captains this one has reported in
+  // The captains this one has reported in
   // this harbor, held here so the flag settles on the row it was raised
   // against. The server is the authority on the limit (one report per pair
   // per voyage, held by the table's own constraint); this is only what the
@@ -88,7 +88,7 @@ export function MembersPanel({
   // row the host" check further down.
   const viewerIsHost = me.id === hostId;
 
-  // [MANIFEST: Partial Sight] The peek button uses usePlayerDetail's
+  // The peek button uses usePlayerDetail's
   // requestDetail to ask the target's client for a snapshot, then applies
   // bandFor to each cargo count before showing it.
   //

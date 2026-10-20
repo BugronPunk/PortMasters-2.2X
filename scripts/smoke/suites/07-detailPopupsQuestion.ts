@@ -25,8 +25,7 @@ export async function detailPopupsQuestionSuite(
   },
 ): Promise<void> {
   const { guest, guestSocket, guestToken, hostId, hostSocket, roomId } = inputs;
-  // [J1: the private information review] The one place a captain asks
-  // another for a snapshot of their hold. The server used to relay the
+  // The one place a captain asks another for a snapshot of their hold. The server used to relay the
   // answer on the sender's own word for who had asked and which harbor
   // the answer was about, so any authenticated captain could push a
   // forged snapshot at any account in the tree. It now holds the

@@ -1,42 +1,16 @@
-// =====================================================================
-// Every "what does this cost" question the game asks: freight, VAT,
-// income tax, the price of a market card, the wage of an artisan, and the
-// Broker's cut on a favor.
+// Every "what does this cost" question in the game: freight, VAT, income
+// tax, market card prices, artisan wages, and the Broker's cut on a favor.
 //
-// Everything here is a pure function of state plus its arguments. Nothing
-// in this file writes to GameState, pushes a log line, or draws from the
-// RNG, which is what makes it the safest part of the engine to reason
-// about and the natural first real subsystem to stand on its own.
-//
-// The explain* functions read the same stacks their calc* counterparts
-// charge from. Every price the game quotes is an ordered list of rungs,
-// and the charge walks the list for the number while the explainer walks
-// the same list for the lines it prints, so a tooltip can only ever
-// describe the arithmetic the settlement runs.
-//
-// They used to be two copies of each sum, held together by hand, on the
-// reasoning that the balance critical math, ported verbatim from the
-// original single player build, should never have to change shape to
-// accommodate a tooltip. The copies had already drifted once, when the
-// freight mirror reached the harbor's five Gold minimum only if a
-// discount existed to trigger a branch, so the arrangement was carrying
-// the risk it was meant to avoid. One list per price keeps the ported
-// numbers exactly as they are and gives the tooltip nothing of its own
-// to be wrong about.
-//
-// The card price was the first of these to take the shape, and the header
-// would be lying if it did not say so: explainCardPrice is the real thing,
-// and getCardFinalCost reads the final step off it. The two were never
-// independent. A card's price is short enough that the breakdown *is* the
-// calculation, so splitting them would mean copying the whole body to buy
-// a separation that had already gone, and a second copy is where a drift
-// would start.
-// =====================================================================
+// Everything here is a pure function of state and arguments: nothing writes
+// to GameState, pushes a log line, or draws from the RNG. The explain*
+// readers walk the same price stacks the calc* charges walk, so a tooltip
+// cannot describe arithmetic the settlement does not run.
 import { cardByFlag, cardName, cardText, carriesTag } from "../cards";
 import { t } from "@/lib/game/i18n";
 import { WAGES } from "../constants/crew";
 import {
   COMMODITIES,
+  MARKET_GOODS,
   PRODUCT_PRICES,
   RECIPES,
   RESOURCES,
@@ -61,54 +35,35 @@ export type ExpectedPrice = {
   modifiers: string[];
 };
 
-// One owner per modifier key, which is what makes finding whichever card
-// writes a given key a reliable way to name the source of a price
-// adjustment for the breakdowns below. That used to be true because only
-// one boon's flags were ever active at a time (selecting a new one
-// replaced state.modifierFlags wholesale, see applyBoon); held boons
-// made several flags ride together, and the pool's own validator is what
-// keeps this reader honest through that: no two cards write the same key,
-// so the first match is still the only match (see the one owner per key
-// clause in ../cards).
-//
-// [F2: the card record, and the mode weighting field] The name comes off the
-// card record rather than off a second walk of the boon table, which is what
-// keeps a retune from moving the card and leaving its own breakdown lines
-// saying the old name. It reads the card's own text rather than a copy kept
-// here, so the label a captain reads on the card and the label the tooltip
-// prints for it are one string.
+// One owner per modifier key (see the one owner per key rule in ../cards),
+// so the first matching card is the only match. The name comes off the card
+// record, which keeps the card label and the tooltip label one string.
 function boonNameForModifierKey(key: string): string {
   const card = cardByFlag(key);
-  // The fallback is read where it is used, not at the module's scope: the
-  // tooltip that prints it is what decides the language, and this reader
-  // only hands the word onward.
+  // The fallback is read where it is used, since the tooltip decides the
+  // language.
   return card === null ? t("Active boon") : cardText(card).name;
 }
 
-// ========== The shape a price stack takes ==========
-// A price stack is a list of rungs, each one a rule that carries a
-// running number to the next. The charge walks the list for the number
-// it takes, the explainer walks the same list for the lines it prints,
-// and one list cannot describe one price two ways.
+// A price stack is a list of rungs, each carrying a running number to the
+// next. The charge walks the list for its number and the explainer walks the
+// same list for its lines, so one list cannot describe one price two ways.
 type StackRung = {
-  // The wording the tooltip prints for this rung. A thunk, because the
-  // charge never reads it and some of these labels cost a card lookup.
-  label: () => string;
-  // Whether the rung is in play for this state. A rung that is not in
-  // play moves nothing and prints nothing.
+  // The tooltip wording. A thunk because the charge never reads it and some
+  // labels cost a card lookup. It receives the movement this rung made, so
+  // a label can report the Gold actually lost rather than a nominal figure.
+  label: (delta: number) => string;
+  // Whether the rung applies. A rung out of play moves and prints nothing.
   inPlay: boolean;
-  // The number the stack carries out of this rung.
+  // The number carried out of this rung.
   next: (running: number) => number;
-  // The movement the tooltip reports. Left out, the movement is what
-  // this rung did to the running number, which is what every freight
-  // rung does; the VAT rungs that take from the sale price rather than
-  // from the tax say which they mean.
+  // The movement the tooltip reports. Defaults to next - running; the VAT
+  // rungs that take from the sale price rather than from the tax override it.
   delta?: (running: number, next: number) => number;
 };
 
-// The one walk both readers make over a stack. The charge asks for the
-// number; the explainer hands the walk a collector and takes the lines
-// as the rungs pass, so the two read one list rather than two.
+// The one walk both readers make. The charge asks for the number; the
+// explainer hands the walk a collector and receives the lines.
 function walkStack(
   rungs: StackRung[],
   start: number,
@@ -120,55 +75,67 @@ function walkStack(
     const next = rung.next(running);
     if (collect !== undefined) {
       const delta = rung.delta ? rung.delta(running, next) : next - running;
-      collect({ label: rung.label(), delta });
+      collect({ label: rung.label(delta), delta });
     }
     running = next;
   }
   return running;
 }
 
-// ========== Transport ==========
-// The freight formula, as one stack of rungs: the harbor's minimum
-// freight, the two discounts the hull and the round carry, the woven
-// goods cut, the charter's per lot cut, the three modules that touch
-// freight, and the luxury rule last. The order is the order the
-// arithmetic takes, and the order the tooltip prints.
-//
-// The stack was two copies until the audit found them (ECO-7 in
-// docs/STUDIO_AUDIT.md), and the copies had already drifted once: this
-// mirror used to reach the harbor's five Gold minimum only when a ship
-// level or a flat discount existed to trigger a branch, so a light run
-// of one or two lots quoted two or four Gold above its base while the
-// settlement took five, and an empty card quoted nothing at all. One
-// list cannot drift from itself.
+// The freight stack: harbor minimum, hull and round discounts, the woven
+// cut, the charter's per item cut, the three modules, and the luxury rule
+// last. The order is the arithmetic's order and the tooltip's.
 function freightStack(
   state: GameState,
   totalItems: number,
-  hasWoven: boolean,
+  wovenUnits: number,
   luxuryUnits: number,
+  wovenLuxuryUnits = 0,
 ): { base: number; rungs: StackRung[] } {
   const base = totalItems * 2;
   const shipDiscount = state.shipLevel * SHIP_DISCOUNT_PER_LEVEL;
   const flatDiscount = state.modifierFlags.transport_flat_discount ?? 0;
-  const silkDiscount = state.modifierFlags.transport_silk_discount ?? 0;
-  const perLotDiscount = state.modifierFlags.transport_per_lot_discount ?? 0;
+  const perItemDiscount = state.modifierFlags.transport_per_lot_discount ?? 0;
+  const hasWoven = wovenUnits > 0;
+  // Units carrying both classes. Silk is woven and luxury, so a rung that
+  // already halved or waived its freight must not take it again under the
+  // other tag. Counts of each class cannot say how many were the same
+  // units, so the manifest hands in the overlap.
+  const bothUnits = Math.max(
+    0,
+    Math.min(wovenLuxuryUnits, wovenUnits, luxuryUnits),
+  );
+  const wovenOnly = Math.max(0, wovenUnits - bothUnits);
+  const luxuryOnly = Math.max(0, luxuryUnits - bothUnits);
+  const plainUnits = Math.max(
+    0,
+    totalItems - wovenOnly - luxuryOnly - bothUnits,
+  );
+  // Each unit starts with an equal share of the running bill. A tag rung
+  // takes its class's share and records what is left of that class, so a
+  // later tag reads a share that already knows what the first took. Without
+  // that record, Silk waived as woven would be waived again as luxury and
+  // the second waiver would land on the cargo beside it. The share rounds
+  // up, so a tag that promises free freight does not leave one unit paying.
+  const weights = { wovenOnly, luxuryOnly, both: bothUnits, plain: plainUnits };
+  const totalWeight = (): number =>
+    weights.wovenOnly + weights.luxuryOnly + weights.both + weights.plain;
+  const shareOf = (cost: number, units: number): number => {
+    const total = totalWeight();
+    return total > 0 ? Math.ceil((cost * units) / total) : 0;
+  };
   return {
     base,
     rungs: [
-      // The harbor's minimum freight, drawn as its own rung rather than
-      // folded into the base: the base is the run's own size, and a
-      // captain reading the breakdown is asking where each Gold went.
-      // The rung is in play only while the run is under the minimum,
-      // which is the only time the floor has anything to say.
+      // The harbor's minimum is its own rung so the breakdown can show it.
+      // It is in play only while the run is under the minimum.
       {
         label: () => t("Minimum freight"),
         inPlay: base < 5,
         next: (cost) => Math.max(5, cost),
       },
-      // The hull's own discount, and then the round's flat cut. Both
-      // floor at the harbor's minimum, so a light run never dips below
-      // five however deep the discounts go, and taking them one at a time
-      // reaches the same number the old combined subtraction did.
+      // The hull's discount and the round's flat cut both floor at the
+      // harbor minimum, so a light run never dips below five.
       {
         label: () =>
           t("Ship Level {state.shipLevel} discount", {
@@ -178,10 +145,12 @@ function freightStack(
         next: (cost) => Math.max(5, cost - shipDiscount),
       },
       {
-        label: () =>
-          t("{boonName} (down {down}g)", {
+        // Print the Gold this rung took, not the flag's nominal four: at
+        // the harbor minimum the bill can lose less.
+        label: (delta) =>
+          t("{boonName} (down {down} Gold)", {
             boonName: boonNameForModifierKey("transport_flat_discount"),
-            down: flatDiscount,
+            down: Math.max(0, -delta),
           }),
         inPlay: Boolean(state.modifierFlags.transport_flat_discount),
         next: (cost) => Math.max(5, cost - flatDiscount),
@@ -193,25 +162,30 @@ function freightStack(
           }),
         inPlay:
           hasWoven && Boolean(state.modifierFlags.transport_silk_discount),
-        next: (cost) => Math.max(5, Math.floor(cost * silkDiscount)),
+        // Half of the woven lines' share, not half of the whole bill, so a
+        // single Silk line cannot halve the cargo beside it. The harbor
+        // minimum still holds.
+        next: (cost) => {
+          const share = shareOf(cost, weights.wovenOnly + weights.both);
+          const removed = Math.ceil(share / 2);
+          weights.wovenOnly /= 2;
+          weights.both /= 2;
+          return Math.max(5, cost - removed);
+        },
       },
-      // [F6: charters at leg four] The Bulk Charter, the Quartermaster
-      // pair's first rule: gold off per lot rather than off the bill.
-      // Read after the two round flags and before the modules, and
-      // floored at zero rather than at the five the base charge floors
-      // at, the same reading the modules under it take: a charter that
-      // makes a light run's freight free is doing what its text says,
-      // and the fall to zero is a power a card above Classic's ceiling
-      // is allowed to carry.
+      // The Bulk Charter takes Gold off per item rather than off the bill.
+      // Its flag key still says "per lot" from the build that named it, but
+      // the arithmetic has always been per item, so the label says item.
+      // Floored at zero rather than five, like the modules below.
       {
         label: () =>
-          t("{boonName} (down {perLot}g per lot)", {
+          t("{boonName} (down {perItem} Gold per item)", {
             boonName: boonNameForModifierKey("transport_per_lot_discount"),
-            perLot: perLotDiscount,
+            perItem: perItemDiscount,
           }),
         inPlay: Boolean(state.modifierFlags.transport_per_lot_discount),
         next: (cost) =>
-          Math.max(0, cost - Math.floor(totalItems * perLotDiscount)),
+          Math.max(0, cost - Math.floor(totalItems * perItemDiscount)),
       },
       {
         label: () =>
@@ -231,69 +205,83 @@ function freightStack(
             cardName: cardName("silk_monopoly"),
           }),
         inPlay: hasModule(state, "silk_monopoly") && hasWoven,
-        next: () => 0,
+        // The woven lines' share, not the whole bill. No harbor minimum
+        // here because the card promises the goods travel free. The weights
+        // record what earlier rungs took, so a Silk line already halved by
+        // Weaver's Winds is not waived twice.
+        next: (cost) => {
+          const share = shareOf(cost, weights.wovenOnly + weights.both);
+          weights.wovenOnly = 0;
+          weights.both = 0;
+          return Math.max(0, cost - share);
+        },
       },
-      // The Fleet of Treasures, the luxury tag's freight rule: gold off
-      // each luxury unit, taken after every module above so it
-      // discounts the freight they have already brought down, and
-      // floored at zero like them. It used to live in the settlement
-      // alone (see completeOrder), which is how the board came to quote
-      // the pre discount freight while the fill charged the discounted
-      // one. The count arrives from the caller because this stack is
-      // handed numbers, not a manifest (see fleetOfTreasuresUnits below
-      // for the count the callers use).
+      // Fleet of Treasures: the luxury tag's freight rule, taken after the
+      // modules above so it discounts freight they already brought down.
+      // The count arrives from the caller because this stack takes numbers,
+      // not a manifest (see fleetOfTreasuresUnits below).
       {
         label: () =>
           t("{cardName} module", { cardName: cardName("fleet_of_treasures") }),
-        inPlay: luxuryUnits > 0,
-        next: (cost) => Math.max(0, cost - luxuryUnits * 3),
+        // A caller may hand in the manifest's luxury count, but a hull
+        // without the module waives nothing. Production callers already
+        // count through fleetOfTreasuresUnits, which returns zero.
+        inPlay: hasModule(state, "fleet_of_treasures") && luxuryUnits > 0,
+        // The luxury lines' share, not three Gold a unit off the whole
+        // bill. Base freight is two Gold a unit, so a nominal three would
+        // zero a pure luxury run and spend the excess on other cargo. A
+        // Silk line already waived as woven carries no weight here.
+        next: (cost) => {
+          const share = shareOf(cost, weights.luxuryOnly + weights.both);
+          weights.luxuryOnly = 0;
+          weights.both = 0;
+          return Math.max(0, cost - share);
+        },
       },
     ],
   };
 }
 
-// The stack's last clamp. Every rung that can take a run below zero
-// already floors it there, so this is a guard on the arithmetic rather
-// than a rule, and it carries no line in the breakdown because no
-// captain ever sees it fire. It sits outside the rungs for that reason,
-// and both readers call it so the two cannot end a run on different
-// numbers.
+// The stack's last clamp. Every rung that can go below zero already floors
+// there, so this guards the arithmetic rather than stating a rule and
+// prints no breakdown line. Both readers call it, so they end on one number.
 function freightFloor(cost: number): number {
   return Math.max(0, cost);
 }
 
-// What a run's freight costs, as the stack above reads it. The number a
-// settlement takes and the number a board quotes are one walk of one list.
+// What a run's freight costs. The settlement and every board quote one walk.
 export function calcTransportCost(
   state: GameState,
   totalItems: number,
-  hasWoven = false,
+  wovenUnits = 0,
   luxuryUnits = 0,
+  wovenLuxuryUnits = 0,
 ): number {
   const { base, rungs } = freightStack(
     state,
     totalItems,
-    hasWoven,
+    wovenUnits,
     luxuryUnits,
+    wovenLuxuryUnits,
   );
   return freightFloor(walkStack(rungs, base));
 }
 
-// The same walk of the same stack, rendered as the lines a captain
-// reads: the base, then every rung that was in play with what it moved,
-// then the total. The breakdown is a reading of the charge rather than a
-// second arithmetic, so the two cannot come apart.
+// The same walk, rendered as lines: the base, each rung that was in play
+// with what it moved, then the total.
 export function explainTransportCost(
   state: GameState,
   totalItems: number,
-  hasWoven = false,
+  wovenUnits = 0,
   luxuryUnits = 0,
+  wovenLuxuryUnits = 0,
 ): PriceBreakdown {
   const { base, rungs } = freightStack(
     state,
     totalItems,
-    hasWoven,
+    wovenUnits,
     luxuryUnits,
+    wovenLuxuryUnits,
   );
   const steps: PriceStep[] = [];
   const final = freightFloor(
@@ -305,12 +293,9 @@ export function explainTransportCost(
 }
 
 // How many units on an order the Fleet of Treasures covers: the luxury
-// tagged lines' own counts, counted only while the module is bolted on,
-// so a call site cannot quote the discount off a hull that does not
-// carry it. The settlement, the board's freight line and the planner's
-// net all count their units through here, which is what keeps the count
-// that prices a run one count (see calcTransportCost above for the
-// arithmetic and completeOrder in ./orders for the receipt).
+// tagged lines' counts, only while the module is equipped, so no call site
+// can quote the discount off a hull that lacks it. The settlement, the
+// board's freight line and the planner all count through here.
 export function fleetOfTreasuresUnits(
   state: GameState,
   resources: readonly { type: string; required?: number }[],
@@ -321,18 +306,48 @@ export function fleetOfTreasuresUnits(
     .reduce((sum, r) => sum + (r.required ?? 0), 0);
 }
 
-// ========== Taxes ==========
-// The VAT stack, as one list of rungs: what the goods cost to make, the
-// wage of the artisan who made them, the tax on what is left of the
-// sale, and then the three round discounts and the module's halving,
-// folded into the tax one after another.
+/**
+ * How many units on a manifest carry a tag. The freight rules need the
+ * count, not a yes or no: a boolean let one Silk line halve a whole run. The
+ * count is read off the same tag vocabulary the cards speak.
+ */
+export function cargoUnitsWithTag(
+  resources: readonly { type: string; required?: number }[],
+  tag: Tag,
+): number {
+  return resources.reduce(
+    (sum, r) =>
+      carriesTag("good", r.type, tag) ? sum + (r.required ?? 0) : sum,
+    0,
+  );
+}
+
+/**
+ * How many units on a manifest carry both tags. Silk is woven and luxury,
+ * so the two waivers are promises about the same bolt and the second must
+ * not take it again from the cargo beside it.
+ */
+export function cargoUnitsWithAllTags(
+  resources: readonly { type: string; required?: number }[],
+  first: Tag,
+  second: Tag,
+): number {
+  return resources.reduce(
+    (sum, r) =>
+      carriesTag("good", r.type, first) && carriesTag("good", r.type, second)
+        ? sum + (r.required ?? 0)
+        : sum,
+    0,
+  );
+}
+
+// The VAT stack: material cost, artisan wage, tax on the margin, then the
+// round discounts and the module's halving, folded in one after another.
 //
-// The stack carries the tax. It starts at nothing, the two cost rungs
-// report what the sale spent without touching it, and the tax on the
-// margin sets it. A sale that does not clear the cost of making the
-// thing owes nothing, and the stack ends at the margin: there is no tax
-// for the discounts below to fold into, which is why they are in play
-// only once the margin has taxed something.
+// The stack carries the tax. It starts at nothing, the two cost rungs only
+// report, and the tax on the margin sets it. A sale that does not clear its
+// cost owes nothing, which is why the discounts are in play only once the
+// margin has taxed something.
 function vatStack(
   state: GameState,
   product: string,
@@ -344,11 +359,13 @@ function vatStack(
     matCost +=
       ((COMMODITIES[m].basePrice[0] + COMMODITIES[m].basePrice[1]) / 2) * a;
   }
-  const workerCost = WAGES[recipe.worker_type];
+  // The wage actually paid, not the list price: the Workshop surcharge, a
+  // hiring discount and the Golden Lotus pledge all move the real cost, and
+  // the margin must use the figure payroll charges.
+  const workerCost = getHireCost(state, recipe.worker_type);
   const taxable = sellingPrice - matCost - workerCost;
   const vatDiscount = state.modifierFlags.vat_discount ?? 0;
   const harborCredit = state.modifierFlags.harbor_credit ?? 0;
-  const voyageDues = state.modifierFlags.voyage_dues_discount ?? 0;
   return [
     {
       label: () => t("Average material cost"),
@@ -357,9 +374,8 @@ function vatStack(
       delta: () => -matCost,
     },
     {
-      // The artisan's name reads here because the tooltip prints it inside
-      // this label, the same reading the wage bill's lines take (see the
-      // singular arm in ./workers).
+      // The artisan's name is here because the tooltip prints it in this
+      // label (see the singular arm in ./workers).
       label: () =>
         t("{workerLabel} wage", {
           workerLabel: t(
@@ -393,13 +409,9 @@ function vatStack(
       next: (tax) => Math.floor(tax * (1 - vatDiscount)),
     },
     {
-      // [F4: boons at milestone moments] Harbor Credit, the boon a crossed
-      // rung deals: the dues a quarter lower, taken as the same
-      // multiplication the round's own discount takes and landing after it
-      // rather than beside it, so a captain holding both pays the product
-      // of the two. The order is a declaration rather than a rule, the way
-      // applyBoon's merge is: the two flags multiply and multiplication
-      // commutes.
+      // Harbor Credit: dues a quarter lower, multiplied in after the
+      // round's own discount, so a captain holding both pays the product of
+      // the two. Multiplication commutes, so the order is a declaration.
       label: () =>
         t("{boonName} (down {pct}%)", {
           boonName: boonNameForModifierKey("harbor_credit"),
@@ -407,20 +419,6 @@ function vatStack(
         }),
       inPlay: taxable > 0 && Boolean(state.modifierFlags.harbor_credit),
       next: (tax) => Math.floor(tax * (1 - harborCredit)),
-    },
-    {
-      // [F6: charters at leg four] The Quiet Account, the other half of the
-      // Aroma pair: the harbor dues halved, taken as the same
-      // multiplication Harbor Credit takes and landing after it rather
-      // than beside it, so a captain holding both pays the product of the
-      // two, floored at each step the way every multiplication above it is.
-      label: () =>
-        t("{boonName} (down {pct}%)", {
-          boonName: boonNameForModifierKey("voyage_dues_discount"),
-          pct: Math.round(voyageDues * 100),
-        }),
-      inPlay: taxable > 0 && Boolean(state.modifierFlags.voyage_dues_discount),
-      next: (tax) => Math.floor(tax * (1 - voyageDues)),
     },
     {
       label: () =>
@@ -433,9 +431,7 @@ function vatStack(
   ];
 }
 
-// The tax a finished good sale pays, as the stack above reads it. The
-// number a settlement takes and the number a board quotes are one walk of
-// one list.
+// The tax a finished good sale pays, as the stack above reads it.
 export function calcVAT(
   state: GameState,
   product: string,
@@ -444,10 +440,8 @@ export function calcVAT(
   return walkStack(vatStack(state, product, sellingPrice), 0);
 }
 
-// The same walk of the same stack, rendered as the lines a captain reads:
-// what the goods cost to make, the wage behind them, the tax on what is
-// left, and every discount that folded into it. The tooltip reads the
-// charge rather than repeating it, so the two cannot come apart.
+// The same walk, rendered as lines: material cost, wage, tax on the margin,
+// and every discount folded into it.
 export function explainVAT(
   state: GameState,
   product: string,
@@ -460,28 +454,19 @@ export function explainVAT(
   return { base: sellingPrice, steps, final };
 }
 
-// The rate a voyage pays until something dials it, and the only thing
-// that dials it today is the Tax Shelter boon (see tax_shelter). Named
-// because the Welcome screen quotes the same figure to a new captain,
-// and two copies of it had already been written.
+// The base income tax rate. Tax Shelter is the one boon that overrides it.
 export const INCOME_TAX_RATE = 0.1;
 
-// The tax on the margin of a finished good sale. Written out four times
-// before this existed, and the tooltip was one of them, which is the copy
-// a captain reads while deciding whether to sell.
+// The tax on the margin of a finished good sale.
 export const VAT_RATE = 0.05;
 
-// The two module factors the tax reads: the Smuggler's Hold surcharge
-// and Tax Evasion's halving. Named so the charge and the rate below fold
-// the same pair, and the pair is listed once so a retune cannot move one
-// and leave the other: a receipt that quotes a rate the charge no
-// longer takes is worse than the bare constant it replaced.
+// The two module factors the tax reads, named once so the charge and the
+// rate print fold the same pair.
 const SMUGGLERS_HOLD_TAX_FACTOR = 1.2;
 const TAX_EVASION_FACTOR = 0.5;
 
-// The factors in force for a state, in the order the charge folds them.
-// One list, read by both the charge and the rate, so the two cannot
-// disagree about which factors apply or in what order they land.
+// The factors in force, in the order the charge folds them, read by both
+// the charge and the rate.
 function incomeTaxFactors(state: GameState): number[] {
   const factors: number[] = [];
   if (hasModule(state, "smugglers_hold"))
@@ -495,177 +480,174 @@ export function calcIncomeTax(state: GameState, preTax: number): number {
   const rate = state.modifierFlags.income_tax_override || INCOME_TAX_RATE;
   let tax = Math.floor(preTax * rate);
   // The charge floors after each multiply, which is where the coins come
-  // from.
+  // from; the rate below does not floor.
   for (const factor of incomeTaxFactors(state)) tax = Math.floor(tax * factor);
   return tax;
 }
 
-// The rate as charged, for the one reader that has to print it: the
-// round's income tax receipt (see the Resolve step in ./lifecycle). The
-// same base calcIncomeTax charges from, with the same module factors
-// folded in, so the percentage the ledger prints and the Gold it takes
-// tell one story. Note this folds the factors on the rate rather than
-// reading them back out of the charge, because the charge floors after
-// each multiply and a rate written back out of two floors would be a
-// third number matching neither the base nor the coins. The receipt
-// used to read the base constant alone, so a Smuggler's Hold round
-// printed ten percent over a charge it took twelve of.
+// The rate as charged, for the income tax receipt (see the Resolve step in
+// ./lifecycle). It folds the module factors on the rate rather than reading
+// them back out of the charge, because the charge floors after each
+// multiply and a rate written back from two floors would match neither the
+// base nor the coins.
 export function incomeTaxRate(state: GameState): number {
-  let rate = state.modifierFlags.income_tax_override || INCOME_TAX_RATE;
-  // The rate does not floor, and that difference is deliberate: only the
-  // charge rounds what it takes.
+  return incomeTaxRateWithOverride(
+    state,
+    state.modifierFlags.income_tax_override,
+  );
+}
+
+// The rate a different override would charge, with the same module factors
+// folded in. The advisor compares today's rate with the card's, and both
+// sides must carry the captain's modules rather than the bare base.
+export function incomeTaxRateWithOverride(
+  state: GameState,
+  override: number | undefined,
+): number {
+  let rate = override || INCOME_TAX_RATE;
+  // Only the charge rounds what it takes; the rate does not floor.
   for (const factor of incomeTaxFactors(state)) rate *= factor;
   return rate;
 }
 
-// ========== Market card pricing ==========
-// The two per unit module discounts: the tag each one covers, and how many
-// Gold it takes off each unit. Named here because two places apply them, the
-// card charge below and the hover preview in explainExpectedPrice, and
-// keeping the tag and the amount in one place is what stops the two from
-// drifting apart again. They had: the preview applied neither, so a captain
-// holding the Kiln Cellar saw a Porcelain Clay price two Gold a unit above
-// what the card went on to charge.
+/**
+ * A rate as a printed percentage: at most one decimal, no trailing zero.
+ *
+ * The module factors make the rate fractional (a Tax Shelter under Tax
+ * Evasion is two and a half percent), so rounding to a whole number would
+ * overstate the charge. The single decimal covers every rate the pool can
+ * build and still prints a future rate sensibly.
+ */
+export function formatTaxRate(rate: number): string {
+  return Number((rate * 100).toFixed(1)).toString();
+}
+
+// The purchase reductions, as one ordered stack. The charge walks it from
+// the card's total; the hover preview walks it from each end of a good's
+// range at quantity one. The order is part of the rule: the round's
+// percentage, the charter's percentage, the three flat per unit reductions,
+// then the Smuggler's Hold's percentage, because a percentage before a flat
+// subtraction settles on a different number.
 //
-// [F2: the card record, and the mode weighting field] They read tags now
-// rather than naming goods (the Kiln Cellar its two, the Foreign Quarter
-// Pass its own two), which is the shape the epic exists to end: with a tag
-// in the line the card's copy and the card's arithmetic agree, and a good
-// added to the catalogue under one of these tags joins the discount the same
-// afternoon. One consequence is worth stating where the numbers are: the
-// Bulk Monopoly boon reads the same tag the Kiln Cellar does, and the two
-// could not overlap before, when each named goods the other did not. A
-// captain holding both now takes four Gold off a bulk unit. That is the
-// trade the card's own new text promises, and it is a pair for the
-// combination instrument F7 describes rather than a reason to keep two
-// disjoint item lists here.
+// KILN_CELLAR_TAG keeps its persisted spelling: a save carries the key and
+// the ledger reads it, so renaming it is a migration, not a copy change.
+// Here it means every market good, not the bulk tag.
 const KILN_CELLAR_TAG: Tag = "bulk";
 const KILN_CELLAR_PER_UNIT = 2;
 const FOREIGN_QUARTER_TAG: Tag = "luxury";
 const FOREIGN_QUARTER_PER_UNIT = 3;
 
-// What a market card actually costs, reported as a step by step breakdown
-// so the Market tooltip can show exactly where a price came from:
-// base cost, then whatever boon or module touched it. getCardFinalCost
-// below reads the final step, so this is the only price of a card there is
-// rather than a second opinion of one.
-export function explainCardPrice(
-  state: GameState,
-  card: ResourceCard,
-): PriceBreakdown {
-  const steps: PriceStep[] = [];
-  let cost = card.totalCost;
+type PurchaseLine = { type: string; quantity?: number };
 
-  if (state.modifierFlags.purchase_discount) {
-    const next = Math.floor(cost * (1 - state.modifierFlags.purchase_discount));
-    steps.push({
-      label: t("{boonName} (down {pct}%)", {
-        boonName: boonNameForModifierKey("purchase_discount"),
-        pct: Math.round(state.modifierFlags.purchase_discount * 100),
-      }),
-      delta: next - cost,
-    });
-    cost = next;
-  }
-  // [F6: charters at leg four] The Long Ledger, the Aroma pair's first
-  // money rule: port purchases a tenth cheaper, taken as the same
-  // multiplication the round's own discount takes and landing right
-  // after it rather than beside it, so a captain holding both pays the
-  // product of the two. This is the charge's copy of the rule; the
-  // preview mirror below folds the same read into its range.
-  if (state.modifierFlags.voyage_purchase_discount) {
-    const next = Math.floor(
-      cost * (1 - state.modifierFlags.voyage_purchase_discount),
-    );
-    steps.push({
-      label: t("{boonName} (down {pct}%)", {
-        boonName: boonNameForModifierKey("voyage_purchase_discount"),
-        pct: Math.round(state.modifierFlags.voyage_purchase_discount * 100),
-      }),
-      delta: next - cost,
-    });
-    cost = next;
-  }
-  if (state.modifierFlags.hemp_price_reduction) {
-    const hempReduction = state.modifierFlags.hemp_price_reduction;
-    // The card is the Bulk Monopoly and reads the bulk tag. The flag's own
-    // name is a persisted handle (a save carries it, and the ledger reads it
-    // by this key), so it keeps the spelling it has always had rather than
-    // moving with the card's caption: a persisted name is a migration, not a
-    // copy change (see the same note in ../paths.ts).
-    const reduction = card.resources.reduce(
-      (sum, r) =>
-        carriesTag("good", r.type, "bulk")
-          ? sum + (r.quantity ?? 0) * hempReduction
-          : sum,
-      0,
-    );
-    if (reduction > 0) {
-      steps.push({
-        label: t("{hempBoon} (down {hempReduction}g per unit)", {
-          hempBoon: boonNameForModifierKey("hemp_price_reduction"),
-          hempReduction,
+// The catalogue as a set, since the stack runs on every hover and press.
+const MARKET_GOOD_SET: ReadonlySet<string> = new Set(MARKET_GOODS);
+
+// How many units of a purchase a rung covers. A null tag means every raw
+// material and product; the two modules name their own tag. The catalogue
+// is the gate, so a new good joins the discount with its own record.
+function purchaseUnits(
+  lines: readonly PurchaseLine[],
+  tag: Tag | null,
+): number {
+  return lines.reduce((sum, line) => {
+    if (!MARKET_GOOD_SET.has(line.type)) return sum;
+    if (tag !== null && !carriesTag("good", line.type, tag)) return sum;
+    return sum + (line.quantity ?? 0);
+  }, 0);
+}
+
+function purchaseStack(
+  state: GameState,
+  lines: readonly PurchaseLine[],
+): StackRung[] {
+  const purchaseDiscount = state.modifierFlags.purchase_discount ?? 0;
+  const voyagePurchaseDiscount =
+    state.modifierFlags.voyage_purchase_discount ?? 0;
+  const goodsReduction = state.modifierFlags.hemp_price_reduction ?? 0;
+  const allUnits = purchaseUnits(lines, null);
+  const bulkUnits = purchaseUnits(lines, KILN_CELLAR_TAG);
+  const luxuryUnits = purchaseUnits(lines, FOREIGN_QUARTER_TAG);
+  return [
+    {
+      label: () =>
+        t("{boonName} (down {pct}%)", {
+          boonName: boonNameForModifierKey("purchase_discount"),
+          pct: Math.round(purchaseDiscount * 100),
         }),
-        delta: -reduction,
-      });
-      cost -= reduction;
-    }
-  }
-  if (hasModule(state, "kiln_cellar")) {
-    const reduction = card.resources.reduce(
-      (sum, r) =>
-        carriesTag("good", r.type, KILN_CELLAR_TAG)
-          ? sum + (r.quantity ?? 0) * KILN_CELLAR_PER_UNIT
-          : sum,
-      0,
-    );
-    if (reduction > 0) {
-      steps.push({
-        label: t(
-          "{kilnCellarName} module (down {KILN_CELLAR_PER_UNIT}g per unit)",
+      inPlay: purchaseDiscount > 0,
+      next: (cost) => Math.floor(cost * (1 - purchaseDiscount)),
+    },
+    // The Long Ledger: port purchases a tenth cheaper, multiplied in right
+    // after the round's discount, so a captain holding both pays the
+    // product of the two.
+    {
+      label: () =>
+        t("{boonName} (down {pct}%)", {
+          boonName: boonNameForModifierKey("voyage_purchase_discount"),
+          pct: Math.round(voyagePurchaseDiscount * 100),
+        }),
+      inPlay: voyagePurchaseDiscount > 0,
+      next: (cost) => Math.floor(cost * (1 - voyagePurchaseDiscount)),
+    },
+    // The Bulk Monopoly: two Gold off every raw material and product, per
+    // unit. It shares the flat shape with the modules below, so a good
+    // covered by several takes their sum.
+    {
+      label: () =>
+        t("{hempBoon} (down {hempReduction} Gold per unit)", {
+          hempBoon: boonNameForModifierKey("hemp_price_reduction"),
+          hempReduction: goodsReduction,
+        }),
+      inPlay: goodsReduction > 0 && allUnits > 0,
+      next: (cost) => Math.max(0, cost - allUnits * goodsReduction),
+    },
+    {
+      label: () =>
+        t(
+          "{kilnCellarName} module (down {KILN_CELLAR_PER_UNIT} Gold per unit)",
           {
             kilnCellarName: cardName("kiln_cellar"),
             KILN_CELLAR_PER_UNIT,
           },
         ),
-        delta: -reduction,
-      });
-      cost -= reduction;
-    }
-  }
-  if (hasModule(state, "foreign_quarter_pass")) {
-    const reduction = card.resources.reduce(
-      (sum, r) =>
-        carriesTag("good", r.type, FOREIGN_QUARTER_TAG)
-          ? sum + (r.quantity ?? 0) * FOREIGN_QUARTER_PER_UNIT
-          : sum,
-      0,
-    );
-    if (reduction > 0) {
-      steps.push({
-        label: t("{cardName} module (down {perUnit}g per unit)", {
+      inPlay: hasModule(state, "kiln_cellar") && bulkUnits > 0,
+      next: (cost) => Math.max(0, cost - bulkUnits * KILN_CELLAR_PER_UNIT),
+    },
+    {
+      label: () =>
+        t("{cardName} module (down {perUnit} Gold per unit)", {
           cardName: cardName("foreign_quarter_pass"),
           perUnit: FOREIGN_QUARTER_PER_UNIT,
         }),
-        delta: -reduction,
-      });
-      cost -= reduction;
-    }
-  }
-  if (hasModule(state, "smugglers_hold")) {
-    const next = Math.floor(cost * 0.85);
-    steps.push({
-      label: t("{smugglersHoldName} module (down 15%)", {
-        smugglersHoldName: cardName("smugglers_hold"),
-      }),
-      delta: next - cost,
-    });
-    cost = next;
-  }
+      inPlay: hasModule(state, "foreign_quarter_pass") && luxuryUnits > 0,
+      next: (cost) =>
+        Math.max(0, cost - luxuryUnits * FOREIGN_QUARTER_PER_UNIT),
+    },
+    {
+      label: () =>
+        t("{smugglersHoldName} module (down 15%)", {
+          smugglersHoldName: cardName("smugglers_hold"),
+        }),
+      inPlay: hasModule(state, "smugglers_hold"),
+      next: (cost) => Math.floor(cost * 0.85),
+    },
+  ];
+}
 
-  const final = Math.max(0, cost);
-  if (final !== cost)
-    steps.push({ label: t("Floor at 0 Gold"), delta: final - cost });
+// What a market card actually costs, as a step by step breakdown for the
+// Market tooltip. getCardFinalCost reads the final step off this, so there
+// is only one card price.
+export function explainCardPrice(
+  state: GameState,
+  card: ResourceCard,
+): PriceBreakdown {
+  const steps: PriceStep[] = [];
+  const final = Math.max(
+    0,
+    walkStack(purchaseStack(state, card.resources), card.totalCost, (step) => {
+      steps.push(step);
+    }),
+  );
   return { base: card.totalCost, steps, final };
 }
 
@@ -673,33 +655,62 @@ export function getCardFinalCost(state: GameState, card: ResourceCard): number {
   return explainCardPrice(state, card).final;
 }
 
-// The typical price range for any tradable good, resource or product. A
-// raw material carries its range on the COMMODITIES entry it already has
-// for its ports, a finished good keeps its own in PRODUCT_PRICES, and
-// nothing carries both, so one lookup answers for either kind.
+/**
+ * What one line of a market card settles at, per unit, after every rung of
+ * the purchase stack.
+ *
+ * The stack charges one total for the card, so a line's own `price` is the
+ * harbor's list, not what the captain pays. The allocation follows each
+ * line's share of the card's base value, because percentage rungs scale the
+ * whole card and flat rungs were already counted per unit in that base.
+ *
+ * Returns an exact fraction; screens round at the print and the standing
+ * order gate compares by cross multiplication.
+ */
+export function cardLineUnitPrice(
+  state: GameState,
+  card: ResourceCard,
+  lineIndex: number,
+): number {
+  const line = card.resources[lineIndex];
+  if (line === undefined) return 0;
+  const base = line.price ?? 0;
+  if (card.totalCost <= 0) return base;
+  return (base * getCardFinalCost(state, card)) / card.totalCost;
+}
+
+/**
+ * Whether a line's settled price is at or under a captain's written
+ * ceiling. Cross multiplied against the proportional allocation, so a
+ * fractional price is never rounded up over the ceiling.
+ */
+export function cardLineFitsCeiling(
+  state: GameState,
+  card: ResourceCard,
+  lineIndex: number,
+  ceiling: number,
+): boolean {
+  const line = card.resources[lineIndex];
+  if (line === undefined) return true;
+  const base = line.price ?? 0;
+  if (card.totalCost <= 0) return base <= ceiling;
+  return base * getCardFinalCost(state, card) <= ceiling * card.totalCost;
+}
+
+// The typical price range for a tradable good. A raw material carries its
+// range on its COMMODITIES entry, a finished good in PRODUCT_PRICES, and
+// nothing carries both, so one lookup answers for either.
 //
-// Returns undefined rather than a made up range for an item that is
-// neither. Callers that only want to annotate a price can then skip an
-// unknown good, while the ones that need a number to divide by, like the
-// deal scoring, can supply their own fallback and make that choice where
-// the division actually happens.
-//
-// Exists because five screens were each rebuilding it with the same two
-// optional chains, three of them with a hand written [0, 100] fallback
-// that only some of them wanted and none of them explained.
+// Returns undefined for an unknown item rather than inventing a range, so
+// callers that need a divisor can choose their own fallback where the
+// division happens.
 export function basePriceRange(item: string): [number, number] | undefined {
   return COMMODITIES[item]?.basePrice ?? PRODUCT_PRICES[item];
 }
 
-// Where a price sits inside its range, as a 0 to 1 fraction: 0 at the
-// floor of the range, 1 at the ceiling, and anything outside pinned to
-// the nearer end. Three screens were working this out for themselves,
-// two of them to colour a cell and one to score a deal, and each of the
-// three wrote the divide by zero guard and the clamp out by hand.
-//
-// Takes an already resolved range rather than an item name, so the
-// caller still chooses its own fallback for a good with no range at all,
-// which is the choice basePriceRange deliberately leaves open above.
+// Where a price sits inside its range, as a 0 to 1 fraction, with outside
+// values pinned to the nearer end. The range is passed in resolved, so the
+// caller still chooses the fallback for a good with no range.
 export function priceRatio(
   unitPrice: number,
   [min, max]: [number, number],
@@ -707,160 +718,62 @@ export function priceRatio(
   return Math.max(0, Math.min(1, (unitPrice - min) / (max - min || 1)));
 }
 
-// A general "what does this typically cost" estimate for a raw material
-// or product, independent of any specific market card. Used for the
-// hover preview during Market so a captain can size up the whole market,
-// including goods that didn't happen to roll onto one of this round's
-// market cards. Ports nudge a raw material's roll by 1 Gold up or down
-// depending on whether the port specializes in it (see genResourceCard),
-// which is why the range carries a margin note instead of trying to fold
-// that into the numbers themselves.
+// A typical cost estimate independent of any market card, used by the
+// Market hover preview for goods that did not roll onto a card this round.
+// Ports nudge a raw material's roll by 1 Gold when they specialize in it
+// (see genResourceCard), so the range carries a margin note instead.
 export function explainExpectedPrice(
   state: GameState,
   itemType: string,
 ): ExpectedPrice {
   const isResource = (RESOURCES as readonly string[]).includes(itemType);
-  let [min, max] = basePriceRange(itemType) ?? [0, 100];
+  const [minBase, maxBase] = basePriceRange(itemType) ?? [0, 100];
+  // One walk per end of the range at quantity one, so the preview applies
+  // the same rungs as the card charge. The first walk collects labels; the
+  // second only carries the number.
+  const rungs = purchaseStack(state, [{ type: itemType, quantity: 1 }]);
   const modifiers: string[] = [];
-
-  // The chain below is read for both kinds of item. It used to sit
-  // inside an `if (isResource)` wrapper, and that wrapper was the whole
-  // difference between this preview and the card charge: a captain
-  // holding a purchase discount while hovering a finished good was told
-  // the good carried no discount at all, and then the market card went
-  // on to charge the discounted price. Every gate inside is already the
-  // narrower question (the boon's flag, the good's tag, the module), the
-  // same gates the charge reads, so the tags decide which lines a raw
-  // good and a product share and the wrapper only ever suppressed the
-  // product's.
-  if (state.modifierFlags.purchase_discount) {
-    const factor = 1 - state.modifierFlags.purchase_discount;
-    min = Math.floor(min * factor);
-    max = Math.floor(max * factor);
-    modifiers.push(
-      t("{boonName} (down {pct}%)", {
-        boonName: boonNameForModifierKey("purchase_discount"),
-        pct: Math.round(state.modifierFlags.purchase_discount * 100),
-      }),
-    );
-  }
-  // [F6: charters at leg four] The Long Ledger, folded into the range
-  // exactly the way the round's own discount above is and in the same
-  // order the card charge takes the two (see explainCardPrice), so the
-  // preview and the charge cannot come to describe one purchase two
-  // ways.
-  if (state.modifierFlags.voyage_purchase_discount) {
-    const factor = 1 - state.modifierFlags.voyage_purchase_discount;
-    min = Math.floor(min * factor);
-    max = Math.floor(max * factor);
-    modifiers.push(
-      t("{boonName} (down {pct}%)", {
-        boonName: boonNameForModifierKey("voyage_purchase_discount"),
-        pct: Math.round(state.modifierFlags.voyage_purchase_discount * 100),
-      }),
-    );
-  }
-  if (
-    carriesTag("good", itemType, "bulk") &&
-    state.modifierFlags.hemp_price_reduction
-  ) {
-    min = Math.max(0, min - state.modifierFlags.hemp_price_reduction);
-    max = Math.max(0, max - state.modifierFlags.hemp_price_reduction);
-    modifiers.push(
-      t("{hempBoon} (down {hempReduction}g per unit)", {
-        hempBoon: boonNameForModifierKey("hemp_price_reduction"),
-        hempReduction: state.modifierFlags.hemp_price_reduction,
-      }),
-    );
-  }
-  // The two per unit module discounts. Flat Gold off a single unit, so
-  // they come off the range the same way the Bulk Monopoly boon above
-  // does rather than scaling it. Applied in the order the card charge
-  // applies them (see explainCardPrice), since a percentage taken before
-  // a flat subtraction and one taken after settle on different numbers.
-  if (
-    hasModule(state, "kiln_cellar") &&
-    carriesTag("good", itemType, KILN_CELLAR_TAG)
-  ) {
-    min = Math.max(0, min - KILN_CELLAR_PER_UNIT);
-    max = Math.max(0, max - KILN_CELLAR_PER_UNIT);
-    modifiers.push(
-      t("{kilnCellarName} module (down {KILN_CELLAR_PER_UNIT}g per unit)", {
-        kilnCellarName: cardName("kiln_cellar"),
-        KILN_CELLAR_PER_UNIT,
-      }),
-    );
-  }
-  if (
-    hasModule(state, "foreign_quarter_pass") &&
-    carriesTag("good", itemType, FOREIGN_QUARTER_TAG)
-  ) {
-    min = Math.max(0, min - FOREIGN_QUARTER_PER_UNIT);
-    max = Math.max(0, max - FOREIGN_QUARTER_PER_UNIT);
-    modifiers.push(
-      t("{cardName} module (down {perUnit}g per unit)", {
-        cardName: cardName("foreign_quarter_pass"),
-        perUnit: FOREIGN_QUARTER_PER_UNIT,
-      }),
-    );
-  }
-  if (hasModule(state, "smugglers_hold")) {
-    min = Math.floor(min * 0.85);
-    max = Math.floor(max * 0.85);
-    modifiers.push(
-      t("{smugglersHoldName} module (down 15%)", {
-        smugglersHoldName: cardName("smugglers_hold"),
-      }),
-    );
-  }
+  const min = Math.max(
+    0,
+    walkStack(rungs, minBase, (step) => {
+      modifiers.push(step.label);
+    }),
+  );
+  const max = Math.max(0, walkStack(rungs, maxBase));
 
   return { min, max, isProduct: !isResource, modifiers };
 }
 
-// ========== Wages ==========
-// The canonical per worker, per round wage for a given type, given every
-// currently active modifier. There is no separate one time "hiring fee"
-// in this game (see hireWorker, which never touches state.money);
-// the number this returns is what Resolve actually charges for that
-// worker, so every place that shows or charges a wage, this function,
-// payWages, and the Pending Payroll preview in phases/WorkerMgmt.tsx,
-// must all read from here rather than derive the formula again themselves.
-// Root cause of the Master's Apprentice bug: payWages and that preview
-// used to hardcode WAGES[type] with only the Artisan's Workshop
-// surcharge, so hire_discount silently never reduced the actual wage
-// payment even though the hiring screen's own price looked discounted.
+// What a harbor bill costs after the voyage's dues reduction. The Quiet
+// Account is the one writer of voyage_dues_discount, and both halves of the
+// Dues read this helper, so the charter cannot discount one bill and leave
+// the other. Floored after the multiply, like the other percentages here.
+export function discountedDue(state: GameState, amount: number): number {
+  const discount = state.modifierFlags.voyage_dues_discount ?? 0;
+  return discount > 0 ? Math.floor(amount * (1 - discount)) : amount;
+}
+
+// The per worker, per round wage for a type with every active modifier.
+// There is no separate hiring fee; this is what Resolve actually charges,
+// so every display and charge of a wage reads from here rather than
+// deriving the formula again.
 export function getHireCost(state: GameState, type: string): number {
   let wage = WAGES[type];
   if (state.modifierFlags.hire_discount)
     wage = Math.floor(wage * (1 - state.modifierFlags.hire_discount));
   if (hasModule(state, "artisans_workshop")) wage = Math.floor(wage * 1.2);
-  // Golden Lotus's pledge takes a fifth off every wage. Applied last, so it
-  // discounts the wage actually due rather than the list price, and read
-  // here so hiring, payroll, severance and every interface preview quote
-  // the same figure (see payWages, fireWorker, and the Pending Payroll
-  // preview in phases/WorkerMgmt.tsx).
+  // Golden Lotus's pledge takes a fifth off every wage, applied last so it
+  // discounts the wage actually due rather than the list price.
   if (state.housePerks.goldenWageDiscount) wage = Math.floor(wage * 0.8);
   return wage;
 }
 
-// ========== Broker intel ==========
-// The Gold a captain pays for one Broker's rumor in Market. Used to live
-// directly on GameState as `intelCost`, set to 5 by createInitialGameState
-// and toggled to 2 by the Broker's Network module's equip/unequip hooks in
-// ./boons.ts. Derived here now instead, so the cost can never drift out of
-// sync with whether the module is actually equipped: the field is gone from
-// the state, and the answer is read straight off hasModule, the same way
-// the rest of this file derives a price from any other module flag.
+// The Gold a captain pays for one Broker's rumor in Market, derived from
+// the equipped module rather than stored on GameState, so the price cannot
+// drift from the hull. Callers should use getIntelCost, not a state field.
 //
-// Callers (purchaseIntel in ./orders.ts and the Broker UI in GamePhasePanel)
-// should call this rather than reading state.intelCost, which no longer
-// exists. Reading it once per purchase keeps the Brokers Network module's
-// discount live the instant it is equipped, with no separate state write
-// needed to keep the field current.
-// The two prices of one rumor, named rather than left inline: the guide
-// states the first to every captain, and a second copy of either number
-// would be the one that went stale. The discounted price is read only by
-// the reader just below, so it is not exported.
+// The two prices are named because the guide quotes the first; the
+// discounted price is read only by the function below.
 export const INTEL_COST = 5;
 const INTEL_COST_WITH_NETWORK = 2;
 
@@ -870,21 +783,13 @@ export function getIntelCost(state: GameState): number {
     : INTEL_COST;
 }
 
-// ========== Broker's Favor ==========
 // The Broker's cut on a Broker's Favor order, a saturating curve rather
-// than a flat rate. Net payout climbs almost one for one with reward at
-// first (a small order keeps the feel of a low flat rate) but bends hard as
-// reward grows, approaching the cap in force without ever reaching it. That
-// gives callBrokersFavor a hard ceiling on what a single favor can pay out
-// regardless of how large a quantity a captain asks for, instead of needing
-// to cap the quantity itself. The cap is the Age's, not a fixed constant:
-// see brokersFavorPayoutCap.
+// than a flat rate. Net payout climbs almost one for one at first and bends
+// toward the Age's cap without reaching it, which caps what one favor pays
+// regardless of quantity. See brokersFavorPayoutCap.
 export function brokersFavorCommission(reward: number): number {
-  // The cap comes from the Age in force, not straight off the constant, so
-  // the Broker's Age genuinely lets one favor pay out more than usual (see
-  // brokersFavorPayoutCap). Reading it here rather than at the call sites
-  // keeps the Orders panel, the action suggester's net figure and the
-  // payout itself all quoting the same number.
+  // Read from the Age in force, so the Broker's Age lets a favor pay more,
+  // and read here so every caller quotes the same number.
   const cap = brokersFavorPayoutCap();
   const net = cap * (1 - Math.exp(-reward / cap));
   return Math.max(0, reward - Math.floor(net));

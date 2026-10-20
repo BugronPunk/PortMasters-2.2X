@@ -114,7 +114,7 @@ const HOUSE_TABLE: { [K in HouseId]: HouseEntry } = {
 // read. So the public House keeps the shape it has always had, and the
 // flags are reached through the table the voyages read.
 export const HOUSES: House[] = HOUSE_IDS.map((id) => {
-  const { perks, ...house } = HOUSE_TABLE[id];
+  const { perks: _perks, ...house } = HOUSE_TABLE[id];
   return { id, ...house };
 });
 

@@ -1,5 +1,5 @@
 // =====================================================================
-// [F2: the card record, and the mode weighting field] The pool: every boon
+// The pool: every boon
 // and every module, written as one card record each (see ./cards for the
 // shape and the vocabulary). The tags sit here beside the id and the
 // prose because a card's tags are part of what the card is, and the rest
@@ -9,7 +9,7 @@
 //   - The prose was a good's name in ten of these cards. Silk Winds named
 //     Silk, Hemp Monopoly named Hemp, the Fleet of Treasures named Foreign
 //     Balm and Pearl String. Every one of them now names the tag its effect
-//     actually reads, which is F1's rule ("effects name tags, never item
+//     actually reads, which is the rule ("effects name tags, never item
 //     keys") applied to the copy a captain reads rather than only to the
 //     engine. Three cards are renamed to match what they do, and their ids
 //     are deliberately not: an id is a handle a standing order and a saved
@@ -28,7 +28,7 @@
 //     that bend the whole ledger (Tax Evasion and the Woven Monopoly) and
 //     the one that halves two risks at once (the Deep Sea Escort Pact).
 //     Ocean Gambit runs the whole pool. Both weightings are authored here
-//     from the start, which is the plan's rollback clause: switching a mode
+//     from the start, which is the design's rollback clause: switching a mode
 //     between the tight pool and the wide one is a config change.
 //
 //   - The second language is not written here. The Mandarin for a card
@@ -92,7 +92,7 @@ export const BOONS_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Weaver's Winds",
-        desc: "Freight on woven goods is halved this round.",
+        desc: "Freight on woven goods is halved this round, down to the harbor minimum of 5 Gold.",
       },
       zh: zhCard("silk_wind"),
     },
@@ -111,7 +111,7 @@ export const BOONS_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Favorable Tides",
-        desc: "Base freight is 4 Gold cheaper this round.",
+        desc: "Base freight is 4 Gold cheaper this round, down to the harbor minimum of 5 Gold.",
       },
       zh: zhCard("favorable_tides"),
     },
@@ -135,7 +135,7 @@ export const BOONS_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Merchant's Charm",
-        desc: "Port purchases cost 15% less this round.",
+        desc: "Purchases at the market cost 15% less this round.",
       },
       zh: zhCard("merchant_charm"),
     },
@@ -159,7 +159,7 @@ export const BOONS_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Artisan's Inspiration",
-        desc: "Every worker produces 1 extra item this round.",
+        desc: "Every artisan produces 1 extra item this round.",
       },
       zh: zhCard("artisan_inspiration"),
     },
@@ -195,7 +195,7 @@ export const BOONS_TIER0: CardRecord[] = [
     effect: { kind: "flags", flags: { income_tax_override: 0.05 } },
     modes: BOTH_MODES,
     strings: {
-      en: { name: "Tax Shelter", desc: "Income tax is 5% this round." },
+      en: { name: "Tax Shelter", desc: "Income tax is halved this round." },
       zh: zhCard("tax_shelter"),
     },
   },
@@ -218,7 +218,7 @@ export const BOONS_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Bulk Monopoly",
-        desc: "Bulk goods cost 2 Gold less per unit this round.",
+        desc: "All raw materials and products cost 2 Gold less per unit this round.",
       },
       zh: zhCard("hemp_monopoly"),
     },
@@ -237,7 +237,7 @@ export const BOONS_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Master's Apprentice",
-        desc: "Hiring costs half this round.",
+        desc: "Wages are halved this round.",
       },
       zh: zhCard("master_apprentice"),
     },
@@ -391,8 +391,8 @@ export const BOONS_TIER2: CardRecord[] = [
   },
 ];
 
-// [F4: boons at milestone moments] The launch pool: one boon per moment,
-// five cards, exactly the small set the plan's iteration note asks for
+// The launch pool: one boon per moment,
+// five cards, exactly the small set the design's iteration note asks for
 // ("The pool should stay small at launch, and the first widening should
 // target the paths with the lowest pick rate"), which is why each card
 // carries a path lean from the first wave rather than none.
@@ -409,6 +409,15 @@ export const BOONS_TIER2: CardRecord[] = [
 // conditioning: the crew loss card is worth the same to a rich captain
 // and a broke one, and what decides which of these a captain sees is
 // which moment arrived and which of the five they already hold.
+//
+// Every card is Gambit only, and the mode weights say so rather than the
+// granting code alone. The five moments are systems of the Gambit release:
+// the switch that arms them reads gambitSystems, which Classic carries
+// false, so a card declaring a Classic weight could never be dealt there.
+// The weight was BOTH_MODES once, and the declaration was the only place
+// the unreachability was not written down. The validator now refuses a
+// milestone boon with a Classic weight for the same reason.
+
 //
 // Each card writes a key of its own. The five keys are new here (see
 // MODIFIER_KEYS in ../types), and no round drafted card writes any of
@@ -427,11 +436,11 @@ export const MILESTONE_BOONS: CardRecord[] = [
     trigger: "crew_loss",
     condition: { kind: "always", weight: 1 },
     effect: { kind: "flags", flags: { steady_rations: 1 } },
-    modes: BOTH_MODES,
+    modes: GAMBIT_ONLY,
     strings: {
       en: {
         name: "Steady Watch",
-        desc: "The crew eats one fewer than their number each leg (never fewer than one), for the voyage.",
+        desc: "The crew eats one fewer than their number each round (never fewer than one), for the voyage.",
       },
       zh: zhCard("steady_watch"),
     },
@@ -443,10 +452,10 @@ export const MILESTONE_BOONS: CardRecord[] = [
     icon: "🧣",
     tags: ["cold"],
     pathWeight: { convoy: 2 },
-    trigger: "cold_leg",
+    trigger: "cold_round",
     condition: { kind: "always", weight: 1 },
     effect: { kind: "flags", flags: { cold_hardened: 1 } },
-    modes: BOTH_MODES,
+    modes: GAMBIT_ONLY,
     strings: {
       en: {
         name: "Cold Hardened",
@@ -461,11 +470,16 @@ export const MILESTONE_BOONS: CardRecord[] = [
     power: 3,
     icon: "🗺️",
     tags: ["public"],
-    pathWeight: { quartermaster: 1.5, aroma: 1.5 },
+    // The two paths whose order pools reach the manifest: the Loom's
+    // garments and the Aroma's commodities. The Quartermaster's provisions
+    // are pantry goods and never become board orders, so a lean there
+    // would favor a seat the card can never pay (see pathDealsBoardOrders
+    // and milestoneChoices).
+    pathWeight: { loom: 1.5, aroma: 1.5 },
     trigger: "pathbound_order",
     condition: { kind: "always", weight: 1 },
     effect: { kind: "flags", flags: { route_mastery: 0.25 } },
-    modes: BOTH_MODES,
+    modes: GAMBIT_ONLY,
     strings: {
       en: {
         name: "Route Mastery",
@@ -484,7 +498,7 @@ export const MILESTONE_BOONS: CardRecord[] = [
     trigger: "renown_rung",
     condition: { kind: "always", weight: 1 },
     effect: { kind: "flags", flags: { harbor_credit: 0.25 } },
-    modes: BOTH_MODES,
+    modes: GAMBIT_ONLY,
     strings: {
       en: {
         name: "Harbor Credit",
@@ -503,7 +517,7 @@ export const MILESTONE_BOONS: CardRecord[] = [
     trigger: "mandate",
     condition: { kind: "always", weight: 1 },
     effect: { kind: "flags", flags: { fleet_color: 0.25 } },
-    modes: BOTH_MODES,
+    modes: GAMBIT_ONLY,
     strings: {
       en: {
         name: "Fleet Colors",
@@ -528,7 +542,7 @@ export const BOONS: CardRecord[] = [
 export const BOON_SWAP_COST = 10;
 
 // How many cards a draft puts in front of a captain. One number for both
-// drafts and for the plan's own phrase about them ("the three presented
+// drafts and for the design's own phrase about them ("the three presented
 // cards are drawn from a weighted pool rather than a filtered one"), because
 // two numbers here would let the boon draft and the shipyard drift into
 // presenting different sized hands with nothing to say that was intended.
@@ -549,7 +563,7 @@ export const MODULES_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Smuggler's Hold",
-        desc: "Purchases cost 15% less. Income tax is 20% higher.",
+        desc: "Purchases at the market cost 15% less. Income tax is 20% higher.",
       },
       zh: zhCard("smugglers_hold"),
     },
@@ -568,7 +582,7 @@ export const MODULES_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Bulk Hauler Rigging",
-        desc: "Freight is 1 Gold less per item. Ship upgrades cost 15 Gold more.",
+        desc: "Freight is 1 Gold less per item. Hull upgrades cost 15 Gold more.",
       },
       zh: zhCard("bulk_hauler"),
     },
@@ -587,7 +601,7 @@ export const MODULES_TIER0: CardRecord[] = [
     strings: {
       en: {
         name: "Artisan's Workshop",
-        desc: "Workers produce 1 extra item. Wages are 20% higher.",
+        desc: "Artisans produce 1 extra item. Wages are 20% higher.",
       },
       zh: zhCard("artisans_workshop"),
     },
@@ -807,7 +821,7 @@ export const MODULES_TIER2: CardRecord[] = [
     strings: {
       en: {
         name: "Fleet of Treasures",
-        desc: "Freight on luxury orders is 3 Gold less per unit.",
+        desc: "Luxury freight is free.",
       },
       zh: zhCard("fleet_of_treasures"),
     },

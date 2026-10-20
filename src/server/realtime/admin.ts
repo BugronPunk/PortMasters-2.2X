@@ -480,7 +480,7 @@ async function purgeResolved(
   // a harbor that no longer exists.
   const hosted = await hostedRoomIds(target.id);
   const socketIds = detachUser(io, target.id);
-  // [I1: the telemetry spine] The records of the harbors this account
+  // The records of the harbors this account
   // hosted go with them, and this is the one place that has to say so by
   // hand. Every other row hanging off a harbor cascades with it; a telemetry
   // record deliberately does not (see VoyageTelemetry in
@@ -490,7 +490,7 @@ async function purgeResolved(
   if (hosted.length) {
     await db.voyageTelemetry.deleteMany({ where: { roomId: { in: hosted } } });
   }
-  // [J2: the mute and the report] The reports this account was named in go
+  // The reports this account was named in go
   // with it, on either side. The rule is the one the telemetry block above
   // states: the operator is erasing an account, and a row that names it is
   // part of the account. A report names two captains rather than one, so
@@ -536,7 +536,7 @@ async function purgeResolved(
     });
   }
 
-  // [I1: the telemetry spine] The rest of the records that name this
+  // The rest of the records that name this
   // account: the delete above covers the harbors it hosted, but a record
   // in any other harbor it sailed in is harbor keyed, not user keyed, and
   // would otherwise survive the purge while naming somebody who no longer

@@ -28,8 +28,7 @@ export async function theCaptainsExchangeInItsOwnPhaseSuite(inputs: {
     where: { userId: guest.id },
     data: { renownLevel: 1, renownXP: 0 },
   });
-  // [J2: the mute and the report] A mute belongs to the table it was set
-  // at, so setting sail lifts it. The host silences the guest here, with
+  // A mute belongs to the table it was set at, so setting sail lifts it. The host silences the guest here, with
   // the harbor still in the lobby, and the frame the departure sends is
   // what says the silence did not come along. The guest rather than the
   // third captain, who has just given up their seat: a mute can only be

@@ -18,7 +18,7 @@ import {
  * fitted module is offered, and the captain may also step back to the
  * picker without spending the choice.
  *
- * [F7: the power budget] Each row reads its own slot's arithmetic: the
+ * Each row reads its own slot's arithmetic: the
  * new module landing where that one sat, so replacing a heavy module can
  * be allowed while replacing a light one is not, and the disabled rows
  * say why before the click (the engine refuses the same picks as the

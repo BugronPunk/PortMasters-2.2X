@@ -14,7 +14,7 @@
 // nothing to give away. What the phrase buys is a moment, not a fence.
 //
 // The phrase is therefore not a secret in the way a password is, and the
-// plan says so: it is seeded in the world, a voyage log hands it to the
+// design says so: it is seeded in the world, a voyage log hands it to the
 // captain who earned it and the manual prints it for whoever goes
 // looking. It is read here, beside the mode it opens, so the route that
 // opens the door and the manual that prints the string are reading one
@@ -48,7 +48,7 @@ interface UnlockConfig {
   phrase: string;
   // The line the manual prints, phrase and all. Written here rather than
   // in the manual for the reason above: the guide a captain can open and
-  // the string the plan is distributed through are the same sentence, so
+  // the string the design is distributed through are the same sentence, so
   // no reader can be handed a stale copy of it.
   manual: string;
 }
@@ -74,7 +74,7 @@ export const UNLOCK_ORDER: readonly UnlockId[] = ["second_ledger"];
 // The completed voyage whose log hands the phrase over, counted per
 // captain.
 //
-// Ten is the count the plan names, and it is also the count the account
+// Ten is the count the design names, and it is also the count the account
 // already marks for itself (CENTURY_CLUB_VOYAGES in ./game/merits.ts banks
 // on the same voyage), so the rumor rides a moment a captain is already
 // celebrating rather than asking for a ceremony of its own. The two

@@ -95,9 +95,9 @@ export function VoteCard({
   /** The note under the count. */
   footnote: ReactNode;
 }) {
-  // The leg is carried with the pick rather than reset by an effect: a
-  // target chosen in a leg the vote fell short in is not a target this
-  // leg's card keeps one press away, and a reading that cannot represent
+  // The round is carried with the pick rather than reset by an effect: a
+  // target chosen in a round the vote fell short in is not a target this
+  // round's card keeps one press away, and a reading that cannot represent
   // a stale choice beats one cleared a frame after it showed.
   const [pick, setPick] = useState({ round: -1, target: "" });
   const target = pick.round === game.currentRound ? pick.target : "";

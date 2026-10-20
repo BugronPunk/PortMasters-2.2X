@@ -312,8 +312,8 @@ export async function fleetCommissionSuite(
     "and loads back with the tally and the trace it was given",
   );
 
-  // [J1: the private information review] The save path's one bound,
-  // which exists because a save is read by the harbor rather than only
+  // The save path's one bound, which exists because a save is read by the
+  // harbor rather than only
   // by the captain who wrote it: the conclusion parses every blob at the
   // table and the Manifest Audit samples one of them, so an enormous
   // save is paid for by six captains, on the code path that has to
@@ -1128,8 +1128,8 @@ export async function fleetCommissionSuite(
   // ========== What a concluded voyage leaves behind ==========
   // The measurement half of the mode, and the one thing here no other
   // part of this file reaches: a voyage that ends writes the commission
-  // onto its Chronicle rows, and a slice about telemetry that never
-  // exercises the write would be claiming something it never checked.
+  // onto its Chronicle rows, and a telemetry check that never exercises
+  // the write would be claiming something it never checked.
   //
   // One captain ends holding a trace that met the commission and the
   // others end holding nothing. The fill is a fact about the fleet, so
@@ -1229,7 +1229,7 @@ export async function fleetCommissionSuite(
       roomId: gambitRoomId,
       round: 5,
       phase: "endgame",
-      phaseLabel: "Voyage Complete",
+      phaseLabel: "Voyage Ended",
       gold: 40,
       reputation: 30,
       shipLevel: 2,
@@ -1279,7 +1279,7 @@ export async function fleetCommissionSuite(
   const hostChronicle = chronicles.find((row) => row.userId === gambitHost.id);
   check(
     JSON.parse(hostChronicle?.objectiveTrace ?? "[]").length === 1,
-    "and carries the per leg trace rather than dropping it",
+    "and carries the per round trace rather than dropping it",
   );
   check(
     hostChronicle?.objectiveMet === true &&

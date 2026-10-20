@@ -19,8 +19,8 @@
 // (using buildChronicle from chronicle.ts) and CaptainRival rows
 // for every pair of finishers (using recordRivalOutcomes from rival.ts).
 //
-// [H8: the reveal and the replay ledger] And flips the cards: the whole
-// hand, every verdict and the fleet's commission leg by leg go out as one
+// And flips the cards: the whole
+// hand, every verdict and the fleet's commission round by round go out as one
 // voyage:reveal frame after the standings, in the one mode where a hand
 // was dealt (see ./reveal.ts).
 // =====================================================================
@@ -79,7 +79,7 @@ export async function maybeConcludeVoyage(
 
   // The watch on the last announcement of this voyage, stood down. The
   // promise it guards is that a report naming a later seat will move the
-  // harbor's checkpoint, and the leg a voyage ends on keeps that promise in
+  // harbor's checkpoint, and the round a voyage ends on keeps that promise in
   // the other currency: every captain who finished is standing on a phase
   // no lap contains, which has no rank and so can never move anything. Left
   // armed, it would fire a quarter minute after the crown was handed out

@@ -31,7 +31,7 @@ export type PhaseReadyFrame = {
   // during a rolling restart, and a frame that carries no mode says
   // nothing about the lap rather than saying the lap is the founding mode.
   mode?: GameMode;
-  // [B2: hard timers, the server as timekeeper] The harbor's clock as the
+  // The harbor's clock as the
   // server publishes it: the epoch millisecond this seat runs out, and the
   // number of seconds the seat was given. Both are null on a seat with no
   // clock of its own, which is the pier, a harbor that has not set sail,
@@ -45,7 +45,7 @@ export type PhaseReadyFrame = {
 
 // The advance that opens a new seat, carrying the market's three hands.
 //
-// [D5: Aroma: the Bazaar Rumor] All three are present only on the advance
+// All three are present only on the advance
 // that opens a port market, because that is the only seat any of them is
 // about: the harbor's pulse (computed from last round's harbor wide purchase
 // tally), the Harbormaster's shift, and the bazaar's lean. Each lands on

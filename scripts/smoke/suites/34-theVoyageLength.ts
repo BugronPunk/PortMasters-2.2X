@@ -1,10 +1,10 @@
 // PortMasters 2.2 Parallel Release, smoke run: The voyage's length, and
 // the table that sails it.
 //
-// Goal I5, which the launch gate beside it asked for: a mode that runs a
-// different voyage pins its own number on its own record, and a four
-// captain harbor has to sail the whole of it and be paid into the
-// chronicle as a four seat voyage.
+// The launch gate beside it asked for a mode that runs a different voyage:
+// it pins its own number on its own record, and a four captain harbor has
+// to sail the whole of it and be paid into the chronicle as a four seat
+// voyage.
 //
 // The article carries the checks that decide the length and the article
 // that drives the table, because the two are the same claim read from
@@ -38,7 +38,7 @@ export async function theVoyageLengthSuite(
         voyageEpoch: number;
         sampleRate: number;
         outcome: string;
-        leg: number;
+        round: number;
         record: string;
       };
       record: TelemetryRecord | null;
@@ -47,34 +47,33 @@ export async function theVoyageLengthSuite(
 ): Promise<void> {
   const { telSail, telStand, telWaitForOne } = inputs;
   // ========== The voyage's length, and the table that sails it ==========
-  // [I5: session length, and table size] The plan makes the mode's length
-  // a configuration restriction rather than a system of its own: the
-  // ladder stays the founding mode's, and a mode that runs a different
-  // voyage pins its own number on its own record. What is checked here is
+  // The mode's length is a configuration restriction rather than a system
+  // of its own: the ladder stays the founding mode's, and a mode that runs
+  // a different voyage pins its own number on its own record. What is checked here is
   // that the pin is read through the one selector, that the state a
   // captain is handed carries it, that the copy a captain reads quotes
   // the voyage rather than the tier, and that a four captain harbor sails
-  // the twelve legs to the end and is paid into the chronicle as a four
+  // the twelve rounds to the end and is paid into the chronicle as a four
   // seat voyage. Four is also the smallest table the mode deals a
-  // hidden card into, so the last fixture is the plan's "four has to be
-  // genuinely good rather than a degraded mode" read end to end.
+  // hidden card into, so the last fixture checks that four seats have to
+  // be genuinely good rather than a degraded mode, end to end.
   check(
     (["fair_winds", "open_waters", "monsoon"] as const)
       .map((tier) => voyageRoundsFor("classic", tier))
       .join(",") === "8,12,16",
-    "the founding mode keeps the tier's ladder, eight legs at Fair Winds and sixteen at Monsoon, so nothing about the base game's length moved",
+    "the founding mode keeps the tier's ladder, eight rounds at Fair Winds and sixteen at Monsoon, so nothing about the base game's length moved",
   );
   check(
     (["fair_winds", "open_waters", "monsoon"] as const).every(
       (tier) => voyageRoundsFor("ocean_gambit", tier) === 12,
     ) &&
-      MODES.ocean_gambit.voyageLegs === 12 &&
-      MODES.classic.voyageLegs === null,
-    "and a Gambit voyage runs twelve legs on every tier, pinned on the mode's own record rather than copied out of the tier beside it",
+      MODES.ocean_gambit.voyageRounds === 12 &&
+      MODES.classic.voyageRounds === null,
+    "and a Gambit voyage runs twelve rounds on every tier, pinned on the mode's own record rather than copied out of the tier beside it",
   );
   check(
     voyageRoundsFor("nonsense", "nonsense") === 8,
-    "while a mode and a tier nobody recognises read as the founding voyage's eight legs, the same fallback every other reader of a mode or a tier makes",
+    "while a mode and a tier nobody recognises read as the founding voyage's eight rounds, the same fallback every other reader of a mode or a tier makes",
   );
 
   // The state the captain is handed. This is the number the lap, the
@@ -87,12 +86,12 @@ export async function theVoyageLengthSuite(
         12 &&
       voyageState({ mode: "classic", difficulty: "fair_winds" }).maxRounds ===
         8,
-    "a Gambit voyage is handed twelve legs whatever tier it is charted at, while the founding voyage still sails its tier's own ladder",
+    "a Gambit voyage is handed twelve rounds whatever tier it is charted at, while the founding voyage still sails its tier's own ladder",
   );
 
   // The copy a captain reads. All three of these quoted the tier before
   // this feature, which was the same number as the voyage until a mode
-  // could pin one, and the loan line's round is the voyage's last leg.
+  // could pin one, and the loan line's round is the voyage's last round.
   // The wording is the record's, and it counts rounds: a voyage is the
   // whole run, so the guide's objective line is what states its length.
   check(
@@ -110,12 +109,12 @@ export async function theVoyageLengthSuite(
     "the guide, the advice and the tutorial quote the voyage's own length, so a twelve round table is never briefed on the eight round voyage its tier would have run",
   );
 
-  // A four captain harbor, sailed to its end. The crew walks the legs the
+  // A four captain harbor, sailed to its end. The crew walks the rounds the
   // way every harbor walks them, one checkpoint move at a time, and then
   // reports the endgame the way a finished voyage does: currentRound one
-  // past the last leg, which is the number the engine's own endgame check
+  // past the last round, which is the number the engine's own endgame check
   // crosses. The endgame is a personal phase and never becomes a harbor
-  // checkpoint, so the leg the record carries is the twelfth.
+  // checkpoint, so the round the record carries is the twelfth.
   const sizeHome = await signUp("size_a");
   const sizeMate = await signUp("size_b");
   const sizeThird = await signUp("size_c");
@@ -134,15 +133,15 @@ export async function theVoyageLengthSuite(
     (payload) => payload?.roomId === sizeRoomId,
     10000,
   );
-  for (let leg = 1; leg <= 12; leg++) {
-    await telStand(sizeRoom.crewSockets[0], sizeRoomId, leg, "parley");
+  for (let round = 1; round <= 12; round++) {
+    await telStand(sizeRoom.crewSockets[0], sizeRoomId, round, "parley");
   }
   for (const socket of sizeRoom.crewSockets) {
     socket.emit("game:status", {
       roomId: sizeRoomId,
       round: 13,
       phase: "endgame",
-      phaseLabel: "Voyage Complete",
+      phaseLabel: "Voyage Ended",
       gold: 150,
       reputation: 30,
       shipLevel: 1,
@@ -159,9 +158,9 @@ export async function theVoyageLengthSuite(
     sizeRow?.row.outcome === "concluded" &&
       sizeRecord?.mode === "ocean_gambit" &&
       sizeRecord?.seats === 4 &&
-      sizeRecord?.endedAtLeg === 12 &&
+      sizeRecord?.endedAtRound === 12 &&
       sizeRecord?.captains.length === 4,
-    "four captains sail a Gambit voyage its twelve legs to the reveal, and the record it leaves carries the four seats it was sailed with and the twelfth leg as the one it ended on",
+    "four captains sail a Gambit voyage its twelve rounds to the reveal, and the record it leaves carries the four seats it was sailed with and the twelfth round as the one it ended on",
   );
   const sizeChronicle = await db.voyageChronicle.findMany({
     where: { roomId: sizeRoomId },
@@ -173,6 +172,6 @@ export async function theVoyageLengthSuite(
         (row) =>
           row.rounds === 12 && row.seats === 4 && row.mode === "ocean_gambit",
       ),
-    "and every chronicle row the voyage writes names the twelve legs and the four seats together, which is the pair a later reader groups the four seat band by",
+    "and every chronicle row the voyage writes names the twelve rounds and the four seats together, which is the pair a later reader groups the four seat band by",
   );
 }

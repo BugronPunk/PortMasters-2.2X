@@ -48,8 +48,8 @@ export function wireChat(io: Server, socket: Socket): void {
     }
     const message = buildSessionMessage(content, s.user);
     recordHarborMessage(roomId, message);
-    // [I1: the telemetry spine] One message in the harbor's own chat,
-    // which is what the plan counts for messages per captain per leg.
+    // One message in the harbor's own chat,
+    // which is what the design counts for messages per captain per round.
     // The lobby square and the direct threads are not voyage talk and
     // are deliberately not counted; see the note on the event itself.
     noteTelemetry(roomId, "message_sent", { actor: s.userId });
@@ -161,7 +161,7 @@ export function wireChat(io: Server, socket: Socket): void {
         return;
       }
       if (targetUserId === room.hostId) return;
-      // [J2: the mute and the report] The target has to be a captain
+      // The target has to be a captain
       // actually standing in this harbor. Without this the host could
       // name any account in the tree and silence it in a harbor it is not
       // in, which is a mute that does nothing visible to the captain it
@@ -177,7 +177,7 @@ export function wireChat(io: Server, socket: Socket): void {
         return;
       }
       muteUser(roomId, targetUserId);
-      // [J2] The record of the act, written where the mute is applied and
+      // The record of the act, written where the mute is applied and
       // before the harbor is handed the new list, so the record and the
       // harbor cannot disagree about whether it happened.
       noteTelemetry(roomId, "mute_set", {
@@ -203,7 +203,7 @@ export function wireChat(io: Server, socket: Socket): void {
       });
       if (!room || room.hostId !== s.userId) return;
       if (!unmuteUser(roomId, targetUserId)) return;
-      // [J2] The other half of the pair, and the reason both halves are
+      // The other half of the pair, and the reason both halves are
       // recorded: a reader asking whether a muted captain was still
       // silenced when the voyage ended reads the last of these two for
       // them, which the sticky mark on their line cannot answer.
@@ -215,14 +215,14 @@ export function wireChat(io: Server, socket: Socket): void {
     },
   );
 
-  // [J2: the mute and the report] A captain's report of another, filed
+  // A captain's report of another, filed
   // from the harbor roster and answered to the captain who filed it.
   //
   // It sits beside the mute because it is the same surface with a longer
   // reach: the mute is the host's own remedy for a harbor they are
   // running, and this is any captain's remedy for a harbor they are only
   // sitting in, which is what a mode that seats strangers needs. What it
-  // leaves behind is a row rather than a state: the plan puts a
+  // leaves behind is a row rather than a state: the design puts a
   // moderation console after this feature, so the reading half of this
   // arrives later, and until it does the record is the whole of it.
   //
@@ -300,7 +300,7 @@ export function wireChat(io: Server, socket: Socket): void {
         });
         return;
       }
-      // [J2] Recorded after the row is written rather than before, which
+      // Recorded after the row is written rather than before, which
       // is the other way round from the mute: the mute is a state the
       // record annotates, and this is a row the record accounts for, so
       // an event for a report that failed to store would be the record

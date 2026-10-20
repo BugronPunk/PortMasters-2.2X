@@ -1,5 +1,5 @@
 // =====================================================================
-// [F6: charters at leg four] The one write the charter moment needs:
+// The one write the charter moment needs:
 // answering it.
 //
 // The pure half is ../charters (what is due, what the moment offers) and
@@ -10,7 +10,7 @@
 //
 //   - The guards come first, and both of them are refusals rather than
 //     quietly doing nothing: the moment must be pending (the switch on, a path
-//     held, the leg reached, no answer given) and the card has to be one
+//     held, the round reached, no answer given) and the card has to be one
 //     of the three the moment is dealing, so a stale click or a hand
 //     made frame is refused rather than trusted. Idempotence falls out
 //     of the first guard rather than being written beside it: the moment
@@ -24,10 +24,10 @@
 //     the books through one spread, and the one owner per key clause the
 //     pool validator holds is what lets either side go first.
 //
-//   - The tally is the deviation from F4 worth writing down. A
-//     milestone's table is counted where it is armed, because arming
-//     happens once and the screen renders again; a charter's trio is
-//     derived rather than armed, so there is no arm moment to count at,
+//   - The tally is the deviation from the milestone design worth writing
+//     down: a milestone's table is counted where it is armed, because
+//     arming happens once and the screen renders again; a charter's trio
+//     is derived rather than armed, so there is no arm moment to count at,
 //     and the three offers are counted here, at the answer. What the
 //     counter therefore reads is answered trios rather than trios
 //     shown, which is the same reading under the moment's own terms
@@ -43,8 +43,8 @@
 //     reader has to date to tell apart.
 //
 // Nothing here reads a clock or a socket, and no wire frame is written:
-// the take reaches the record through the leg report's claim and the
-// server's own attribution (see the charter field on LegReport), which is
+// the take reaches the record through the round report's claim and the
+// server's own attribution (see the charter field on RoundReport), which is
 // the half this writer cannot do because it runs on the captain's own
 // machine.
 // =====================================================================

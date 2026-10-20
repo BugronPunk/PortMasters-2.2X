@@ -29,8 +29,8 @@ import { carriesADash, check, GAMBIT, ledgerSentences } from "../harness";
 import type { LedgerLine } from "@/lib/game/ledger";
 
 export async function standingOrdersSuite(): Promise<void> {
-  // [B3: standing orders] The evaluation for this slice, and the one the
-  // plan asks to be testable with no server: what the harbor's clock plays
+  // Standing orders, and the rule that has to be testable with no server:
+  // what the harbor's clock plays
   // for a captain who is not standing at their seat is a pure engine
   // function taking a state and a record. Every check below drives it
   // through the entry point the clock itself uses, autoCommit, so what is
@@ -166,7 +166,7 @@ export async function standingOrdersSuite(): Promise<void> {
       everyGood.buy.every((line) => line.maxPrice === 1),
     `and one line per good is the whole of what a list can say, however long the list it was read from was (${goods.length} goods)`,
   );
-  // [D4: Loom: the Refit] The line the board can never answer. Rags is
+  // The line the board can never answer. Rags is
   // cargo the Loom's bench buys off the quay rather than a good the port
   // merchant trades, so an instruction naming one would be a line the
   // merchant could never fill, and the reader drops it the same way it
@@ -185,8 +185,8 @@ export async function standingOrdersSuite(): Promise<void> {
       MAX_STANDING_BUYS < ITEMS.length,
     "a shopping list cannot name a rag, because a standing order buys a card and the merchant's cards are dealt from the goods the merchant trades, so the hold's catalogue and the board's are two lists rather than one",
   );
-  // A set the captain wrote and then switched off is the rollback the
-  // plan asks for, and it is measured against this one record below.
+  // A set the captain wrote and then switched off is the rollback, and it
+  // is measured against this one record below.
   const ordersWritten: StandingOrders = {
     ...quiet,
     boon: BOONS[0].id,
@@ -214,7 +214,7 @@ export async function standingOrdersSuite(): Promise<void> {
   );
 
   // Dawn, the one seat whose work is a choice rather than a press. The
-  // draft is the one board in the leg drawn with live randomness rather
+  // draft is the one board in the round drawn with live randomness rather
   // than from the captain's seed, so every fixture below reads the hand
   // the state under test was actually dealt rather than a hand taken
   // from some other state and hoped for.
@@ -274,7 +274,7 @@ export async function standingOrdersSuite(): Promise<void> {
   check(
     took(rollbackDawnLogs, cardText(rollbackFirst).name) &&
       !took(rollbackDawnLogs, cardText(rollbackPick).name),
-    "and with the switch off the same written boon is passed over too, which is the rollback the plan asks for",
+    "and with the switch off the same written boon is passed over too, which is the rollback the design asks for",
   );
 
   // Market. The purse is deep enough that affordability is not what is
@@ -314,8 +314,8 @@ export async function standingOrdersSuite(): Promise<void> {
       took(wholeLogs, "Standing orders at the port board"),
     `orders pricing every good at the top the board itself asks buy the whole board and pay for it out of the captain's purse (${wholeBoard.length} lots)`,
   );
-  // [C4: three foods, spoilage and the split hold] The same order on the
-  // ship every captain actually starts in, with the tree's own opening
+  // The same order on the ship every captain actually starts in, with the
+  // tree's own opening
   // stock in the hold: the list still buys what the hold has room for,
   // and every lot it could not take is refused for room rather than for
   // price, which is the split hold's own rule arriving through the seat
@@ -425,7 +425,7 @@ export async function standingOrdersSuite(): Promise<void> {
   // Holding the engine to this is what makes the check about the rule
   // rather than about the engine agreeing with itself.
   //
-  // [D2] The one thing the model does not restate is the pathbound lock,
+  // The one thing the model does not restate is the pathbound lock,
   // because the lock is not a rule about the hold: it is asked through
   // lockedBehind, the same reader the trade board greys a card with and
   // the same one the engine's own guard asks, so a card this model would
@@ -479,9 +479,9 @@ export async function standingOrdersSuite(): Promise<void> {
     skipping.completedOrders.length === 0 &&
       skipping.totalOrdersCompleted === 0 &&
       !took(skippingLogs, "Standing orders at the trade board"),
-    `and the trade board's default is still to fill nothing, which is the seat [B2] shipped (the hold was loaded for it, and it is left standing)`,
+    `and the trade board's default is still to fill nothing, which is the seat standing orders shipped (the hold was loaded for it, and it is left standing)`,
   );
-  // [D2] The two seats below are the same board and the same hold, one
+  // The two seats below are the same board and the same hold, one
   // environment value apart in nothing at all: the only difference is the
   // path the captain sails. It is the check the lock was put inside
   // canFillOrder for, since that function is the one judgement the hand
@@ -530,7 +530,7 @@ export async function standingOrdersSuite(): Promise<void> {
   autoCommit(poor, standingCtx, poorLogs);
   check(
     poor.shipLevel === 0 &&
-      took(poorLogs, "Gold to upgrade the ship") &&
+      took(poorLogs, "Gold for the hull upgrade") &&
       !took(poorLogs, "Standing orders at the shipyard"),
     "and a yard the purse cannot pay for is refused by the engine rather than by the order, so a written upgrade costs a captain nothing",
   );
@@ -555,7 +555,7 @@ export async function standingOrdersSuite(): Promise<void> {
     absent.purchasedCards.length === 0 &&
       absent._pendingPulseTally === undefined &&
       absent.phase !== "market",
-    "a captain who wrote nothing is played exactly as [B2] played them: no lot bought, no report added, and the seat left on the lap's own terms",
+    "a captain who wrote nothing is played exactly as standing orders played them: no lot bought, no report added, and the seat left on the lap's own terms",
   );
   const played = deepPurse(deal("market"));
   played.standingOrders = listFrom(boardTops(played).tops, 0);

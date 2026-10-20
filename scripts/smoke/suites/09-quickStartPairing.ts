@@ -9,7 +9,6 @@ export async function quickStartPairingSuite(inputs: {
   hostSocket: Socket;
 }): Promise<{ quickStartRoomId: string | null }> {
   const { guestSocket, hostSocket } = inputs;
-  let quickStartRoomId: string | null;
   // Both captains ask in the same tick. That is the case the button
   // exists for, and the case that used to seat them in two separate
   // harbors: without serialized matching, both lookups find no open
@@ -31,7 +30,7 @@ export async function quickStartPairingSuite(inputs: {
       hostMatch.roomId === guestMatch.roomId,
     "both captains are paired into the same harbor",
   );
-  quickStartRoomId = hostMatch?.roomId ?? guestMatch?.roomId ?? null;
+  const quickStartRoomId = hostMatch?.roomId ?? guestMatch?.roomId ?? null;
 
   const quickRoom = quickStartRoomId
     ? await db.room.findUnique({

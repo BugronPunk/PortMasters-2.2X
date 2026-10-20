@@ -56,7 +56,7 @@ export function grantHelperReputation(
 ): number {
   // The cap follows the voyage's own pinned length rather than the harbor's
   // tier, because the two stopped being the same number when the mode
-  // gained a length of its own (see voyageLegs in ../mode).
+  // gained a length of its own (see voyageRounds in ../mode).
   const cap = helperReputationCapFor(state.maxRounds);
   const headroom = Math.max(0, cap - state.helperReputationEarned);
   const granted = Math.min(Math.max(1, rawGain), headroom);
@@ -169,10 +169,10 @@ export function receiveRepayment(
   );
 }
 
-// [MANIFEST 07: Bequest Routing] Called only on the original lender's own
-// client, only for a loan they redirected before it was repaid. No Gold
-// changes here: the redirect target already received it via
-// receiveRepayment on their own client instead. This only stops a debt
+// Called only on the original lender's own client, only for a loan they
+// redirected before it was repaid. No Gold changes here: the redirect
+// target already received it via receiveRepayment on their own client
+// instead. This only stops a debt
 // that is no longer open from sitting in loansGiven forever, which is
 // what would otherwise happen since aid:repaid never reaches this client
 // for a redirected loan.

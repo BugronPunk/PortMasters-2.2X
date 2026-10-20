@@ -128,6 +128,13 @@ export function useSound() {
   // The volume as a 0 to 1 multiplier, used by both the ambient bed
   // and the UI feedback tones.
   const volumeScale = volume / 100;
+  // The scale the bed is built at, kept in a ref so a volume move ramps
+  // the live bed in the effect below rather than tearing the oscillators
+  // down and rebuilding them.
+  const volumeScaleRef = useRef(volumeScale);
+  useEffect(() => {
+    volumeScaleRef.current = volumeScale;
+  }, [volumeScale]);
 
   // A timer that outlives the panel has nothing to sound.
   useEffect(
@@ -185,7 +192,7 @@ export function useSound() {
     osc2.start();
     // Ramp to the volume scaled ambient gain
     gain.gain.linearRampToValueAtTime(
-      AMBIENT_BASE_GAIN * volumeScale,
+      AMBIENT_BASE_GAIN * volumeScaleRef.current,
       ctx.currentTime + 2,
     );
 
@@ -202,10 +209,8 @@ export function useSound() {
         // best effort
       }
     };
-    // volumeScale is derived from volume, so we depend on volume here
-    // to ramp the gain again when the slider moves. But we do NOT want to
-    // tear down and rebuild the whole ambient bed on every volume
-    // change, so we handle volume changes in a separate effect below.
+    // The build reads the scale through a ref and the effect below ramps
+    // the live bed, so a volume move never tears down the oscillators.
   }, [enabled]);
 
   // Update the ambient bed gain when volume changes (without rebuilding

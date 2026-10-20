@@ -1,7 +1,7 @@
 // =====================================================================
 // Realtime layer: the Harbor Pulse tallies.
 //
-// [MANIFEST 01] Every client already knows what it bought this round;
+// Every client already knows what it bought this round;
 // this just adds up everyone's reports so the next round's market can
 // lean toward or away from whatever the harbor actually did, instead of
 // every captain's price roll staying completely blind to the rest of

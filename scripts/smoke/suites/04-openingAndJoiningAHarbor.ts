@@ -17,7 +17,6 @@ export async function openingAndJoiningAHarborSuite(inputs: {
   };
 }): Promise<{ code: string; roomId: string }> {
   const { guest, host } = inputs;
-  let roomId: string;
   const created = await call<{ room: { id: string; code: string } }>(
     "/api/rooms",
     {
@@ -31,7 +30,7 @@ export async function openingAndJoiningAHarborSuite(inputs: {
   );
   check(created.status === 200, "the host can create a harbor");
   if (created.status !== 200) throw new Error("No harbor, stopping here.");
-  roomId = created.body.room.id;
+  const roomId = created.body.room.id;
   const code = created.body.room.code;
 
   const joined = await call<{ room: { id: string } }>("/api/rooms/join", {

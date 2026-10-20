@@ -1,9 +1,8 @@
 // =====================================================================
-// [MANIFEST 05: Backing] The client side Gold effects of backing another
-// captain's loan. The resolution math itself (how much of a pledge is
-// actually called on versus returned) is pure and already lives in
-// ../backing.ts; this file is only the part that moves money on whichever
-// client it runs on.
+// The client side Gold effects of backing another captain's loan. The
+// resolution math itself (how much of a pledge is actually called on
+// versus returned) is pure and already lives in ../backing.ts; this file
+// is only the part that moves money on whichever client it runs on.
 //
 // grantHelperReputation is imported from ./aid rather than duplicated,
 // because lending and backing share one per voyage Reputation ceiling.
@@ -15,9 +14,9 @@ import { ageBackingReputationMultiplier } from "./ages";
 import { grantHelperReputation } from "./aid";
 import { debitGold } from "./settlement";
 
-// [MANIFEST 05: Backing] Escrows a pledge immediately, the same escrow on
-// commitment timing every other cross player commitment in this game
-// already uses. The server (see the backing:offer handler in
+// Escrows a pledge immediately, the same escrow on commitment timing
+// every other cross player commitment in this game already uses. The
+// server (see the backing:offer handler in
 // src/server/realtime/wiring/aid.ts) is what actually decided how much of
 // the requested pledge a loan still has room for, the same relationship
 // venture contributions have with their own overflow cap, so amount here
@@ -39,9 +38,9 @@ export function pledgeBacking(
   });
 }
 
-// [MANIFEST 05: Backing] The backer's own side of however the loan they
-// backed actually resolved. refundAmount is whatever was never called on
-// and comes back untouched; calledAmount is whatever genuinely went to
+// The backer's own side of however the loan they backed actually
+// resolved. refundAmount is whatever was never called on and comes back
+// untouched; calledAmount is whatever genuinely went to
 // cover the lender's shortfall and is gone for good. The Reputation bonus
 // only applies when nothing at all was called, since that's the case the
 // backer's own real risk never actually needed catching, see
@@ -54,7 +53,7 @@ export function receiveBackingOutcome(
 ) {
   if (refundAmount > 0) state.money += refundAmount;
   if (calledAmount <= 0) {
-    // [MANIFEST 10: Ages of the Ledger] The Lender's Age pays half again
+    // The Lender's Age pays half again
     // for a pledge that came home whole. The multiplier is applied to the
     // raw figure, before the shared helper ceiling inside
     // grantHelperReputation, which is what stops an Age from lifting a
@@ -101,8 +100,8 @@ export function receiveBackingOutcome(
   }
 }
 
-// [MANIFEST 05: Backing] The lender's side of a called backing pledge,
-// arriving separately from, and in addition to, whatever the borrower
+// The lender's side of a called backing pledge, arriving separately
+// from, and in addition to, whatever the borrower
 // themselves managed to pay through the ordinary receiveRepayment above.
 // From the lender's perspective these are two distinct, unrelated
 // captains paying them, so they arrive as two distinct calls rather than

@@ -3,7 +3,7 @@
 // =====================================================================
 // /admin/balance: the balance dashboard.
 //
-// [I3: the dashboard, and the front page number] Its own route under
+// Its own route under
 // /admin rather than a tab on the console, because it belongs to a
 // different job: the console is about accounts, and this is about whether
 // the mode itself is healthy. Somebody on balance duty opens this page,

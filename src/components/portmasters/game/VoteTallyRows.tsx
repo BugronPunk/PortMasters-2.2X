@@ -61,7 +61,7 @@ export function VoteTallyRows({
   nextStep,
 }: {
   rows: TallyRow[];
-  /** The server's count for this leg, or null before its first word. */
+  /** The server's count for this round, or null before its first word. */
   census: VoteCensus | null;
   /** The roster a name is read out of, for the captains still to speak. */
   members: PublicUser[];
@@ -79,7 +79,7 @@ export function VoteTallyRows({
     return (
       <p className="mt-3 text-[11px] text-muted-foreground">
         {t(
-          "The harbor's count has not arrived yet. It comes with this leg's vote.",
+          "The harbor's count has not arrived yet. It comes with this round's vote.",
         )}
       </p>
     );
@@ -146,7 +146,7 @@ export function VoteTallyRows({
         {myVote === null
           ? t("Your name is not in yet. Pick a captain and press the button.")
           : t(
-              "Your name is in for {votedName}. Nothing else is asked of you this leg.",
+              "Your name is in for {votedName}. Nothing else is asked of you this round.",
               { votedName: captainName(members, myVote) },
             )}
       </p>
@@ -166,7 +166,7 @@ export function VoteTallyRows({
               },
             )
           : t(
-              "Every captain still sailing has named someone, so nothing more can land this leg. A later leg can call this vote again.",
+              "Every captain still sailing has named someone, so nothing more can land this round. A later round can call this vote again.",
             )}
       </p>
     </div>

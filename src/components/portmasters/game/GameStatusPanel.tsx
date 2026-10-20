@@ -23,7 +23,7 @@ import { GameLogPanel } from "./GameLogPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VoyageHeader } from "./status/VoyageHeader";
 import { StatGrid } from "./status/StatGrid";
-import { ColdLegChip } from "./status/ColdLegChip";
+import { ColdRoundChip } from "./status/ColdRoundChip";
 import { CargoHold } from "./status/CargoHold";
 import { ShipTab } from "./status/ShipTab";
 import { DuesTab } from "./status/DuesTab";
@@ -50,7 +50,7 @@ export type RosterEntry = WorkerType & {
  * The captain's own rail.
  *
  * The handful of numbers that are checked every few seconds (round, waters,
- * funds, reputation, and what is owed at round end) lead the column, and
+ * Gold, reputation, and what is owed at round end) lead the column, and
  * everything else is a tab, so the ledger is a peer tab rather than a
  * footnote below the fold. Five sections stacked in one narrow column
  * (Captain's Log, Vessel Status, Cargo Hold, Outstanding Loans, Dues) would be an unavoidably long vertical scroll in a rail
@@ -89,26 +89,26 @@ export function GameStatusPanel({
   const showObligations = !["harbor", "dawn", "endgame", "bankruptcy"].includes(
     game.phase,
   );
-  // [C1: the Larder and Short Rations] Read once for the two decisions
+  // Read once for the two decisions
   // below, since it is the same answer to both: whether the layer is
   // running decides whether the stat exists at all, and if it is running,
   // whether the crew is short decides what colour the number wears.
   const larderOn = survivalLayerOn(game.mode);
   const shortRations = larderOn && onShortRations(game);
-  // [C3: garments and the cold] The weather and the wardrobe, read once
+  // The weather and the wardrobe, read once
   // each for the chip below. The layer decides whether there is a chip at
-  // all, the tag decides whether this leg is one worth saying anything
+  // all, the tag decides whether this round is one worth saying anything
   // about, and the score is the same sum the settlement tick freezes
   // against, so the warning printed here and the check that bites the crew
   // cannot read differently.
   const garmentsOn = garmentsLayerOn(game.mode);
-  const coldLeg = garmentsOn && legIsCold(game);
+  const coldRound = garmentsOn && legIsCold(game);
   const warmth = warmthScore(game);
   const shortWarmth = shortOfWarmth(game);
 
   // The whole unlocked roster, not the three founding types, each type
   // with its hands and the wage it is due: the join lives in the engine
-  // now (see unlockedWorkerRoster), so this rail and Worker Management
+  // now (see unlockedWorkerRoster), so this rail and Artisan Management
   // cannot come to disagree about who owes what.
   //
   // The two figures below are not summed from that roster. The wage is
@@ -146,7 +146,9 @@ export function GameStatusPanel({
           larder={game.larder}
           shortRations={shortRations}
         />
-        {coldLeg && <ColdLegChip warmth={warmth} shortWarmth={shortWarmth} />}
+        {coldRound && (
+          <ColdRoundChip warmth={warmth} shortWarmth={shortWarmth} />
+        )}
         <VoyageTimeline phase={game.phase} mode={game.mode} className="mt-2" />
       </div>
 

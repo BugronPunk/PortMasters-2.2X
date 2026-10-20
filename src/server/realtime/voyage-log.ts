@@ -4,7 +4,7 @@
 // The pure half is src/lib/game/voyage-log.ts, which owns the kinds and
 // the sentences. This is the half that touches the world: it holds one
 // voyage's lines in memory while that voyage runs, stamps each of them
-// with the leg the harbor is standing in, and puts them on the harbor's
+// with the round the harbor is standing in, and puts them on the harbor's
 // channel as they are written.
 //
 // Three rules shape every function below, and the first two are the
@@ -47,7 +47,7 @@ import {
 } from "@/lib/game/voyage-log";
 import { roomChannel } from "./channel";
 
-// One line of a held voyage: the leg it happened on and the fact itself.
+// One line of a held voyage: the round it happened on and the fact itself.
 // What is held is the fact and never the sentence, because the sentence
 // belongs to a language and a held log belongs to a harbor, and a harbor can
 // hold two (see the read at every send below).
@@ -56,10 +56,10 @@ interface HeldVoyageLine {
   facts: VoyageLogFacts;
 }
 
-// One voyage in flight, as the log sees it. The round is the harbor's leg,
+// One voyage in flight, as the log sees it. The round is the harbor's round,
 // kept here rather than asked for at every note, because every caller
 // would have to read the checkpoint to write a line and this is the one
-// thing that decides which leg a line lands on.
+// thing that decides which round a line lands on.
 interface HeldVoyageLog {
   round: number;
   lines: HeldVoyageLine[];
@@ -101,16 +101,16 @@ const voyageLogs = new Map<string, HeldVoyageLog>();
 
 // A voyage is under way, so the log opens on it. Called from the one place
 // a voyage begins, for the same reason the spine opens there: a log that
-// opened anywhere else could miss the harbor's first leg.
+// opened anywhere else could miss the harbor's first round.
 //
-// The round is the caller's rather than a constant here, because the leg a
+// The round is the caller's rather than a constant here, because the round a
 // voyage starts on is the harbor's fact and not this module's.
 //
 // The seat the voyage opens in is anchored through the same note every
 // other seat is, rather than being left out because nobody reported a move
 // into it. A voyage is entered by the host's start rather than by a ready
 // vote, and a log whose first anchor line belonged to the second seat of
-// the voyage would read as a leg that was never played: the reader of a
+// the voyage would read as a round that was never played: the reader of a
 // log cannot tell a seat that was skipped from one that was simply never
 // written down.
 export function openVoyageLog(
@@ -124,9 +124,9 @@ export function openVoyageLog(
   noteVoyageLogAdvance(io, roomId, round, phase);
 }
 
-// One fact into the harbor's log, stamped with the leg the harbor is standing
+// One fact into the harbor's log, stamped with the round the harbor is standing
 // in and sent to everyone sitting there. The stamp is read here rather
-// than taken from the caller, so a line cannot be filed under a leg it did
+// than taken from the caller, so a line cannot be filed under a round it did
 // not happen on.
 //
 // The fact is what is kept; the sentence is built here, once per socket,
@@ -165,7 +165,7 @@ export function noteVoyageLog(
 // The harbor left a seat for another, which moves the log's own stamp and
 // writes the line that says where the harbor is going.
 //
-// The round moves first, because the line belongs to the leg that is
+// The round moves first, because the line belongs to the round that is
 // beginning rather than the one just left: read in order, a captain sees
 // the anchor line for the phase they are about to play, and everything
 // after it happened while they were playing it.
@@ -184,7 +184,7 @@ export function noteVoyageLogAdvance(
   const held = voyageLogs.get(roomId);
   if (!held) return;
   held.round = round;
-  noteVoyageLog(io, roomId, { kind: "leg_advanced", phase });
+  noteVoyageLog(io, roomId, { kind: "round_advanced", phase });
 }
 
 // A captain's seat is gone, by the Leave button or by the grace timer's
@@ -206,7 +206,7 @@ export function noteVoyageLogDeparture(
 
 // The log as one socket asked for it, sent to that socket alone. A reload
 // replays the voyage to the captain who reloaded, and a captain who
-// arrives at Dusk for the first time is handed the legs they were not
+// arrives at Dusk for the first time is handed the rounds they were not
 // standing in. It goes to the asker rather than to the harbor because the
 // harbor is already holding its own copy: a broadcast here would put the
 // whole log on every captain's screen once per request.

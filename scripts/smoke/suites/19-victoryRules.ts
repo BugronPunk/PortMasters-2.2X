@@ -23,7 +23,7 @@ import { check } from "../harness";
 import type { LedgerLine } from "@/lib/game/ledger";
 
 export async function victoryRulesSuite(): Promise<void> {
-  // H4. What a card is worth at the end of a voyage, which is arithmetic
+  // What a card is worth at the end of a voyage, which is arithmetic
   // over numbers other code produced, so all of it is settled here rather
   // than over a socket: the same reason the deck and the draw above are
   // checked without a connection between them. Where those numbers come

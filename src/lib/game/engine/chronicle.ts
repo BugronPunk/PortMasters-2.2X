@@ -29,7 +29,7 @@ type ChronicleInput = {
   borrowCount: number;
   crowned: boolean;
   bankrupt: boolean;
-  // [H7: Maroon and the Harbormaster] Whether the harbor put this captain
+  // Whether the harbor put this captain
   // ashore. Here rather than only on the row because it belongs in the
   // prose: being voted off your own ship is the thing whoever reads this
   // back will want to know, and a chronicle that hid it would be recording
@@ -46,7 +46,7 @@ type ChronicleInput = {
   // reads translate it (see merchantRatingLabel in
   // ../constants/reputation.ts).
   merchantRating: string;
-  // [H9: the unlock code] The line the harbor hands a captain whose
+  // The line the harbor hands a captain whose
   // voyage count just crossed the threshold, or null on every other
   // voyage. Handed in as prose rather than derived here, because what it
   // names is the world's own table of doors rather than anything about

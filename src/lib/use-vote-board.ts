@@ -84,20 +84,20 @@ export type VoteChannel<P extends VotePress = VotePress> = {
  * the captains still to speak ride the frame.
  *
  * The press in flight is a number rather than a boolean so a press can
- * never wedge the button past the leg it belongs to: the leg turning
- * clears it, the same way the leg turning is what changes the button's
+ * never wedge the button past the round it belongs to: the round turning
+ * clears it, the same way the round turning is what changes the button's
  * other terms.
  */
 export function useVoteBoard<T extends VoteTallyFrame, P extends VotePress>(
   socket: Socket | null,
   roomId: string | null,
   game: GameState,
-  // The leg this vote opens at, or null for a mode that opens no vote.
+  // The round this vote opens at, or null for a mode that opens no vote.
   rung: number | null,
   channel: VoteChannel<P>,
 ) {
   const [held, setHeld] = useState<T | null>(null);
-  // The leg this captain has pressed in and not yet been answered about.
+  // The round this captain has pressed in and not yet been answered about.
   const [pressed, setPressed] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -113,7 +113,7 @@ export function useVoteBoard<T extends VoteTallyFrame, P extends VotePress>(
       if (!err) return;
       setError(err);
       // A refused press is a press that is answered, so the button may
-      // be offered again rather than left latched to a leg that is done.
+      // be offered again rather than left latched to a round that is done.
       setPressed(null);
     },
     [roomId],
@@ -128,7 +128,7 @@ export function useVoteBoard<T extends VoteTallyFrame, P extends VotePress>(
   }, []);
 
   // The count as it stands, asked for when this captain's screen turns to
-  // a checkpoint the card is drawn in. A leg's book is built by the
+  // a checkpoint the card is drawn in. A round's book is built by the
   // captains in it and the empty one is never broadcast, so without this a
   // card opened before anyone has voted has nothing to show: no count, no
   // threshold and no list of who the harbor is waiting on. The ask is a
@@ -165,7 +165,7 @@ export function useVoteBoard<T extends VoteTallyFrame, P extends VotePress>(
     channel.stateRequest,
   ]);
 
-  // The press. It carries the captain this captain names and the leg the
+  // The press. It carries the captain this captain names and the round the
   // nomination belongs to, and nothing else: the harbor holds the book, so
   // it already knows who is at the table.
   const vote = useCallback(
@@ -178,11 +178,11 @@ export function useVoteBoard<T extends VoteTallyFrame, P extends VotePress>(
         channel.press(roomId, game.currentRound, targetUserId),
       );
     },
-    [socket, roomId, game.currentRound, channel.vote, channel.press],
+    [socket, roomId, game.currentRound, channel],
   );
 
-  // The nominations of the leg this client is standing in, or an empty
-  // board. A tally from an older leg is not shown, for the reason the
+  // The nominations of the round this client is standing in, or an empty
+  // board. A tally from an older round is not shown, for the reason the
   // objective's board is clamped: what is on screen should be what is
   // true now, and a stale tally would name captains the harbor is no longer
   // voting on.

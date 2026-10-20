@@ -57,7 +57,7 @@ import { removeUserAidRequest, clearAidSilent } from "./aid";
 import { hydrateLoans, clearLoansSilent } from "./loans";
 import { emitRoomMembers, clearMutedUsers, clearSessionChat } from "./chat";
 import { concludedRooms, maybeConcludeVoyage } from "./conclusion";
-// [D7: the draft, and switching] The harbor's half of the path draft, and its
+// The harbor's half of the path draft, and its
 // book of switches. It is dealt in the same breath as the alignment cards
 // above and cleared in the same places they are, because the two are the
 // same kind of thing: private information this process mints, hands to one
@@ -70,7 +70,7 @@ import { clearBoonLedger } from "./boon-ledger";
 import { clearMaroons } from "./maroon";
 import { clearReveals } from "./reveal";
 import { closeVoyageTelemetry, dropVoyageTelemetry } from "./telemetry";
-// [B4: the log surfaces] The harbor's own log, which is a product surface
+// The harbor's own log, which is a product surface
 // rather than a measurement and is therefore opened by every voyage the
 // spine above may or may not be recording.
 import { clearVoyageLog } from "./voyage-log";
@@ -81,7 +81,7 @@ import { wireRoomJoin } from "./wiring/room-join";
 import { wireStatusHeartbeat } from "./wiring/status-heartbeat";
 import { wirePhaseReady } from "./wiring/phase-ready";
 import { wirePulse } from "./wiring/pulse";
-import { wireLegReport } from "./wiring/leg-report";
+import { wireRoundReport } from "./wiring/round-report";
 import { wireObjective } from "./wiring/objective";
 import { wireAudit } from "./wiring/audit";
 import { wireMaroon } from "./wiring/maroon";
@@ -115,7 +115,7 @@ import { wireDisconnect } from "./wiring/disconnect";
 // and there is nobody left in the channel to broadcast an empty board to.
 function clearRoomAllMaps(roomId: string): void {
   roomCheckpoints.delete(roomId);
-  // [B2: hard timers, the server as timekeeper] The harbor's clock, which is
+  // The harbor's clock, which is
   // an in process timer for a harbor that no longer exists. It is disarmed
   // rather than dropped, because the deadline lives on the checkpoint this
   // function just deleted and a timer whose seat is gone has nothing left to
@@ -131,17 +131,16 @@ function clearRoomAllMaps(roomId: string): void {
   clearBarterSilent(roomId);
   escortContracts.clearSilent(roomId);
   refitContracts.clearSilent(roomId);
-  // [F3: modules in the shipyard ladder, and trading them between
-  // captains] And the module market's rows, silent for the reason the two
+  // And the module market's rows, silent for the reason the two
   // boards above are: the room row is already gone, so there is nobody
   // left in a channel to broadcast an empty board to.
   moduleTrades.clearSilent(roomId);
-  // [D5: Aroma: the Bazaar Rumor] The bazaar's rows, which belong to the
+  // The bazaar's rows, which belong to the
   // voyage that ended with the harbor. Silent like the two boards above it,
   // because the room row is already gone and there is nobody left in the
   // channel to broadcast an empty board to.
   clearBazaarSilent(roomId);
-  // [D7: the draft, and switching] And the path draft's two maps, silent for
+  // And the path draft's two maps, silent for
   // the reason the boards above are: the room row is already gone, so there
   // is nobody standing in a draft to hand a null view to and nobody to tell
   // that a switch is forgotten.
@@ -163,11 +162,11 @@ function clearRoomAllMaps(roomId: string): void {
   // The detail questions waiting on captains in this harbor, which are
   // questions about a harbor that no longer exists.
   forgetDetailRequests(roomId);
-  // [B4: the log surfaces] And the voyage's log, which belongs to the harbor
+  // And the voyage's log, which belongs to the harbor
   // that held it. Dropped rather than written down, because a log is a
   // surface a table reads while it sails and there is no table left.
   clearVoyageLog(roomId);
-  // [I1: the telemetry spine] And the voyage the spine was holding, which
+  // And the voyage the spine was holding, which
   // is dropped and not written, because every caller that reaches this
   // function with a voyage still open has already written it. The reaper
   // writes an emptied record before it calls this, and the REST leave
@@ -178,8 +177,7 @@ function clearRoomAllMaps(roomId: string): void {
   dropVoyageTelemetry(roomId);
 }
 
-// [D3: Convoy: the Escort Contract] [D4: Loom: the Refit] [F3: modules in
-// the shipyard ladder, and trading them between captains] What a departure
+// What a departure
 // takes off the harbor's three consent boards, in one callback because a
 // departure is one event rather than three.
 //
@@ -224,7 +222,7 @@ function buildDepartureCleanup(): DepartureCleanup {
 // room:leave straight after that route call, so this is where the check
 // can be made.
 //
-// [I1: the telemetry spine] A harbor that is gone because its last seat was
+// A harbor that is gone because its last seat was
 // given up is a voyage that stopped, and this is the only place the last
 // captain's own Leave can be noticed: the REST route that took the seat
 // runs in a different copy of this module and cannot see the accumulator,
@@ -282,7 +280,7 @@ export function attachRealtime(httpServer: HttpServer): Server {
     // that module's import graph (the presence module imports it).
     socket.data.locale = handshakeLocale;
 
-    // [J2: the mute and the report] The socket's own frame budget, put in
+    // The socket's own frame budget, put in
     // front of every handler below. It goes here, before the auto
     // authentication on the next line, so that not even the auth frame can
     // arrive uncounted: the middleware runs per incoming packet, and a
@@ -331,7 +329,7 @@ export function attachRealtime(httpServer: HttpServer): Server {
     wireStatusHeartbeat(io, socket);
     wirePhaseReady(io, socket);
     wirePulse(socket);
-    wireLegReport(socket);
+    wireRoundReport(socket);
     wireObjective(io, socket);
     wireAudit(io, socket);
     wireMaroon(io, socket);

@@ -203,7 +203,7 @@ export function Parley({
   // table above says.
   const stations = STATIONS.map((s) => ({ ...s, label: t(s.label) }));
 
-  // [H6: the Manifest Audit] The leg this screen is on ends the moment the
+  // The round this screen is on ends the moment the
   // vote carries, so the captain reads the finding on the strip above and
   // this phase, which the audit just spent, closes behind it.
   //
@@ -216,8 +216,8 @@ export function Parley({
   // protocol it was already using.
   //
   // The guards are the ones that keep a stale finding from spending a
-  // later leg: the reveal carries the leg it was made in, so a captain who
-  // reloads in leg seven is shown the finding without being pushed out of
+  // later round: the reveal carries the round it was made in, so a captain who
+  // reloads in round seven is shown the finding without being pushed out of
   // a Parley the harbor never voted to end.
   // The dependency below is the press itself rather than the phaseSync
   // record it came from. That record changes whenever anything in it does,
@@ -250,14 +250,14 @@ export function Parley({
         />
       )}
 
-      {/* [H7: Maroon and the Harbormaster] The console sits above the fold
+      {/* The console sits above the fold
           because it belongs to one captain and it is the reason this
           screen is open for them: everything under it is the table's
           business, and this is theirs. It renders nothing at all for a
           captain the harbor has not put ashore. */}
       <HarbormasterConsole game={game} maroon={maroon} />
 
-      {/* [H6: the Manifest Audit, H7: Maroon, F5: public offers] The
+      {/* The
           harbor's business, behind one fold: the two votes and the
           fleet's ledger are one row rather than up to three panels, two
           of them folds of their own, between the strip and the board.
@@ -267,7 +267,7 @@ export function Parley({
           outcome) and each stays inside this fold until its window has
           passed the voyage by, so a mode's headline mechanic is still
           explained to the first captain who opens the row. The ledger is
-          the plan's evaluation surface, where the table argues about
+          the design's evaluation surface, where the table argues about
           what each seat passed on, so it sits where the argument happens
           rather than where the picks were made, and it draws nothing at
           all until a first pick lands. */}
@@ -433,17 +433,16 @@ export function Parley({
         </>
       ) : (
         <>
-          {/* [D3: Convoy: the Escort Contract] The protection market, the
+          {/* The protection market, the
               other thing sold at this table, on the same terms the
-              exchange sells on: a price agreed in the open, and one leg
+              exchange sells on: a price agreed in the open, and one round
               of it. It draws nothing at all in a build with the switch
               off. */}
           <EscortMarket game={game} escort={escort} me={me} members={members} />
 
-          {/* [F3: modules in the shipyard ladder, and trading them between
-              captains] The module market, on the same terms as the two
+          {/* The module market, on the same terms as the two
               above it, a price agreed in the open, for a card rather
-              than a leg of cover. It draws nothing at all in a build
+              than a round of cover. It draws nothing at all in a build
               with the switch off. */}
           <ModuleMarket
             game={game}
@@ -452,7 +451,7 @@ export function Parley({
             members={members}
           />
 
-          {/* [D5: Aroma: the Bazaar Rumor] The desk, the third of the
+          {/* The desk, the third of the
               port's trades. It draws nothing at all in a build with the
               switch off, and a captain who holds no path of their own
               still reads the board below the desk. */}

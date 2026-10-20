@@ -3,7 +3,7 @@
 // from during Parley, ordered over ../contracts' own board.
 // =====================================================================
 
-import { LEG_ALREADY_COVERED } from "@/lib/game/constants/copy";
+import { ROUND_ALREADY_COVERED } from "@/lib/game/constants/copy";
 import type { Server, Socket } from "socket.io";
 
 import { consentPartyBusy, type EscortContract } from "@/lib/game/engine";
@@ -48,9 +48,9 @@ const ESCORT_POST: ConsentPostSpec<EscortContract> = {
   on: escortContractsOn,
   phase: "parley",
   phaseRefusal: (locale) =>
-    tFor(locale, "One leg of protection is sold in the Parley phase."),
+    tFor(locale, "One round of protection is sold in the Parley phase."),
   // The audit's spend closes this board on the tick it lands rather
-  // than on the advance that follows it (see auditSpentLeg).
+  // than on the advance that follows it (see auditSpentRound).
   auditSpend: "Protection is sold",
   selfRefusal: (locale) =>
     tFor(locale, "You can't sell protection to yourself."),
@@ -84,21 +84,21 @@ const ESCORT_ACCEPT: ConsentAcceptSpec<EscortContract> = {
   },
   selfRefusal: (locale) =>
     tFor(locale, "You are the one selling that protection."),
-  // A contract agreed after the spend is trading the leg the harbor just
-  // closed (see auditSpentLeg).
+  // A contract agreed after the spend is trading the round the harbor just
+  // closed (see auditSpentRound).
   auditSpend: "Contracts are agreed",
   // The buyer's side, and the side is the whole of what the two markets
   // differ on here (see consentPartyBusy): a captain may hold one cover
-  // a leg, and a cover is a leg of somebody else's safety.
+  // a round, and a cover is a round of somebody else's safety.
   busy: (rows, _opening, userId, round, locale) =>
     consentPartyBusy(rows, "buyer", userId, round)
-      ? tFor(locale, LEG_ALREADY_COVERED)
+      ? tFor(locale, ROUND_ALREADY_COVERED)
       : null,
 };
 
 export function wireEscortContracts(io: Server, socket: Socket): void {
   //
-  // [D3: Convoy: the Escort Contract] The market a Convoy captain sells
+  // The market a Convoy captain sells
   // protection from during Parley. The board itself lives in ./contracts,
   // and everything these handlers do is order it: refuse a post that
   // duplicates one already standing, move one offer to agreed, let the
@@ -120,7 +120,7 @@ export function wireEscortContracts(io: Server, socket: Socket): void {
   // which is the same division of labour the barter board runs on and the
   // reason none of these handlers reads a purse. What the server is
   // authoritative about is the ordering: one captain per cover, one claim
-  // per contract, and no agreement about a leg that has already gone.
+  // per contract, and no agreement about a round that has already gone.
   socket.on("contract:state:request", (payload: { roomId?: string }) => {
     const s = seated(socket, payload);
     if (!s) return;
@@ -138,63 +138,63 @@ export function wireEscortContracts(io: Server, socket: Socket): void {
       fee?: number;
       targetUserId?: string;
     }) => {
-      const post = await postConsentOffer(socket, payload, ESCORT_POST);
-      if (post === null) return;
-      // A captain this seller was turned down by reads one row about that
-      // pair rather than a stack of them, so the second offer to the same
-      // buyer replaces the refusal it follows. Without this a seller could
-      // paper the board with refusals, which is the one bound the primitive
-      // above cannot hold on their behalf: it counts offers, and a refusal
-      // is not an offer.
-      const kept = post.rows.filter(
-        (c) =>
-          !(
-            c.status === "declined" &&
-            c.sellerUserId === post.sellerUserId &&
-            c.buyerUserId === post.buyerUserId
-          ),
-      );
-      const contract: EscortContract = {
-        id: rowId(post.roomId, post.sellerUserId),
-        sellerUserId: post.sellerUserId,
-        sellerName: post.sellerName,
-        buyerUserId: post.buyerUserId,
-        buyerName: post.buyerName,
-        fee: post.fee,
-        round: post.round,
-        // The phase the offer was made in, which is the phase it expires
-        // with. D3's market is the Parley and only the Parley, so this is
-        // that rule written on the row rather than compared against a
-        // constant in the board's own expiry (see expireConsent).
-        phase: post.phase,
-        status: "offered",
-      };
-      escortContracts.set(post.roomId, [...kept, contract]);
-      // [B4: the log surfaces] The harbor's line, which carries no buyer
-      // for the reason the kind's own note gives: a direct offer is one
-      // captain's business and the log is everyone's.
-      noteVoyageLog(io, post.roomId, {
-        kind: "contract_posted",
-        captain: contract.sellerName,
-        fee: contract.fee,
+      await postConsentOffer(socket, payload, ESCORT_POST, (post) => {
+        // A captain this seller was turned down by reads one row about that
+        // pair rather than a stack of them, so the second offer to the same
+        // buyer replaces the refusal it follows. Without this a seller could
+        // paper the board with refusals, which is the one bound the primitive
+        // above cannot hold on their behalf: it counts offers, and a refusal
+        // is not an offer.
+        const kept = post.rows.filter(
+          (c) =>
+            !(
+              c.status === "declined" &&
+              c.sellerUserId === post.sellerUserId &&
+              c.buyerUserId === post.buyerUserId
+            ),
+        );
+        const contract: EscortContract = {
+          id: rowId(post.roomId, post.sellerUserId),
+          sellerUserId: post.sellerUserId,
+          sellerName: post.sellerName,
+          buyerUserId: post.buyerUserId,
+          buyerName: post.buyerName,
+          fee: post.fee,
+          round: post.round,
+          // The phase the offer was made in, which is the phase it expires
+          // with. The escort market is the Parley and only the Parley, so
+          // this is that rule written on the row rather than compared
+          // against a constant in the board's own expiry (see expireConsent).
+          phase: post.phase,
+          status: "offered",
+        };
+        escortContracts.set(post.roomId, [...kept, contract]);
+        // The harbor's line, which carries no buyer
+        // for the reason the kind's own note gives: a direct offer is one
+        // captain's business and the log is everyone's.
+        noteVoyageLog(io, post.roomId, {
+          kind: "contract_posted",
+          captain: contract.sellerName,
+          fee: contract.fee,
+        });
+        escortContracts.broadcast(io, post.roomId);
       });
-      escortContracts.broadcast(io, post.roomId);
     },
   );
 
   socket.on(
     "contract:accept",
     async (payload: { roomId?: string; contractId?: string }) => {
-      const accepted = await acceptConsentOffer(socket, payload, ESCORT_ACCEPT);
-      if (accepted === null) return;
-      escortContracts.set(accepted.roomId, accepted.rows);
-      noteVoyageLog(io, accepted.roomId, {
-        kind: "contract_agreed",
-        captain: accepted.opening.sellerName,
-        taker: accepted.taker.name,
-        fee: accepted.opening.fee,
+      await acceptConsentOffer(socket, payload, ESCORT_ACCEPT, (accepted) => {
+        escortContracts.set(accepted.roomId, accepted.rows);
+        noteVoyageLog(io, accepted.roomId, {
+          kind: "contract_agreed",
+          captain: accepted.opening.sellerName,
+          taker: accepted.taker.name,
+          fee: accepted.opening.fee,
+        });
+        escortContracts.broadcast(io, accepted.roomId);
       });
-      escortContracts.broadcast(io, accepted.roomId);
     },
   );
 
@@ -303,7 +303,7 @@ export function wireEscortContracts(io: Server, socket: Socket): void {
         );
         return;
       }
-      // Only an offer can be withdrawn. The plan's own sentence is that
+      // Only an offer can be withdrawn. The design's own sentence is that
       // everything offered in Parley is binding once both parties accept,
       // so an agreed contract is not the seller's to take back: what a
       // seller who regrets the price has is the gap the voyage leaves
@@ -392,13 +392,13 @@ export function wireEscortContracts(io: Server, socket: Socket): void {
         fail(tFor(s.locale, "That contract covers another captain."));
         return;
       }
-      // The leg, not the phase. The raid is rolled in Resolve and the
+      // The round, not the phase. The raid is rolled in Resolve and the
       // claim follows it by a frame, but a harbor whose clock has already
-      // carried it on is still the leg the contract was sold for, and a
-      // claim is a report about that leg rather than an action taken in
+      // carried it on is still the round the contract was sold for, and a
+      // claim is a report about that round rather than an action taken in
       // one phase of it.
       if (contract.round !== cp.round) {
-        fail(tFor(s.locale, "That contract was for an earlier leg."));
+        fail(tFor(s.locale, "That contract was for an earlier round."));
         return;
       }
       escortContracts.set(

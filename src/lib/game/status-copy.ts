@@ -1,6 +1,6 @@
 // PortMasters 2.2 Parallel Release: the status conventions.
 //
-// [W3: the status convention] Every state a captain can see says what it
+// Every state a captain can see says what it
 // is, why it happened, and the way back. This module is the one place
 // those three clauses are authored: each family below carries a state, a
 // cause and a remedy, and every surface composes its sentence from them
@@ -29,8 +29,8 @@
 // the language a captain reads is the process's, and the English the
 // suites pin is the same copy this module has always carried.
 
-import { CREW_LOSS_AFTER_HUNGRY_LEGS } from "./constants/crew";
-import { COLD_LEG_WARMTH } from "./constants/garments";
+import { CREW_LOSS_AFTER_HUNGRY_ROUNDS } from "./constants/crew";
+import { COLD_ROUND_WARMTH } from "./constants/garments";
 import { t } from "./i18n";
 import { line, type LedgerLine } from "./ledger";
 
@@ -51,16 +51,16 @@ type StatusFamilyId = "frozen" | "hungry" | "idle";
 
 // The cold. A hand it takes is still aboard, still eating and still on
 // the payroll, so the sentence has to separate a laundry problem from a
-// funeral: the state names the leg, the cause names the clothes, and the
+// funeral: the state names the round, the cause names the clothes, and the
 // remedy is the one purchase that ends it.
 export const FROZEN_CREW: StatusFamily = {
-  state: "Frozen out this leg",
+  state: "Frozen out this round",
   cause: "went into the cold short of warm clothes",
-  remedy: "A warmer layer before a cold leg keeps every hand working",
+  remedy: "A warmer layer before a cold round keeps every hand working",
 };
 
 // Short rations. The count in the rule is the engine's own
-// (CREW_LOSS_AFTER_HUNGRY_LEGS decides the hand the crew loses), so no
+// (CREW_LOSS_AFTER_HUNGRY_ROUNDS decides the hand the crew loses), so no
 // sentence can quote a patience the engine does not keep.
 export const HUNGRY_CREW: StatusFamily = {
   state: "Short Rations",
@@ -74,7 +74,7 @@ export const HUNGRY_CREW: StatusFamily = {
 // actually made.
 export const IDLE_HAND: StatusFamily = {
   state: "Idle",
-  cause: "no task is set for this leg",
+  cause: "no task is set for this round",
   remedy: "Assign a task to put them to work",
 };
 
@@ -84,7 +84,7 @@ export const IDLE_HAND: StatusFamily = {
     from either surface reads the same reason and the same promise. */
 export function frozenBenchLine(): string {
   return t(
-    "🥶 {FROZEN_CREW.state}: the crew {FROZEN_CREW.cause}. Back next leg. {FROZEN_CREW.remedy}.",
+    "🥶 {FROZEN_CREW.state}: the crew {FROZEN_CREW.cause}. Back next round. {FROZEN_CREW.remedy}.",
     {
       "FROZEN_CREW.state": t(FROZEN_CREW.state),
       "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
@@ -97,10 +97,10 @@ export function frozenBenchLine(): string {
 // readers so the engine's ledger and the validator are reading the same
 // sentence rather than two sentences that can drift.
 const FROZEN_ASSIGN_REFUSAL =
-  "❌ The only free hands are frozen out this leg: the crew {FROZEN_CREW.cause}, and they are back next leg. {FROZEN_CREW.remedy}.";
+  "❌ The only free hands are frozen out this round: the crew {FROZEN_CREW.cause}, and they are back next round. {FROZEN_CREW.remedy}.";
 
 /** The assignment refusal: the line the engine logs when every free
-    hand is standing the leg down for the cold. */
+    hand is standing the round down for the cold. */
 export function frozenAssignRefusal(): string {
   return t(FROZEN_ASSIGN_REFUSAL, {
     "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
@@ -137,7 +137,7 @@ export function frozenWorkLog(name: string, task: string): string {
 // The English the per hand frozen line is told in, named beside its two
 // readers for the reason the refusal's own English is named.
 const FROZEN_WORK_LOG =
-  "🥶 {name} is frozen out this leg: the crew {FROZEN_CREW.cause}, and the work on {task} waits for next leg. {FROZEN_CREW.remedy}.";
+  "🥶 {name} is frozen out this round: the crew {FROZEN_CREW.cause}, and the work on {task} waits for next round. {FROZEN_CREW.remedy}.";
 
 /** The same line, as a line for a captain's own ledger. The task is the
     worker record's own word, so it is read in the reader's language
@@ -168,7 +168,7 @@ export function frozenFrostbiteLog(name: string, label: string): string {
 // The English the frostbite line is told in, named beside its two readers
 // for the reason the refusal's own English is named.
 const FROZEN_FROSTBITE_LOG =
-  "🥶 Frostbite: {name} the {label} {FROZEN_CREW.cause}, and is out of action next leg. {FROZEN_CREW.remedy}.";
+  "🥶 Frostbite: {name} the {label} {FROZEN_CREW.cause}, and is out of action next round. {FROZEN_CREW.remedy}.";
 
 /** The same line, as a line for a captain's own ledger. The label is the
     craft the crew record carries, read through the pack in the reader's
@@ -185,25 +185,28 @@ export function frozenFrostbiteLogLine(
   });
 }
 
-// ==== The cold leg chip, as the rail says it ====
+// ==== The cold round chip, as the rail says it ====
 
 /**
- * The rail's cold leg chip: the weather read before the leg settles,
+ * The rail's cold round chip: the weather read before the round settles,
  * which is the reason the chip is drawn at all (a warning that first
  * appears in the settlement has already cost the hand). The way back is
  * drawn with it rather than left to a hover title, because the captain
  * reading it on a phone has no hover, and because it is still
  * actionable while the chip is on screen: the bench's wardrobe closes
- * the warmth gap while the leg is open, so the sentence points at the
- * clothes rather than at the next cold leg. The weather itself, the
- * warmth sum the crew is wearing against what the leg asks, is passed
+ * the warmth gap while the round is open, so the sentence points at the
+ * clothes rather than at the next cold round. The weather itself, the
+ * warmth sum the crew is wearing against what the round asks, is passed
  * in already written by the caller (see warmthText in ./garments),
  * which keeps this module clear of the garments reader.
  */
-export function coldLegChipLine(warmth: string, shortWarmth: boolean): string {
-  const reading = t("❄️ A cold leg: warmth {warmth} of {COLD_LEG_WARMTH}", {
+export function coldRoundChipLine(
+  warmth: string,
+  shortWarmth: boolean,
+): string {
+  const reading = t("❄️ A cold round: warmth {warmth} of {COLD_ROUND_WARMTH}", {
     warmth,
-    COLD_LEG_WARMTH,
+    COLD_ROUND_WARMTH,
   });
   return shortWarmth
     ? t("{reading}, so the cold will take a hand. {FROZEN_CREW.remedy}.", {
@@ -219,24 +222,24 @@ export function coldLegChipLine(warmth: string, shortWarmth: boolean): string {
 // wording while the count stays the engine's. A surface that retyped the
 // sentence with a hardcoded number would keep this tail and be caught.
 const HUNGRY_RULE_TAIL =
-  "legs in a row without rations costs the newest hand aboard.";
+  "rounds in a row without rations costs the newest hand aboard.";
 
 /** The rule on its own, for the surfaces that print it beside their own
     lead in: the tooltip, the provisions note, the engine's own line. */
 export function hungryRule(): string {
   return t(HUNGRY_RULE, {
-    CREW_LOSS_AFTER_HUNGRY_LEGS,
+    CREW_LOSS_AFTER_HUNGRY_ROUNDS,
     HUNGRY_RULE_TAIL: t(HUNGRY_RULE_TAIL),
   });
 }
 
 // The English the rule is told in, named beside its two readers.
-const HUNGRY_RULE = "{CREW_LOSS_AFTER_HUNGRY_LEGS} {HUNGRY_RULE_TAIL}";
+const HUNGRY_RULE = "{CREW_LOSS_AFTER_HUNGRY_ROUNDS} {HUNGRY_RULE_TAIL}";
 
 /** The same rule, as a line for a captain's own ledger. */
 function hungryRuleLine(): LedgerLine {
   return line(HUNGRY_RULE, {
-    CREW_LOSS_AFTER_HUNGRY_LEGS,
+    CREW_LOSS_AFTER_HUNGRY_ROUNDS,
     HUNGRY_RULE_TAIL: line(HUNGRY_RULE_TAIL),
   });
 }
@@ -268,7 +271,7 @@ export function hungryProvisionsNote(): string {
   );
 }
 
-/** The engine's production line, said once per hungry leg above the
+/** The engine's production line, said once per hungry round above the
     smaller numbers it explains. */
 export function hungryProductionNote(): string {
   return t(HUNGRY_PRODUCTION_NOTE, {
@@ -280,7 +283,7 @@ export function hungryProductionNote(): string {
 // The English the production note is told in, named beside its two
 // readers.
 const HUNGRY_PRODUCTION_NOTE =
-  "⚠️ The crew is on short rations, so every artisan works the leg at a slower pace, and {hungryEffect} {HUNGRY_CREW.remedy} at the next Market.";
+  "⚠️ The crew is on short rations, so every artisan works the round at a slower pace, and {hungryEffect} {HUNGRY_CREW.remedy} at the next Market.";
 
 /** The same note, as a line for a captain's own ledger. The rule it
     quotes is held as material, so the whole note reads in one language
@@ -381,12 +384,12 @@ export const STATUS_SENTENCES: readonly StatusSentence[] = [
     declares: ["cause", "remedy"],
   },
   {
-    surface: "the rail's cold leg chip while the warmth falls short",
+    surface: "the rail's cold round chip while the warmth falls short",
     family: "frozen",
-    build: () => coldLegChipLine("1", true),
+    build: () => coldRoundChipLine("1", true),
     // The state clause is left out on purpose: this chip's state is the
     // weather reading it leads with, and the family's name for the
-    // aftermath ("Frozen out this leg") belongs to the legs that read
+    // aftermath ("Frozen out this round") belongs to the rounds that read
     // that row. The chip is held to the clause every surface must carry.
     declares: ["remedy"],
   },
@@ -404,7 +407,7 @@ export const STATUS_SENTENCES: readonly StatusSentence[] = [
     declares: ["state", "cause", "remedy"],
   },
   {
-    surface: "the voyage log's hungry leg line",
+    surface: "the voyage log's hungry round line",
     family: "hungry",
     build: hungryProductionNote,
     declares: ["state", "cause", "remedy"],

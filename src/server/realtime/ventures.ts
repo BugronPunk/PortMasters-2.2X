@@ -1,7 +1,7 @@
 // =====================================================================
 // Realtime layer: Convoy Ventures.
 //
-// [MANIFEST 04] Persisted through the ConvoyVenture Prisma model rather
+// Persisted through the ConvoyVenture Prisma model rather
 // than kept in memory like the barter and aid boards: a venture can sit
 // open across many rounds, not one phase, so losing it to a server
 // restart would erase real Gold every contributor already put in.
@@ -25,7 +25,7 @@ import {
 } from "@/lib/game/convoy";
 import type { VentureSummary } from "@/types/realtime/ventures";
 import { roomChannel } from "./channel";
-import { sockets } from "./presence";
+import { broadcastRoomSystem } from "./presence";
 
 function ventureSummary(v: {
   id: string;
@@ -134,19 +134,11 @@ export async function settleVenture(
     settlements,
   });
   if (settlements.length) {
-    // The settlement itself is the same fact for every captain, which is
-    // why the frame above can be one broadcast; the sentence about it is
-    // not the same fact, so it goes out one socket at a time, each in the
-    // language that socket presented. The walk is the departure notice's
-    // (see reapDeparture in ./presence), kept in the same shape so the
-    // two harbor wide notices cannot come apart in how they address a harbor.
-    for (const [socketId, state] of sockets) {
-      if (state.roomId !== venture.roomId) continue;
-      io.to(socketId).emit("room:system", {
-        roomId: venture.roomId,
-        content: ventureAnnouncementFor(state.locale, outcome),
-      });
-    }
+    // The settlement is one broadcast; the sentence about it is per
+    // captain, so it goes out through the room system helper.
+    broadcastRoomSystem(io, venture.roomId, (locale) =>
+      ventureAnnouncementFor(locale, outcome),
+    );
   }
 }
 

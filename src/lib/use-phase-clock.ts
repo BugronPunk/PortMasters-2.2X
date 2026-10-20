@@ -3,7 +3,7 @@
 // =====================================================================
 // The harbor's clock, ticking where it is drawn.
 //
-// [B2: hard timers, the server as timekeeper] The clock belongs to the
+// The clock belongs to the
 // server: it arms a deadline when the harbor's checkpoint moves and
 // announces the advance when that deadline passes, whether or not every
 // captain has readied, so a table where somebody has walked away still

@@ -37,7 +37,7 @@ import {
   rumorGoodAllowed,
   rumorId,
   rumorLean,
-  rumorNextLeg,
+  rumorNextRound,
   rumorSpokeIn,
   rumorStanding,
   snapToCheckpoint,
@@ -45,7 +45,7 @@ import {
 // The three readers this pass added, taken from the module that states the
 // rule rather than from the engine barrel: the barrel's bazaar block carries
 // the readers the desk already read, and these are the ones the desk's own
-// naming of a leg and its reading of a landed row moved into.
+// naming of a round and its reading of a landed row moved into.
 import {
   rumorLandedLine,
   rumorLandsOn,
@@ -115,11 +115,11 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
 
     // The goods a rumor may name, read the way the desk and the server
-    // read them: one leg ahead, against the harbor's own charter. Fair
-    // Winds never opens a tier and Open Waters opens one at leg four,
+    // read them: one round ahead, against the harbor's own charter. Fair
+    // Winds never opens a tier and Open Waters opens one at round four,
     // which is what gives the checks below a real commodity the coming
     // market does not trade and a real commodity that unlocks on the
-    // very leg a rumor would move.
+    // very round a rumor would move.
     const tierOne = RESOURCES_TIER1[0] ?? "";
     const goodsAt = (difficulty: string, round: number) =>
       bazaarGoods(difficulty, round);
@@ -135,7 +135,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     check(
       !goodsAt("open_waters", 3).includes(tierOne) &&
         goodsAt("open_waters", 4).includes(tierOne),
-      "and a tier is nameable one leg before the port stocks it, because a rumor is a claim about the market the harbor has not reached yet: a captain can speak about a cargo before the harbor has the goods, which is the fiction the plan asks for",
+      "and a tier is nameable one round before the port stocks it, because a rumor is a claim about the market the harbor has not reached yet: a captain can speak about a cargo before the harbor has the goods, which is the fiction the design asks for",
     );
     check(
       rumorGoodAllowed("Hemp", "fair_winds", 3) &&
@@ -165,7 +165,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       [3, 4, 5, 6, 9]
         .map((round) => rumorCooldownLeft(spoke([3]), speaker, round))
         .join(",") === `${RUMOR_COOLDOWN_ROUNDS},2,1,0,0`,
-      "the wait counts down from the leg the captain spoke in and reaches nothing on the third leg after it, where it stays rather than going negative, which is the once every three legs the plan asks for",
+      "the wait counts down from the round the captain spoke in and reaches nothing on the third round after it, where it stays rather than going negative, which is the once every three rounds the design asks for",
     );
     check(
       rumorCooldownLeft(spoke([1, 5]), speaker, 6) === 2 &&
@@ -174,88 +174,89 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
     check(
       rumorCooldownLine(0) === "The bazaar will hear you again." &&
-        rumorCooldownLine(1).includes("one more leg") &&
-        rumorCooldownLine(2).includes("2 more legs") &&
+        rumorCooldownLine(1).includes("one more round") &&
+        rumorCooldownLine(2).includes("2 more rounds") &&
         !rumorCooldownLine(1).includes("2"),
-      "the wait is said in legs and in a sentence rather than as a bare number: a captain with one leg to wait is told so in words, and a captain whose wait is over is told that rather than told nothing",
+      "the wait is said in rounds and in a sentence rather than as a bare number: a captain with one round to wait is told so in words, and a captain whose wait is over is told that rather than told nothing",
     );
-    // The same wait read from its other end. How many legs are left
+    // The same wait read from its other end. How many rounds are left
     // answers how long, and the desk's second question is when, because
-    // the legs are numbered above it and a number of legs is a number of
-    // page turns rather than a leg to come back at.
+    // the rounds are numbered above it and a number of rounds is a number of
+    // page turns rather than a round to come back at.
     check(
       rumorSpokeIn([], speaker) === 0 &&
         rumorSpokeIn(spoke([4], "captain-b"), speaker) === 0 &&
         rumorSpokeIn(spoke([3]), speaker) === 3 &&
         rumorSpokeIn(spoke([3, 6]), speaker) === 6 &&
         rumorSpokeIn(spoke([6, 3]), speaker) === 6 &&
-        rumorNextLeg([], speaker) === 0 &&
-        rumorNextLeg(spoke([3]), speaker) === 3 + RUMOR_COOLDOWN_ROUNDS,
-      "the leg a captain last spoke in is the newest of their own rows in whichever order the board holds them, and the leg the bazaar hears them again is that leg plus the cooldown, with a captain who has never spoken waiting for nothing at all, because a desk that draws the wait has to draw the leg it ends on rather than only its length",
+        rumorNextRound([], speaker) === 0 &&
+        rumorNextRound(spoke([3]), speaker) === 3 + RUMOR_COOLDOWN_ROUNDS,
+      "the round a captain last spoke in is the newest of their own rows in whichever order the board holds them, and the round the bazaar hears them again is that round plus the cooldown, with a captain who has never spoken waiting for nothing at all, because a desk that draws the wait has to draw the round it ends on rather than only its length",
     );
     check(
       [3, 4, 5, 6, 7, 9].every(
         (round) =>
           rumorCooldownLeft(spoke([3]), speaker, round) ===
-          Math.max(0, rumorNextLeg(spoke([3]), speaker) - round),
+          Math.max(0, rumorNextRound(spoke([3]), speaker) - round),
       ),
-      "and the two readings are one reading rather than two counts kept beside each other: the wait counted down from the leg a captain spoke in and the leg the desk tells them to come back at agree on every leg between them",
+      "and the two readings are one reading rather than two counts kept beside each other: the wait counted down from the round a captain spoke in and the round the desk tells them to come back at agree on every round between them",
     );
 
-    // The one leg a rumor would move nothing, which is the last thing the
+    // The one round a rumor would move nothing, which is the last thing the
     // server has to be true about a row and the one no client can be
     // trusted to have worked out for itself.
-    const pinnedLegs = voyageState({ difficulty: "fair_winds" }).maxRounds;
+    const pinnedRounds = voyageState({ difficulty: "fair_winds" }).maxRounds;
     check(
-      pinnedLegs === voyageRoundsFor(GAMBIT, "fair_winds") && pinnedLegs === 12,
-      "the length the closing leg is read against is one number read in exactly one place: the legs a captain's own state pins at departure are the legs the server reads off the harbor when it decides whether a rumor has a market to land on",
+      pinnedRounds === voyageRoundsFor(GAMBIT, "fair_winds") &&
+        pinnedRounds === 12,
+      "the length the closing round is read against is one number read in exactly one place: the rounds a captain's own state pins at departure are the rounds the server reads off the harbor when it decides whether a rumor has a market to land on",
     );
     check(
-      rumorCanLand(1, pinnedLegs) &&
-        rumorCanLand(pinnedLegs - 1, pinnedLegs) &&
-        !rumorCanLand(pinnedLegs, pinnedLegs) &&
-        !rumorCanLand(pinnedLegs + 1, pinnedLegs) &&
+      rumorCanLand(1, pinnedRounds) &&
+        rumorCanLand(pinnedRounds - 1, pinnedRounds) &&
+        !rumorCanLand(pinnedRounds, pinnedRounds) &&
+        !rumorCanLand(pinnedRounds + 1, pinnedRounds) &&
         !rumorCanLand(1, 1),
-      "a rumor may be spoken in every leg of a voyage except the one with no leg after it, because a row is a claim about the next port and the closing leg has no next port: the row would lean a market this voyage never opens, which is the settlement the plan's own rollback note asks to be skipped cleanly rather than left half applied",
+      "a rumor may be spoken in every round of a voyage except the one with no round after it, because a row is a claim about the next port and the closing round has no next port: the row would lean a market this voyage never opens, which is the settlement the design's own rollback note asks to be skipped cleanly rather than left half applied",
     );
     // The same wait, read against the voyage that holds it. The cooldown
-    // runs three legs whatever the table is doing, so a captain who speaks
-    // at the tenth leg of a twelve leg voyage is still being counted down
-    // in the eleventh, and the leg the ordinary sentence ends on is the
-    // thirteenth: a leg this voyage never opens, and a desk that names it
+    // runs three rounds whatever the table is doing, so a captain who speaks
+    // at the tenth round of a twelve round voyage is still being counted down
+    // in the eleventh, and the round the ordinary sentence ends on is the
+    // thirteenth: a round this voyage never opens, and a desk that names it
     // is a countdown to a moment nobody at the table ever reaches.
-    const lateRows = spoke([pinnedLegs - 2]);
+    const lateRows = spoke([pinnedRounds - 2]);
     const lateWait = rumorWaitLine(
       lateRows,
       speaker,
-      pinnedLegs - 1,
-      pinnedLegs,
+      pinnedRounds - 1,
+      pinnedRounds,
     );
     const openWait = rumorWaitLine(
       lateRows,
       speaker,
-      pinnedLegs - 1,
-      pinnedLegs + 8,
+      pinnedRounds - 1,
+      pinnedRounds + 8,
     );
     check(
-      rumorCooldownLeft(lateRows, speaker, pinnedLegs - 1) === 2 &&
+      rumorCooldownLeft(lateRows, speaker, pinnedRounds - 1) === 2 &&
         lateWait ===
-          `The bazaar is quiet for you to the end of this voyage. You spoke in leg ${pinnedLegs - 2}.` &&
-        !lateWait.includes(String(pinnedLegs + 1)) &&
+          `The bazaar is quiet for you to the end of this voyage. You spoke in round ${pinnedRounds - 2}.` &&
+        !lateWait.includes(String(pinnedRounds + 1)) &&
         lateWait !== openWait &&
-        openWait.includes(`again at leg ${pinnedLegs + 1}`),
-      "and a wait the cooldown outlasts is said in the bazaar's own words rather than in a leg the voyage never reaches: the desk keeps the leg the captain spoke in and drops the leg it would have come back at, while the same rows read on a voyage long enough to hold that leg are still sent back to it, so the sentence turns on the length rather than on the count",
+        openWait.includes(`again at round ${pinnedRounds + 1}`),
+      "and a wait the cooldown outlasts is said in the bazaar's own words rather than in a round the voyage never reaches: the desk keeps the round the captain spoke in and drops the round it would have come back at, while the same rows read on a voyage long enough to hold that round are still sent back to it, so the sentence turns on the length rather than on the count",
     );
     check(
-      rumorClosingLine().includes("last leg") &&
-        !rumorClosingLine().toLowerCase().includes("more leg") &&
+      rumorClosingLine().includes("last round") &&
+        !rumorClosingLine().toLowerCase().includes("more round") &&
         !rumorClosingLine().toLowerCase().includes("again") &&
         rumorClosingLine() !== rumorCooldownLine(1),
-      "and that leg is refused in the bazaar's own sentence rather than in the wait's: a captain standing at the closing leg is told which leg is the reason, so the desk's silence is read as a fact about the voyage rather than as a wait that would end in three legs time",
+      "and that round is refused in the bazaar's own sentence rather than in the wait's: a captain standing at the closing round is told which round is the reason, so the desk's silence is read as a fact about the voyage rather than as a wait that would end in three rounds time",
     );
     check(
       RUMOR_SHIFT_FRACTION === PORT_SHIFT_FRACTION,
-      "and the band a rumor leans a price by is the Harbormaster's own tenth rather than a second number kept beside it, which is what makes a rumor a call the table already knows how to read and what keeps the plan's guard on how swingy a price may become one number in one place",
+      "and the band a rumor leans a price by is the Harbormaster's own tenth rather than a second number kept beside it, which is what makes a rumor a call the table already knows how to read and what keeps the design's guard on how swingy a price may become one number in one place",
     );
 
     // One row, as the harbor holds it and as three readers may see it.
@@ -278,28 +279,28 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       rumorStanding(rumorRow, 5) &&
         !rumorStanding(rumorRow, 6) &&
         !rumorStanding(rumorRow, 7),
-      "a rumor stands in the leg it was spoken in and in no leg after it, which is the one question the whole visibility rule turns on",
+      "a rumor stands in the round it was spoken in and in no round after it, which is the one question the whole visibility rule turns on",
     );
     check(
       asPublisher?.direction === 1 &&
         asOther?.direction === null &&
         asLater?.direction === 1 &&
         rumorRow.direction === 1,
-      "the direction is stripped for every reader but its publisher while the rumor stands, and it is public the moment the market it moved is drawn, while the row the harbor holds keeps it either way: the fleet is handed the captain, the good and the leg rather than the lean, and the row itself is never rewritten",
+      "the direction is stripped for every reader but its publisher while the rumor stands, and it is public the moment the market it moved is drawn, while the row the harbor holds keeps it either way: the fleet is handed the captain, the good and the round rather than the lean, and the row itself is never rewritten",
     );
     check(
       asOther?.publisherName === "Smoke aroma" &&
         asOther?.good === "Silk" &&
         asOther?.round === 5 &&
         asOther?.id === rumorRow.id,
-      "and the name, the good and the leg travel to everyone, because a rumor the harbor cannot attribute is not the mechanic: the fleet is meant to know who spoke and to have to guess at why",
+      "and the name, the good and the round travel to everyone, because a rumor the harbor cannot attribute is not the mechanic: the fleet is meant to know who spoke and to have to guess at why",
     );
     check(
       rumorId(speaker, 5) !== rumorId(speaker, 6) &&
         rumorId(speaker, 5) !== rumorId("captain-b", 5) &&
         rumorId(speaker, 5).includes(speaker) &&
         rumorId(speaker, 5).includes("5"),
-      "one captain speaks once a leg, so a row's id is its publisher and its leg together: two rows can never be handed one id, which is what the board's one writer relies on rather than checking",
+      "one captain speaks once a round, so a row's id is its publisher and its round together: two rows can never be handed one id, which is what the board's one writer relies on rather than checking",
     );
 
     // What the lean does, which is the other half of the visibility
@@ -317,7 +318,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         atSix.Tea === -RUMOR_SHIFT_FRACTION &&
         Object.keys(rumorLean([rumorRow, teaRow], 5)).length === 0 &&
         Object.keys(rumorLean([rumorRow, teaRow], 7)).length === 0,
-      "a rumor is priced by the very next market and by no other: the leg it was spoken in has already been drawn and the leg after next has moved on, so one row leans one price once",
+      "a rumor is priced by the very next market and by no other: the round it was spoken in has already been drawn and the round after next has moved on, so one row leans one price once",
     );
     check(
       rumorLean([rumorRow, rowBy({ publisherUserId: "captain-b" })], 6).Silk ===
@@ -367,7 +368,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         normalizeBazaarRumor({ ...soundRow, direction: 0 }) === null &&
         normalizeBazaarRumor({ ...soundRow, direction: 2 }) === null &&
         normalizeBazaarRumor({ ...soundRow, direction: "higher" }) === null,
-      "a row off the wire is kept only when it names a publisher, a good and a leg and its direction is a real lean or the null a standing row carries, because a row that failed to parse is not an empty row and a row the screen draws is a row the fleet believes",
+      "a row off the wire is kept only when it names a publisher, a good and a round and its direction is a real lean or the null a standing row carries, because a row that failed to parse is not an empty row and a row the screen draws is a row the fleet believes",
     );
     const leaned = normalizeRumorLean({
       Silk: RUMOR_SHIFT_FRACTION,
@@ -388,7 +389,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         !("Sails" in leaned) &&
         Object.keys(normalizeRumorLean(null)).length === 0 &&
         Object.keys(normalizeRumorLean([RUMOR_SHIFT_FRACTION])).length === 0,
-      "and a lean off a save is held to the band the constant declares with everything that is not a finite number dropped, so a save edited to lean a good by half is read as a rumor's worth and no more, which is the defensive half of the plan's own guard on how swingy a price may become",
+      "and a lean off a save is held to the band the constant declares with everything that is not a finite number dropped, so a save edited to lean a good by half is read as a rumor's worth and no more, which is the defensive half of the design's own guard on how swingy a price may become",
     );
 
     // The two sentences, which are the ones a captain reads and the harbor
@@ -419,7 +420,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
 
     // ========== The market the lean lands on ==========
     //
-    // One leg drawn twice from one seed for two captains who differ in
+    // One round drawn twice from one seed for two captains who differ in
     // one thing only: what the bazaar told them. The cards have to come
     // out identical and only the named good's price may move, which is
     // also what proves a rumor is a price rather than a second market
@@ -471,7 +472,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         ),
     );
     if (rumored === undefined) {
-      throw new Error("This leg's board carried no good a tenth moves.");
+      throw new Error("This round's board carried no good a tenth moves.");
     }
     const leanedUp = marketUnder({
       bazaarLean: { [rumored]: RUMOR_SHIFT_FRACTION },
@@ -517,7 +518,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     // landed row tells the table which way a captain leaned and nothing
     // about whether the good was in the port at all. The two states are
     // read off the one drawn board, because that is what a captain holds
-    // on the leg their rumor lands: one row naming a good the port drew
+    // on the round their rumor lands: one row naming a good the port drew
     // and one naming a good it did not.
     const drawnGoods = new Set(
       plainMarket.resourceCards.flatMap((card) =>
@@ -530,7 +531,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
     if (drewGood === undefined || missedGood === undefined) {
       throw new Error(
-        "This leg's board named every good, so no rumor could miss it.",
+        "This round's board named every good, so no rumor could miss it.",
       );
     }
     check(
@@ -538,12 +539,12 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         { good: drewGood, round: 5 },
         plainMarket.resourceCards,
       ) ===
-        `The port of leg 6 drew ${drewGood} and priced it against your rumor.` &&
+        `The port of round 6 drew ${drewGood} and priced it against your rumor.` &&
         rumorLandedLine(
           { good: missedGood, round: 5 },
           plainMarket.resourceCards,
         ) ===
-          `The port of leg 6 drew no ${missedGood}, so your rumor moved no price you could buy.` &&
+          `The port of round 6 drew no ${missedGood}, so your rumor moved no price you could buy.` &&
         rumorLandedLine({ good: drewGood, round: 5 }, []) === null,
       "and the port's answer to a row the market just priced is presence rather than a price: a good the port drew is reported as priced against the rumor and a good it did not is reported as a price that never moved, both read off this captain's own drawn market, while a market that has not been drawn yet is answered with nothing rather than with a guess about a port nobody has reached",
     );
@@ -583,7 +584,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       );
     if (leaningCard === undefined) {
       throw new Error(
-        "This leg's board carried no card where the three hands disagree about rounding.",
+        "This round's board carried no card where the three hands disagree about rounding.",
       );
     }
     const allThree = marketUnder({
@@ -605,7 +606,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     });
     check(
       pricedByAllThree,
-      "and the three hands are one price rather than three: a card carrying the rumored good at the port under the Harbormaster's call is priced by the rounding of the whole product, and this leg's board carries a card where rounding the hands one at a time would land elsewhere, so that is the claim and not a coincidence",
+      "and the three hands are one price rather than three: a card carrying the rumored good at the port under the Harbormaster's call is priced by the rounding of the whole product, and this round's board carries a card where rounding the hands one at a time would land elsewhere, so that is the claim and not a coincidence",
     );
   });
 
@@ -636,10 +637,10 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     "bazaar.ts",
   ]);
 
-  // The leg a landed row was priced by, which is the one leg of delay the
-  // whole feature is: the chip names both legs off the reader and the
-  // footnote's outcome sentence is built on the same reader, so the leg a
-  // captain reads and the leg the market priced are one number rather
+  // The round a landed row was priced by, which is the one round of delay the
+  // whole feature is: the chip names both rounds off the reader and the
+  // footnote's outcome sentence is built on the same reader, so the round a
+  // captain reads and the round the market priced are one number rather
   // than the same arithmetic written twice.
   check(
     rumorLandsOn({ round: 5 }) === 6 &&
@@ -649,21 +650,21 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         "const landsOn = rumorLandsOn({ round: game.currentRound });",
       ) &&
       deskSource.includes(
-        "spoken in leg {row.round} · priced at leg {landsOn}",
+        "spoken in round {row.round} · priced at round {landsOn}",
       ) &&
       deskSource.includes("rumorLandedLine(row, game.resourceCards)") &&
       !deskSource.includes("row.round + 1"),
-    "the leg a landed row was priced by is the leg after the one it was spoken in, named by the one reader that states the pair and by no arithmetic written into the desk: the chip names both legs off it and the footnote's outcome goes through the same reader, so the two legs a row wears cannot come apart",
+    "the round a landed row was priced by is the round after the one it was spoken in, named by the one reader that states the pair and by no arithmetic written into the desk: the chip names both rounds off it and the footnote's outcome goes through the same reader, so the two rounds a row wears cannot come apart",
   );
 
   // The copy the desk prints, held to the table it is printed for: the
-  // empty board says why its window is two legs wide rather than claiming
+  // empty board says why its window is two rounds wide rather than claiming
   // the voyage has been silent, and the two paragraphs that explain the
   // seat are written for a table that may hold two captains of the
   // speaking path rather than one.
   check(
     deskSource.includes(
-      "The board keeps those two legs and no more. Older rows moved markets the harbor has already priced and traded through.",
+      "The board keeps those two rounds and no more. Older rows moved markets the harbor has already priced and traded through.",
     ) &&
       deskSource.includes("which good they named") &&
       deskSource.includes("each {SELLER_PATH.name}") &&
@@ -678,12 +679,12 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         "voyage log, and the board below names them the moment they speak.",
       ) &&
       !deskSource.includes("named ports"),
-    "and the desk's own copy names the good rather than the ports and turns on the captain rather than on the seat: the empty board explains the two leg window rather than announcing a silent voyage, the intro says each Aroma captain may speak rather than the Aroma captain, and the reader who holds no path is told who is named where rather than left to work the silence out from a form that is not there",
+    "and the desk's own copy names the good rather than the ports and turns on the captain rather than on the seat: the empty board explains the two round window rather than announcing a silent voyage, the intro says each Aroma captain may speak rather than the Aroma captain, and the reader who holds no path is told who is named where rather than left to work the silence out from a form that is not there",
   );
 
   // The publish handler's two reads, and the order between them: the room
   // row is read first because it is the read that waits on the database,
-  // and the checkpoint is read last because its phase and its leg are what
+  // and the checkpoint is read last because its phase and its round are what
   // every check after it judges and what the row is written with. Nothing
   // between the checkpoint and the write yields, so a phase that moved out
   // of the Parley while the database read was in flight is refused rather
@@ -748,11 +749,11 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   // did. It is empty at the end of the run or the feature is broken
   // somewhere no single check above was pointed at.
   //
-  // Standing is judged against the leg the harbor was standing on rather
+  // Standing is judged against the round the harbor was standing on rather
   // than against a clock: every move of the harbor in this suite goes through
   // parkBazaar, so this is never behind the harbor, and the only frames that
   // can arrive between two parks are the ones a park itself caused.
-  let bazaarLeg = 0;
+  let bazaarRound = 0;
   const bazaarLeaks: string[] = [];
   // And the reading that keeps the scan above honest: the publisher is the
   // one captain who is owed a standing direction, so a run where none was
@@ -777,7 +778,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
           payload.rumors.map((row) => row.id),
         );
         for (const row of payload.rumors) {
-          if (row.direction === null || row.round < bazaarLeg) continue;
+          if (row.direction === null || row.round < bazaarRound) continue;
           if (row.publisherUserId === captain.id) {
             bazaarOwnReads += 1;
             continue;
@@ -857,7 +858,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
 
   // The harbor's own seat, moved the way this suite moves any harbor's seat.
-  // A checkpoint only ever moves forward, so the legs below are walked in
+  // A checkpoint only ever moves forward, so the rounds below are walked in
   // order rather than named at random.
   const bazaarRoomRow = async () =>
     db.room.findUnique({
@@ -885,12 +886,12 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       await new Promise((resolve) => setTimeout(resolve, 250));
       row = await bazaarRoomRow();
     }
-    // The leg the harbor is standing on now, which is the leg every frame
+    // The round the harbor is standing on now, which is the round every frame
     // this park caused is read against by the scan above. Set after the
     // harbor has moved rather than before it, so a frame the park itself
-    // caused is judged against the leg it was caused by rather than the one
+    // caused is judged against the round it was caused by rather than the one
     // it left.
-    bazaarLeg = round;
+    bazaarRound = round;
     return row;
   };
   const bazaarReadyAll = (round: number, phase: Phase) => {
@@ -966,7 +967,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     "and a real commodity the coming market does not stock is refused rather than leaned onto nothing, because the list the server checks is the list that market draws from rather than the catalogue the game owns",
   );
 
-  // The two rows this leg will price the next market with.
+  // The two rows this round will price the next market with.
   const bazaarSilk = bazaarSpeaks(bazaarThird, (board) => board.length === 1);
   // The claim below reads the speaker's own board beside the frame it
   // watched, so that board is waited for too rather than read hopeful.
@@ -986,7 +987,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       bazaarAfterSilk.rumors[0].round === 3 &&
       bazaarAfterSilk.rumors[0].publisherUserId === bazaarSeller.id &&
       bazaarAfterSilk.rumors[0].good === "Silk",
-    "a captain who speaks puts a row on the board the whole harbor reads, and the row carries the leg it was spoken in and the name of the captain who spoke it",
+    "a captain who speaks puts a row on the board the whole harbor reads, and the row carries the round it was spoken in and the name of the captain who spoke it",
   );
   check(
     bazaarAfterSilk?.rumors[0].direction === null &&
@@ -1018,7 +1019,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       bazaarDirectionOf(bazaarSeller, rumorId(bazaarReader.id, 3)) === null &&
       bazaarDirectionOf(bazaarReader, rumorId(bazaarSeller.id, 3)) === null &&
       bazaarDirectionOf(bazaarReader, rumorId(bazaarReader.id, 3)) === -1,
-    "two captains can speak in one leg about two goods, and each of them reads their own row with its direction and the other captain's without: the third captain at the table, who holds no path at all, reads both rows and neither lean, which is what makes this a market rather than a private channel",
+    "two captains can speak in one round about two goods, and each of them reads their own row with its direction and the other captain's without: the third captain at the table, who holds no path at all, reads both rows and neither lean, which is what makes this a market rather than a private channel",
   );
 
   // A rumor is not a promise, so a captain who leaves the harbor does not
@@ -1079,7 +1080,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   check(
     bazaarTooSoon !== null &&
       bazaarTooSoon === rumorCooldownLine(RUMOR_COOLDOWN_ROUNDS),
-    "and a captain who has already spoken this leg is refused in the sentence the desk prints, counted off the rows the harbor already holds rather than off a counter a doctored client could simply not obey",
+    "and a captain who has already spoken this round is refused in the sentence the desk prints, counted off the rows the harbor already holds rather than off a counter a doctored client could simply not obey",
   );
 
   // The harbor's log, which is the other place the trade is written down.
@@ -1115,9 +1116,9 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     "the harbor's log carries the rumor as the bazaar wrote it, with the captain and the good and never the direction, because the log is public the instant it is written and the direction is not public until the market answers the row",
   );
 
-  // ========== The leg the rumors land on ==========
+  // ========== The round the rumors land on ==========
   //
-  // The market of leg four is the one both rows were aimed at, and it is
+  // The market of round four is the one both rows were aimed at, and it is
   // opened by the advance out of Dawn, which is the step the server hangs
   // the lean on.
   await parkBazaar(4, "dawn");
@@ -1142,12 +1143,12 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     bazaarAtTheMarket?.bazaarLean?.Silk === RUMOR_SHIFT_FRACTION &&
       bazaarAtTheMarket?.bazaarLean?.Tea === -RUMOR_SHIFT_FRACTION &&
       Object.keys(bazaarAtTheMarket?.bazaarLean ?? {}).length === 2,
-    "the leg four market is priced against both rumors, each good leaned by exactly the band the constant declares, and the frame carrying the lean carries no name with it: every captain draws the same market from that frame and none of them is told which captain leaned which way",
+    "the round four market is priced against both rumors, each good leaned by exactly the band the constant declares, and the frame carrying the lean carries no name with it: every captain draws the same market from that frame and none of them is told which captain leaned which way",
   );
   check(
     bazaarDirectionOf(bazaarThird, rumorId(bazaarSeller.id, 3)) === 1 &&
       bazaarDirectionOf(bazaarThird, rumorId(bazaarReader.id, 3)) === -1,
-    "and the reveal lands with the market rather than after it: the third captain, who read two rows with no direction a moment ago, now reads both, which is the plan's false positive generator and the reason a direction is held back for exactly one leg",
+    "and the reveal lands with the market rather than after it: the third captain, who read two rows with no direction a moment ago, now reads both, which is the design's false positive generator and the reason a direction is held back for exactly one round",
   );
   // The frame and the board, which are the two halves of one price: what a
   // captain was told the market was priced by, read against the lean their
@@ -1192,7 +1193,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   });
   check(
     bazaarStillQuiet !== null && bazaarStillQuiet === rumorCooldownLine(2),
-    "a captain who spoke in one leg is refused through the two legs after it and told how many are left, which is the wait the desk draws before the click rather than a refusal discovered after it",
+    "a captain who spoke in one round is refused through the two rounds after it and told how many are left, which is the wait the desk draws before the click rather than a refusal discovered after it",
   );
 
   const bazaarThirdSpeaks = bazaarSpeaks(bazaarThird, (board) =>
@@ -1209,34 +1210,34 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   );
 
   // The window the whole feature is built on: the market after next is
-  // priced by the rumor spoken in leg four and by neither of the two from
-  // leg three, and the market after that is told that nobody spoke at all.
+  // priced by the rumor spoken in round four and by neither of the two from
+  // round three, and the market after that is told that nobody spoke at all.
   await parkBazaar(5, "dawn");
-  const bazaarLegFive = bazaarAdvanceTo(5);
+  const bazaarRoundFive = bazaarAdvanceTo(5);
   bazaarReadyAll(5, "dawn");
-  const bazaarAtFive = await bazaarLegFive;
+  const bazaarAtFive = await bazaarRoundFive;
   check(
     bazaarAtFive?.bazaarLean?.Hemp === -RUMOR_SHIFT_FRACTION &&
       Object.keys(bazaarAtFive?.bazaarLean ?? {}).length === 1,
-    "and the next market is priced by the rumor spoken in leg four alone: the two rows from leg three are not carried forward, which is the one leg window the feature is built on",
+    "and the next market is priced by the rumor spoken in round four alone: the two rows from round three are not carried forward, which is the one round window the feature is built on",
   );
 
   await parkBazaar(6, "dawn");
-  const bazaarLegSix = bazaarAdvanceTo(6);
+  const bazaarRoundSix = bazaarAdvanceTo(6);
   bazaarReadyAll(6, "dawn");
-  const bazaarAtSix = await bazaarLegSix;
+  const bazaarAtSix = await bazaarRoundSix;
   check(
     bazaarAtSix !== null &&
       "bazaarLean" in bazaarAtSix &&
       Object.keys(bazaarAtSix.bazaarLean ?? {}).length === 0,
-    "and a market nobody spoke about is sent an empty lean rather than no lean at all, because a market that is never told last leg's rumor is over would price the same good twice",
+    "and a market nobody spoke about is sent an empty lean rather than no lean at all, because a market that is never told last round's rumor is over would price the same good twice",
   );
 
-  // ========== The closing leg, which has no market left to move ==========
+  // ========== The closing round, which has no market left to move ==========
   //
-  // The last leg of the voyage, walked to rather than sailed to: a
+  // The last round of the voyage, walked to rather than sailed to: a
   // checkpoint only ever moves forward and nothing between here and there
-  // is a leg this rule reads, so the walk is a jump.
+  // is a round this rule reads, so the walk is a jump.
   const bazaarClosingPark = await parkBazaar(12, "parley");
   const bazaarTooLate = await bazaarRefused(bazaarSeller, "bazaar:publish", {
     good: "Hemp",
@@ -1247,13 +1248,13 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       bazaarClosingPark?.currentPhase === "parley" &&
       bazaarTooLate !== null &&
       bazaarTooLate === rumorClosingLine(),
-    "and the closing leg of the voyage is the one leg a rumor cannot be spoken in, refused in the bazaar's own sentence rather than in the wait's: a rumor is priced by the port one leg after the leg it was spoken in and this leg has no port after it, so the row would spend the publisher's whole cooldown leaning a market the voyage never opens",
+    "and the closing round of the voyage is the one round a rumor cannot be spoken in, refused in the bazaar's own sentence rather than in the wait's: a rumor is priced by the port one round after the round it was spoken in and this round has no port after it, so the row would spend the publisher's whole cooldown leaning a market the voyage never opens",
   );
   check(
     bazaarBoardOf(bazaarThird).length === 3 &&
       bazaarSeen.get(bazaarThird.id)?.size === 3 &&
       bazaarTooLate !== rumorCooldownLine(1),
-    "and the refusal is a refusal rather than a row written and then discarded: the board still carries the voyage's three rows and no fourth, and the captain is told the leg rather than a wait, because the two refusals are two different facts about their table and only one of them is about their own record",
+    "and the refusal is a refusal rather than a row written and then discarded: the board still carries the voyage's three rows and no fourth, and the captain is told the round rather than a wait, because the two refusals are two different facts about their table and only one of them is about their own record",
   );
 
   // ========== A restarted voyage has a bazaar nobody has spoken at ==========
@@ -1261,13 +1262,13 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   // The rows go with the voyage that ends, which is the half of that clear
   // that is load bearing rather than tidy: a row is what a captain's
   // cooldown is measured from, so a row left standing across a restart
-  // would refuse its publisher in the voyage about to begin, for legs they
+  // would refuse its publisher in the voyage about to begin, for rounds they
   // never spoke in, and the desk would draw that wait over a button with
   // nothing behind it. The reading below is what the old rows would have
   // cost, computed off the very rows the harbor is holding, paired with what
   // the reopened bazaar actually does with them.
   const bazaarOldRows = bazaarBoardOf(bazaarThird);
-  const bazaarHeldLeg = bazaarOldRows.find(
+  const bazaarHeldRound = bazaarOldRows.find(
     (row) => row.publisherUserId === bazaarThird.id,
   )?.round;
   const bazaarCarried = rumorCooldownLeft(bazaarOldRows, bazaarThird.id, 1);
@@ -1302,10 +1303,10 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     "restarting the voyage reopens the harbor at its first checkpoint with a bazaar nobody has spoken at, and the board is emptied by a frame rather than by the clients looking away: a captain still standing in that harbor is told the rows are gone rather than left to work it out from a wait that never ends",
   );
   check(
-    bazaarHeldLeg !== undefined &&
-      bazaarCarried === bazaarHeldLeg + RUMOR_COOLDOWN_ROUNDS - 1 &&
+    bazaarHeldRound !== undefined &&
+      bazaarCarried === bazaarHeldRound + RUMOR_COOLDOWN_ROUNDS - 1 &&
       bazaarCarried > 0,
-    "and the wait that clear spared the table is the wait the old rows would have charged: the row this captain spoke in leg four would have refused them in leg one of the voyage about to begin and for five legs after it, which is the one way this feature can read as a button that is simply broken rather than as a rule",
+    "and the wait that clear spared the table is the wait the old rows would have charged: the row this captain spoke in round four would have refused them in round one of the voyage about to begin and for five rounds after it, which is the one way this feature can read as a button that is simply broken rather than as a rule",
   );
 
   // The whole run's reading of the one invariant, which is the claim the

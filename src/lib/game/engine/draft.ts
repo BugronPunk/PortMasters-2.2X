@@ -1,7 +1,7 @@
 // =====================================================================
 // PortMasters 2.2 Parallel Release: the draft's writes into a save.
 //
-// [D7: the draft, and switching] The engine half of the plan's clause. The
+// The engine half of the design's clause. The
 // rule half (the deck, the pass, the window and the fee) lives in
 // ../draft and holds no state; this module is what a kept card and a
 // changed identity write into a captain's own save.
@@ -189,8 +189,8 @@ function refusalLine(refusal: PathSwitchRefusal): LedgerLine {
 
 /**
  * The harbor's answer when it is not reading new papers, or null where it
- * is: both halves of the "when" the plan's clause puts on a switch, "at a
- * port, legs three through nine".
+ * is: both halves of the "when" the design's clause puts on a switch, "at a
+ * port, rounds three through nine".
  *
  * It is one function rather than two checks at each caller because two
  * callers have to agree about both, and they are on opposite sides of the
@@ -203,7 +203,7 @@ function refusalLine(refusal: PathSwitchRefusal): LedgerLine {
  * there is one sentence per fact, the shape rumorCooldownLine takes.
  *
  * It answers with the sentence rather than a flag because the sentence is
- * the only part of a refusal worth printing. The legs are asked first, so a
+ * the only part of a refusal worth printing. The rounds are asked first, so a
  * switch attempted in the wrong season of a voyage is told about the season
  * rather than about the seat it happened to be attempted in.
  */
@@ -240,7 +240,7 @@ function pathSwitchOpenRefusal(
 
 /**
  * The harbor's answer when this captain has already changed their papers
- * this voyage, which is the plan's "once per voyage" said to the captain.
+ * this voyage, which is the design's "once per voyage" said to the captain.
  *
  * It is a sentence of its own rather than a line inside pathSwitchBlocked
  * below because it is told from two sides of the wire: the engine's guard
@@ -260,7 +260,7 @@ export function pathSwitchSpentLine(): string {
  *
  * The order of the questions is the order a captain meets them: what they
  * hold, whether they have already changed it, whether the harbor is
- * reading papers at all this leg, whether they are standing at a port,
+ * reading papers at all this round, whether they are standing at a port,
  * whether the destination is somewhere new, and only then whether they can
  * pay for it. The last question is the only one about the destination,
  * and putting it last keeps "you already hold that path" from being
@@ -287,7 +287,7 @@ function pathSwitchRefusal(
   to: PathId,
 ): PathSwitchRefusal | null {
   if (state.path === null) return { kind: "no_path" };
-  if (state.pathSwitchLeg > 0) return { kind: "spent" };
+  if (state.pathSwitchRound > 0) return { kind: "spent" };
   const when = pathSwitchOpenRefusal(state.currentRound, state.phase);
   if (when !== null) return when;
   if (to === state.path) return { kind: "same_path" };
@@ -338,7 +338,7 @@ export function applyDraftPath(
  *
  * "Unfulfilled" is carried on the card's own record: a card already in
  * completedOrders stays on the board, because the manifest is also the
- * leg's history and a filled order is not something a captain can forfeit.
+ * round's history and a filled order is not something a captain can forfeit.
  * What this removes is the work the old papers opened and the captain did
  * not do, which is the whole of why changing identity costs something more
  * than the fee.
@@ -361,11 +361,11 @@ function forfeitPathOrders(state: GameState, path: PathId): number {
  *
  * The fee is a charge and not a trade: it leaves the purse and is
  * deliberately kept out of roundCosts and totalCosts, which are the
- * ledger a leg's profit is read off. Papers are bought, and a switch is
+ * ledger a round's profit is read off. Papers are bought, and a switch is
  * not the voyage's business any more than a bribe is, so neither the
  * round's books nor the integrity ceiling over them should move for it.
  *
- * The stamp is the leg the switch happened on, written here because this
+ * The stamp is the round the switch happened on, written here because this
  * is the only moment it exists, and it is what pathSwitchBlocked reads
  * above: the guard and the record are one field, so a switch cannot be
  * recorded without being spent.
@@ -385,7 +385,7 @@ export function applyPathSwitch(
   state.money -= fee;
   const forfeited = forfeitPathOrders(state, from);
   state.path = to;
-  state.pathSwitchLeg = state.currentRound;
+  state.pathSwitchRound = state.currentRound;
   logs.push(pathSwitchLine(from, to, fee));
   if (forfeited > 0) logs.push(pathForfeitLine(forfeited));
   return true;

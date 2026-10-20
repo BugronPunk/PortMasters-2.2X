@@ -34,7 +34,7 @@ export interface DifficultyConfig {
   // Display metadata, read by the lobby switch, the harbor card chip, and the
   // in game status chip, so copy and numbers never drift from one source.
   name: string;
-  // [F1: the tag vocabulary, and the two tag rule] What water this charter
+  // What water this charter
   // is, in the vocabulary of ./constants/tags, read by the rule module
   // against the two numbers in this same record that make two of the tags
   // checkable rather than authored: a charter carries armed exactly when
@@ -109,7 +109,7 @@ export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
     icon: "🌤️",
     tagline: "A gentle passage for new captains.",
     summary:
-      "Eight rounds on the founding trade. A short, legible voyage with room to learn the rhythm before the money runs tight.",
+      "A gentle passage on the founding trade. A short, legible voyage with room to learn the rhythm before the money runs tight.",
     rounds: 8,
     startingGold: 100,
     maintenance: 15,
@@ -132,7 +132,7 @@ export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
     icon: "🌊",
     tagline: "The full trade opens as the harbor grows busy.",
     summary:
-      "Twelve rounds. The charter opens twice and the market swells from six cards to ten, with pirates that begin to bite past the midpoint.",
+      "The charter opens twice and the market swells from six cards to ten, with pirates that begin to bite past the midpoint.",
     rounds: 12,
     startingGold: 100,
     maintenance: 18,
@@ -155,7 +155,7 @@ export const DIFFICULTIES: Record<Difficulty, DifficultyConfig> = {
     icon: "⛈️",
     tagline: "A long, adversarial haul for seasoned captains.",
     summary:
-      "Sixteen rounds, back loaded and unforgiving. The market swells to eleven cards, the largest imperial mandates fall late, and a corrupt broker may leak your position to the pirates.",
+      "Back loaded and unforgiving. The market swells to eleven cards, the largest imperial mandates fall late, and a corrupt broker may leak your position to the pirates.",
     rounds: 16,
     startingGold: 90,
     maintenance: 22,
@@ -292,7 +292,7 @@ export function marketCountsFor(
 // Which content tier's Silk Road Charter opens on exactly this round, if
 // any, so the caller can announce what actually arrived rather than a
 // generic banner. (Named for the Silk Road Charter, the schedule's own
-// event, so it cannot be read as the leg four charter cards' switch.)
+// event, so it cannot be read as the round four charter cards' switch.)
 function silkRoadCharterTierOpeningOn(
   value: unknown,
   roundNo: number,

@@ -67,7 +67,7 @@ export type AidRequest = {
   round: number;
 };
 
-// [D3: Convoy: the Escort Contract] The escort market's board, as one
+// The escort market's board, as one
 // captain receives it.
 //
 // The row type is the game layer's (see EscortContract in
@@ -87,7 +87,7 @@ export type EscortBoard = {
   contracts: EscortContract[];
 };
 
-// [D4: Loom: the Refit] The bench's board, as one captain receives it.
+// The bench's board, as one captain receives it.
 //
 // The same shape as the escort board above and personalized the same way,
 // which is why its rows are the consent primitive's rather than a second
@@ -100,7 +100,7 @@ export type RefitBoard = {
   refits: RefitContract[];
 };
 
-// [D5: Aroma: the Bazaar Rumor] The bazaar's board, as one captain
+// The bazaar's board, as one captain
 // receives it.
 //
 // The same shape as the two boards above and the same rule about rows: the
@@ -113,7 +113,7 @@ export type RefitBoard = {
 // the feature rather than a detail of it. A standing rumor's direction
 // belongs to its publisher, so two captains in one harbor are sent two boards
 // that differ in a field rather than in which rows they carry, and the
-// filtering happens where the rows and the harbor's leg are both in hand (see
+// filtering happens where the rows and the harbor's round are both in hand (see
 // publicRumors). That is also why the type says the direction may be null:
 // a null there is not a missing answer, it is the server saying this row's
 // answer is not yours yet.
@@ -122,7 +122,6 @@ export type BazaarBoard = {
   rumors: PublicRumor[];
 };
 
-// [F3: modules in the shipyard ladder, and trading them between captains]
 // The module market's board, as one captain receives it.
 //
 // The fourth personalized market and the sixth shape, and it keeps the

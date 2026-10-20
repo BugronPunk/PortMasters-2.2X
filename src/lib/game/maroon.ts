@@ -1,12 +1,12 @@
 // =====================================================================
 // PortMasters 2.2 Parallel Release: Maroon, and the Harbormaster's hand.
 //
-// [H7: Maroon and the Harbormaster] The harbor's second vote, and the
+// The harbor's second vote, and the
 // heavier one. From the mode's rung, once a voyage, two thirds of the
 // captains still sailing may put one captain ashore: they lose the ship
 // and everything on it, keep half their Gold, and are handed the one
 // power in the mode that is not about their own books. From then on,
-// once a leg, they may name a port and lean every price at it by a tenth
+// once a round, they may name a port and lean every price at it by a tenth
 // in either direction, in front of the whole table.
 //
 // The vote is modeled on the Manifest Audit's (see ./audit) and the
@@ -40,7 +40,7 @@ export const MAROON_SHARE = 0.5;
 
 // How far the Harbormaster moves a port's prices, in either direction.
 // A tenth is small enough that a market stays readable and large enough
-// that a whole leg of buying at one port is a decision rather than a
+// that a whole round of buying at one port is a decision rather than a
 // rounding error, which is the same band the mode's other multipliers
 // work in (see the Harbor Pulse's own per good nudge).
 export const PORT_SHIFT_FRACTION = 0.1;
@@ -77,7 +77,7 @@ export type PortShift = {
  * The Gold a marooned captain keeps, floored to whole coins.
  *
  * Here rather than in the engine that takes the ship, because it is the
- * plan's number and the smoke suite holds it to the sentence a captain
+ * design's number and the smoke suite holds it to the sentence a captain
  * reads: "keep half their gold" is a rule, and a rule written out at the
  * place the subtraction happens is a rule that drifts from its own
  * description.
@@ -98,7 +98,7 @@ export function maroonKeptGold(gold: number): number {
  * anything at the sizes a harbor is dealt. Strictly more than two thirds
  * of a table of three is three votes, which is unanimity and therefore
  * not a vote at all; two thirds of three is two, and a two thirds
- * majority is what the plan asks for. At six the fraction lands on a
+ * majority is what the design asks for. At six the fraction lands on a
  * whole seat and both readings agree. It is that inclusive two thirds
  * that maroonNamesNeeded below writes as a whole count of names, so the
  * card that quotes the share and the server that decides on it answer
@@ -157,7 +157,7 @@ export function normalizePortShift(value: unknown): PortShift | null {
 }
 
 /**
- * What every price at one port is multiplied by this leg.
+ * What every price at one port is multiplied by this round.
  *
  * A multiplier rather than a mutation of the card, so a market drawn
  * before a shift arrived is never rewritten after the fact and a shift
@@ -178,11 +178,11 @@ export function portShiftMultiplier(
  * The shift as the harbor reads it, which is the only rendering there is.
  *
  * A clause rather than a sentence, exactly as a manifest line is (see
- * fulfillmentLine in ./audit): whoever shows it frames it with the leg and
+ * fulfillmentLine in ./audit): whoever shows it frames it with the round and
  * the hand that made it, and the clause itself then reads the same in
  * every frame. A sentence would have to pick a tense, and the two frames
- * this appears in need different ones: a call made this leg has not
- * landed yet, and a call made last leg is the one the market on screen was
+ * this appears in need different ones: a call made this round has not
+ * landed yet, and a call made last round is the one the market on screen was
  * priced against.
  *
  * The percent is read from PORT_SHIFT_PERCENT above, which is where its

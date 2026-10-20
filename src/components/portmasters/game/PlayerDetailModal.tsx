@@ -143,7 +143,7 @@ export function PlayerDetailModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       {/* Capped and scrollable. This panel is the tallest dialog in the
           game: header, stat tiles, comparison bar, legacy card, cargo,
-          workers, modules and a log box. Uncapped it ran taller than a
+          artisans, modules and a log box. Uncapped it ran taller than a
           laptop viewport, and because the dialog is vertically centred
           with the page scroll locked, both the title and the Close
           button were off screen with no way to reach them. */}
@@ -186,7 +186,7 @@ export function PlayerDetailModal({
             )}
             {detail?.phase === "endgame" && (
               <Pill tone="gain" className="shrink-0">
-                {t("🏁 Voyage complete")}
+                {t("🏁 Voyage Ended")}
               </Pill>
             )}
           </div>
@@ -295,7 +295,7 @@ export function PlayerDetailModal({
 
                   <div className="rounded-xl border border-black/10 dark:border-white/10 p-3.5">
                     <h4 className="text-xs font-semibold text-muted-foreground mb-2">
-                      {t("👥 Workers")}
+                      {t("👥 Artisans")}
                     </h4>
                     {/* The star the idle rows carry, defined where it
                         appears for the same reason the bench carries the

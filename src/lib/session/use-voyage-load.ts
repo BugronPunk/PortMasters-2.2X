@@ -95,21 +95,21 @@ export function useVoyageLoad({
   setStartingGoldBonus: Dispatch<SetStateAction<number>>;
 }): void {
   const { houseIdRef, renownRef } = useFallbackMemory();
-  const env: LoadEnv = {
-    roomId,
-    ctx,
-    roomMode,
-    dispatch,
-    setSeatPin,
-    setStartingGoldBonus,
-    houseIdRef,
-    renownRef,
-  };
 
   // Load saved state on mount / harbor change.
   useEffect(() => {
     if (!enabled) return;
     let alive = true;
+    const env: LoadEnv = {
+      roomId,
+      ctx,
+      roomMode,
+      dispatch,
+      setSeatPin,
+      setStartingGoldBonus,
+      houseIdRef,
+      renownRef,
+    };
 
     // One background retry for the two unreachable paths below, and the
     // reason this hook asks a second time at all: a transport hiccup that
@@ -166,7 +166,17 @@ export function useVoyageLoad({
       clearTimeout(timeoutId);
       if (retryId !== null) clearTimeout(retryId);
     };
-  }, [roomId, enabled, ctx, roomMode]);
+  }, [
+    roomId,
+    enabled,
+    ctx,
+    roomMode,
+    dispatch,
+    setSeatPin,
+    setStartingGoldBonus,
+    houseIdRef,
+    renownRef,
+  ]);
 }
 
 // The reading for the two loads that never reached the harbor, whether the

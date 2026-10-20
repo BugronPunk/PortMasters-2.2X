@@ -16,7 +16,7 @@ import {
  * What happens to a loan nobody repays, as the one sentence every surface
  * that shows a loan renders: the ask this desk posts, the list of asks
  * beside it, and the Dues tab on the rail. The round is the voyage's own
- * last one, read off maxRounds, so the sentence names the leg this voyage
+ * last one, read off maxRounds, so the sentence names the round this voyage
  * settles on rather than a figure typed in beside it, and the borrower and
  * the lender read one wording of one rule. The sentence reads through the
  * pack here, at the composer all three surfaces share, so the wording and

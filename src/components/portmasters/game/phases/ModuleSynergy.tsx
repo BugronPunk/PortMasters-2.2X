@@ -55,7 +55,7 @@ const MODULE_SYNERGY_RULES: {
   {
     ids: ["bulk_hauler", "silk_monopoly"],
     label:
-      "Freight Mastery: {bulkHauler} reduces transport per item and {silkMonopoly} can zero it out on any order carrying woven goods. Shipping costs almost nothing.",
+      "Freight Mastery: {bulkHauler} reduces the Freight you pay per item and {silkMonopoly} can zero it out on any order carrying woven goods. Freight costs almost nothing.",
     params: (name) => ({
       bulkHauler: name("bulk_hauler"),
       silkMonopoly: name("silk_monopoly"),
@@ -65,7 +65,7 @@ const MODULE_SYNERGY_RULES: {
   {
     ids: ["artisans_workshop", "salvage_crane"],
     label:
-      "Production Engine: {artisansWorkshopName} boosts worker output and {salvageCraneName} refunds the freight on some orders. More goods, more Gold back.",
+      "Production Engine: {artisansWorkshopName} boosts artisan output and {salvageCraneName} refunds the freight on some orders. More goods, more Gold back.",
     params: (name) => ({
       artisansWorkshopName: name("artisans_workshop"),
       salvageCraneName: name("salvage_crane"),
@@ -85,7 +85,7 @@ const MODULE_SYNERGY_RULES: {
   {
     ids: ["overdrive_engine", "bulk_hauler"],
     label:
-      "Penalty Stack: {overdriveEngineName} adds maintenance and {bulkHaulerName} raises upgrade cost. Consider swapping one if funds are tight.",
+      "Penalty Stack: {overdriveEngineName} adds maintenance and {bulkHaulerName} raises upgrade cost. Consider swapping one if Gold is tight.",
     params: (name) => ({
       overdriveEngineName: name("overdrive_engine"),
       bulkHaulerName: name("bulk_hauler"),

@@ -30,7 +30,7 @@ import {
 import { usePrivateLog } from "@/lib/use-private-log";
 import { useVoyageLog } from "@/lib/use-voyage-log";
 import { useObjective } from "@/lib/use-objective";
-import { useLegReport } from "@/lib/use-leg-report";
+import { useRoundReport } from "@/lib/use-round-report";
 import { useAudit } from "@/lib/use-audit";
 import { useBoonLedger } from "@/lib/use-boon-ledger";
 import { useMaroon } from "@/lib/use-maroon";
@@ -134,7 +134,7 @@ function leaveRefusal(phase: GameState["phase"]): string {
   switch (phase) {
     case "harbor":
       return "A voyage leaves the pier when the host sets sail, not by readying up.";
-    // [W2: the path draft] The deal's own seat. It is left by the table
+    // The deal's own seat. It is left by the table
     // rather than by any one captain, so the refusal says what actually
     // turns the step over instead of pointing at a button that never
     // existed: see canLeavePhase, which refuses this seat, and the panel
@@ -197,7 +197,8 @@ export function GameRoom({
     game: state.game,
     act,
     // The voyage's own seed identity, which the engine's autoCommit needs to
-    // leave a seat on the clock's behalf (see [B2] in @/lib/use-phase-sync).
+    // leave a seat on the clock's behalf (see the `ctx` note in
+    // @/lib/use-phase-sync).
     ctx,
     authed,
     myUserId: me.id,
@@ -236,6 +237,11 @@ export function GameRoom({
     loaded: state.loaded,
     playSound,
   });
+
+  // The two callbacks the effects below depend on directly. Depending on the
+  // whole board object would re-run them on every render.
+  const escortClaim = escort.claim;
+  const aidRepay = aid.repay;
 
   // The cover the raid roll consults, mirrored from the board this captain
   // can see. The engine asks one field and never the network (see
@@ -281,7 +287,7 @@ export function GameRoom({
   // becomes a frame, which is also the one place it can be.
   //
   // Cleared before it is sent rather than after: a claim that the server
-  // refuses, because the leg moved on or the contract is already claimed,
+  // refuses, because the round moved on or the contract is already claimed,
   // is still a raid that happened, and resending it every render would only
   // be a way to keep asking.
   useEffect(() => {
@@ -290,8 +296,8 @@ export function GameRoom({
     act((g) => {
       g.pendingEscortClaim = null;
     });
-    escort.claim(pending.contractId, pending.raidGold);
-  }, [state.game.pendingEscortClaim, socket, act, escort.claim]);
+    escortClaim(pending.contractId, pending.raidGold);
+  }, [state.game.pendingEscortClaim, socket, act, escortClaim]);
 
   // The seven effects: join the harbor channel on every reconnect, watch for
   // voyage conclusion, relay the engine's pending debt settlements, relay
@@ -305,7 +311,7 @@ export function GameRoom({
   }, [socket, authed, room.id]);
 
   const [voyageResult, setVoyageResult] = useState<VoyageResult | null>(null);
-  // [H8: the reveal and the replay ledger] The harbor's cards, face up.
+  // The harbor's cards, face up.
   // It arrives once, when the voyage concludes, and again for a captain
   // who reloads onto a finished table: the server hands the same payload
   // to a joining socket, which is the only way a browser that was not
@@ -417,11 +423,11 @@ export function GameRoom({
   useEffect(() => {
     const pending = state.game._pendingDebtSettlements;
     if (!pending || pending.length === 0) return;
-    for (const s of pending) aid.repay(s.amount, s.debtId);
+    for (const s of pending) aidRepay(s.amount, s.debtId);
     act((g) => {
       g._pendingDebtSettlements = [];
     });
-  }, [state.game._pendingDebtSettlements, aid.repay, act]);
+  }, [state.game._pendingDebtSettlements, aidRepay, act]);
 
   // Word on the Docks: completeOrder sets this the instant this captain's
   // own running total crosses the threshold; only the server knows whether
@@ -540,9 +546,9 @@ export function GameRoom({
     (debtId: string) => {
       const debt = state.game.debts.find((d) => d.id === debtId);
       if (!debt) return;
-      aid.repay(debt.amount, debtId);
+      aidRepay(debt.amount, debtId);
     },
-    [aid, state.game.debts],
+    [aidRepay, state.game.debts],
   );
 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -570,10 +576,11 @@ export function GameRoom({
     [state.game, state.logs],
   );
   const playerDetail = usePlayerDetail(socket, room.id, myDetail);
+  const requestPlayerDetail = playerDetail.requestDetail;
   // Whatever this voyage has told this captain and no one else. Empty in
   // every Classic harbor, because nothing is ever sent there.
   const privateLog = usePrivateLog(socket, room.id);
-  // [B4: the log surfaces] The harbor's own log, which is the other half of
+  // The harbor's own log, which is the other half of
   // the same pair and is read beside it at Dusk. It subscribes here, where
   // the socket is, but it asks the server for nothing until the screen
   // that draws it says so.
@@ -584,24 +591,24 @@ export function GameRoom({
   // because the commission's quotas are scaled by it and only the harbor
   // knows what it was pinned to.
   const objective = useObjective(socket, room.id, state.game, ctx, act, seats);
-  // [I1: the telemetry spine] What this voyage's records are missing
-  // otherwise: the orders each leg dealt and filled, and how varied the
+  // What this voyage's records are missing
+  // otherwise: the orders each round dealt and filled, and how varied the
   // hold closed it. Nothing comes back from this, and nothing on the
   // screen reads it: it is the one subscription in this component that is
   // purely a measurement.
-  useLegReport(socket, room.id, state.game);
-  // [H6: the Manifest Audit] The harbor's vote and its finding, in one
+  useRoundReport(socket, room.id, state.game);
+  // The harbor's vote and its finding, in one
   // hook because they are one interaction: the vote is what the Parley
   // phase offers, and the finding is what outlives it. Both are broadcast
   // and both are harbor stamped inside the hook. Inert in Classic, where no
   // vote can be called and none is ever sent.
   const audit = useAudit(socket, room.id, state.game, me.id);
-  // [F5: public offers] The fleet's ledger: this captain's own boon picks
+  // The fleet's ledger: this captain's own boon picks
   // reported out, the whole table's reported back. Both directions are
   // mode gated inside the hook (see its own note), so a Classic harbor
   // costs no frame either way and the panels draw nothing of it.
   const boons = useBoonLedger(socket, room.id, state.game);
-  // [H7: Maroon and the Harbormaster] The second vote, and the one piece
+  // The second vote, and the one piece
   // of state in this component a client applies to its own books on
   // somebody else's word, which is why this hook is handed `act`. Inert in
   // Classic, where no rung exists, no vote can be called and no leaning
@@ -616,7 +623,7 @@ export function GameRoom({
   const [restartConfirmOpen, setRestartConfirmOpen] = useState(false);
   const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false);
   const [shortcutHelpOpen, setShortcutHelpOpen] = useState(false);
-  // [B3: standing orders] The captain's own record, edited in place.
+  // The captain's own record, edited in place.
   const [standingOpen, setStandingOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -987,7 +994,7 @@ export function GameRoom({
   const handleSelectPlayer = useCallback(
     (userId: string) => {
       setSelectedPlayerId(userId);
-      playerDetail.requestDetail(userId);
+      requestPlayerDetail(userId);
       api
         .getLegacyFor(userId)
         .then(({ legacy }) =>
@@ -995,9 +1002,7 @@ export function GameRoom({
         )
         .catch(() => {});
     },
-    // The press itself, not the hook's whole answer: the callback reads
-    // nothing else off it, and the answer moves whenever a peek resolves.
-    [playerDetail.requestDetail],
+    [requestPlayerDetail],
   );
 
   function copyCode() {
@@ -1207,7 +1212,7 @@ export function GameRoom({
                 onSwitch={draft.switchPath}
                 onDismissError={draft.clearError}
               />
-              {/* [F4: boons at milestone moments] What the moments have
+              {/* What the moments have
                   left in this captain's hands, under the chip because the
                   two answer the same question in the same words. It
                   draws nothing when nothing is held, so a rail without a
@@ -1225,7 +1230,7 @@ export function GameRoom({
               </div>
             </div>
             {/* The stub a folded rail leaves: the way back, and the one
-                reading a folded captain still checks, the leg they are on.
+                reading a folded captain still checks, the round they are on.
                 It exists only on the wide layout, because below the
                 breakpoint the rails are full width rows and a folded row
                 would have no stub to come back from. */}
@@ -1345,7 +1350,7 @@ export function GameRoom({
                   onTutorialOpen={() => setTutOpen(true)}
                   colorFor={colorFor}
                   roster={roster}
-                  // [W2: the path draft] The harbor's deal, for the stage at
+                  // The harbor's deal, for the stage at
                   // the draft's own seat. The chip in the rail above reads
                   // the same hook for its in deal state.
                   draft={draft}
@@ -1648,7 +1653,7 @@ export function GameRoom({
         mode={state.game.mode}
         difficulty={state.game.difficulty}
       />
-      {/* [B3: standing orders] The form writes the record the way the
+      {/* The form writes the record the way the
           load heal does, through the normalizer, rather than trusting
           what the controls composed. The controls can only build the
           closed vocabulary, so this is not a guard against them: it is
@@ -1731,6 +1736,7 @@ export function GameRoom({
           onClick={() => setTipsOpen(true)}
           className="fixed bottom-5 right-5 pm-grad-advisor rounded-full h-12 w-12 flex items-center justify-center shadow-lg z-40"
           title={t("Strategy tips")}
+          aria-label={t("Strategy tips")}
         >
           <LifeBuoy className="h-5 w-5" />
         </motion.button>

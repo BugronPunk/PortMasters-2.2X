@@ -71,11 +71,11 @@ type Step = {
   // mode changes, which is the question they came with.
   points?: readonly string[];
   tip: string;
-  // [H9: the unlock code] The manual's own appendix, printed on the step it
+  // The manual's own appendix, printed on the step it
   // belongs to rather than in a panel of its own. It is prose from the
   // world rather than advice about a phase, so it reads as a notice under
   // the tip, and it is written with the phrase rather than without it: the
-  // plan seeds the phrase on a page of the manual, and this is the manual a
+  // design seeds the phrase on a page of the manual, and this is the manual a
   // captain can actually open. Built from the table so a second sealed
   // harbor adds a sentence here rather than a second copy of this one.
   aside?: string;
@@ -122,10 +122,10 @@ const STEPS: Step[] = [
   },
   {
     icon: Hammer,
-    title: "Upgrade at the Shipyard",
+    title: "Hull Upgrade at the Shipyard",
     gradient: "pm-grad-dusk",
-    body: "Dusk is the shipyard. Upgrade your ship (opens a new module slot and reduces transport costs) or draft and rig a module. Modules are permanent ship upgrades: a Smuggler's Hold, a Broker's Network, a Salvage Crane, and more.",
-    tip: "Do not skip the Shipyard. The transport discount from a higher ship level pays for itself within two rounds.",
+    body: "Dusk is the shipyard. Upgrade your hull (opens a new module slot and lowers freight costs) or draft and rig a module. Modules are permanent hull fittings: a Smuggler's Hold, a Broker's Network, a Salvage Crane, and more.",
+    tip: "Do not skip the Shipyard. The freight discount from a higher ship level pays for itself within two rounds.",
   },
   {
     icon: Coins,

@@ -58,7 +58,7 @@ export function DuesTab({
               <Term term="Wages">
                 👥 {t("Wages")}
                 {workerCount > 0
-                  ? t(" ({count} workers)", { count: workerCount })
+                  ? t(" ({count} artisans)", { count: workerCount })
                   : ""}
               </Term>
             }
@@ -96,11 +96,11 @@ export function DuesTab({
           </PanelTotal>
           {safe ? (
             <div className="mt-1.5 text-center text-[10px] text-gain">
-              {t("✅ Funds sufficient for round end")}
+              {t("✅ Enough Gold for round end")}
             </div>
           ) : (
             <div className="mt-1.5 rounded-md bg-alarm/5 py-1 text-center text-[10px] text-alarm">
-              {t("🚨 Risk: Funds may fall short at round end!")}
+              {t("🚨 Risk: Gold may fall short at round end!")}
             </div>
           )}
         </>

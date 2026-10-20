@@ -103,7 +103,7 @@ export function Purchase({
         </div>
       </FoldRow>
       <Provisions game={game} act={act} />
-      {/* [D4: Loom: the Refit] The bench folds, because it is a desk a
+      {/* The bench folds, because it is a desk a
           captain visits rather than the screen they buy on: the board and
           the larder lead, and a Loom captain or a captain shopping for a
           mend opens one row. It draws itself out of the tree wherever the
@@ -115,7 +115,7 @@ export function Purchase({
           icon={ICONS.Rags}
           title={t("Refit Bench")}
           gist={t(
-            "A Loom captain's work: a garment put right in one leg, at a fee the two of you agree.",
+            "A Loom captain's work: a garment put right in one round, at a fee the two of you agree.",
           )}
           open={benchOpen}
           onToggle={() => setBenchOpen((v) => !v)}

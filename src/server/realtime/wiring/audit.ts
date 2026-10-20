@@ -12,7 +12,7 @@ export function wireAudit(io: Server, socket: Socket): void {
   // wired by the helper the maroon's vote is wired by as well (see
   // ./vote), because the guards around a vote are the same rule on both
   // sides: the harbor is the caller's, the checkpoint is the Parley step
-  // and the leg is the one the vote names. Everything else the vote is
+  // and the round is the one the vote names. Everything else the vote is
   // judged against, including the roster it needs a majority of, is
   // read in recordAuditVote from the harbor rather than from the payload,
   // so a doctored frame cannot widen a majority.

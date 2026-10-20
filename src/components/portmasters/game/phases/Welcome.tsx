@@ -168,7 +168,7 @@ export function Welcome({
         {/* The voyage's own length, read from the state the captain is
             sailing rather than from the tier: a Gambit voyage is twelve
             rounds on every tier, so the tier's ladder would greet the crew
-            with the length of a voyage they are not on (see voyageLegs in
+            with the length of a voyage they are not on (see voyageRounds in
             src/lib/game/mode).
 
             It counts rounds rather than voyages: a voyage is the whole
@@ -195,7 +195,7 @@ export function Welcome({
               <Ship className="h-5 w-5 mr-2" />
               {canStart
                 ? harborIds.length === 1
-                  ? t("Start Solo Practice Voyage")
+                  ? t("Start Solo Practice")
                   : t(START_VOYAGE)
                 : t("Need at least one captain in the harbor")}
             </Button>
@@ -217,24 +217,24 @@ export function Welcome({
         </Button>
       </div>
       <div className="max-w-2xl mx-auto mt-3 space-y-2">
-        {/* The label carries no count of the legs: they are counted where
+        {/* The label carries no count of the rounds: they are counted where
             they are written, in the mode record. A number that has to agree
             with a list beside it is a second copy of that list, and the
             label is the copy that rots: a mode changes its lap and rewrites
             its own description, and nobody remembers the number on the pill
             above it. The wording avoids "in Order" for the same reason it
-            avoids a count: in this game Order is a noun, and the leg the
+            avoids a count: in this game Order is a noun, and the round the
             mode moved is the one that carries it.
 
             What follows the label is whatever shape the mode briefs in,
             and the shape is the mode's decision rather than this screen's:
             a line for the mode that has always printed one, and the chart
-            for the mode whose whole design is the order its legs run in.
+            for the mode whose whole design is the order its rounds run in.
             A line and a chart are two renderings of one record, not two
             records, which is why this branch is a branch on the data
             rather than a second panel beside the first. */}
         {/* One pill for the two questions this screen exists to answer,
-            what you are playing and what it costs you to fail (W4): the
+            what you are playing and what it costs you to fail: the
             round and the mode's own line are one thing said twice, and a
             captain reading their first lobby should meet the start button
             before a stack of competing pills. The badge line rides under
@@ -247,7 +247,7 @@ export function Welcome({
           {briefing.kind === "line" ? (
             t(briefing.text)
           ) : (
-            <RoundFlow legs={briefing.legs} closes={briefing.closes} />
+            <RoundFlow phases={briefing.phases} closes={briefing.closes} />
           )}
           {/* The first seat, named: a captain who has read the chart
               knows the shape of the lap and not what standing in its
@@ -309,7 +309,7 @@ export function Welcome({
               title={t("🚀 Starting Resources")}
               rows={[
                 t("📦 {stock}", { stock: stockLine }),
-                t("💰 {gold} Gold starting funds", { gold: cfg.startingGold }),
+                t("💰 {gold} starting Gold", { gold: cfg.startingGold }),
               ]}
             />
             <InfoCard
@@ -317,7 +317,7 @@ export function Welcome({
               title={t("⏱️ Production Delay")}
               rows={[
                 t("Assign task now → item arrives at Resolve"),
-                t("Workers don't produce instantly!"),
+                t("Artisans don't produce instantly!"),
               ]}
             />
             <InfoCard

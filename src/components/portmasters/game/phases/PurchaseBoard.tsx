@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   basePriceRange,
+  cardLineUnitPrice,
   explainCardPrice,
   getCardFinalCost,
   purchaseCard,
@@ -98,7 +99,12 @@ function PurchaseCard({
         // direction and "price" says what moved, so nothing on this
         // board needs a hover.
         const range = basePriceRange(r.type);
-        const unitPrice = r.price ?? 0;
+        // The line's settled unit price, not the list price: the stack
+        // charges the card total, so a boon or module can bring the
+        // captain's price below the harbor's list while the Unit line
+        // still showed the list. The Deal mark reads the same settled
+        // number the Buy button will charge for this line's share.
+        const unitPrice = Math.round(cardLineUnitPrice(game, c, i) * 10) / 10;
         const isDeal = range !== undefined && unitPrice < range[0];
         const isPricey = range !== undefined && unitPrice > range[1];
         // flex-wrap matters here: the good name and the mark chips

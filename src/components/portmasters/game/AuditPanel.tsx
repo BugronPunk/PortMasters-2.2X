@@ -4,10 +4,10 @@
 // decides to look, and the strip is what it found.
 //
 // The card lives inside the Parley phase, because that is the only place
-// the vote can be called: the audit's price is the rest of that leg's
+// the vote can be called: the audit's price is the rest of that round's
 // trading, so the button that spends it belongs on the board it spends.
 // The strip is full width under the commission, because the finding is
-// the whole harbor's and outlives the leg it was made in.
+// the whole harbor's and outlives the round it was made in.
 //
 // The frame both are drawn on belongs to the harbor rather than to the
 // audit: the vote card (see VoteCard) and the strip a carried vote
@@ -109,12 +109,12 @@ export function AuditVoteCard({
       rule={
         <span>
           {t(
-            "A majority of the captains still sailing can open one manifest. What comes back is a sample of what they filed. A carried vote ends this leg's trading, and the voyage carries on at the next leg. The count below names who is still to vote, and what the vote does when the names it needs land on one captain.",
+            "A majority of the captains still sailing can open one manifest. What comes back is a sample of what they filed. A carried vote ends this round's trading, and the voyage carries on at the next round. The count below names who is still to vote, and what the vote does when the names it needs land on one captain.",
           )}
         </span>
       }
       closed={t(
-        "This vote opens at leg {opensAt}, and this is leg {game.currentRound}. A simple majority of the captains still sailing then opens one captain's manifest: {AUDIT_REVEAL_WORDS} of their most recent order fulfillments, and nothing else. A carried vote ends that leg's trading, the voyage carries on at the next leg, and the harbor opens one manifest a voyage.",
+        "This vote opens at round {opensAt}, and this is round {game.currentRound}. A simple majority of the captains still sailing then opens one captain's manifest: {AUDIT_REVEAL_WORDS} of their most recent order fulfillments, and nothing else. A carried vote ends that round's trading, the voyage carries on at the next round, and the harbor opens one manifest a voyage.",
         {
           opensAt,
           "game.currentRound": game.currentRound,
@@ -139,7 +139,7 @@ export function AuditVoteCard({
           myVote={audit.myVote}
           nextStep={(needed) =>
             t(
-              "{namesNeeded} on one captain opens that captain's manifest to the whole harbor and closes this leg's trading.",
+              "{namesNeeded} on one captain opens that captain's manifest to the whole harbor and closes this round's trading.",
               { namesNeeded: nameCount(needed) },
             )
           }
@@ -189,7 +189,7 @@ export function AuditRevealStrip({ reveal }: { reveal: AuditReveal | null }) {
             </div>
           )}
 
-          {/* [C1: the Larder and Short Rations] The second half of the plan's
+          {/* The second half of the design's
               audit clause: the sample of fulfillments, plus the captain's
               current Larder. Drawn only when the layer reports one, so a
               voyage with the provisions switch off shows the reveal this strip
@@ -217,14 +217,14 @@ export function AuditRevealStrip({ reveal }: { reveal: AuditReveal | null }) {
                     )
                   : reveal.larder === 0
                     ? t("an empty larder, with no crew aboard to go hungry.")
-                    : t("rations aboard, eaten one a head each leg.")}
+                    : t("rations aboard, eaten one a head each round.")}
               </span>
             </div>
           )}
 
           <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground/80">
             {t(
-              "{manifestLine} Opened by a majority in leg {reveal.round}, which closed that leg's trading; the finding stays on the table for the rest of the voyage.",
+              "{manifestLine} Opened by a majority in round {reveal.round}, which closed that round's trading; the finding stays on the table for the rest of the voyage.",
               {
                 manifestLine: reveal.flagged
                   ? t(

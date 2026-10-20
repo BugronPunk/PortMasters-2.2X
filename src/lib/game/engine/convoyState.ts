@@ -1,16 +1,16 @@
 // =====================================================================
-// [MANIFEST 04: Convoy Ventures] The client side Gold effects of backing
-// and settling a convoy venture. The venture's own math (contribution
-// caps, deadline windows, payout rates) is pure and already lives in
-// ../convoy.ts; this file is only the part that moves money.
+// The client side Gold effects of backing and settling a convoy venture.
+// The venture's own math (contribution caps, deadline windows, payout
+// rates) is pure and already lives in ../convoy.ts; this file is only the
+// part that moves money.
 // =====================================================================
 import type { GameState } from "../types";
 import { line, type LedgerLine } from "@/lib/game/ledger";
 import { debitGold } from "./settlement";
 
-// [MANIFEST 04: Convoy Ventures] Escrows a contribution immediately, the
-// same moment barter posting escrows an offer (see postBarterOffer) rather
-// than waiting for the venture to actually resolve. The server (see the
+// Escrows a contribution immediately, the same moment barter posting
+// escrows an offer (see postBarterOffer) rather than waiting for the
+// venture to actually resolve. The server (see the
 // venture:contribute handler in src/server/realtime/wiring/ventures.ts) is
 // the one authority on whether this contribution actually landed (a
 // venture that filled or expired between the click and the server's
@@ -33,7 +33,7 @@ export function contributeToVenture(
   });
 }
 
-// [MANIFEST 04: Convoy Ventures] The payout side, for any of three outcomes.
+// The payout side, for any of three outcomes.
 // Fired once per contributor, by the server, the moment a venture resolves:
 // "filled" (amount is this contributor's proportional share of targetGold
 // times CONVOY_VENTURE_PAYOUT_MULTIPLIER), "failed" (amount is

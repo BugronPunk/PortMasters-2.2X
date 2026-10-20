@@ -1,9 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { cargoCarriesTag } from "@/lib/game/cards";
 import {
   canFillOrder,
+  cargoUnitsWithAllTags,
+  cargoUnitsWithTag,
   completeOrder,
   explainTransportCost,
   fleetOfTreasuresUnits,
@@ -12,7 +13,6 @@ import {
   opportunistIsBorrower,
   opportunistLine,
   opportunistMayBorrow,
-  opportunistPayout,
   opportunistUsesLine,
   pathOrderOf,
   quoteOrder,
@@ -50,39 +50,39 @@ function OrderCard({
   colorFor: (item: string) => string | undefined;
   card: CustomerCard;
 }) {
-  // [D2: the nine slot order board] The three pathbound cards. `path`
-  // is the path that posted this card, and it is null for an ordinary
-  // order; `locked` is the path this card waits on for this captain,
-  // and it is null wherever the card is theirs to fill, which is every
-  // ordinary card and every marked card whose path they hold. Both are
-  // the engine's own readings (pathOrderOf and lockedBehind), so a
-  // card greyed here is a card the engine refuses there: the board and
-  // the guard cannot come apart.
+  // The three pathbound cards. `path` is the path that posted this
+  // card, and it is null for an ordinary order; `locked` is the path
+  // this card waits on for this captain, and it is null wherever the
+  // card is theirs to fill, which is every ordinary card and every
+  // marked card whose path they hold. Both are the engine's own readings
+  // (pathOrderOf and lockedBehind), so a card greyed here is a card the
+  // engine refuses there: the board and the guard cannot come apart.
   const path = pathConfig(pathOrderOf(o, game.mode));
   const locked = lockedBehind(game, o);
   const canComplete = canFillOrder(game, o);
   const completed = game.completedOrders.includes(o.id);
-  // [D6: Free Captain: Opportunist] The one card on this board whose
-  // price this captain can move. `mayBorrow` is the ability question,
-  // asked of the engine rather than answered here (the path holds it, or
-  // F6's Factor does, and a borrow is left), and everything the card
-  // quotes is priced
-  // off the payout the borrow would actually pay. completeOrder runs
-  // the same arithmetic on the same reduced number, so the net figure
-  // on the card and the Gold that lands in the purse are one number;
-  // a card that showed the face value would be advertising a sum the
-  // engine never hands over. A captain with nothing to spend reads
-  // the card exactly as everyone else at the table does.
+  // The one card on this board whose price this captain can move.
+  // `mayBorrow` is the ability question, asked of the engine rather than
+  // answered here (the path holds it, or the Factor does, and a borrow
+  // is left), and everything the card quotes is priced off the payout
+  // the borrow would actually pay. completeOrder runs the same
+  // arithmetic on the same reduced number, so the net figure on the card
+  // and the Gold that lands in the purse are one number; a card that
+  // showed the face value would be advertising a sum the engine never
+  // hands over. A captain with nothing to spend reads the card exactly
+  // as everyone else at the table does.
   const mayBorrow = locked !== null && opportunistMayBorrow(game, locked);
-  const borrowPayout = opportunistPayout(game, o.reward);
   const canBorrow = canFillOrder(game, o, true);
-  // [F6: charters at leg four] The spent line is asked of the door reader
-  // rather than of a path, so a Quartermaster whose Factor is spent reads
-  // the same sentence a spent Free Captain reads. One reader for the
-  // board and the guard, the D6 reading kept through the second door.
+  // The spent line is asked of the door reader rather than of a path, so
+  // a Quartermaster whose Factor is spent reads the same sentence a spent
+  // Free Captain reads. One reader for the board and the guard, the same
+  // reading kept through the second door.
   const borrowSpent =
     opportunistIsBorrower(game) && opportunistBorrowsLeft(game) < 1;
-  const hasWoven = cargoCarriesTag(o.resources, "woven");
+  // The woven units, not a yes or no: the freight rungs take the woven
+  // lines' share of the bill, so the tooltip and the fill need the same
+  // count (see cargoUnitsWithTag).
+  const wovenUnits = cargoUnitsWithTag(o.resources, "woven");
   // The Fleet of Treasures units, counted through the engine's own reader
   // (see fleetOfTreasuresUnits), and handed to the freight read the
   // tooltip shows, so the freight line on this card and the Gold the fill
@@ -93,8 +93,9 @@ function OrderCard({
   const transportBreakdown = explainTransportCost(
     game,
     o.totalItems,
-    hasWoven,
+    wovenUnits,
     fleetUnits,
+    cargoUnitsWithAllTags(o.resources, "woven", "luxury"),
   );
   // What this order pays, read through the engine's own quote (see
   // quoteOrder), so the reward on this card is the reward the fill
@@ -116,7 +117,7 @@ function OrderCard({
     (i) =>
       i.port === o.demandPort && o.resources.some((r) => r.type === i.item),
   );
-  // [D2] A locked card is asked first, because the lock is the
+  // A locked card is asked first, because the lock is the
   // strongest thing a card can say: a card nobody may fill is
   // not a card to style as a prize. Dashed and muted is how this
   // board renders a thing that is visible but not pressable (the
@@ -156,7 +157,7 @@ function OrderCard({
             </span>
           </span>
           {path ? (
-            // [D2] The chip a pathbound card wears: the crest and the
+            // The chip a pathbound card wears: the crest and the
             // name, both read off the path record rather than written
             // onto the card, so a path renamed in ./paths renames here.
             // Muted where the card is locked, which keeps the two ends
@@ -187,7 +188,7 @@ function OrderCard({
       }
       footer={
         locked ? (
-          // [D2] The lock line stands where the button stands, because
+          // The lock line stands where the button stands, because
           // that is where a captain's eye already goes on every card
           // on this board. Deliberately not a disabled button: a
           // button that can never be pressed promises an action the
@@ -200,7 +201,7 @@ function OrderCard({
               🔒 {pathLockLine(locked)}
             </div>
             {completed || mayBorrow ? (
-              // [D6] The Free Captain's reach, drawn under the lock it
+              // The Free Captain's reach, drawn under the lock it
               // reaches through. The lock line stays above it because
               // the lock is still the truth about every other captain;
               // what this captain gets is a price, and the price is
@@ -214,7 +215,14 @@ function OrderCard({
               // discovers they had used is a rule taught by surprise.
               <>
                 <div className="text-[11px] text-orders leading-snug">
-                  {opportunistLine(game, o.reward, borrowPayout)}
+                  {/* The sentence carries the credited reward, the same
+                      number the Reward line below prints and the fill
+                      banks (see quoteOrder), not the pre tax basis the
+                      penalty was taken from. The two diverged whenever a
+                      VAT or a bonus touched the order, and a captain
+                      reading "60 instead of 100" beside "Reward: 66"
+                      was reading two accounts of one fill. */}
+                  {opportunistLine(game, o.reward, quote.reward)}
                 </div>
                 <Button
                   className={cn(
@@ -318,7 +326,7 @@ function OrderCard({
                     : "bg-alarm",
               )}
               title={t(
-                "Profit margin: {margin}% of reward is net profit after transport, VAT, and commission",
+                "Profit margin: {margin}% of reward is net profit after freight, VAT, and commission",
                 { margin },
               )}
             >

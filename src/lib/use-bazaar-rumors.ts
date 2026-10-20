@@ -34,7 +34,7 @@ const CHANNEL = {
  * on the advance (see applyBazaarLean). There is no per captain filtering
  * here either, and that one is the point: the filtering is the feature's
  * secret and it is done on the server, once, in the one function that
- * knows the harbor's leg (see publicRumors). A client that filtered would be
+ * knows the harbor's round (see publicRumors). A client that filtered would be
  * a client holding the directions it is not owed.
  *
  * What is left is what a relay is: subscribe, heal, ask, publish, and keep

@@ -76,7 +76,7 @@ export function ModuleDraft({
           {!game.moduleSwapUsed && !swapDealable && (
             <PanelNote className="text-center text-[11px] mb-3">
               {t(
-                "Nothing new to deal: every module the yard could offer this hull is either on this table already or aboard. Take one of these, or come back next leg.",
+                "Nothing new to deal: every module the yard could offer this hull is either on this table already or aboard. Take one of these, or come back next round.",
               )}
             </PanelNote>
           )}

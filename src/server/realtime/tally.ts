@@ -21,7 +21,7 @@ import type { Server } from "socket.io";
 import { pruneStaleVotes } from "@/lib/game/audit";
 import { roomChannel } from "./channel";
 import { activeRosterSet } from "./checkpoint";
-import type { LegState } from "./leg-state";
+import type { RoundState } from "./round-state";
 
 /**
  * The count the harbor is told, recounted against the roster as it stands.
@@ -47,7 +47,7 @@ import type { LegState } from "./leg-state";
 export async function recountAndTell<T>(
   io: Server,
   roomId: string,
-  state: LegState,
+  state: RoundState,
   event: string,
   frame: (roster: ReadonlySet<string>, book: ReadonlyMap<string, string>) => T,
   first: boolean,

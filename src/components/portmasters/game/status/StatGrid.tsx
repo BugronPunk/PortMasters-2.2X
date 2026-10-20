@@ -6,7 +6,7 @@ import { hungryMarkerLabel, hungryTooltip } from "@/lib/game/status-copy";
 import { FigureTile } from "../../profile/FigureTile";
 
 /**
- * The four headline numbers of the pinned rail: funds, reputation, and then
+ * The four headline numbers of the pinned rail: Gold, reputation, and then
  * whatever the voyage is charging the captain at this moment, which is what
  * round end will take while a voyage is under way and the ship's class
  * before it starts. A Larder cell joins them while the provisions layer is
@@ -46,7 +46,7 @@ export function StatGrid({
   larder: number;
   shortRations: boolean;
 }) {
-  // [W3: the status convention] The hungry cell's sentence opens on a tap,
+  // The hungry cell's sentence opens on a tap,
   // which is the rail's one reveal idiom (the held cards under this grid
   // open the same way), so the why and the way back reach a touch screen
   // rather than living in a hover title.
@@ -57,7 +57,7 @@ export function StatGrid({
       <div className="grid grid-cols-2 gap-1.5">
         <FigureTile
           size="readout"
-          label={t("Funds")}
+          label={t("Gold")}
           value={t("{money}", { money })}
           valueClassName="text-gold-ink"
         />
@@ -82,11 +82,10 @@ export function StatGrid({
             valueClassName="text-sea"
           />
         )}
-        {/* [C1: the Larder and Short Rations] Drawn only when the layer
+        {/* Drawn only when the layer
             is running, so a voyage with the switch off shows the same
             three columns at the same width it always had rather than a
-            fourth cell reporting a number no rule moves. [W3: the status
-            convention] The cell swaps its label to the state's own words
+            fourth cell reporting a number no rule moves. The cell swaps its label to the state's own words
             and opens the full sentence on a tap: colour alone is a
             readout only a captain who already knows the rule can read,
             and a hover never shows on a touch screen. */}

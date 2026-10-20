@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
   // phases in the wrong order and desynchronize from the harbor without
   // either side being able to tell why.
   //
-  // [H5: the quota rung] The seat count this voyage was pinned to rides
+  // The seat count this voyage was pinned to rides
   // along as well, and it is the one harbor fact here a client cannot work
   // out for itself: the commission's quotas scale with the size of the
   // fleet the voyage was dealt to, so a captain who reloads mid voyage has
@@ -92,7 +92,7 @@ const SaveSchema = z.object({
   data: z.record(z.string(), z.any()),
 });
 
-// [J1: the private information review] A bound on the blob itself, which
+// A bound on the blob itself, which
 // no other part of this route has. The check above judges four numbers
 // inside the save and the design is deliberately that everything else is
 // written as sent: the engine is client authoritative, so a captain's own
@@ -131,7 +131,7 @@ export async function PUT(req: NextRequest) {
       { status: 403 },
     );
 
-  // [MANIFEST 13: Ledger Integrity Pass] The one guard on an endpoint
+  // The one guard on an endpoint
   // that otherwise writes whatever arrives. The save is still accepted
   // either way: a captain mid voyage must never lose their game to a
   // false positive, and the ceiling in integrity.ts is set from the

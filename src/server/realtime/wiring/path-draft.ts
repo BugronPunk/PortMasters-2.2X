@@ -1,6 +1,6 @@
 // =====================================================================
 // The path draft, and switching: the two opposite kinds of frame the
-// plan gives the fleet at departure.
+// design gives the fleet at departure.
 // =====================================================================
 
 import type { Server, Socket } from "socket.io";
@@ -16,7 +16,7 @@ import { makeFail, marketOffRefusal } from "./fail";
 
 export function wirePathDraft(io: Server, socket: Socket): void {
   //
-  // [D7: the draft, and switching] The two surfaces the plan's clause
+  // The two surfaces the design's clause
   // gives the fleet, and they are opposite kinds of frame, which is the
   // whole design of the feature.
   //
@@ -91,7 +91,7 @@ export function wirePathDraft(io: Server, socket: Socket): void {
   // voyage is in the season and the seat a switch may happen in, and
   // whether this captain has already spent their one switch. That last one
   // is kept in the harbor's own book rather than trusted to a client,
-  // because the plan's clause is "once per voyage" and a rule only a
+  // because the design's clause is "once per voyage" and a rule only a
   // client enforces is a rule a doctored client can spend twice.
   socket.on(
     "path:switch",

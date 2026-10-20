@@ -71,7 +71,7 @@ export type Action =
       mode?: GameMode;
       houseId?: HouseId | null;
     }
-  | { type: "SET_SAVING"; saving: boolean; at: number };
+  | { type: "SET_SAVING"; saving: boolean; at?: number };
 
 export function reducer(state: SessionState, action: Action): SessionState {
   switch (action.type) {
@@ -98,7 +98,7 @@ export function reducer(state: SessionState, action: Action): SessionState {
       // the harbor's checkpoint already is, instead of always at round 1.
       // The phase is normalized before it is compared, because this is a
       // room row read off the wire and a voyage that was already sailing
-      // when the six phase leg landed has one of the older names in it: read
+      // when the six phase round landed has one of the older names in it: read
       // raw, that name would not match the pier and a captain would be
       // snapped onto a checkpoint they were already standing on.
       const cp = action.checkpoint;
@@ -122,7 +122,11 @@ export function reducer(state: SessionState, action: Action): SessionState {
       return { ...state, game, logs, newLines };
     }
     case "SET_SAVING":
-      return { ...state, saving: action.saving, lastSavedAt: action.at };
+      return {
+        ...state,
+        saving: action.saving,
+        lastSavedAt: action.at ?? state.lastSavedAt,
+      };
     default:
       return state;
   }

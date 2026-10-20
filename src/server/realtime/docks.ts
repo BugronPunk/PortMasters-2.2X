@@ -1,7 +1,7 @@
 // =====================================================================
 // Realtime layer: Word on the Docks winners.
 //
-// [MANIFEST 02] A spontaneous, harbor wide race layered alongside the
+// A spontaneous, harbor wide race layered alongside the
 // scheduled Imperial Mandates. Whoever's own client is first to report
 // crossing the completed orders threshold wins; this server's only job
 // is deciding who was first, the same first report wins arbitration

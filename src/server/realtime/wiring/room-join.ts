@@ -27,7 +27,11 @@ import {
   objectiveTotalFor,
   roomObjectiveTallies,
 } from "../objective";
-import { broadcastPresence, cancelDeparture, sockets } from "../presence";
+import {
+  broadcastPresence,
+  broadcastRoomSystem,
+  cancelDeparture,
+} from "../presence";
 import { refitContracts } from "../refits";
 import { moduleTrades } from "../module-trades";
 import { revealFor } from "../reveal";
@@ -88,21 +92,12 @@ export function wireRoomJoin(
       // longer be told about, which credits the taker and never credits
       // them.
       removeUserBarterOffers(io, previousRoomId, s.userId);
-      // The notice is read by the whole harbor, so it goes to every socket
-      // still in the old harbor, each in its captain's own language. The
-      // departing socket is already out of that harbor (roomId was cleared
-      // above), so the walk leaves it out.
-      for (const [socketId, state] of sockets) {
-        if (state.roomId !== previousRoomId) continue;
-        io.to(socketId).emit("room:system", {
-          roomId: previousRoomId,
-          content: tFor(
-            state.locale,
-            "{s.user.displayName} set sail for another port",
-            { "s.user.displayName": s.user.displayName },
-          ),
-        });
-      }
+      // The departing socket's roomId was cleared above, so it is left out.
+      broadcastRoomSystem(io, previousRoomId, (locale) =>
+        tFor(locale, "{s.user.displayName} set sail for another port", {
+          "s.user.displayName": s.user.displayName,
+        }),
+      );
       void emitRoomMembers(io, previousRoomId);
     }
 
@@ -116,21 +111,12 @@ export function wireRoomJoin(
     s.mode = normalizeMode(member.room.mode);
     socket.join(roomChannel(roomId));
     if (!wasReconnecting) {
-      // The harbor-wide rule again: every socket in the harbor reads the
-      // entry line in its own language, the joining socket included.
-      for (const [socketId, state] of sockets) {
-        if (state.roomId !== roomId) continue;
-        io.to(socketId).emit("room:system", {
-          roomId,
-          content: tFor(
-            state.locale,
-            "{s.user.displayName} entered the harbor",
-            {
-              "s.user.displayName": s.user.displayName,
-            },
-          ),
-        });
-      }
+      // The joining socket is included.
+      broadcastRoomSystem(io, roomId, (locale) =>
+        tFor(locale, "{s.user.displayName} entered the harbor", {
+          "s.user.displayName": s.user.displayName,
+        }),
+      );
     }
     void emitRoomMembers(io, roomId);
     // Hydrate the joiner with everyone's last known game status, the
@@ -143,8 +129,8 @@ export function wireRoomJoin(
       await readyStatePayload(roomId, cp),
     );
     io.to(socket.id).emit("barter:update", barterPayloadFor(roomId, s.userId));
-    // [D3: Convoy: the Escort Contract] And the market's board, on the
-    // same reasoning as the barter one above: a reload mid leg has to get
+    // And the market's board, on the
+    // same reasoning as the barter one above: a reload mid round has to get
     // its own view of it back from here, and the view is this captain's
     // rather than the harbor's because two captains can legitimately be
     // owed two different boards.
@@ -152,7 +138,7 @@ export function wireRoomJoin(
       "contract:update",
       escortContracts.payloadFor(roomId, s.userId),
     );
-    // [D4: Loom: the Refit] And the bench's, on the same reasoning: a
+    // And the bench's, on the same reasoning: a
     // captain who reloads at a port asks for the work on offer and is
     // answered with their own view of the board, because a direct offer
     // is one captain's business and the harbor's board is not.
@@ -160,8 +146,7 @@ export function wireRoomJoin(
       "refit:update",
       refitContracts.payloadFor(roomId, s.userId),
     );
-    // [F3: modules in the shipyard ladder, and trading them between
-    // captains] And the module market's, on the same reasoning as the two
+    // And the module market's, on the same reasoning as the two
     // above: a captain who reloads at the Parley table asks what is on it
     // and is answered with their own view, because a direct offer is one
     // captain's business and the harbor's board is not.
@@ -169,9 +154,9 @@ export function wireRoomJoin(
       "module:update",
       moduleTrades.payloadFor(roomId, s.userId),
     );
-    // [D5: Aroma: the Bazaar Rumor] And the bazaar's, which needs one
-    // thing the two boards above do not: the harbor's leg. A row of this
-    // board reads differently depending on which leg is reading it, since
+    // And the bazaar's, which needs one
+    // thing the two boards above do not: the harbor's round. A row of this
+    // board reads differently depending on which round is reading it, since
     // that is what decides whether a rumor is still standing and whose
     // direction is therefore public (see publicRumors), so the payload is
     // built against the checkpoint rather than against the rows alone. It
@@ -200,7 +185,7 @@ export function wireRoomJoin(
     // the socket that just asked, never to the harbor: a reload replays
     // what this captain is already holding and tells the table nothing.
     void sendAlignment(io, roomId, s.userId);
-    // [D7: the draft, and switching] And the hand this captain is holding,
+    // And the hand this captain is holding,
     // where the voyage is still being dealt. It goes to the socket that
     // just joined for the reason the card above does, and it is the one
     // frame in the draft that is private in its whole shape: nobody else in
@@ -238,8 +223,8 @@ export function wireRoomJoin(
     // hand over: a harbor that has not audited anyone costs no frame.
     const audit = auditRevealFor(roomId);
     if (audit) io.to(socket.id).emit("audit:reveal", audit);
-    // [F5: public offers] The fleet's ledger rides the same handoff and
-    // is public for the plainer reason: the plan's own sentence, every
+    // The fleet's ledger rides the same handoff and
+    // is public for the plainer reason: the design's own sentence, every
     // offer is public. A captain who reloads into the middle of a draft
     // has to see what the table has already kept, or the argument the
     // table is having is missing a side of it on their screen. Sent to
@@ -279,7 +264,7 @@ export function wireRoomJoin(
     forgetStatus(roomId, s.userId);
     removeUserBarterOffers(io, roomId, s.userId);
     removeUserAidRequest(io, roomId, s.userId);
-    // [I1: the telemetry spine] The ordinary way out of a voyage. The
+    // The ordinary way out of a voyage. The
     // client sends this only for a deliberate departure and only after
     // the REST call that gives up the seat has succeeded, and the grace
     // timer's reap will find no seat left to take, so this is where the
@@ -287,27 +272,19 @@ export function wireRoomJoin(
     // accumulator, and it ignores anyone the voyage never counted as a
     // captain, so a spectator's exit costs the record nothing.
     noteCaptainLeft(roomId, s.userId);
-    // [B4: the log surfaces] The same departure, into the harbor's log,
+    // The same departure, into the harbor's log,
     // which is the other place a captain's exit is worth a line: the
     // system message above scrolls away with the conversation, and a
     // table that lost a seat read why at Dusk. The log refuses a seat
     // it has already recorded, so the reap below cannot print this
     // twice.
     noteVoyageLogDeparture(io, roomId, s.userId, s.user.displayName);
-    // The notice is read by the whole harbor, so it goes to every socket
-    // still in the harbor, each in its captain's own language: the same
-    // walk the set-sail notice above takes, and the departing socket is
-    // already out of the harbor (roomId was cleared above), so the walk
-    // leaves it out the way the old broadcast did.
-    for (const [socketId, state] of sockets) {
-      if (state.roomId !== roomId) continue;
-      io.to(socketId).emit("room:system", {
-        roomId,
-        content: tFor(state.locale, "{s.user.displayName} left the harbor", {
-          "s.user.displayName": s.user.displayName,
-        }),
-      });
-    }
+    // The departing socket was cleared above, so it is left out.
+    broadcastRoomSystem(io, roomId, (locale) =>
+      tFor(locale, "{s.user.displayName} left the harbor", {
+        "s.user.displayName": s.user.displayName,
+      }),
+    );
     void emitRoomMembers(io, roomId);
     void tearDownIfRoomGone(roomId);
     broadcastPresence(io);

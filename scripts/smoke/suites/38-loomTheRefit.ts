@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { RefitBoard } from "@/types/realtime/boards";
 import { db } from "@/lib/db";
 import {
-  COLD_LEG_WARMTH,
+  COLD_ROUND_WARMTH,
   GARMENTS,
   MEND_GOLD_PER_POINT,
   MEND_POINTS,
@@ -128,10 +128,10 @@ export async function loomTheRefitSuite(
         "one path works the bench and no other does, so the question a captain asks before offering is answered by the path record rather than by a name written into a screen",
       );
 
-      // The two legs this block needs, found by asking the sea rather than
+      // The two rounds this block needs, found by asking the sea rather than
       // by naming rounds that happen to be cold. The weather is drawn from
       // the voyage's own numbers (see legIsCold), so a block that listed its
-      // legs would be holding its own copy of the draw and would go on
+      // rounds would be holding its own copy of the draw and would go on
       // passing after the draw moved.
       const legAt = (round: number): GameState =>
         benchState({ currentRound: round });
@@ -139,22 +139,22 @@ export async function loomTheRefitSuite(
       const coldRound = rounds.find((round) => legIsCold(legAt(round)));
       const warmRound = rounds.find((round) => !legIsCold(legAt(round)));
       if (coldRound === undefined || warmRound === undefined) {
-        // A precondition rather than a claim: a sixty leg window of one
+        // A precondition rather than a claim: a sixty round window of one
         // fixed draw that came back all one kind would make every check
         // below a statement about a weather system this voyage does not
         // have, and the checks are about the pile rather than the sea.
-        throw new Error("This voyage's weather carried no leg of one kind.");
+        throw new Error("This voyage's weather carried no round of one kind.");
       }
-      const coldLeg = legAt(coldRound);
-      const warmLeg = legAt(warmRound);
-      const pile = ragsAtPort(coldLeg);
+      const coldRoundState = legAt(coldRound);
+      const warmRoundState = legAt(warmRound);
+      const pile = ragsAtPort(coldRoundState);
       check(
         pile >= 1 &&
           pile <= RAGS_AT_PORT_COLD &&
-          ragsLeftAtPort(coldLeg) === pile &&
-          ragsAtPort(warmLeg) === 0 &&
-          ragsLeftAtPort(warmLeg) === 0,
-        "the harbor's pile fills on a cold leg, inside the bound the constants carry, and there is no pile at all after a fair one, which is the plan's tension written as a number: a Loom is poor in fair weather and busy in cold",
+          ragsLeftAtPort(coldRoundState) === pile &&
+          ragsAtPort(warmRoundState) === 0 &&
+          ragsLeftAtPort(warmRoundState) === 0,
+        "the harbor's pile fills on a cold round, inside the bound the constants carry, and there is no pile at all after a fair one, which is the design's tension written as a number: a Loom is poor in fair weather and busy in cold",
       );
       check(
         ragsAtPort(legAt(coldRound)) === pile &&
@@ -164,21 +164,21 @@ export async function loomTheRefitSuite(
       );
       check(
         ragsLeftAtPort({
-          ...coldLeg,
+          ...coldRoundState,
           ragsRound: coldRound,
           ragsTaken: pile,
         }) === 0 &&
           ragsLeftAtPort({
-            ...coldLeg,
+            ...coldRoundState,
             ragsRound: coldRound - 1,
             ragsTaken: pile + 4,
           }) === pile &&
           ragsLeftAtPort({
-            ...coldLeg,
+            ...coldRoundState,
             ragsRound: coldRound,
             ragsTaken: pile + 4,
           }) === 0,
-        "the share counts down as it is taken and floors at nothing, and a count stamped with an earlier leg is not subtracted from this one's, which is what lets a save written mid leg be read at the next Dawn without a heal",
+        "the share counts down as it is taken and floors at nothing, and a count stamped with an earlier round is not subtracted from this one's, which is what lets a save written mid round be read at the next Dawn without a heal",
       );
 
       const noPath = attempt((logs) =>
@@ -186,7 +186,7 @@ export async function loomTheRefitSuite(
       );
       check(
         noPath.ok === false && noPath.said.includes("Only a Loom captain"),
-        "only a Loom captain buys rags off the harbor pile, and the refusal is a sentence rather than a silent false, because the exclusivity the plan asks for is this line rather than a greyed out button",
+        "only a Loom captain buys rags off the harbor pile, and the refusal is a sentence rather than a silent false, because the exclusivity the design asks for is this line rather than a greyed out button",
       );
       const spent = benchState({
         currentRound: coldRound,
@@ -239,7 +239,7 @@ export async function loomTheRefitSuite(
           loom.ragsTaken === 1 &&
           loom.ragsRound === coldRound &&
           bought.said.includes(`${pile - 1} left`),
-        "the purchase takes the scrap out of the purse, puts one rag in the hold and stamps the leg it was taken in, and the line it writes is the count the captain has left rather than the count the harbor started with",
+        "the purchase takes the scrap out of the purse, puts one rag in the hold and stamps the round it was taken in, and the line it writes is the count the captain has left rather than the count the harbor started with",
       );
       const drained = benchState({ currentRound: coldRound });
       drained.inventory = {};
@@ -250,7 +250,7 @@ export async function loomTheRefitSuite(
           ragsLeftAtPort(drained) === 0 &&
           (drained.inventory[RAGS] ?? 0) === pile &&
           drained.money === 500 - pile * RAG_SCRAP_VALUE,
-        "and one captain can take the whole share and not a rag more, one at a time, which is the count the plan bounds the reweave with: three rags at the quay is one coat and a spare rather than an industry",
+        "and one captain can take the whole share and not a rag more, one at a time, which is the count the design bounds the reweave with: three rags at the quay is one coat and a spare rather than an industry",
       );
 
       const tooFew = benchState({
@@ -340,12 +340,12 @@ export async function loomTheRefitSuite(
           mender.mendsMade === 1 &&
           mender.mendRound === coldRound &&
           mended.said.includes(String(MEND_GOLD_PER_POINT)),
-        "the harbor tailors put one point back for the five Gold the constants carry and stamp the leg they worked in rather than clearing a flag, which is what lets a save written mid leg be read at the next Dawn without a heal",
+        "the harbor tailors put one point back for the five Gold the constants carry and stamp the round they worked in rather than clearing a flag, which is what lets a save written mid round be read at the next Dawn without a heal",
       );
       const twice = attempt((logs) => mendGarment(mender, REWEAVE_GOOD, logs));
       check(
         twice.ok === false && twice.said.includes("already worked"),
-        "and a second mend in the same leg is refused rather than sold, so the once a leg rule belongs to the engine and not to the panel that draws the button",
+        "and a second mend in the same round is refused rather than sold, so the once a round rule belongs to the engine and not to the panel that draws the button",
       );
       const whole = wearing(worn.durability);
       const wholeTry = attempt((logs) =>
@@ -498,7 +498,7 @@ export async function loomTheRefitSuite(
           reported.garments[1]?.durability === 5 + MEND_POINTS &&
           reported.money === 0 &&
           shortOfWarmth(reported) &&
-          Number(reportedAfter) < COLD_LEG_WARMTH &&
+          Number(reportedAfter) < COLD_ROUND_WARMTH &&
           reportedAfter !== reportedBefore,
         "the figure the wardrobe prints after the mend is the figure the sea reads: a crew the work left a hair short is short in the panel's own number as well, and that number moves when the mend lands, so the panel and the settlement cannot read one wardrobe two ways",
       );
@@ -518,13 +518,13 @@ export async function loomTheRefitSuite(
       check(
         shortLine !== undefined &&
           shortLine.includes(settledNumber) &&
-          Number(settledNumber) < COLD_LEG_WARMTH,
+          Number(settledNumber) < COLD_ROUND_WARMTH,
         "the settlement names a warmth below the ask in the sentence that says the ask was missed, so the log line and the panel read the same wardrobe the same way",
       );
 
       // And the number the panel prints is a function of the save the mend
       // wrote rather than of anything this machine worked out on the way, so
-      // a reload mid leg reads the wardrobe the mend left rather than the
+      // a reload mid round reads the wardrobe the mend left rather than the
       // one it found.
       const carriedOn = JSON.parse(JSON.stringify(reported)) as GameState;
       check(
@@ -535,7 +535,7 @@ export async function loomTheRefitSuite(
 
       // The same claim walked rather than fixtured, over every wardrobe the
       // catalogue can dress rather than over the one that was reported: the
-      // tenth the panel prints meets the leg's ask exactly when the score
+      // tenth the panel prints meets the round's ask exactly when the score
       // does, which is what keeps the panel and the sea from reading one
       // wardrobe two ways whatever the table's numbers become.
       const coldCrew = benchState({ currentRound: coldRound });
@@ -561,7 +561,7 @@ export async function loomTheRefitSuite(
             2 &&
           everyCrew.every(
             (crew) =>
-              Number(warmthText(warmthScore(crew))) >= COLD_LEG_WARMTH ===
+              Number(warmthText(warmthScore(crew))) >= COLD_ROUND_WARMTH ===
               !shortOfWarmth(crew),
           ),
         "and the printed warmth meets the ask exactly when the verdict does, walked over every wardrobe of up to three garments the catalogue can dress with the cold hardening boon on or off, so no captain can read a wardrobe that meets the ask while the sea counts them short",
@@ -626,7 +626,7 @@ export async function loomTheRefitSuite(
           !refitSellerBusy([refitOn({})], "loom", 3) &&
           !refitSellerBusy([refitOn({ status: "agreed" })], "loom", 4) &&
           !refitSellerBusy([refitOn({ status: "agreed" })], "customer", 3),
-        "the bench bounds the seller rather than the customer: a refit that was actually taken makes the Loom busy for that leg, an offer nobody took does not, the next leg frees the hands again, and the customer who bought the work is not the party this market runs out of hands",
+        "the bench bounds the seller rather than the customer: a refit that was actually taken makes the Loom busy for that round, an offer nobody took does not, the next round frees the hands again, and the customer who bought the work is not the party this market runs out of hands",
       );
 
       // Which states settle, which is the one question three readers ask of a
@@ -646,12 +646,12 @@ export async function loomTheRefitSuite(
         settles.every(
           ([status, settled]) => consentSettled(status) === settled,
         ),
-        "a row settles in exactly the two states that commit a movement, an agreement and the escort's spent cover, and in no other state, so an offer still waiting on a press and one its addressee turned down are both read as rows that settled nothing, which is what makes the declined row safe to keep on the board for the leg it was made in",
+        "a row settles in exactly the two states that commit a movement, an agreement and the escort's spent cover, and in no other state, so an offer still waiting on a press and one its addressee turned down are both read as rows that settled nothing, which is what makes the declined row safe to keep on the board for the round it was made in",
       );
 
       // One reading rather than two. A status the busy rule calls a
       // commitment and the predicate calls nothing would be a captain
-      // counted as covered for a leg the market had already refused them,
+      // counted as covered for a round the market had already refused them,
       // and it is the shape of the defect the decline was added to fix.
       const partyRow = (status: string) => ({
         id: "p1",
@@ -680,7 +680,7 @@ export async function loomTheRefitSuite(
           !consentPartyBusy([partyRow("declined")], "seller", "loom", 3) &&
           !consentPartyBusy([partyRow("declined")], "buyer", "customer", 3) &&
           !consentPartyBusy([partyRow("agreed")], "seller", "loom", 4),
-        "and the board's own busy rule is that same reading rather than a second copy of it: over the four states, the party a settled row names is busy for the round it settled in, the next leg frees them, and a captain who was turned down is covered by nothing",
+        "and the board's own busy rule is that same reading rather than a second copy of it: over the four states, the party a settled row names is busy for the round it settled in, the next round frees them, and a captain who was turned down is covered by nothing",
       );
       check(
         expireConsent([refitOn({})], { phase: "orders", round: 3 }).length ===
@@ -695,7 +695,7 @@ export async function loomTheRefitSuite(
             phase: "market",
             round: 4,
           }).length === 0,
-        "an offer nobody took dies with the Market it was posted in, while a refit the two captains agreed survives the rest of the leg and dies with it, which is the same expiry the escort contract lives under because it is the same primitive",
+        "an offer nobody took dies with the Market it was posted in, while a refit the two captains agreed survives the rest of the round and dies with it, which is the same expiry the escort contract lives under because it is the same primitive",
       );
 
       // What a refit does to two purses, which is the whole of the trade.
@@ -776,14 +776,14 @@ export async function loomTheRefitSuite(
       check(
         applyRefitSide(bare, agreedRefit, "customer", bareLogs) &&
           ledgerSentences(bareLogs).some((line) => line.includes("no worn")),
-        "and a customer whose wardrobe lost the garment between the accept and the settlement reads a sentence saying so, which is the line for a state that moved underneath an agreement rather than for an ordinary leg",
+        "and a customer whose wardrobe lost the garment between the accept and the settlement reads a sentence saying so, which is the line for a state that moved underneath an agreement rather than for an ordinary round",
       );
       const dark = benchState({ currentRound: 3 });
       check(
         !withEnv("NEXT_PUBLIC_REFITS", "off", () =>
           applyRefitSide(dark, agreedRefit, "customer", []),
         ) && dark.money === 500,
-        "and an agreement settled with the bench switched off moves nobody, which is the plan's rollback read at the one place a refit would have changed a state",
+        "and an agreement settled with the bench switched off moves nobody, which is the design's rollback read at the one place a refit would have changed a state",
       );
 
       // The load site, where every field this build added is healed.
@@ -811,7 +811,7 @@ export async function loomTheRefitSuite(
           ancient.ragsRewoven === 0 &&
           ancient.mendRound === 0 &&
           ancient.ragsRound === 0,
-        "a save written before this feature reads as a captain who has never mended anything, bought a rag or sold a refit, and both stamps heal to a leg no voyage has rather than to one that reads as already spent",
+        "a save written before this feature reads as a captain who has never mended anything, bought a rag or sold a refit, and both stamps heal to a round no voyage has rather than to one that reads as already spent",
       );
       const wounded = voyageState();
       wounded.refitsSold = -3;
@@ -837,30 +837,33 @@ export async function loomTheRefitSuite(
       );
     });
 
-    // The bench from the other side of its own switch. The plan's rollback
-    // is to remove the Refit action and leave the consent primitive in
+    // The bench from the other side of its own switch. The rollback is to
+    // remove the Refit action and leave the consent primitive in
     // place for later use, so every reader this feature added answers
-    // nothing at all rather than half of it answering. Which leg this state
+    // nothing at all rather than half of it answering. Which round this state
     // stands in does not matter: the pile is not drawn at all with the
     // bench switched off.
-    const offLeg = benchState();
+    const offRound = benchState();
     check(
       !withEnv("NEXT_PUBLIC_REFITS", "off", () =>
         canSellRefit({ path: REFIT_SELLER_PATH, mode: GAMBIT }),
       ) &&
         withEnv("NEXT_PUBLIC_REFITS", "off", () =>
-          refitRoomFor(offLeg, REWEAVE_GOOD),
+          refitRoomFor(offRound, REWEAVE_GOOD),
         ) === 0 &&
-        withEnv("NEXT_PUBLIC_REFITS", "off", () => ragsAtPort(offLeg)) === 0 &&
-        withEnv("NEXT_PUBLIC_REFITS", "off", () => ragsLeftAtPort(offLeg)) ===
+        withEnv("NEXT_PUBLIC_REFITS", "off", () => ragsAtPort(offRound)) ===
           0 &&
-        !withEnv("NEXT_PUBLIC_REFITS", "off", () => buyRag(offLeg, [])) &&
-        !withEnv("NEXT_PUBLIC_REFITS", "off", () => reweaveRags(offLeg, [])) &&
+        withEnv("NEXT_PUBLIC_REFITS", "off", () => ragsLeftAtPort(offRound)) ===
+          0 &&
+        !withEnv("NEXT_PUBLIC_REFITS", "off", () => buyRag(offRound, [])) &&
         !withEnv("NEXT_PUBLIC_REFITS", "off", () =>
-          mendGarment(offLeg, REWEAVE_GOOD, []),
+          reweaveRags(offRound, []),
         ) &&
-        offLeg.money === 500 &&
-        (offLeg.inventory[RAGS] ?? 0) === 0,
+        !withEnv("NEXT_PUBLIC_REFITS", "off", () =>
+          mendGarment(offRound, REWEAVE_GOOD, []),
+        ) &&
+        offRound.money === 500 &&
+        (offRound.inventory[RAGS] ?? 0) === 0,
       "with the bench switched off every reader this feature added answers nothing at all, which is what makes the rollback a bench that is gone rather than one that is half running",
     );
   });
@@ -982,7 +985,7 @@ export async function loomTheRefitSuite(
   });
   check(
     notAGarment !== null && notAGarment.includes("garment the crew can wear"),
-    "and a refit naming a good nobody can wear is refused at the door, because a row no customer could take would sit on the bench for a whole leg",
+    "and a refit naming a good nobody can wear is refused at the door, because a row no customer could take would sit on the bench for a whole round",
   );
 
   const loomSelfSell = await loomRefused(loomSeller, "refit:post", {
@@ -1031,7 +1034,7 @@ export async function loomTheRefitSuite(
       loomOpenRow.buyerUserId === null &&
       loomOpenRow.phase === "market" &&
       loomOpenRow.round === 1,
-    "an open offer lands on the whole table's bench at the fee the form meant, floored to whole Gold, naming the garment, addressed to nobody and stamped with the leg and the phase it was posted in",
+    "an open offer lands on the whole table's bench at the fee the form meant, floored to whole Gold, naming the garment, addressed to nobody and stamped with the round and the phase it was posted in",
   );
   check(
     loomOpenRow !== undefined && loomBoardOf(loomForeigner).length === 1,
@@ -1138,7 +1141,7 @@ export async function loomTheRefitSuite(
   });
   check(
     handsFull !== null && handsFull.includes("already taken on a refit"),
-    "and a Loom captain whose hands are full is refused a second customer, because one pair of hands works one garment and a leg is how long they have",
+    "and a Loom captain whose hands are full is refused a second customer, because one pair of hands works one garment and a round is how long they have",
   );
 
   const loomWithdrawRefused = await loomRefused(loomSeller, "refit:cancel", {
@@ -1216,7 +1219,7 @@ export async function loomTheRefitSuite(
     "the harbor's log carries the trade as the bench wrote it, the offer and the agreement, with the price and the garment on both lines and the taker named on the second",
   );
 
-  // The leg moves on. Everything on the bench was sold for the leg that
+  // The round moves on. Everything on the bench was sold for the round that
   // just ended, so the sweep is what takes the whole of it away.
   loomSeat(loomSeller, 2, "market");
   await settle();
@@ -1224,7 +1227,7 @@ export async function loomTheRefitSuite(
     loomBoardOf(loomSeller).length === 0 &&
       loomBoardOf(loomBuyer).length === 0 &&
       loomBoardOf(loomForeigner).length === 0,
-    "the leg a refit was sold for is the leg it lives, and the move to the next one takes the whole bench off every captain's screen",
+    "the round a refit was sold for is the round it lives, and the move to the next one takes the whole bench off every captain's screen",
   );
 
   const loomReopenedBench = loomSettles(loomForeigner, (board) =>
@@ -1242,7 +1245,7 @@ export async function loomTheRefitSuite(
   );
   check(
     loomReopenedRow?.round === 2 && loomReopenedRow?.fee === 12,
-    "and the bench opens again on the new leg, which is what makes the one refit a leg a bound the voyage reads a leg at a time rather than a ceiling on the trade",
+    "and the bench opens again on the new round, which is what makes the one refit a round a bound the voyage reads a round at a time rather than a ceiling on the trade",
   );
 
   // ===== The frames two captains can press into each other's screens =====
@@ -1263,7 +1266,7 @@ export async function loomTheRefitSuite(
     );
 
   // Two customers taking the same open offer in the same tick, which is the
-  // ordinary shape of a busy leg rather than an exotic one: the bench's open
+  // ordinary shape of a busy round rather than an exotic one: the bench's open
   // rows are the whole table's to take.
   const loomRaceTaken = loomSettles(loomSeller, (board) =>
     board.some(
@@ -1326,7 +1329,7 @@ export async function loomTheRefitSuite(
     "and the customer who took the work pressing it a second time is refused in the same sentence with the bench still carrying one agreement, so a double press settles once and reads as a double press rather than as a second sale",
   );
 
-  // The next leg, where the seller's hands are free again and the sweep has
+  // The next round, where the seller's hands are free again and the sweep has
   // taken that agreement off every screen. The move is waited on as a frame
   // rather than as a pause, because the rows leaving are the evidence that
   // the checkpoint actually moved.
@@ -1420,7 +1423,7 @@ export async function loomTheRefitSuite(
 
   // ===== The two seams the checks above cannot reach from a socket =====
   //
-  // Held in source for the reason suite 48's leg seam is: the relay is a
+  // Held in source for the reason suite 48's round seam is: the relay is a
   // React effect with a socket inside it, the smoke run has no browser to
   // mount it in, and a board assembled here would prove nothing about the
   // file a captain's browser actually runs. What these hold is the two
@@ -1523,11 +1526,11 @@ export async function loomTheRefitSuite(
   const benchFlat = benchCode.replace(/\s+/g, " ");
   check(
     benchFlat.includes(
-      "One open offer per captain you name, one refit taken on a leg, and an offer nobody takes before the Market closes is gone.",
+      "One open offer per captain you name, one refit taken on a round, and an offer nobody takes before the Market closes is gone.",
     ) &&
       benchFlat.indexOf("One open offer per captain you name") <
         benchFlat.indexOf("{canSell &&") &&
-      benchFlat.includes("No refit work on offer this leg."),
+      benchFlat.includes("No refit work on offer this round."),
     "the two rules of the trade stand in the paragraph above the seller's block that is always drawn, so a customer who never opens the seller's form still reads when an offer leaves the bench and how much of it one captain may take on, and the empty bench keeps only the claim that nothing is on it",
   );
 

@@ -121,9 +121,9 @@ const PHASE_WIDGETS: Record<
   { hue: number; screen: string; what: string }
 > = {
   harbor: { hue: 68, screen: "phase:harbor", what: "The pier" },
-  /* [W2: the path draft] The deal a dealing Gambit departure opens at,
+  /* The deal a dealing Gambit departure opens at,
      between the pier and Dawn. It is a phase of the lap rather than one of
-     the leg's six (see PHASE_FACES), so it is listed here with a screen of
+     the round's six (see PHASE_FACES), so it is listed here with a screen of
      its own and nothing beside it: what this rung has to clear is the five
      session surfaces every phase stands among. 207 does, with Members at
      175 and Chat at 240 the nearest two at 32 and 33 degrees against a
@@ -323,7 +323,7 @@ const WIDGETS: Widget[] = [
      The list is the engine's own (see PHASE_FACES and the table above it),
      and what is kept here is what the wheel decides.
 
-     Named for the six phases of the leg plus the pier and the four
+     Named for the six phases of the round plus the pier and the four
      personal and terminal states, which is the vocabulary the engine
      runs. There is no artisan entry: the bench is the second station of
      the market rather than a phase of its own, so it wears the market's
@@ -348,7 +348,7 @@ const WIDGETS: Widget[] = [
     what: "Market Depth",
   },
   { name: "pulse", hue: 90, screens: ["phase:market"], what: "Market Pulse" },
-  /* [C1: the Larder and Short Rations] The provisions panel is the fourth
+  /* The provisions panel is the fourth
      thing to open inside the Market, and it had to find a rung on a screen
      that already carries four: the phase tag at 154, the Advisor at 197,
      the Depth at 347 and the Pulse at 90, plus the five session surfaces a
@@ -362,7 +362,7 @@ const WIDGETS: Widget[] = [
     screens: ["phase:market"],
     what: "The Larder, and the provisions it buys",
   },
-  /* [C3: garments and the cold] The Wardrobe is the fifth panel to open
+  /* The Wardrobe is the fifth panel to open
      inside the Market, and the Larder's note above leaves it one window:
      217 to 220, between the Advisor at 197 and Chat at 240, which the
      session rule checks against every phase. 219 takes it, 22 degrees from
@@ -378,7 +378,7 @@ const WIDGETS: Widget[] = [
     screens: ["phase:market"],
     what: "The Wardrobe, and the clothes the crew wears",
   },
-  /* [D4: Loom: the Refit] The bench is the sixth panel to open inside the
+  /* The bench is the sixth panel to open inside the
      Market, and by the time it arrived the screen's rungs were nearly all
      spoken for: the phase tag at 154, the Advisor at 197, the Depth at 347,
      the Pulse at 90, the Larder at 270, the Wardrobe at 219, and the five

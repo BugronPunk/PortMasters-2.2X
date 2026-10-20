@@ -4,8 +4,8 @@
 // Two shapes of money move in this tree that were written out twice and
 // are written once here.
 //
-// The first is an agreed trade settling its fee. D3's escort contract, D4's
-// refit and F3's module trade are one transaction three times: a captain
+// The first is an agreed trade settling its fee. The escort contract, the
+// refit bench and the module trade are one transaction three times: a captain
 // offers a service or a thing at a price, another captain takes it, and
 // each side then moves its own purse on its own machine. What the three
 // agree on is the whole of the settlement: the switch that says the market
@@ -13,7 +13,7 @@
 // that keeps a reload from moving the same Gold twice, the fee leaving the
 // buyer and landing in the seller, and the four counters each kind keeps of
 // its own trades. What they do not agree on is which of them it is: the
-// flag, the counters, the sentences and the thing itself, a leg of cover, a
+// flag, the counters, the sentences and the thing itself, a round of cover, a
 // garment put right or a module bolted to a hull.
 //
 // The second is a captain putting their own Gold into something that is not
@@ -117,7 +117,7 @@ type SettleTerms = {
  * only the holder of a purse writes to it. What the kind adds is the thing
  * itself, and that is what the three hooks are for: a module leaves a hull
  * before its fee lands and lands on another one after, a garment takes its
- * points back on the buyer's own machine, and an escort covers a leg and
+ * points back on the buyer's own machine, and an escort covers a round and
  * moves no cargo at all.
  *
  * The ledger is the idempotence: a reload between the agreement and the
@@ -125,7 +125,7 @@ type SettleTerms = {
  * that reports the same row again must not move it again either (see
  * movementApplied in ./consent). The key is the row's own id and the word
  * fee, and it is one key for all three kinds because the ids are the rows'
- * own and the leg stamp empties the list at each Dawn.
+ * own and the round stamp empties the list at each Dawn.
  *
  * The buyer's payment is allowed to be short and the seller is credited
  * the agreed price rather than the payment, and the asymmetry is

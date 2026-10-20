@@ -50,7 +50,7 @@ function Standings({
             {s.bankrupt && (
               <Skull className="h-3.5 w-3.5 text-alarm shrink-0" />
             )}
-            {/* [H7: Maroon and the Harbormaster] The other way a
+            {/* The other way a
                 voyage can go wrong, and a different icon rather
                 than a second use of the skull: a captain can be
                 put ashore and still be solvent, and the standings
@@ -152,7 +152,7 @@ export function EndgameResults({
           </div>
         );
       })}
-      {/* [H8: the reveal and the replay ledger] The cards come down
+      {/* The cards come down
           before the standings, because the reveal is what the evening
           was for and the standings are the record of it. A harbor that
           dealt no cards, which is every Classic harbor, is sent no

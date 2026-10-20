@@ -33,13 +33,13 @@ export const PRODUCTS = [
   ...PRODUCTS_TIER1,
   ...PRODUCTS_TIER2,
 ] as const;
-// [D4: Loom: the Refit] The worn out end of a garment, and the one good in
+// The worn out end of a garment, and the one good in
 // this catalogue the market board never trades. It is named here with the
 // other goods rather than down beside the rest of the Loom's arithmetic,
 // because the hold, the icons and the colours are all built from the names
 // in this block and the name has to exist before the catalogue below reads
 // it. What it is worth, and what it turns back into, live with the numbers
-// that do that arithmetic (see the D4 block further down).
+// that do that arithmetic (see the refit block further down).
 export const RAGS = "Rags";
 
 // Every tradable good across every tier, unlocked or not. This is the
@@ -49,7 +49,7 @@ export const RAGS = "Rags";
 // The market's own goods are named one line up from the hold's, because the
 // two stopped being the same list the day Rags arrived. Rags is cargo: it
 // takes a slot, it is priced, and it is bought and sold in this file. What
-// it is not is a market good, since the plan gives one path the exclusive
+// it is not is a market good, since the design gives one path the exclusive
 // right to buy it, so its only seller is the harbor's own pile and its only
 // shelf is the Loom's bench. A panel that lists what the market trades reads
 // MARKET_GOODS, and a panel that counts what a hold can carry reads ITEMS,
@@ -57,7 +57,7 @@ export const RAGS = "Rags";
 export const MARKET_GOODS = [...RESOURCES, ...PRODUCTS] as const;
 export const ITEMS = [...MARKET_GOODS, RAGS] as const;
 
-// [F1: the tag vocabulary, and the two tag rule] What each good is, in
+// What each good is, in
 // the vocabulary of ./tags. Typed as a Record over ITEMS rather than as a
 // plain table, which is what makes coverage structural: a good added to
 // the catalogue above cannot ship untagged, because the missing row is a
@@ -66,7 +66,7 @@ export const ITEMS = [...MARKET_GOODS, RAGS] as const;
 // The assignment is a reading of each good rather than a balance dial, and
 // where the tree already keeps a number about a good the tag is read
 // against it. Three of these rows are held to their number by the rule
-// module: every garment in GARMENTS carries cold, because a cold leg asks
+// module: every garment in GARMENTS carries cold, because a cold round asks
 // the wardrobe for warmth and the wardrobe's own table is where that
 // question lives, and Rags carries woven because it is what a garment
 // comes to when the sea has had all of it.
@@ -81,7 +81,7 @@ export const ITEMS = [...MARKET_GOODS, RAGS] as const;
 // this catalogue would actually worry about on a long haul, and neither
 // is held to a number here because no rule in this tree ages a trade
 // good: the tag is a claim about the good, and the day a rule reads it is
-// the day it becomes checkable (see G3's perishability axis).
+// the day it becomes checkable (see TAG_MEANINGS in ./tags).
 export const GOOD_TAGS: Record<(typeof ITEMS)[number], TagList> = {
   Hemp: ["bulk", "woven"],
   Silk: ["woven", "luxury"],
@@ -185,7 +185,7 @@ export const RECIPES: Record<
   },
 };
 
-// [F2: the card record, and the mode weighting field] A SILK_GOODS list used
+// A SILK_GOODS list used
 // to stand here: Silk and every finished good whose recipe uses it, read by
 // the two cards that priced Silk freight and by the two screens that drew
 // the same estimate. It is gone rather than kept beside the tag, and the two

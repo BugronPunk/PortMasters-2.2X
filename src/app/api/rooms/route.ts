@@ -45,7 +45,7 @@ const CreateSchema = z.object({
   // does not name a mode gets the founding one, which is what every harbor
   // created before modes existed is already playing.
   mode: z.string().optional(),
-  // [H9: the unlock code] The phrase a host types to open a sealed mode.
+  // The phrase a host types to open a sealed mode.
   // Bounded rather than free, because it is normalized and compared after
   // it arrives and nothing but a phrase is ever that long.
   unlock: z.string().max(200).optional(),
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
   // form, so the language is read once, here.
   const locale = await requestLocale();
 
-  // [H9: the unlock code] The gate. A sealed mode opens with the phrase
+  // The gate. A sealed mode opens with the phrase
   // and with nothing else: not with the host's own record, which is the
   // whole point of the entitlement being a harbor setting, and not with a
   // phrase that answers to some other door.

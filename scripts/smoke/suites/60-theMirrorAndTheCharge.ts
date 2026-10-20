@@ -105,8 +105,11 @@ export async function theMirrorAndTheChargeSuite(): Promise<void> {
         for (const flags of transportFlagSets) {
           for (const modules of transportModuleSets) {
             const g = stateFor(shipLevel, flags, modules);
-            const charge = calcTransportCost(g, items, woven);
-            const final = explainTransportCost(g, items, woven).final;
+            // Every unit woven, or none: the parity sweep keeps its old
+            // two arms, handed to the stack as the count it now reads.
+            const wovenUnits = woven ? items : 0;
+            const charge = calcTransportCost(g, items, wovenUnits);
+            const final = explainTransportCost(g, items, wovenUnits).final;
             transportPoints += 1;
             transportFinals.add(final);
             if (final !== charge && transportMiss === null) {

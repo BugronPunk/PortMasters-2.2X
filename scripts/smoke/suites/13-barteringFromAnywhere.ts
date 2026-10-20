@@ -356,7 +356,7 @@ export async function barteringFromAnywhereSuite(inputs: {
   // goods out of its hold the moment the press lands, before the frame is
   // even sent (see the engine's postBarterOffer, and why the escrow works
   // that way). So a refusal has to be able to say which post it refused,
-  // or a press made as the leg turns destroys the goods outright: out of
+  // or a press made as the round turns destroys the goods outright: out of
   // the hold, never on the board, gone for the voyage. This is that
   // frame, and the echo is the whole reason it carries anything.
   const refusedPostEcho = waitForEvent<{
@@ -562,7 +562,7 @@ export async function barteringFromAnywhereSuite(inputs: {
     "utf8",
   );
   check(
-    gameRoom.includes("aid.repay(debt.amount, debtId)") &&
+    gameRoom.includes("aidRepay(debt.amount, debtId)") &&
       !gameRoom.includes("repayLoan") &&
       boardsHook.includes("repayLoan(g, settled.debtId, l)") &&
       aidHook.includes('socket.on("aid:repay:ok"'),

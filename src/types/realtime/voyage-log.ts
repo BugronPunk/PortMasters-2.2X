@@ -1,7 +1,7 @@
 // =====================================================================
 // PortMasters 2.2 Parallel Release: the harbor's log.
 //
-// [B4: the log surfaces] The harbor's log.
+// The harbor's log.
 //
 // The public half of the pair above, and the contrast is the point: the
 // private channel is addressed to one captain and to nobody else, and a
@@ -24,7 +24,7 @@ export type VoyageLogDelivery = {
 };
 
 // The whole log, to the one socket that asked for it. The round rides
-// along because the client groups the lines by leg, and the leg a voyage
+// along because the client groups the lines by round, and the round a voyage
 // is standing in is the server's fact rather than something a client can
 // work out from the lines it happens to be holding.
 export type VoyageLogHistory = {

@@ -1,11 +1,11 @@
 // =====================================================================
 // Market: one phase, two stations.
 //
-// [B1: the six phase leg, as data] Buying at the port merchant and setting
-// the artisan bench to work were two harbor checkpoints before this, which
-// meant the harbor stood and waited twice for work the design treats as one
-// phase. They are now the two stations of Market, in this order: the board
-// first, then the bench. The order is the design's, and it is the one a
+// Buying at the port merchant and setting the artisan bench to work were
+// two harbor checkpoints before this, which meant the harbor stood and
+// waited twice for work the design treats as one phase. They are now the
+// two stations of Market, in this order: the board first, then the bench.
+// The order is the design's, and it is the one a
 // captain who wants to read the market they just bought in before promising
 // an artisan a task will want.
 //
@@ -19,7 +19,7 @@
 //   again.
 //
 //   A field in the save would be a new persisted field for a fact that only
-//   matters while the panel is on screen, and [B1]'s rollback clause is that
+//   matters while the panel is on screen, and the rollback clause is that
 //   the whole change reverts by reverting one file, which an added field
 //   would break. Reloading mid market lands a captain back at the board,
 //   where the goods they already bought are still listed.
@@ -103,11 +103,11 @@ export function Market({
             onRumorBoardOpen={onRumorBoardOpen}
             onContinue={() => setStation("bench")}
           />
-          {/* [B2: hard timers, the server as timekeeper] The harbor's clock
+          {/* The harbor's clock
               on the station where a captain cannot vote yet. The board is the
               first of the phase's two stations and carries no ready vote by
               design, which is why the harbor is not waited on from it, but
-              the leg is running all the same and a captain still reading the
+              the round is running all the same and a captain still reading the
               board is exactly who needs to know how much of it is left. The
               bench draws the same bar from its own footer, so the countdown
               follows the captain across the phase rather than sitting on one

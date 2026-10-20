@@ -53,14 +53,14 @@ export type SocketState = {
 // prevents firing phase:advance twice while clients catch up.
 export type Checkpoint = {
   round: number;
-  // A phase of the leg, or the pier before the leg begins. Held as the
+  // A phase of the round, or the pier before the round begins. Held as the
   // engine's own Phase rather than as a loose string, so a checkpoint can
   // only ever be written with a value some lap contains; the two places
   // that take one off a wire or out of the database normalize it first.
   phase: Phase;
   readyUserIds: Set<string>;
   advancing: boolean;
-  // [B2: hard timers, the server as timekeeper] Whether this seat's fire has
+  // Whether this seat's fire has
   // already been held once for a captain standing in the yard. A captain in
   // the module draft is at Dusk (see seatOf), so the clock that times Dusk
   // would otherwise cancel a pick that is seconds from done, and the hold
@@ -74,7 +74,7 @@ export type Checkpoint = {
   // advances the harbor whether or not the yard is still occupied, so no
   // table can be parked in the yard past one extra budget.
   yardHeld: boolean;
-  // [B2: hard timers, the server as timekeeper] The epoch millisecond this
+  // The epoch millisecond this
   // seat's clock runs out, or null when no clock is running: the pier, a
   // harbor that has not set sail, and a server started with the clock off
   // are all this null. It is the published half of the clock, which is what
@@ -85,7 +85,7 @@ export type Checkpoint = {
   // than being asked of the database at arming time because the checkpoint
   // is already the harbor's own record, read from the room row on the one
   // cache miss there is, and because the question the clock asks of it is
-  // asked on every seat of every leg: a second read would be a second
+  // asked on every seat of every round: a second read would be a second
   // answer to which voyage this is, on the path where a disagreement would
   // put a clock on a harbor whose mode keeps none.
   //

@@ -13,7 +13,7 @@ export function wireMaroon(io: Server, socket: Socket): void {
   // The harbor's heavier vote (see ./maroon), wired the way the audit's
   // is, because the two are the same question asked with different
   // weights: the harbor is the caller's, the checkpoint is the Parley
-  // step, and the leg is the one the vote names. Everything the vote is
+  // step, and the round is the one the vote names. Everything the vote is
   // actually judged against (the rung, the roster, the marks on the
   // target) is read from the harbor inside recordMaroonVote, so a doctored
   // frame can name a captain; it cannot widen the harbor that has to

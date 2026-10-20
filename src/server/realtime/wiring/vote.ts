@@ -10,9 +10,9 @@
 // The two were written as two copies of that shape, and copies drift,
 // because a shape written twice is a shape with two answers. The guards
 // around a vote are the same rule on both sides: the harbor is the one
-// the socket is seated in, the leg is the one the checkpoint is standing
+// the socket is seated in, the round is the one the checkpoint is standing
 // on, and the phase is the one the vote belongs to. A frame names a
-// harbor, a leg and a captain, and the harbor and the leg are read from the
+// harbor, a round and a captain, and the harbor and the round are read from the
 // server's own books rather than taken from the frame, so a doctored
 // frame can ask a question but cannot widen the table that has to
 // agree.
@@ -58,7 +58,7 @@ type VoteEvents = {
 };
 
 // The vote's own record, as the module that owns the vote writes it: the
-// harbor, the captain who pressed, the leg and the captain they named. It
+// harbor, the captain who pressed, the round and the captain they named. It
 // hands back the sentence that refuses the press, or nothing at all when
 // the nomination was taken.
 type VoteRecord = (

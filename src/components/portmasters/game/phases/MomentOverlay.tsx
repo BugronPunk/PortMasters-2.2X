@@ -9,7 +9,7 @@ import { DraftCard, DraftGrid, PhaseHeading } from "./PhaseShared";
 import type { PhasePanelProps } from "./PhaseShared";
 
 /**
- * [F4: boons at milestone moments] [F6: charters at leg four] The one
+ * The one
  * overlay a moment is answered on, printed by the milestone draft and
  * the charter draft alike.
  *
@@ -24,9 +24,9 @@ import type { PhasePanelProps } from "./PhaseShared";
  * else lives here once, so a change to the dress is one edit rather than
  * two that can drift apart.
  *
- * An overlay rather than a phase, and both halves of that are the plan's
+ * An overlay rather than a phase, and both halves of that are the design's
  * reading. A moment lands at a seat the captain already stands at (one
- * fixed leg for the charter, up to five triggers at three different
+ * fixed round for the charter, up to five triggers at three different
  * seats for the milestones), so a phase would have to be restarted from
  * each of them and every other captain's screen would have to move for
  * one captain's moment: the overlay is drawn over that seat, and the

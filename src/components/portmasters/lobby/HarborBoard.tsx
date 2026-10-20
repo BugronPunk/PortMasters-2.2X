@@ -133,7 +133,7 @@ export function HarborBoard({
                     {t(modeConfig(room.mode).badge)}
                   </Pill>
                 )}
-                {/* [H9: the unlock code] What opened the harbor, worn beside
+                {/* What opened the harbor, worn beside
                     the voyage it opened. It takes the charter colour rather
                     than the caution above it, because it is not a warning
                     about the room: it is how the room was charted, which is

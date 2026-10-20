@@ -35,7 +35,7 @@ export type StandingRow = {
   reputation: number;
   crowned: boolean;
   bankrupt: boolean;
-  // [H7: Maroon and the Harbormaster] Whether the harbor put this captain
+  // Whether the harbor put this captain
   // ashore. Read beside bankrupt rather than folded into it because the
   // standings say what happened to a captain, and the two are different
   // things that can both be true of one seat.
@@ -46,7 +46,7 @@ export type StandingRow = {
   newMerits: string[];
 };
 
-// [H8: the reveal and the replay ledger] One captain's card, flipped.
+// One captain's card, flipped.
 //
 // This is the one frame in the mode that carries an alignment to the whole
 // harbor, and the reason it may is that the voyage is over by the time it is
@@ -97,7 +97,7 @@ export type RevealedCaptain = {
   delivered: Record<string, number>;
   // What this captain was seen to trade, from the order fulfillments their
   // own client recorded, oldest first. The window is the audit's
-  // (AUDIT_WINDOW), so on a long voyage this is the closing legs rather
+  // (AUDIT_WINDOW), so on a long voyage this is the closing rounds rather
   // than all of it, which is everything that is durably kept.
   fills: OrderFill[];
 };
@@ -105,7 +105,7 @@ export type RevealedCaptain = {
 // The reveal, as the conclusion builds it and as a rejoining captain is
 // handed it. The card, the verdicts and the marks for every finisher, plus
 // the two things a ledger needs to tell the story of the evening: what the
-// fleet handed over, leg by leg, and what each captain handed over
+// fleet handed over, round by round, and what each captain handed over
 // themselves.
 export type VoyageReveal = {
   roomId: string;
@@ -115,7 +115,7 @@ export type VoyageReveal = {
   // Drawn by the server from the harbor's own epoch and pinned seats, which
   // is what keeps it the board the fleet was actually working against.
   objective: Objective;
-  // The commission's progress leg by leg, merged across every captain's
+  // The commission's progress round by round, merged across every captain's
   // record of it. Empty for a harbor whose captains never watched a board.
   fleetTrace: ObjectiveTraceEntry[];
   // Every finisher, in the order the standings arrive in.

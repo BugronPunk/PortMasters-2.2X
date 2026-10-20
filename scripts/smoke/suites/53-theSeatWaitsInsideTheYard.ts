@@ -286,16 +286,16 @@ export async function theSeatWaitsInsideTheYardSuite(
   // The harbor's answer is that the newer of the two things a captain has
   // said wins: a report naming the yard's own screen withdraws the vote
   // that was cast at the seat, and the vote comes back the way every vote
-  // at a seat does (see withdrawVoteForAScreen). The leg below is walked
+  // at a seat does (see withdrawVoteForAScreen). The round below is walked
   // on reports rather than on votes, so the departure above is behind it
   // and this seat starts with a clear ready set.
-  const nextLeg: Seat = { round: 2, phase: "dusk" };
-  report(crew[0], nextLeg);
-  const stoodAgain = await stand(nextLeg);
+  const nextRound: Seat = { round: 2, phase: "dusk" };
+  report(crew[0], nextRound);
+  const stoodAgain = await stand(nextRound);
   check(
     stoodAgain &&
       heard.every((mine, i) => mine.advances.length === expected[i]),
-    "reporting onto the next leg's seat moves the harbor the way any report does and announces nothing, because a report is a captain saying where they stand rather than a vote they cast",
+    "reporting onto the next round's seat moves the harbor the way any report does and announces nothing, because a report is a captain saying where they stand rather than a vote they cast",
   );
 
   crew[0].socket.emit("phase:ready", { roomId: room, round: 2, phase: "dusk" });
@@ -338,7 +338,7 @@ export async function theSeatWaitsInsideTheYardSuite(
   // them there, which is the order every client runs (see the stand
   // helper in this article's own lap walk).
   const released = counts().map((count) => count + 1);
-  report(crew[0], nextLeg);
+  report(crew[0], nextRound);
   crew[0].socket.emit("phase:ready", { roomId: room, round: 2, phase: "dusk" });
   await settled(
     () => heard.every((mine, i) => mine.advances.length === released[i]),

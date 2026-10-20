@@ -99,7 +99,7 @@ export async function seeingEachOthersLiveDataSuite(inputs: {
   }>(guestSocket, "game:status", (payload) => payload?.user?.id === hostId);
 
   // The phase is sent in the numbering this engine used before the six
-  // phase leg landed, which is what a client still running the older
+  // phase round landed, which is what a client still running the older
   // build reports, and it is sent on purpose: the harbor caches and
   // rebroadcasts this frame to every captain, so the value it holds is
   // read by the roster, by the active roster the ready check waits on and

@@ -50,8 +50,8 @@ export function GameControlPanel({
   onNextPhase: () => void;
   onGuide: () => void;
   /**
-   * [B3: standing orders] Opens the captain's own form. It is not host
-   * gated and not phase gated, because the record belongs to the captain
+   * Opens the captain's own form. It is not host gated and not phase
+   * gated, because the record belongs to the captain
    * rather than to the voyage: it can be written at the pier before the
    * first round and changed mid Market while the clock is running.
    */
@@ -74,9 +74,9 @@ export function GameControlPanel({
   // roster the harbor already broadcasts rather than reusing the vote's.
   harborCount: number;
   /**
-   * [B2: hard timers, the server as timekeeper] The harbor's deadline, the
-   * seat's budget, and the moment this client saw them: the published
-   * numbers the countdown is composed from. Optional: a bar drawn before
+   * The harbor's deadline, the seat's budget, and the moment this client
+   * saw them: the published numbers the countdown is composed from.
+   * Optional: a bar drawn before
    * the first ready state arrives, or in a harbor with the clock switched
    * off, has no countdown to show and says so by passing nothing.
    *
@@ -96,7 +96,7 @@ export function GameControlPanel({
    */
   onShortcuts: () => void;
 }) {
-  // [B3] The page is the mode's before it is the captain's. A voyage whose
+  // The page is the mode's before it is the captain's. A voyage whose
   // mode keeps no standing order has none to write, so the button is not
   // drawn at all and the captain's own switch is read only once there is a
   // page to read it on (see standingOrdersLive, and the standingOrders
@@ -122,7 +122,7 @@ export function GameControlPanel({
   let nextDisabled = true;
 
   if (game.gameOver) {
-    startText = t("Game Over");
+    startText = t("Voyage Ended");
     startDisabled = true;
     nextDisabled = true;
   } else if (game.phase === "harbor") {
@@ -144,7 +144,7 @@ export function GameControlPanel({
     }
     nextDisabled = true;
   } else if (game.phase === "path_draft") {
-    // [W2: the path draft] The deal's own seat, handled ahead of the gated
+    // The deal's own seat, handled ahead of the gated
     // branch below because this phase *is* a gated one: left to that branch
     // it would offer an enabled Next Phase over a seat canLeavePhase
     // refuses, which is the ready set no departure could carry out that
@@ -159,7 +159,7 @@ export function GameControlPanel({
     startDisabled = true;
     nextDisabled = true;
   } else if (isGatedPhase(game.mode, game.phase)) {
-    // Every phase the ready check gates, which is every phase of the leg
+    // Every phase the ready check gates, which is every phase of the round
     // except the drafts: Dawn and the Path Draft are handled by the branches
     // above, so they cannot reach here, because neither is left by confirming
     // anything (see lockInBoon and the draft's settle in the engine's
@@ -167,7 +167,7 @@ export function GameControlPanel({
     // offers exactly the moves the harbor will actually wait for: a phase added
     // to a lap is a Next Phase step the day it lands, and a phase a mode does
     // not run is not a step at all, which it would be if this asked whether
-    // the phase is leg work instead.
+    // the phase is round work instead.
     startText = t("On Voyage...");
     startDisabled = true;
     nextText = t("Next Phase");
@@ -182,10 +182,10 @@ export function GameControlPanel({
   // Next Phase transitions (setting sail is handled above on its
   // own terms), so it always routes to that button.
   //
-  // [B2: hard timers, the server as timekeeper] The clock joins the count
-  // here, because this bar is the one thing on screen in every phase: a
-  // captain waiting on the crew reads both numbers in the same place, and the
-  // one that is moving is the one that ends the wait.
+  // The clock joins the count here, because this bar is the one thing on
+  // screen in every phase: a captain waiting on the crew reads both
+  // numbers in the same place, and the one that is moving is the one that
+  // ends the wait.
   if (waiting) {
     // The count is the shared builder's sentence (see readyLine in
     // @/lib/use-phase-sync) with this bar's own tail, because the one
@@ -248,9 +248,9 @@ export function GameControlPanel({
           {saving ? t("Saving…") : t("Saved")}
           <span className="text-muted-foreground">· {phaseLabel(game)}</span>
         </span>
-        {/* [B3: standing orders] Lit only when the set would actually do
-            something, which is the switch and at least one instruction
-            under it (see standingOrdersLive). A captain who turned the
+        {/* Lit only when the set would actually do something, which is
+            the switch and at least one instruction under it (see
+            standingOrdersLive). A captain who turned the
             switch on and wrote nothing is sailing the default voyage, and
             a button that glowed for them would be promising a seat that
             nothing is going to play. */}

@@ -41,7 +41,7 @@ Two things surprise people at first. The port is 8080, not 3000. And there is no
 | `npm start`                 | Runs the production build on port 8080                                                                   |
 | `npm run typecheck`         | Checks every TypeScript file and reports type errors                                                     |
 | `npm run lint`              | Runs ESLint across the project                                                                           |
-| `npm run test:smoke`        | Drives a real voyage through a running server and checks it arrived                                      |
+| `npm run test:smoke`        | Runs the smoke suite against a running server                                                            |
 | `npm run check:palette`     | Checks the widget hues, their distance from the danger red, and that no raw colour class slipped in      |
 | `npm run check:private`     | Scans the tree for a second path to any secret the game hides, and fails on the first one                |
 | `npm run check:tags`        | Checks the tag vocabulary, the two tag rule, and every entry that carries a word                         |
@@ -50,7 +50,7 @@ Two things surprise people at first. The port is 8080, not 3000. And there is no
 | `npm run check:status`      | Checks the status convention: three clauses per family, and no guarded sentence spelled twice            |
 | `npm run check:dead`        | Finds every export nothing reads and every module nothing imports, and fails on the first one            |
 | `npm run report:bands`      | Prints every Ocean Gambit win rate band against its target, per role and per table size                  |
-| `npm run report:gates`      | Prints the plan's sixteen launch gates over the last three hundred voyages, with the ship decision       |
+| `npm run report:gates`      | Prints the sixteen launch gates over the last three hundred voyages, with the ship decision              |
 | `npm run report:cards`      | Prints each card's offer to pick conversion with the appearance count beside it                          |
 | `npm run report:modules`    | Prints each module's equipped count against its traded count across every voyage save                    |
 | `npm run report:milestones` | Prints retention for each milestone cohort: the share still in the harbor at the close                   |
@@ -62,7 +62,7 @@ For a production run, the order is `npm install`, `npm run db:push`, `npm run bu
 
 Schema changes travel through `db:push` alone. There is no `prisma/migrations` history in this repository, and a versioned migration would not be applied by the host either; `docs/RELEASE_NOTES.md` says why under Where the two repositories differ outside the game.
 
-The smoke test needs a server that is already running. To check a production build instead of a development one:
+The smoke suite needs a server that is already running. To check a production build instead of a development one:
 
 ```bash
 npm run build
@@ -71,7 +71,7 @@ PHASE_CLOCK=1 npm start
 PHASE_CLOCK=1 npm run test:smoke
 ```
 
-Both lines carry `PHASE_CLOCK=1` on purpose, and it is the same value on both rather than only on the server: the clock suites need the server under test to be timing its legs, and the run reads the same variable to know which clock it is checking, so it is set on the run as well. A server you simply play on leaves it unset.
+Both lines carry `PHASE_CLOCK=1` on purpose, and it is the same value on both rather than only on the server: the clock suites need the server under test to be timing its rounds, and the run reads the same variable to know which clock it is checking, so it is set on the run as well. A server you simply play on leaves it unset.
 
 Point it elsewhere with `SMOKE_BASE_URL`, which is how it checks a server that is not sitting on 8080.
 
@@ -90,7 +90,7 @@ Every round walks the same six gates, opening at the harbor, and every captain i
 | Parley  | Trade goods and Gold with the other captains on the Captain's Exchange, which is open to every captain from their first voyage |
 | Orders  | Fill trade orders for Gold and Reputation                                                                                      |
 | Resolve | Production lands, pirates may find you, then wages and maintenance come due                                                    |
-| Dusk    | Upgrade the ship, draft and rig modules                                                                                        |
+| Dusk    | Hull Upgrade, draft and rig modules                                                                                            |
 
 ### Difficulty tiers
 
@@ -166,7 +166,7 @@ It is a harbor setting rather than an account one, and that is the design rather
 
 **Pirates and escorts.** The settlement step can cost you every coin on hand. An escort is hired for a cut of your current Gold and guarantees safe passage.
 
-**The shipyard.** Ship levels that open module slots and cut transport costs, plus modules such as the Smuggler's Hold, the Broker's Network and the Salvage Crane.
+**The shipyard.** Ship levels that open module slots and cut freight costs, plus modules such as the Smuggler's Hold, the Broker's Network and the Salvage Crane.
 
 **The long game.** Captain's Legacy and Renown levels with titles, nine Captain's Merits, a daily check in on a seven day cycle that never punishes a missed day, voyage chronicles written in prose at the end of a run, head to head rivalries, and a harbor wide leaderboard.
 
@@ -182,17 +182,19 @@ Solo practice is built in as well. A captain can set sail alone, which is the ea
 
 **Standing orders.** A captain who has to step away can write down what their seat should do when a phase's clock runs out without them: which boon to take at the draft, the most they will pay for each good on the market board, whether to fill the trade board's orders their hold already covers, and whether to buy the next hull at the shipyard. The set is kept with the voyage and the table does not see it, and every seat an order plays signs the ledger once, so a captain who comes back can read what happened while they were gone. The switch turns the whole thing off without erasing a word of it, and a voyage whose captain never opens the form sails exactly the way it did before the form existed.
 
-**The voyage log.** Dusk shows a captain what happened while they were not looking, in two columns. The left one is the harbor's own log, written by the server and read by everyone in the harbor: the voyage leaving the dock, each seat the harbor weighs anchor for, offers posted, filled and lapsed, seats the tide ran out on, and captains who left the harbor. The right one is what was addressed to this captain alone, which is where the dealt alignment card arrives and where anything else the table is hiding will land. The log is kept for as long as the voyage is, so a captain who reloads mid voyage can be handed the legs they missed, and it is bounded, so a twelve leg voyage never grows a screen without a ceiling.
+**The voyage log.** Dusk shows a captain what happened while they were not looking, in two columns. The left one is the harbor's own log, written by the server and read by everyone in the harbor: the voyage leaving the dock, each seat the harbor weighs anchor for, offers posted, filled and lapsed, seats the tide ran out on, and captains who left the harbor. The right one is what was addressed to this captain alone, which is where the dealt alignment card arrives and where anything else the table is hiding will land. The log is kept for as long as the voyage is, so a captain who reloads mid voyage can be handed the rounds they missed, and it is bounded, so even a twelve round Ocean Gambit voyage never grows a screen without a ceiling.
 
 ## The 2.2 build and the one before it
 
 This is PortMasters 2.2 Parallel Release, a build of its own rather than a patched copy of the one before it. That earlier build is [PortMasters 2 Parallel Release](https://github.com/LostInHustle/PortMasters2-Parallel-Release), which is where the multiplayer game as it exists today was designed. If you have sailed that one, nothing you learned there is wrong here.
 
-Every system of the earlier build is still here and still working the same way, and six more are built on top of it. The release notes open with the side by side table of the two builds, from the shipped harbor systems to the measured module counts, and state the rule those counts are measured again under whenever a pass adds or removes a file.
+Every system of the earlier build is still here and still working the same way, and seven more are built on top of it. The release notes open with the side by side table of the two builds, from the shipped harbor systems to the measured counts of modules, routes, components and models, and state the rule those counts are measured again under whenever a pass adds or removes a file.
 
 The interface and the realtime layer were both rebuilt around the new systems, and the process now reads its configuration once at boot and tells you what it did not like rather than starting anyway.
 
-[The release notes](docs/RELEASE_NOTES.md) walk through each of the six new systems, what came across unchanged, what was repaired, and the few things that are designed and visible but not yet switched on.
+[The release notes](docs/RELEASE_NOTES.md) walk through each of the seven new systems, what came across unchanged, and what was repaired.
+
+[The bilingual harbor](docs/BILINGUAL_HARBOR.md) states how every captain facing line is paired between English and Mandarin, and the vocabulary the two languages share.
 
 ## Configuration
 
@@ -209,13 +211,13 @@ The server reads six environment variables. Five of them configure the process a
 
 `DATABASE_URL` has no fallback and the server will not start without it, so copy `.env.example` to `.env` before the first run. The operator code fails closed, so an installation that never sets a real one has no way in at all, which is the safe direction for that particular door.
 
-`TELEMETRY_SAMPLE_RATE` is the one setting a live game reads without any captain noticing. A voyage that ends leaves one row describing what happened in it, which is where any later reading of the numbers is taken from, and this is the share of voyages that leave one. It is a fraction of one, so `0.25` records a quarter of them, and the decision is drawn once per voyage and held for its whole life rather than made per event, so a recorded voyage is recorded from its first leg to its last. Leave it unset and every voyage is recorded, which is the default because a game this size has no volume problem yet. Nothing in a voyage waits on that write, and no rule of the game reads a record back, so turning it down or off changes what the harbor remembers and never how it plays.
+`TELEMETRY_SAMPLE_RATE` is the one setting a live game reads without any captain noticing. A voyage that ends leaves one row describing what happened in it, which is where any later reading of the numbers is taken from, and this is the share of voyages that leave one. It is a fraction of one, so `0.25` records a quarter of them, and the decision is drawn once per voyage and held for its whole life rather than made per event, so a recorded voyage is recorded from its first round to its last. Leave it unset and every voyage is recorded, which is the default because a game this size has no volume problem yet. Nothing in a voyage waits on that write, and no rule of the game reads a record back, so turning it down or off changes what the harbor remembers and never how it plays.
 
 `PHASE_CLOCK` is the one setting that changes how a table feels rather than what it remembers. A phase of a round is a stretch of real time, and each one has a length the game was designed with: a boon draft is twenty five seconds, the market and the parley are three minutes each, orders are two, resolve is ninety seconds and dusk is a minute. This multiplies all six at once, so `2` gives every harbor twice the time in every phase and `0.5` gives it half, and the lengths themselves stay where they belong, which is on the phase's own record in the code. `0`, or the word `off`, is the clock switched off: no phase ends on its own, and every phase ends only when every captain has readied, which is how the game played before the clock existed. Nothing durable is written differently either way, because a deadline is published to the table as it runs and never stored, so this can be changed and changed back without a migration. Leave it unset for `0`, which is the clock off: a seat that ends because a timer says so is a pressure rather than a convenience, so it is asked for rather than assumed, and it is asked for on the mode that wants it, which is Ocean Gambit. The founding mode keeps no clock at all whatever this is set to.
 
 An environment variable that is already set always wins over the file, which is the order a hosting platform expects. Point `ENV_FILE` at a different file to read from that one instead, which is how two servers run side by side from a single checkout without editing anything back and forth.
 
-Twelve further variables are documented in `.env.example` under their own heading, and none of them is a setting of the server the way the six above are. Each is the rollback for one system of Ocean Gambit, the experimental voyage this branch is building toward, and each is read as two questions in a fixed order: whether the harbor is a Gambit harbor, and then what the file says. The mode is asked first, so a switch can only ever take a system away from the mode it belongs to and never hand it to Classic, which is the shipped release kept exactly as it was. That boundary is also why they are not in the table above: they are not knobs on the game, they are the way one mode of it is taken apart, and a Classic harbor plays the game this branch forked from whatever any of them says.
+Twelve further variables are documented in `.env.example` under their own heading, and none of them is a setting of the server the way the six above are. Each is the rollback for one system of Ocean Gambit, the second mode this branch ships, and each is read as two questions in a fixed order: whether the harbor is a Gambit harbor, and then what the file says. The mode is asked first, so a switch can only ever take a system away from the mode it belongs to and never hand it to Classic, which is the shipped release kept exactly as it was. That boundary is also why they are not in the table above: they are not knobs on the game, they are the way one mode of it is taken apart, and a Classic harbor plays the game this branch forked from whatever any of them says.
 
 `next.config.ts` reads two more, and only while the development server is running, because they decide which hostnames may load development resources: the compiled chunks under `/_next`, the hot reload channel, and the internal endpoints. Next.js allows `localhost` on its own. `ALLOWED_DEV_ORIGINS` adds any other hostname as a comma separated list, and `RAILWAY_PUBLIC_DOMAIN` is read as well, which the host injects with the hostname the running service answers on. A production build reads neither.
 

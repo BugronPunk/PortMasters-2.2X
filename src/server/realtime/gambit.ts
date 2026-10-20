@@ -286,13 +286,13 @@ type HeldCard = {
  * during play, and what it answers is written to a row only the captain
  * it belongs to can read.
  *
- * [F6: charters at leg four] The charter take is the second. The leg
+ * The charter take is the second. The round
  * report's one claim that is not a figure is a card a captain holds, and the
  * alignment that take is recorded with has to come off this table rather
  * than off the wire (see charter_taken in @/lib/game/telemetry), so an
  * operator measurement says what the voyage dealt a captain and never
  * what a captain said about themselves. It is called during play, once
- * per leg a claim arrives on, which the once per voyage dedup in
+ * per round a claim arrives on, which the once per voyage dedup in
  * noteCharterTaken bounds to what a client's repetition costs, and a
  * captain this table cannot name is left unattributed by the caller
  * rather than filled in.

@@ -36,7 +36,7 @@ import type { Server } from "socket.io";
 import { db } from "@/lib/db";
 import { emitToUser, roomMembers } from "./presence";
 
-// [J2: the mute and the report] Whether a write failed because the row it
+// Whether a write failed because the row it
 // tried to write was already there.
 //
 // Read off the error's own code rather than through the class Prisma
@@ -167,7 +167,7 @@ export function clearSessionChat(roomId: string): boolean {
 // one left before anyone else did) sees the Start Game control without
 // needing to refresh.
 //
-// [J2: the mute and the report] One frame per captain rather than one for
+// One frame per captain rather than one for
 // the harbor, because what rides on it is the mute list and the roster is
 // the wrong audience for that. A mute is the host's judgement of one
 // captain, and broadcasting it tells every captain in the harbor who has

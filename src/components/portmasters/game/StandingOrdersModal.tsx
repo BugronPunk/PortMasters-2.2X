@@ -1,7 +1,7 @@
 "use client";
 
 // =====================================================================
-// [B3: standing orders] The form a captain writes once.
+// The form a captain writes once.
 //
 // The record it edits and the evaluation that reads it are both engine
 // side (src/lib/game/standing.ts and src/lib/game/engine/standing.ts),
@@ -33,7 +33,7 @@ import { ScrollText } from "lucide-react";
 import { ICONS } from "@/lib/game/constants/brand";
 import { cardText } from "@/lib/game/cards";
 import { basePriceRange } from "@/lib/game/engine";
-import { t } from "@/lib/game/i18n";
+import { t, tId } from "@/lib/game/i18n";
 import {
   unlockedBoons,
   unlockedProducts,
@@ -253,7 +253,7 @@ function BuyRow({
             onBlur={() => setTyped(null)}
             className="h-7 w-16 px-1.5 text-right text-[12px]"
           />
-          <span className="text-[10px] text-muted-foreground">{t("gold")}</span>
+          <span className="text-[10px] text-muted-foreground">{t("Gold")}</span>
         </>
       )}
     </div>
@@ -360,7 +360,7 @@ export function StandingOrdersModal({
                 onClick={() => set({ boon: null })}
               />
               {boons.map((card) => {
-                // [F2: the card record, and the mode weighting field] The
+                // The
                 // three strings come off the record through cardText, so the
                 // row this panel draws and the card the draft deals are one
                 // card described once.
@@ -381,7 +381,7 @@ export function StandingOrdersModal({
           </Section>
 
           <Section
-            title={t("Market")}
+            title={tId("ui.market")}
             hint={t(
               "Each good you mark is bought from the purchase board whenever every good on that card is at or under the price you set, in the order the board is laid out. Anything dearer is left on the board.",
             )}

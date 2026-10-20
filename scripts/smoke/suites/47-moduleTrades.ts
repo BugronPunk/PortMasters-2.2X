@@ -12,7 +12,7 @@ import {
   canSellModule,
   expireConsent,
   isModuleId,
-  moduleListedThisLeg,
+  moduleListedThisRound,
   moduleSlotsOpen,
   normalizeModulesTraded,
   normalizeModuleTradeState,
@@ -143,8 +143,8 @@ export async function moduleTradesSuite(
     });
 
     check(
-      moduleListedThisLeg([row()], "seller", "bulk_hauler", 3) &&
-        moduleListedThisLeg(
+      moduleListedThisRound([row()], "seller", "bulk_hauler", 3) &&
+        moduleListedThisRound(
           [
             row({
               status: "agreed",
@@ -156,10 +156,10 @@ export async function moduleTradesSuite(
           "bulk_hauler",
           3,
         ) &&
-        !moduleListedThisLeg([row()], "seller", "bulk_hauler", 4) &&
-        !moduleListedThisLeg([row()], "seller", "smugglers_hold", 3) &&
-        !moduleListedThisLeg([row()], "other", "bulk_hauler", 3),
-      "one module is one listing a leg: a row takes the module out of the market whether it is still an offer or already an agreement, the next leg opens it again, and neither a different module nor a different seller is caught by it",
+        !moduleListedThisRound([row()], "seller", "bulk_hauler", 4) &&
+        !moduleListedThisRound([row()], "seller", "smugglers_hold", 3) &&
+        !moduleListedThisRound([row()], "other", "bulk_hauler", 3),
+      "one module is one listing a round: a row takes the module out of the market whether it is still an offer or already an agreement, the next round opens it again, and neither a different module nor a different seller is caught by it",
     );
 
     check(
@@ -173,7 +173,7 @@ export async function moduleTradesSuite(
           phase: "parley",
           round: 4,
         }).length === 0,
-      "an offer nobody took dies with the Parley it was posted in, while a trade the two captains agreed survives the rest of the leg and dies with it, which is the same expiry the two markets before it live under because it is the same primitive",
+      "an offer nobody took dies with the Parley it was posted in, while a trade the two captains agreed survives the rest of the round and dies with it, which is the same expiry the two markets before it live under because it is the same primitive",
     );
 
     check(
@@ -219,7 +219,7 @@ export async function moduleTradesSuite(
         ledgerSentences(sellerLogs).some((line) =>
           line.includes("leaves your hull"),
         ),
-      "the seller's side is the plan's automatic unequip: the module comes off the hull by itself, the accounting it carried is unwound with it, so the hauler's upgrade surcharge goes while the overdrive's own penalty stays, the agreed fee lands in the purse, and the ledger writes down that this module moved",
+      "the seller's side is the design's automatic unequip: the module comes off the hull by itself, the accounting it carried is unwound with it, so the hauler's upgrade surcharge goes while the overdrive's own penalty stays, the agreed fee lands in the purse, and the ledger writes down that this module moved",
     );
 
     const ghosted = hullState({
@@ -295,7 +295,7 @@ export async function moduleTradesSuite(
     );
 
     // The guard the desks ask before that click, and the minting it stands
-    // in front of (G1). The settle above is deliberately asymmetric, the
+    // in front of. The settle above is deliberately asymmetric, the
     // boundary the escort's own settle shares and pins (suite 37), so this
     // pair reads the same agreed trade at two purses: one that covers the
     // fee, where the payment and the credit are one number, and one that
@@ -353,7 +353,7 @@ export async function moduleTradesSuite(
         ledgerSentences(unknownLogs).some((line) =>
           line.includes("The yard has no"),
         ),
-      "and a row naming a module this build's pool has never heard of costs the captain their fee and a sentence rather than a crash or a nameless card on the hull, which is the branch for a save that moved between two builds rather than for an ordinary leg",
+      "and a row naming a module this build's pool has never heard of costs the captain their fee and a sentence rather than a crash or a nameless card on the hull, which is the branch for a save that moved between two builds rather than for an ordinary round",
     );
 
     const again = hullState({ currentRound: 3, equippedModules: [hauler] });
@@ -468,7 +468,7 @@ export async function moduleTradesSuite(
       "the ledger's own reader answers an empty ledger for every shape that is not a record, floors what it can count and drops what it cannot, so the report and the save heal through one reader rather than two that could disagree",
     );
 
-    // The plan's second reading, over saves built by hand.
+    // The second reading, over saves built by hand.
     const traffic = readModuleTraffic({
       modules: [
         { id: "bulk_hauler", name: "Bulk Hauler Rigging" },
@@ -490,7 +490,7 @@ export async function moduleTradesSuite(
         traffic[0]?.traded === 1 &&
         traffic[1]?.equipped === 1 &&
         traffic[1]?.traded === 3,
-      "the plan's second reading pairs the two columns off the saves themselves: what is equipped is the hull each save carries and what was traded away is its ledger, summed across the voyages the report was pointed at",
+      "the design's second reading pairs the two columns off the saves themselves: what is equipped is the hull each save carries and what was traded away is its ledger, summed across the voyages the report was pointed at",
     );
     const shippedRows = shippedModuleTraffic([
       { equipped: ["bulk_hauler"], traded: { bulk_hauler: 2 } },
@@ -603,7 +603,7 @@ export async function moduleTradesSuite(
   });
   check(
     modOffSeason !== null && modOffSeason.includes(phaseFace("parley").label),
-    "a module cannot be listed outside the Parley, and the refusal names the phase that opens the market, because a module changes hands at the table rather than mid leg",
+    "a module cannot be listed outside the Parley, and the refusal names the phase that opens the market, because a module changes hands at the table rather than mid round",
   );
 
   // The harbor's seat, moved the way this suite moves any harbor's seat.
@@ -640,7 +640,7 @@ export async function moduleTradesSuite(
   check(
     modNotAModule !== null &&
       modNotAModule.includes("module the yard can bolt on"),
-    "and a listing naming a card nobody can bolt on is refused at the door, because a row no buyer could take would sit on the board for a whole leg",
+    "and a listing naming a card nobody can bolt on is refused at the door, because a row no buyer could take would sit on the board for a whole round",
   );
 
   const modSelfSell = await modRefused(modSeller, "module:post", {
@@ -689,7 +689,7 @@ export async function moduleTradesSuite(
       modOpenRow.buyerUserId === null &&
       modOpenRow.phase === "parley" &&
       modOpenRow.round === 1,
-    "an open listing lands on the whole table's board at the fee the form meant, floored to whole Gold, naming the module, addressed to nobody and stamped with the leg and the phase it was posted in",
+    "an open listing lands on the whole table's board at the fee the form meant, floored to whole Gold, naming the module, addressed to nobody and stamped with the round and the phase it was posted in",
   );
   check(
     modOpenRow !== undefined && modBoardOf(modForeigner).length === 1,
@@ -702,7 +702,7 @@ export async function moduleTradesSuite(
   });
   check(
     modRelisted !== null && modRelisted.includes("already listed that module"),
-    "the same module cannot be listed twice in one leg, whatever price the second row names, because one module is one thing and a second row could not be honoured",
+    "the same module cannot be listed twice in one round, whatever price the second row names, because one module is one thing and a second row could not be honoured",
   );
 
   const modDoubleOpen = await modRefused(modSeller, "module:post", {
@@ -828,7 +828,7 @@ export async function moduleTradesSuite(
 
   // The field report's own case, on the row shape it met: a listing posted
   // to the whole table, taken by a captain the table offered it to. The
-  // third module this captain has not listed this leg, so the kind's own
+  // third module this captain has not listed this round, so the kind's own
   // bound is what says the row below is a fresh listing rather than a
   // second one.
   const modOpenTakePosted = modSettles(modBuyer, (board) =>
@@ -952,7 +952,7 @@ export async function moduleTradesSuite(
     "the harbor's log carries the trade as the board wrote it, the listing and the sale, with the price and the module on both lines and the taker named on the second, and the sale the third captain took stands on exactly one line rather than two",
   );
 
-  // The leg moves on. Everything on the board was sold for the leg that
+  // The round moves on. Everything on the board was sold for the round that
   // just ended, so the sweep is what takes the whole of it away.
   modSeat(modSeller, 2, "parley");
   await settle();
@@ -960,7 +960,7 @@ export async function moduleTradesSuite(
     modBoardOf(modSeller).length === 0 &&
       modBoardOf(modBuyer).length === 0 &&
       modBoardOf(modForeigner).length === 0,
-    "the leg a trade was made for is the leg it lives, and the move to the next one takes the whole board off every captain's screen",
+    "the round a trade was made for is the round it lives, and the move to the next one takes the whole board off every captain's screen",
   );
 
   const modReopened = modSettles(modForeigner, (board) =>
@@ -978,10 +978,10 @@ export async function moduleTradesSuite(
   );
   check(
     modReopenedRow?.round === 2 && modReopenedRow?.fee === 12,
-    "and the same module can be listed again on the new leg, which is what makes the one listing a leg a bound the voyage reads a leg at a time rather than a ceiling on the trade",
+    "and the same module can be listed again on the new round, which is what makes the one listing a round a bound the voyage reads a round at a time rather than a ceiling on the trade",
   );
 
-  // The listing that was still standing when its leg moved, which is the
+  // The listing that was still standing when its round moved, which is the
   // expiry the reporter's recipient meets with a screen they left open:
   // the sweep took the row off every board, and the accept is refused
   // rather than resurrecting an offer the voyage has already left behind.
@@ -996,14 +996,14 @@ export async function moduleTradesSuite(
       modExpiredRefused.includes("already gone") &&
       modBoardOf(modForeigner).length === 0 &&
       modBoardOf(modSeller).length === 0,
-    "an offer that expires with the leg it was posted for cannot be taken afterwards: the row that was still a live listing when the seat moved is off every board, and the accept from a stale screen is answered with the sentence rather than with a settlement",
+    "an offer that expires with the round it was posted for cannot be taken afterwards: the row that was still a live listing when the seat moved is off every board, and the accept from a stale screen is answered with the sentence rather than with a settlement",
   );
 
   // The named offer's own bound, read in a live harbor rather than on a
   // row this file built: the primitive keeps one open offer per seller per
   // buyer, so a second listing aimed at the same captain meets the sentence
   // that names them. The modules are two this seller has not listed this
-  // leg, so the kind's own lock is not what the second post meets.
+  // round, so the kind's own lock is not what the second post meets.
   const modNamedPosted = modSettles(modBuyer, (board) =>
     board.some(
       (t) => t.sellerUserId === modSeller.id && t.status === "offered",
@@ -1056,7 +1056,7 @@ export async function moduleTradesSuite(
       modBoardOf(modSeller).length === 0 &&
       modBoardOf(modBuyer).length === 0 &&
       modBoardOf(modForeigner).length === 0,
-    "an offer dies with the phase it was posted in as well as with the leg: the seat moving to Resolve takes the standing listing off every board, and the accept from a screen that was left open is answered with the sentence rather than with a settlement",
+    "an offer dies with the phase it was posted in as well as with the round: the seat moving to Resolve takes the standing listing off every board, and the accept from a screen that was left open is answered with the sentence rather than with a settlement",
   );
 
   // The row shape itself, with its comments taken out, because these two
@@ -1108,10 +1108,10 @@ export async function moduleTradesSuite(
     "src/components/portmasters/game/ModuleMarket.tsx",
   );
   check(
-    marketDesk.includes("One listing per module a leg") &&
-      marketDesk.indexOf("One listing per module a leg") <
+    marketDesk.includes("One listing per module a round") &&
+      marketDesk.indexOf("One listing per module a round") <
         marketDesk.indexOf("{canSell &&"),
-    "the three rules of this market stand above the seller's own block rather than inside it, so the captain who only ever takes an offer reads one listing per module a leg, one open offer per captain named and the Parley close at the desk that asks them to take one",
+    "the three rules of this market stand above the seller's own block rather than inside it, so the captain who only ever takes an offer reads one listing per module a round, one open offer per captain named and the Parley close at the desk that asks them to take one",
   );
   check(
     marketDesk.includes("tops out at {MAX_SHIP_LEVEL} slots at ship level") &&
@@ -1137,13 +1137,13 @@ export async function moduleTradesSuite(
   check(
     marketDesk.includes("Nothing on the market yet") &&
       marketDesk.includes("List a module and yours is the first row") &&
-      marketDesk.includes("comes off the board when the leg turns") &&
+      marketDesk.includes("comes off the board when the round turns") &&
       marketDesk.includes("Any captain with a module bolted on can list one"),
     "and the empty board tells the seller what took a row of theirs off it and the buyer who may list at all, so the invitation to be first cannot be read as a claim that a listing already posted is still standing",
   );
 
   // The buyer's purse, which is the one condition the settle deliberately
-  // does not ask and the desks therefore have to (G1). The rule is stated
+  // does not ask and the desks therefore have to. The rule is stated
   // once, in the engine's core beside the purse reader it folds, and each
   // desk's blocked chain reads it rather than writing the comparison a
   // second time on the screen, so the three desks that price their own

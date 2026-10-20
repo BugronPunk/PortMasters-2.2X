@@ -1,7 +1,7 @@
 // =====================================================================
 // Realtime layer: the reveal, and the harbor's record of it.
 //
-// [H8: the reveal and the replay ledger] The end of an Ocean Gambit
+// The end of an Ocean Gambit
 // voyage is the one moment the mode's central secret stops being one. The
 // cards were dealt at departure, defended all the way to the wire, and
 // every rule in the mode was written so that no frame carried an

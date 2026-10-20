@@ -1,5 +1,5 @@
 // =====================================================================
-// [MANIFEST 01: The Harbor Pulse] Pure market pricing formula, split out of
+// Pure market pricing formula for the Harbor Pulse, split out of
 // src/server/realtime/index.ts (the same reason pools.ts was split out of
 // difficulty.ts): this is real money math that decides every captain's next
 // round's prices, and it belongs next to the rest of the pure game logic in

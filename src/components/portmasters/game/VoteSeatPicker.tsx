@@ -17,7 +17,7 @@
 // in reads a button that says so instead of one that offers the press a
 // second time.
 //
-// The seat this vote is aimed at is held by the caller with the leg it was
+// The seat this vote is aimed at is held by the caller with the round it was
 // chosen in (see the pick state on each card), so the picker takes the
 // target it should show and hands back every change rather than keeping a
 // choice of its own that a phase change would have to clear.
@@ -54,7 +54,7 @@ export function VoteSeatPicker({
 }: {
   /** The select's own label, which names the vote it picks for. */
   selectLabel: string;
-  /** The captain picked this leg, or an empty string for none. */
+  /** The captain picked this round, or an empty string for none. */
   target: string;
   onPick: (targetId: string) => void;
   /** The roster the list is drawn from. */

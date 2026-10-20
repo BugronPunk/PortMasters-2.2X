@@ -9,7 +9,7 @@ import { sendVoyageLogHistory } from "../voyage-log";
 
 export function wireVoyageLog(socket: Socket): void {
   //
-  // [B4: the log surfaces] The one request the log takes from a client.
+  // The one request the log takes from a client.
   // A captain who arrives at Dusk asks for the voyage so far, and the
   // answer goes back to that socket rather than to the harbor: the harbor is
   // already holding its own copy, and a broadcast here would put the

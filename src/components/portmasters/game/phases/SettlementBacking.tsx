@@ -21,7 +21,7 @@ export function LoanBacking({
   backing,
   myUserId,
 }: Pick<PhasePanelProps, "game" | "backing"> & { myUserId: string }) {
-  // [MANIFEST 05: Backing] Only a loan neither side of, and not already
+  // Only a loan neither side of, and not already
   // backed by someone else, is actually mine to back.
   const backableLoans = backing.loans.filter(
     (l) => l.borrowerId !== myUserId && l.lenderId !== myUserId && !l.backerId,

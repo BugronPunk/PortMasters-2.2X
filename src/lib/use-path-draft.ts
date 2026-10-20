@@ -3,7 +3,7 @@
 // =====================================================================
 // The path draft, and switching, client side.
 //
-// [D7: the draft, and switching] The harbor's two path frames, as one captain
+// The harbor's two path frames, as one captain
 // meets them, and the difference between them is the feature rather than
 // the plumbing.
 //

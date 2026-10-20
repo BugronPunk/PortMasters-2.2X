@@ -1,10 +1,10 @@
-// PortMasters 2.2 Parallel Release, smoke run: A voyage end to end on the six phase leg.
+// PortMasters 2.2 Parallel Release, smoke run: A voyage end to end on the six phase round.
 
 import { db } from "@/lib/db";
 import { lapPhases } from "@/lib/game/checkpoint";
 import type { GameMode } from "@/lib/game/mode";
 import { voyageRoundsFor } from "@/lib/game/mode";
-import { isLegPhase, normalizePhase, phaseFace } from "@/lib/game/phases";
+import { isRoundPhase, normalizePhase, phaseFace } from "@/lib/game/phases";
 import type { Phase } from "@/lib/game/types";
 import {
   LEDGER_PHRASE,
@@ -20,8 +20,8 @@ import type { Socket } from "socket.io-client";
 import type { SmokeRun } from "../run";
 
 export async function voyageEndToEndSuite(run: SmokeRun): Promise<void> {
-  // [B1: the six phase leg, as data] The plan's evaluation for this slice,
-  // read over live sockets rather than off the tables. A whole voyage has
+  // The six phase round, as data, read over live sockets rather than off the
+  // tables. A whole voyage has
   // to reach every seat of the lap, and both captains have to be told the
   // same checkpoint at every transition. What this catches that no data
   // check can is a phase that does not register with the checkpoint
@@ -29,10 +29,10 @@ export async function voyageEndToEndSuite(run: SmokeRun): Promise<void> {
   // as a harbor that never arrived rather than as one that is quietly
   // wrong.
   //
-  // Classic sails its whole voyage, which is the run the evaluation names.
+  // Classic sails its whole voyage, which is the run the check follows.
   // Gambit sails one full round: enough to prove its own order drives the
   // same protocol, without spending twelve rounds of wall clock on a lap
-  // the leg clock section above already holds to the data. Between them,
+  // the round clock section above already holds to the data. Between them,
   // every seat of both laps is walked by the harbor itself.
   //
   // Each captain here is brand new and holds exactly one socket, which
@@ -136,7 +136,7 @@ export async function voyageEndToEndSuite(run: SmokeRun): Promise<void> {
     // lap: every seat of the round, repeated for as many rounds as the
     // voyage is long. Nothing about the order is typed in below, so a lap
     // that changed order would change what the harbor is expected to walk.
-    const lap = lapPhases(mode).filter(isLegPhase);
+    const lap = lapPhases(mode).filter(isRoundPhase);
     const expected: LapStep[] = [];
     for (let round = 1; round <= rounds; round++) {
       for (const phase of lap) expected.push({ round, phase });
@@ -275,7 +275,7 @@ export async function voyageEndToEndSuite(run: SmokeRun): Promise<void> {
     // made, in the order it made them. Two clients that agree on the
     // phase but heard a different number of transitions would mean one of
     // them was being carried by a catch up path rather than by the harbor,
-    // which is the failure the rollback clause of [B1] is about.
+    // which is the failure the rollback rule is about.
     check(
       JSON.stringify(crew[0].frames) === JSON.stringify(crew[1].frames),
       `both captains heard the same ${label} frames, in the same order, for the whole voyage`,

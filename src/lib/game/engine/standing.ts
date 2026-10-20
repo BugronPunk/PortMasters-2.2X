@@ -2,10 +2,9 @@
 // PortMasters 2.2 Parallel Release: what a captain's standing orders
 // actually do.
 //
-// [B3: standing orders] The record, the vocabulary and the normalizer
-// live in ../standing. This is the half that touches the voyage: the two
-// readings ./lifecycle's autoCommit takes before it plays a seat the
-// captain was not standing at.
+// The record, the vocabulary and the normalizer live in ../standing. This
+// is the half that touches the voyage: the two readings ./lifecycle's
+// autoCommit takes before it plays a seat the captain was not standing at.
 //
 // The governing rule, and the reason every branch below calls the same
 // exported engine function a button would: **an order can do nothing a
@@ -32,6 +31,7 @@ import { line, type LedgerLine } from "@/lib/game/ledger";
 import { upgradeShip } from "./boons";
 import { purchaseCard, tallyCardPurchases } from "./market";
 import { canFillOrder, completeOrder } from "./orders";
+import { cardLineFitsCeiling } from "./pricing";
 
 /**
  * The boon a captain's orders ask for, resolved against the board they
@@ -87,9 +87,16 @@ export function workStandingOrders(
         // mixes a good the captain priced with one they did not is a card
         // they did not ask for, and buying it anyway would spend their
         // Gold on the half they said nothing about.
-        const priced = card.resources.every((r) => {
+        // The ceiling is weighed against the line's settled share of the
+        // card, not the harbor's list price: a Merchant's Charm or a
+        // Smuggler's Hold can bring the captain's price under a written
+        // ceiling while the list stays above it, and the gate used to skip
+        // a card the till would have charged within the order.
+        const priced = card.resources.every((r, i) => {
           const ceiling = standingBuyFor(orders, r.type);
-          return ceiling !== null && (r.price ?? 0) <= ceiling;
+          return (
+            ceiling !== null && cardLineFitsCeiling(state, card, i, ceiling)
+          );
         });
         if (!priced) continue;
         purchaseCard(state, card.id, logs);
@@ -105,7 +112,7 @@ export function workStandingOrders(
           },
         ),
       );
-      // [MANIFEST 01: The Harbor Pulse] The lots above are purchases the
+      // The lots above are purchases the
       // harbor's next pulse should count, and the report that carries a
       // captain's tally was sent before this ran, from the state as it
       // stood when the harbor's advance arrived. So the delta rides out on

@@ -244,10 +244,10 @@ export function useObjective(
 
   // The trace the evaluation reads, written once per round rather than on
   // every move: what matters months later is how close the fleet stood in
-  // each leg, so the last value a round reached is the value worth keeping.
+  // each round, so the last value a round reached is the value worth keeping.
   const totalJson = JSON.stringify(total);
   useEffect(() => {
-    if (!objective || Object.keys(total).length === 0) return;
+    if (!objective || totalJson === "{}") return;
     const snapshot = JSON.parse(totalJson) as Record<string, number>;
     act((g) => {
       const last = g.objectiveTrace[g.objectiveTrace.length - 1];

@@ -1,9 +1,8 @@
 // PortMasters 2.2 Parallel Release, smoke run: The Houses and the Ages.
 //
-// [HYG-5] The first of the two coverage articles the studio audit's
-// hygiene finding asked for: the Great Houses' pledge and its per voyage
-// perk, the epoch anchored Age read, and the two account level boards,
-// none of which had a suite of its own before this one.
+// The first of the two coverage articles: the Great Houses' pledge and
+// its per voyage perk, the epoch anchored Age read, and the two account
+// level boards.
 //
 // The pledge is walked through the route a Lobby picker calls, the perk
 // on a fresh voyage the engine builds at the one place a voyage is born,
@@ -234,11 +233,11 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
         line.includes("Jade Pavilion pledge"),
       ) &&
       ledgerSentences(jadeHireLogs).some((line) =>
-        line.includes("Insufficient funds"),
+        line.includes("Not enough Gold"),
       ) &&
       plainPurse.workers.weaver.length === 0 &&
       ledgerSentences(plainHireLogs).some((line) =>
-        line.includes("Insufficient funds"),
+        line.includes("Not enough Gold"),
       ),
     "the Jade Pavilion pledge is spent by the first hire it covers and by no second one: a pledged captain with an empty purse comes away with one artisan, written as the one the waiver meant, while an unpledged captain with the same purse is refused at the hire",
   );

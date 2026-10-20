@@ -1,19 +1,19 @@
 // =====================================================================
 // Realtime layer: the fleet's ledger of boon picks.
 //
-// [F5: public offers] The plan's feature is one sentence: every offer is
+// The design's feature is one sentence: every offer is
 // public, the whole fleet sees the three cards you were shown and the one
 // you kept. This module is the server half of it. One record per captain
 // per harbor, replaced by the next pick, broadcast to the whole harbor after
 // every accepted report.
 //
-// There is no switch here, and that is the plan's rollback clause read as
+// There is no switch here, and that is the design's rollback clause read as
 // code: "This is the one build layer feature that must not be quietly
 // disabled, because the hidden role mode's evidence surface depends on
 // it. If it is turned off, the mode's mode flag goes off with it." So the
 // gate is the harbor's own mode record and nothing else, the same shape
 // the audit's rung follows (see auditOpensAt in @/lib/game/mode), except
-// that the ledger has no rung: boons are drafted from the first leg, so
+// that the ledger has no rung: boons are drafted from the first round, so
 // the mode is the whole of the question. A Classic harbor never records a
 // report and never receives a frame, because nothing ever emits one to it.
 //
@@ -27,7 +27,7 @@
 // Nothing here trusts a report's shape: the fields are read and bounded
 // in ./wiring/boons before this module is ever reached, and what arrives
 // here is already a BoonRecord off the public catalogue. What this module
-// still judges is order: a report from an older leg than the record the
+// still judges is order: a report from an older round than the record the
 // captain already has is refused rather than stored, so a stale tab
 // cannot rewind the table's picture of a captain who has since picked.
 // =====================================================================

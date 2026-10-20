@@ -1,7 +1,7 @@
 import { getLocale, tFor, type Locale } from "../i18n";
 
 // Reputation a captain gains for lending Gold to another captain short on
-// funds, scaled to the amount so a token loan doesn't pay the same as
+// Gold, scaled to the amount so a token loan doesn't pay the same as
 // bailing someone out completely. Floored at 1 so even a small loan is
 // worth something.
 export const AID_REPUTATION_PER_GOLD = 1 / 5;
@@ -44,7 +44,7 @@ const HELPER_REPUTATION_PER_ROUND = 6;
 // the caller passes the length the voyage was pinned to (GameState.maxRounds
 // through ./engine/aid). Reading the tier here was right while a tier and a
 // voyage were the same number of rounds and wrong the moment they were not:
-// a Gambit voyage is twelve legs on every tier, so a tier read would hand a
+// a Gambit voyage is twelve rounds on every tier, so a tier read would hand a
 // Fair Winds crew the cap of an eight round voyage and cut them off at
 // eighty percent of what they had honestly earned.
 export function helperReputationCapFor(voyageRounds: number): number {
@@ -117,7 +117,7 @@ export function merchantRatingLabel(
   return tFor(locale, label);
 }
 
-// [MANIFEST 05: Backing] A third captain can co sign part of an existing
+// A third captain can co sign part of an existing
 // loan between two others, pledging their own Gold as a safety net for the
 // lender. The pledge is escrowed immediately, the same moment every other
 // commitment in this game is (a barter offer, an aid loan, a Convoy

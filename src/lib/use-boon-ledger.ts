@@ -1,7 +1,7 @@
 "use client";
 
 // =====================================================================
-// [F5: public offers] The fleet's ledger, client side.
+// The fleet's ledger, client side.
 //
 // Two directions in one hook because they are one conversation, the same
 // way the audit's vote and finding are: the report that goes out is this
@@ -11,10 +11,10 @@
 // The report is sent on the record's own change and not on a timer: the
 // record is replaced by every pick the engine takes (a click, a standing
 // order, the dawn fallback, a milestone answer), so an effect that
-// watches it is watching exactly the events the plan's sentence names.
+// watches it is watching exactly the events the design's sentence names.
 // The identity it sends under is stamped with the harbor as well as the
 // decision, so a captain who sails from one harbor into another and
-// happens to draw the same trio in the new voyage's first leg still
+// happens to draw the same trio in the new voyage's first round still
 // reports it: the stamp that remembers the last send belongs to the
 // harbor it was sent from.
 //
@@ -27,7 +27,7 @@
 // The emit is gated on the mode, which is the whole of the feature's
 // gate: a Classic harbor runs no ledger, matches no frame, and this hook
 // stays otherwise inert there. There is no switch to consult, by design
-// (see the plan's rollback note read as code in ../server/realtime/
+// (see the design's rollback note read as code in ../server/realtime/
 // boon-ledger.ts).
 // =====================================================================
 

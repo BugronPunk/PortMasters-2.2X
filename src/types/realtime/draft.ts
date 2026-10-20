@@ -1,7 +1,7 @@
 // =====================================================================
 // PortMasters 2.2 Parallel Release: the draft and the switch of papers.
 //
-// [D7: the draft, and switching] The draft, as one captain sees it, and the
+// The draft, as one captain sees it, and the
 // one change of papers a voyage allows.
 //
 // The steps are a union and a list of the same four, so a reader that has to
@@ -12,10 +12,10 @@
 
 import type { PathId } from "@/lib/game/paths";
 
-// [D7: the draft, and switching] The draft, as one captain sees it.
+// The draft, as one captain sees it.
 //
 // This is the one frame in the tree that is private in its whole shape
-// rather than in a field, and that is the plan's own reason for the
+// rather than in a field, and that is the design's own reason for the
 // feature being dealt by the server at all: "a hand of cards is private
 // information and the client cannot be trusted to deal it." So the view is
 // addressed to one captain through emitToUser and never broadcast: the
@@ -80,11 +80,11 @@ export type DraftView = {
   path: PathId | null;
 };
 
-// [D7: the draft, and switching] The one change of papers a voyage allows,
+// The one change of papers a voyage allows,
 // as the harbor is told about it.
 //
 // This one is harbor wide, unlike the draft's own frame, and the difference
-// is the design rather than the plumbing: the plan's clause for switching
+// is the design rather than the plumbing: the design's clause for switching
 // is "the switch is published to the fleet log where everyone sees it...
 // the price of changing your identity is that everyone knows." So the same
 // fact travels twice, deliberately: the log line is the record the fleet

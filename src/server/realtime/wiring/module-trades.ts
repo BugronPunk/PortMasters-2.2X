@@ -8,7 +8,7 @@ import type { Server, Socket } from "socket.io";
 
 import {
   isModuleId,
-  moduleListedThisLeg,
+  moduleListedThisRound,
   type ModuleTrade,
 } from "@/lib/game/engine";
 import { moduleTradesOn } from "@/lib/game/flags";
@@ -44,7 +44,7 @@ const MODULE_POST: ConsentPostSpec<ModuleTrade> = {
     // is the one thing about a listing the server can check without
     // reading anybody's save, and it is worth checking: a row naming a
     // boon, a charter or a card nobody has heard of is a row no buyer
-    // could take, and it would sit on the board for a whole leg.
+    // could take, and it would sit on the board for a whole round.
     read: (payload) =>
       typeof payload?.module === "string" ? payload.module : null,
     known: (moduleId) => isModuleId(moduleId),
@@ -52,21 +52,21 @@ const MODULE_POST: ConsentPostSpec<ModuleTrade> = {
       tFor(locale, "A listing names a module the yard can bolt on."),
   },
   // The audit's spend closes this board on the tick it lands rather
-  // than on the advance that follows it (see auditSpentLeg).
+  // than on the advance that follows it (see auditSpentRound).
   auditSpend: "Modules are listed",
   selfRefusal: (locale) => tFor(locale, "You can't sell a module to yourself."),
   // The kind's own bound, refused where the seller is the one who can
   // act on it: one module is one thing, so once a row names it the
-  // board is done hearing about it until the leg turns, whatever stage
-  // that row has reached (see moduleListedThisLeg). Further listings
+  // board is done hearing about it until the round turns, whatever stage
+  // that row has reached (see moduleListedThisRound). Further listings
   // of the same module would be rows a buyer could accept and the
   // seller could not honour, which is a worse thing to hand a buyer
   // than a sentence at the moment the second listing is made.
   bound: {
     busy: (rows, sellerId, term, round) =>
-      moduleListedThisLeg(rows, sellerId, term, round),
+      moduleListedThisRound(rows, sellerId, term, round),
     refusal: (locale) =>
-      tFor(locale, "You have already listed that module this leg."),
+      tFor(locale, "You have already listed that module this round."),
   },
 };
 
@@ -87,8 +87,8 @@ const MODULE_ACCEPT: ConsentAcceptSpec<ModuleTrade> = {
   statusRefusal: (row, locale) =>
     row.status === "offered" ? null : tFor(locale, OFFER_ALREADY_GONE),
   selfRefusal: (locale) => tFor(locale, "You are the one selling that module."),
-  // A trade agreed after the spend is trading the leg the harbor just
-  // closed (see auditSpentLeg).
+  // A trade agreed after the spend is trading the round the harbor just
+  // closed (see auditSpentRound).
   auditSpend: "Module trades are agreed",
   // No party busy check here, and the absence is the design rather than
   // an omission (see the header of @/lib/game/engine/modules): a hull's
@@ -99,13 +99,12 @@ const MODULE_ACCEPT: ConsentAcceptSpec<ModuleTrade> = {
 
 export function wireModuleTrades(io: Server, socket: Socket): void {
   //
-  // [F3: modules in the shipyard ladder, and trading them between
-  // captains] The market a captain lists a hull's module from during
+  // The market a captain lists a hull's module from during
   // Parley. The board itself lives in ../module-trades and the machinery
-  // under it is the consent factory all three of this epic's markets are
+  // under it is the consent factory all three of this mode's markets are
   // made of (see ../consent), so these four handlers are the same four
   // questions the two markets before them ask, this time about a card
-  // rather than a leg of cover or a garment: order the posts, move one
+  // rather than a round of cover or a garment: order the posts, move one
   // offer to agreed, let the seller take an offer back while it still is
   // one.
   //
@@ -130,10 +129,10 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
   //
   // So what the server is authoritative about is again the ordering, and
   // for this kind that means three things. A module changes hands at the
-  // Parley table and not mid leg, so the phase on the row is the Parley.
-  // One module is listed once a leg by the captain selling it, which is
+  // Parley table and not mid round, so the phase on the row is the Parley.
+  // One module is listed once a round by the captain selling it, which is
   // this kind's own bound and sharper than the by buyer one every market
-  // shares (see moduleListedThisLeg). And a listing names a module the
+  // shares (see moduleListedThisRound). And a listing names a module the
   // pool knows, checked through the game layer's own reader rather than
   // trusted from the post.
   socket.on("module:state:request", (payload: { roomId?: string }) => {
@@ -151,53 +150,53 @@ export function wireModuleTrades(io: Server, socket: Socket): void {
       module?: string;
       targetUserId?: string;
     }) => {
-      const post = await postConsentOffer(socket, payload, MODULE_POST);
-      if (post === null) return;
-      const trade: ModuleTrade = {
-        id: rowId(post.roomId, post.sellerUserId),
-        sellerUserId: post.sellerUserId,
-        sellerName: post.sellerName,
-        buyerUserId: post.buyerUserId,
-        buyerName: post.buyerName,
-        fee: post.fee,
-        round: post.round,
-        // The phase the offer was made in, which is the phase it expires
-        // with, read off the row rather than compared against a constant
-        // in the board's own expiry (see expireConsent). F3's market is
-        // the Parley and only the Parley, so this is that rule written
-        // on the row, the same reading the escort's own row takes.
-        phase: post.phase,
-        status: "offered",
-        module: post.term,
-      };
-      moduleTrades.set(post.roomId, [...post.rows, trade]);
-      // [B4: the log surfaces] The harbor's line, which carries no buyer for
-      // the reason the escort's own note gives: a direct offer is one
-      // captain's business and the log is everyone's.
-      noteVoyageLog(io, post.roomId, {
-        kind: "module_posted",
-        captain: trade.sellerName,
-        module: trade.module,
-        fee: trade.fee,
+      await postConsentOffer(socket, payload, MODULE_POST, (post) => {
+        const trade: ModuleTrade = {
+          id: rowId(post.roomId, post.sellerUserId),
+          sellerUserId: post.sellerUserId,
+          sellerName: post.sellerName,
+          buyerUserId: post.buyerUserId,
+          buyerName: post.buyerName,
+          fee: post.fee,
+          round: post.round,
+          // The phase the offer was made in, which is the phase it expires
+          // with, read off the row rather than compared against a constant
+          // in the board's own expiry (see expireConsent). The module
+          // market is the Parley and only the Parley, so this is that rule
+          // written on the row, the same reading the escort's own row takes.
+          phase: post.phase,
+          status: "offered",
+          module: post.term,
+        };
+        moduleTrades.set(post.roomId, [...post.rows, trade]);
+        // The harbor's line, which carries no buyer for
+        // the reason the escort's own note gives: a direct offer is one
+        // captain's business and the log is everyone's.
+        noteVoyageLog(io, post.roomId, {
+          kind: "module_posted",
+          captain: trade.sellerName,
+          module: trade.module,
+          fee: trade.fee,
+        });
+        moduleTrades.broadcast(io, post.roomId);
       });
-      moduleTrades.broadcast(io, post.roomId);
     },
   );
 
   socket.on(
     "module:accept",
     async (payload: { roomId?: string; tradeId?: string }) => {
-      const accepted = await acceptConsentOffer(socket, payload, MODULE_ACCEPT);
-      if (accepted === null) return;
-      moduleTrades.set(accepted.roomId, accepted.rows);
-      noteVoyageLog(io, accepted.roomId, {
-        kind: "module_sold",
-        captain: accepted.opening.sellerName,
-        taker: accepted.taker.name,
-        module: accepted.opening.module,
-        fee: accepted.opening.fee,
+      await acceptConsentOffer(socket, payload, MODULE_ACCEPT, (accepted) => {
+        moduleTrades.set(accepted.roomId, accepted.rows);
+        noteVoyageLog(io, accepted.roomId, {
+          kind: "module_sold",
+          captain: accepted.opening.sellerName,
+          taker: accepted.taker.name,
+          module: accepted.opening.module,
+          fee: accepted.opening.fee,
+        });
+        moduleTrades.broadcast(io, accepted.roomId);
       });
-      moduleTrades.broadcast(io, accepted.roomId);
     },
   );
 

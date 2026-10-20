@@ -18,7 +18,7 @@ import {
 export function wirePlayerDetail(io: Server, socket: Socket): void {
   // A question about a captain is written down here before it is
   // forwarded, and an answer is relayed only against a question that is
-  // waiting for one. Before [J1: the private information review] the
+  // waiting for one. Before the
   // response handler took a client's word for it: it checked that the
   // sender claimed to be the captain the answer was about and nothing
   // else, so any authenticated captain could push a snapshot of their

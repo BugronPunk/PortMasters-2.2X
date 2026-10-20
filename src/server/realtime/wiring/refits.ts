@@ -47,7 +47,7 @@ const REFIT_POST: ConsentPostSpec<RefitContract> = {
     // is the one thing about a refit the server can check without
     // reading anybody's save, and it is worth checking: a row naming a
     // good nobody can wear is a row no customer could take, and it
-    // would sit on the board for a whole leg.
+    // would sit on the board for a whole round.
     read: (payload) =>
       typeof payload?.good === "string" ? payload.good : null,
     known: (good) => garmentSpec(good) !== null,
@@ -64,7 +64,7 @@ const REFIT_POST: ConsentPostSpec<RefitContract> = {
     busy: (rows, sellerId, _term, round) =>
       refitSellerBusy(rows, sellerId, round),
     refusal: (locale) =>
-      tFor(locale, "You have already taken on a refit this leg."),
+      tFor(locale, "You have already taken on a refit this round."),
   },
 };
 
@@ -88,7 +88,7 @@ const REFIT_ACCEPT: ConsentAcceptSpec<RefitContract> = {
   // The seller's bound rather than the buyer's, and the side is the
   // whole of what the two markets differ on here (see
   // consentPartyBusy). A customer may buy a refit for every garment
-  // they own; a Loom has two hands and one leg.
+  // they own; a Loom has two hands and one round.
   busy: (rows, opening, _userId, round, locale) =>
     refitSellerBusy(rows, opening.sellerUserId, round)
       ? tFor(locale, REFIT_ALREADY_TAKEN)
@@ -97,11 +97,11 @@ const REFIT_ACCEPT: ConsentAcceptSpec<RefitContract> = {
 
 export function wireRefits(io: Server, socket: Socket): void {
   //
-  // [D4: Loom: the Refit] The bench a Loom captain sells repair work from
+  // The bench a Loom captain sells repair work from
   // at a port. The board itself lives in ./refits and the machinery under
-  // it is the consent factory both of this epic's markets are made of (see
+  // it is the consent factory both of this mode's markets are made of (see
   // ./consent), so these four handlers are the same four questions the
-  // escort's are, asked about a garment instead of a leg of cover: order
+  // escort's are, asked about a garment instead of a round of cover: order
   // the posts, move one offer to agreed, let the seller take an offer back
   // while it still is one.
   //
@@ -124,7 +124,7 @@ export function wireRefits(io: Server, socket: Socket): void {
   // So what the server is authoritative about is again the ordering, and
   // for this kind that means three things. A refit is offered at a port
   // and not at sea, so the phase on the row is the Market. One Loom
-  // captain takes on one refit a leg, which is what makes the offer worth
+  // captain takes on one refit a round, which is what makes the offer worth
   // reading rather than a queue one pair of hands cannot work through.
   // And a bench offer names a garment that exists, checked through the
   // game layer's own reader rather than trusted from the post.
@@ -143,51 +143,51 @@ export function wireRefits(io: Server, socket: Socket): void {
       good?: string;
       targetUserId?: string;
     }) => {
-      const post = await postConsentOffer(socket, payload, REFIT_POST);
-      if (post === null) return;
-      const contract: RefitContract = {
-        id: rowId(post.roomId, post.sellerUserId),
-        sellerUserId: post.sellerUserId,
-        sellerName: post.sellerName,
-        buyerUserId: post.buyerUserId,
-        buyerName: post.buyerName,
-        fee: post.fee,
-        round: post.round,
-        // The phase the offer was made in, which is the phase it expires
-        // with, read off the row rather than compared against a constant
-        // in the board's own expiry (see expireConsent).
-        phase: post.phase,
-        status: "offered",
-        good: post.term,
-      };
-      refitContracts.set(post.roomId, [...post.rows, contract]);
-      // [B4: the log surfaces] The harbor's line, which carries no buyer for
-      // the reason the escort's own note gives: a direct offer is one
-      // captain's business and the log is everyone's.
-      noteVoyageLog(io, post.roomId, {
-        kind: "refit_posted",
-        captain: contract.sellerName,
-        good: contract.good,
-        fee: contract.fee,
+      await postConsentOffer(socket, payload, REFIT_POST, (post) => {
+        const contract: RefitContract = {
+          id: rowId(post.roomId, post.sellerUserId),
+          sellerUserId: post.sellerUserId,
+          sellerName: post.sellerName,
+          buyerUserId: post.buyerUserId,
+          buyerName: post.buyerName,
+          fee: post.fee,
+          round: post.round,
+          // The phase the offer was made in, which is the phase it expires
+          // with, read off the row rather than compared against a constant
+          // in the board's own expiry (see expireConsent).
+          phase: post.phase,
+          status: "offered",
+          good: post.term,
+        };
+        refitContracts.set(post.roomId, [...post.rows, contract]);
+        // The harbor's line, which carries no buyer for
+        // the reason the escort's own note gives: a direct offer is one
+        // captain's business and the log is everyone's.
+        noteVoyageLog(io, post.roomId, {
+          kind: "refit_posted",
+          captain: contract.sellerName,
+          good: contract.good,
+          fee: contract.fee,
+        });
+        refitContracts.broadcast(io, post.roomId);
       });
-      refitContracts.broadcast(io, post.roomId);
     },
   );
 
   socket.on(
     "refit:accept",
     async (payload: { roomId?: string; contractId?: string }) => {
-      const accepted = await acceptConsentOffer(socket, payload, REFIT_ACCEPT);
-      if (accepted === null) return;
-      refitContracts.set(accepted.roomId, accepted.rows);
-      noteVoyageLog(io, accepted.roomId, {
-        kind: "refit_agreed",
-        captain: accepted.opening.sellerName,
-        taker: accepted.taker.name,
-        good: accepted.opening.good,
-        fee: accepted.opening.fee,
+      await acceptConsentOffer(socket, payload, REFIT_ACCEPT, (accepted) => {
+        refitContracts.set(accepted.roomId, accepted.rows);
+        noteVoyageLog(io, accepted.roomId, {
+          kind: "refit_agreed",
+          captain: accepted.opening.sellerName,
+          taker: accepted.taker.name,
+          good: accepted.opening.good,
+          fee: accepted.opening.fee,
+        });
+        refitContracts.broadcast(io, accepted.roomId);
       });
-      refitContracts.broadcast(io, accepted.roomId);
     },
   );
 

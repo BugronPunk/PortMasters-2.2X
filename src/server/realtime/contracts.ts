@@ -1,9 +1,9 @@
 // =====================================================================
 // Realtime layer: the escort contract board.
 //
-// [D3: Convoy: the Escort Contract] The board Convoy captains sell from
+// The board Convoy captains sell from
 // during Parley. The machinery that holds it is the consent factory this
-// epic's second market shares (see ./consent), and what is left here is the
+// mode's second market shares (see ./consent), and what is left here is the
 // binding: the event the market speaks on, the payload it speaks in, and the
 // one rule this kind adds to the shared visibility filter, which is that a
 // claimed contract's raid figure belongs to its seller.

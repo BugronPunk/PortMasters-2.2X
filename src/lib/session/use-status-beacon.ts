@@ -14,8 +14,8 @@ import type { SessionState } from "./reducer";
 // disagree about what a captain is doing.
 // =====================================================================
 
-// The cadence every live channel rides on, exported because the leg report
-// (see ../use-leg-report) and the objective report (see ../use-objective)
+// The cadence every live channel rides on, exported because the round report
+// (see ../use-round-report) and the objective report (see ../use-objective)
 // debounce on this same number: the three answer one change together, and
 // three separate literals are three chances for one of them to drift.
 export const STATUS_BROADCAST_MS = 120;

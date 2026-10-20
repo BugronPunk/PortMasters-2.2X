@@ -41,7 +41,7 @@ export function ShipTab({
       {modules.length === 0 ? (
         <p className="pt-1 text-[10px] text-muted-foreground">
           {t(
-            "No modules installed. Upgrade the ship in the Shipyard to unlock slots.",
+            "No modules installed. Upgrade the hull in the Shipyard to unlock slots.",
           )}
         </p>
       ) : (

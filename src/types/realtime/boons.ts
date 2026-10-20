@@ -1,7 +1,7 @@
 // =====================================================================
 // PortMasters 2.2 Parallel Release: public offers, the fleet's ledger.
 //
-// [F5: public offers] The plan's feature is one sentence: every offer is
+// The design's feature is one sentence: every offer is
 // public, the whole fleet sees the three cards you were shown and the one
 // you kept. These two frames are that sentence on the wire.
 //
@@ -14,7 +14,7 @@
 // It is the one broadcast besides the audit that is keyed by captain, and
 // it is safe for the same reason the tally is: there is nowhere in the
 // record to put a hold, a purse or an alignment. It carries card ids out
-// of the public boon catalogue, the leg the choice was made in, and which
+// of the public boon catalogue, the round the choice was made in, and which
 // milestone the pick answered, and nothing else. The names the harbor reads
 // are looked up client side off the roster the harbor already has, so no
 // frame here names anybody.

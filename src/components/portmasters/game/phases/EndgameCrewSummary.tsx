@@ -8,8 +8,8 @@ import { FigureTile, PanelTotal, SummaryHeading } from "./PhaseShared";
 /**
  * Crew Management Summary. Shows worker productivity stats at voyage
  * end: the crew still aboard, how many reached skilled status, total
- * items produced, and the wages paid. [C2: crew loss by name] The first
- * tile says "Crew Aboard" rather than "Workers Hired" because the two
+ * items produced, and the wages paid. The first
+ * tile says "Crew Aboard" rather than "Artisans Hired" because the two
  * stopped being the same number the moment a hand could be lost or
  * dismissed, and the line under the tiles is where the names of the lost
  * are read back: the log said each one as it happened, and a summary that
@@ -24,7 +24,7 @@ export function CrewSummary({ game }: { game: GameState }) {
   // this one is where that shows.
   const crewAboard = allWorkers.length;
   const skilledCount = allWorkers.filter((w) => w.isSkilled).length;
-  const totalWages = game.workerWages;
+  const totalWages = game.wagesPaid;
   const lost = game.crewLost ?? [];
 
   // Estimate total items produced from worker producedCount
@@ -35,12 +35,12 @@ export function CrewSummary({ game }: { game: GameState }) {
 
   if (crewAboard === 0) return null;
 
-  // The hands the voyage took, each named with the leg it happened on. The
+  // The hands the voyage took, each named with the round it happened on. The
   // join is the language's own, so a Mandarin list separates the way its
   // sentences do.
   const lostList = lost
     .map((loss) =>
-      t("{loss.name} (leg {loss.round})", {
+      t("{loss.name} (round {loss.round})", {
         "loss.name": loss.name,
         "loss.round": loss.round,
       }),

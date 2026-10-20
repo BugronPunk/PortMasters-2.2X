@@ -450,8 +450,8 @@ export function Notice({
           type="button"
           onClick={onDismiss}
           className={tier.dismiss || undefined}
-          title={size === "sm" ? undefined : "Dismiss"}
-          aria-label={size === "sm" ? t("Dismiss error") : "Dismiss"}
+          title={size === "sm" ? undefined : t("Dismiss")}
+          aria-label={size === "sm" ? t("Dismiss error") : t("Dismiss")}
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -483,7 +483,7 @@ export function RefusalLine({
     <p className={cn("text-[11px] text-alarm", className)}>
       {error}{" "}
       <button type="button" onClick={onDismiss} className="underline">
-        Dismiss
+        {t("Dismiss")}
       </button>
     </p>
   );

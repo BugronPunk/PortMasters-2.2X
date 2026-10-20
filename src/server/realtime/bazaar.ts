@@ -1,8 +1,8 @@
 // =====================================================================
 // Realtime layer: the bazaar board.
 //
-// [D5: Aroma: the Bazaar Rumor] The board an Aroma captain speaks from
-// during Parley. It is the third market this epic's paths hold in harbor
+// The board an Aroma captain speaks from
+// during Parley. It is the third market this mode's paths hold in harbor
 // state and it is the simplest of the three, because there is nothing to
 // agree: an escort contract and a refit are both promises between two
 // captains and need the consent machinery underneath them (see ./consent),
@@ -23,12 +23,12 @@
 // lines it takes: a departing captain's rows stay on the board. The two
 // consent boards drop a departed captain's rows, because a promise from
 // someone who is not in the harbor is a promise nobody can settle, and
-// the plan's own line is that betrayal lives in the gaps between
+// the design's own line is that betrayal lives in the gaps between
 // contracts. A rumor is not a promise to anyone. It was published in the
 // open, the harbor heard it, and the market it moves prices it whether or
 // not the captain who said it is still ashore. Dropping the row when they
 // leave would reprice every good for the captains still sailing, which
-// is the half applied settlement the plan's rollback note warns about
+// is the half applied settlement the design's rollback note warns about
 // dressed as a cleanup. The row goes when the voyage does.
 //
 // Transient by construction: nothing here is written down, and a save
@@ -64,7 +64,7 @@ function setBazaarRumors(roomId: string, rows: BazaarRumor[]): void {
  *
  * The id is minted here rather than by the caller because it is the
  * board's own guarantee that it is worth anything: one captain publishes
- * at most one rumor in a leg, so a row's id is its publisher and its leg
+ * at most one rumor in a round, so a row's id is its publisher and its round
  * together (see rumorId), and the board is where "no two rows share one"
  * has to hold. Every refusal that keeps that true is upstream, in the
  * handler that reads the cooldown before calling this.
@@ -90,8 +90,8 @@ export function publishBazaarRumor(
  * bazaar:update on the wire carries.
  *
  * The round is a parameter rather than read off the rows, because it is
- * the harbor's leg and not the row's: the same rows read one leg later are
- * a different board, since the leg is what decides which of them have
+ * the harbor's round and not the row's: the same rows read one round later are
+ * a different board, since the round is what decides which of them have
  * landed and whose directions are therefore public. Every site that sends
  * a board has the harbor's checkpoint in hand, and this is the one place
  * that turns it into the visibility rule.
@@ -141,9 +141,9 @@ export function broadcastBazaar(
  * Drops the board for a harbor and tells the captains still in it, which is
  * what the end of a voyage gets.
  *
- * A voyage is the whole life of a rumor: rows are kept from the first leg
- * to the last so a captain's cooldown can be read off them, and the leg
- * after a voyage ends is a leg of a different voyage, where nothing
+ * A voyage is the whole life of a rumor: rows are kept from the first round
+ * to the last so a captain's cooldown can be read off them, and the round
+ * after a voyage ends is a round of a different voyage, where nothing
  * anybody said here means anything.
  */
 export function clearBazaar(io: Server, roomId: string, round: number): void {

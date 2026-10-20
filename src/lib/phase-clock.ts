@@ -1,7 +1,7 @@
 // =====================================================================
 // PortMasters 2.2 Parallel Release: the phase clock, as a client reads it.
 //
-// [B2: hard timers, the server as timekeeper] The clock belongs to the
+// The clock belongs to the
 // server. It arms a deadline when the harbor's checkpoint moves and
 // announces the advance when that deadline passes, whether or not every
 // captain has readied, so a table where somebody has walked away still

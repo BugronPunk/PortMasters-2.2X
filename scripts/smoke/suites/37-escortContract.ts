@@ -24,7 +24,7 @@ import {
   normalizeConsentLedger,
   normalizeEscortState,
   resetConsentLedger,
-  resetEscortLeg,
+  resetEscortRound,
   resolvePirateAttack,
   visibleContracts,
 } from "@/lib/game/engine";
@@ -118,7 +118,7 @@ export async function escortContractSuite(
       escortCoverage() < 1,
     "the guns' share of a raid is the one number the constants carry, and it leaves part of the boarding party for the escort's hold to eat",
   );
-  // The same number as the plan sells it, pinned as the literal rather than
+  // The same number the sale promises, pinned as the literal rather than
   // only as the reader, because a check that compared the reader to the
   // constant would sail through a build where somebody had moved both: the
   // promise a captain buys is four coins in ten beaten off and the other
@@ -200,7 +200,7 @@ export async function escortContractSuite(
       coverFromBoard([contractOn({ status: "offered" })], "buyer", 3) ===
         null &&
       coverFromBoard([contractOn({ status: "claimed" })], "buyer", 3) !== null,
-    "a contract covers the captain it names as its buyer, in the leg it was made for: an offer nobody took protects nobody, another captain's contract is not this captain's cover, and the leg it no longer matches leaves them sailing on their own luck",
+    "a contract covers the captain it names as its buyer, in the round it was made for: an offer nobody took protects nobody, another captain's contract is not this captain's cover, and the round it no longer matches leaves them sailing on their own luck",
   );
   check(
     coverFromBoard([], "buyer", 3) === null,
@@ -217,7 +217,7 @@ export async function escortContractSuite(
       ) &&
       !consentPartyBusy([contractOn({})], "buyer", "seller", 3) &&
       consentPartyBusy([contractOn({})], "seller", "seller", 3),
-    "one agreement per captain per leg, asked on the side the market bounds: an agreement somebody actually holds makes that party busy, an offer they have not taken is not, a captain on the other side of the table is not, and the side is the whole of what the two markets differ on, so the escort asks about its buyer while the Loom's bench asks about its seller",
+    "one agreement per captain per round, asked on the side the market bounds: an agreement somebody actually holds makes that party busy, an offer they have not taken is not, a captain on the other side of the table is not, and the side is the whole of what the two markets differ on, so the escort asks about its buyer while the Loom's bench asks about its seller",
   );
 
   // The board's own three policies: who sees a row, what an expiry takes
@@ -252,14 +252,14 @@ export async function escortContractSuite(
   // one row that is past the offer stage without settling anything, which
   // is the shape every reader that asked "is this still an offer" rather
   // than "is this an agreement" got wrong the moment the state existed:
-  // the cover, the one agreement a leg bound, and the aim the aimed offer
+  // the cover, the one agreement a round bound, and the aim the aimed offer
   // was already read through.
   const declinedRow = contractOn({ id: "declined", status: "declined" });
   check(
     coverFromBoard([declinedRow], "buyer", 3) === null &&
       !consentPartyBusy([declinedRow], "buyer", "buyer", 3) &&
       !consentPartyBusy([declinedRow], "seller", "seller", 3),
-    "a contract that was turned down covers nobody and commits nobody on either side of it, so the captain who said no is still free to be covered by somebody else in the leg they said it in",
+    "a contract that was turned down covers nobody and commits nobody on either side of it, so the captain who said no is still free to be covered by somebody else in the round they said it in",
   );
   check(
     visibleContracts([declinedRow], "seller").length === 1 &&
@@ -272,7 +272,7 @@ export async function escortContractSuite(
       expireConsent([declinedRow], { phase: "orders", round: 3 }).length ===
         1 &&
       expireConsent([declinedRow], { phase: "parley", round: 4 }).length === 0,
-    "and a turn-down is not a standing offer, so the seller may ask again, and it has no phase to die with because there is nothing left to take back: it stays as a receipt for the leg that read it and goes when the leg does",
+    "and a turn-down is not a standing offer, so the seller may ask again, and it has no phase to die with because there is nothing left to take back: it stays as a receipt for the round that read it and goes when the round does",
   );
   check(
     expireConsent([openOffer], { phase: "orders", round: 3 }).length === 0 &&
@@ -280,7 +280,7 @@ export async function escortContractSuite(
         0 &&
       expireConsent([claimedRow], { phase: "orders", round: 3 }).length === 1 &&
       expireConsent([claimedRow], { phase: "parley", round: 4 }).length === 0,
-    "an offer nobody took dies with the Parley it was posted in, because an offer nobody accepted is not binding on anyone, while a contract the two captains did agree survives the phase it was made in and lives exactly the leg it protects",
+    "an offer nobody took dies with the Parley it was posted in, because an offer nobody accepted is not binding on anyone, while a contract the two captains did agree survives the phase it was made in and lives exactly the round it protects",
   );
   check(
     consentOfferStanding([openOffer], "seller", null) &&
@@ -422,7 +422,7 @@ export async function escortContractSuite(
     "and with the market switched off a contract still sitting on the board moves no Gold on either side of it, so the rollback is clean at the moment money would have moved rather than only at the moment a market was drawn",
   );
 
-  // The ledger, which is the idempotence and the leg stamp both.
+  // The ledger, which is the idempotence and the round stamp both.
   const ledgerLeftOver = purseOf(500);
   ledgerLeftOver.currentRound = 5;
   ledgerLeftOver.settledMovements = ["c1:fee"];
@@ -432,7 +432,7 @@ export async function escortContractSuite(
     ledgerLeftOver.money === 460 &&
       ledgerLeftOver.settledMovements.length === 1 &&
       ledgerLeftOver.settledMovements[0] === "c1:fee",
-    "a ledger left over from an earlier leg answers for nothing: the movement applies and the list is replaced rather than grown, so an id that comes round again on a new leg still settles",
+    "a ledger left over from an earlier round answers for nothing: the movement applies and the list is replaced rather than grown, so an id that comes round again on a new round still settles",
   );
   const leaving = purseOf(500);
   leaving.currentRound = 4;
@@ -442,16 +442,16 @@ export async function escortContractSuite(
   leaving.settledRound = 4;
   // The two calls the Dawn makes, in the order it makes them, because the
   // ledger stopped being the escort's when the primitive arrived (see
-  // startBoonDrafting): one takes the leg's cover and its waiting claim,
-  // and the other empties the leg's settlement ledger and stamps it.
-  resetEscortLeg(leaving);
+  // startBoonDrafting): one takes the round's cover and its waiting claim,
+  // and the other empties the round's settlement ledger and stamps it.
+  resetEscortRound(leaving);
   resetConsentLedger(leaving);
   check(
     leaving.escortCover === null &&
       leaving.pendingEscortClaim === null &&
       leaving.settledMovements.length === 0 &&
       leaving.settledRound === 4,
-    "the Dawn that opens a leg takes the cover, the claim waiting to be relayed and the ledger with it, and stamps the new leg so the list is emptied there rather than at the next settlement",
+    "the Dawn that opens a round takes the cover, the claim waiting to be relayed and the ledger with it, and stamps the new round so the list is emptied there rather than at the next settlement",
   );
 
   // ========== The raid roll, which is the one place the cover is spent ==========
@@ -564,7 +564,7 @@ export async function escortContractSuite(
     keptWhole.escortCover?.contractId === "c1" &&
       keptWhole.pendingEscortClaim?.raidGold === 250 &&
       keptWhole.escortSold === 2,
-    "and a save that already holds a leg's contract facts keeps them, so the pass is a heal rather than a reset",
+    "and a save that already holds a round's contract facts keeps them, so the pass is a heal rather than a reset",
   );
   const carriedCover = JSON.parse(JSON.stringify(keptWhole)) as GameState;
   check(
@@ -723,7 +723,7 @@ export async function escortContractSuite(
       openRow.fee === 40 &&
       openRow.buyerUserId === null &&
       openRow.round === 1,
-    "an open offer lands on the whole table's board at the fee the form meant, floored to whole Gold, addressed to nobody and stamped with the leg it was posted in",
+    "an open offer lands on the whole table's board at the fee the form meant, floored to whole Gold, addressed to nobody and stamped with the round it was posted in",
   );
   check(
     openRow !== undefined && boardOf(escortForeigner).length === 1,
@@ -841,7 +841,7 @@ export async function escortContractSuite(
   });
   check(
     alreadyCovered !== null && alreadyCovered.includes("already covered"),
-    "and a captain who is covered for a leg cannot take a second cover in it, because one buyer's cover is one field rather than a set",
+    "and a captain who is covered for a round cannot take a second cover in it, because one buyer's cover is one field rather than a set",
   );
 
   const withdrawRefused = await refusedFrom(escortSeller, "contract:cancel", {
@@ -926,7 +926,7 @@ export async function escortContractSuite(
     "and a second claim against the same cover is refused, so one raid cannot be billed to the guns twice",
   );
 
-  // The leg moves on. Everything on the board was sold for the leg that
+  // The round moves on. Everything on the board was sold for the round that
   // just ended, so the sweep is what takes the whole of it away.
   reportSeat(escortSeller, 2, "parley");
   await settle();
@@ -934,7 +934,7 @@ export async function escortContractSuite(
     boardOf(escortSeller).length === 0 &&
       boardOf(escortBuyer).length === 0 &&
       boardOf(escortForeigner).length === 0,
-    "the leg a contract was sold for is the leg it lives, and the move to the next one takes the whole board off every captain's screen",
+    "the round a contract was sold for is the round it lives, and the move to the next one takes the whole board off every captain's screen",
   );
   const lateClaim = await refusedFrom(escortBuyer, "contract:claim", {
     contractId: directRow?.id ?? "",
@@ -942,7 +942,7 @@ export async function escortContractSuite(
   });
   check(
     lateClaim !== null,
-    "and a claim a leg late is refused rather than applied to a contract the board no longer remembers",
+    "and a claim a round late is refused rather than applied to a contract the board no longer remembers",
   );
 
   const reopenedBoard = boardSettles(escortForeigner, (board) =>
@@ -959,7 +959,7 @@ export async function escortContractSuite(
   );
   check(
     reopenedRow?.round === 2 && reopenedRow?.fee === 30,
-    "and the market opens again on the new leg, which is what makes the plan's count of contracts per leg a count rather than a ceiling on the voyage",
+    "and the market opens again on the new round, which is what makes the design's count of contracts per round a count rather than a ceiling on the voyage",
   );
 
   // ========== The dead end this market shipped with, and the ways out of it ==========
@@ -1083,7 +1083,7 @@ export async function escortContractSuite(
   // A refusal is not a ban, and the board keeps one row per pair rather than
   // a stack of them: the seller asks again, the second offer replaces the
   // row it follows, and the captain who said no is not committed by it and
-  // takes the new price in the same leg.
+  // takes the new price in the same round.
   const askedAgain = boardSettles(escortBuyer, (board) =>
     board.some(
       (c) =>
@@ -1120,7 +1120,7 @@ export async function escortContractSuite(
   check(
     agreedAfterDecline?.status === "agreed" &&
       agreedAfterDecline.buyerUserId === escortBuyer.id,
-    "and the captain who turned one price down is not committed by it: the leg is still theirs to cover, so they take the next offer in it, which is the press the one agreement bound used to refuse by reading a refusal as an agreement",
+    "and the captain who turned one price down is not committed by it: the round is still theirs to cover, so they take the next offer in it, which is the press the one agreement bound used to refuse by reading a refusal as an agreement",
   );
 
   const openAgain = boardSettles(escortForeigner, (board) =>
@@ -1311,7 +1311,7 @@ export async function escortContractSuite(
         refusal?.includes("already been agreed"),
       ) &&
       !consentPartyBusy(raceBoard, "buyer", raceLoser.id, 3),
-    "two captains pressing on the same open offer in one tick cannot both take it: the row settles once for the captain whose frame the server read first, the other press is refused by the state the row is in by then, and the captain it refused holds no cover for the leg",
+    "two captains pressing on the same open offer in one tick cannot both take it: the row settles once for the captain whose frame the server read first, the other press is refused by the state the row is in by then, and the captain it refused holds no cover for the round",
   );
 
   // The same ordering asked the other way round: a press to take and a
@@ -1427,12 +1427,12 @@ export async function escortContractSuite(
     "two posts from one seller in the same tick are one row rather than two, so a client cannot paper a board by sending the same frame twice: the first lands and the second is refused by name rather than dropped",
   );
 
-  // ========== One seller, two buyers, one leg ==========
+  // ========== One seller, two buyers, one round ==========
   //
   // The market's bound is on the buyer rather than on the seller (one
   // captain's cover is one field, while a seller may carry as many
   // contracts as captains will take), so a seller covering two buyers in
-  // one leg is an ordinary leg rather than a second trade refused. Both
+  // one round is an ordinary round rather than a second trade refused. Both
   // rows settle, and the ledger that keeps a reload from paying twice
   // keys each of them by its own id.
   reportSeat(escortSeller, 4, "parley");
@@ -1557,6 +1557,6 @@ export async function escortContractSuite(
       sellerPurse.escortSold === 2 &&
       sellerPurse.escortClaims === 2 &&
       sellerPurse.settledMovements.length === 4,
-    "a seller covering two different buyers in one leg settles both rows rather than one of them: each fee and each absorbed raid moves under its own ledger key, so the two agreements are counted twice where a repeated frame would count once",
+    "a seller covering two different buyers in one round settles both rows rather than one of them: each fee and each absorbed raid moves under its own ledger key, so the two agreements are counted twice where a repeated frame would count once",
   );
 }

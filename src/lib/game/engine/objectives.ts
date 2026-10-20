@@ -5,7 +5,7 @@
 // Delivery is per item rather than all at once, and that is the one place
 // this departs from the mandate it copies. A mandate is an order: it is
 // filled whole or not at all. An objective has to be watchable while it is
-// half done, because the epic measures the argument the fleet has when the
+// half done, because the design measures the argument the fleet has when the
 // number is close, and a number that only ever reads 0 or done produces no
 // argument at all.
 //
@@ -172,7 +172,7 @@ export function deliverToObjective(
       { partList: parts.join(" + "), paid },
     ),
   );
-  // [F4: boons at milestone moments] The mandate moment: the plan's
+  // The mandate moment: the design's
   // "contributing to a Joint Mandate", read at the first delivery to the
   // voyage's shared commission, which is the event this function is. It
   // sits after the ledger line rather than before it so the entry reads

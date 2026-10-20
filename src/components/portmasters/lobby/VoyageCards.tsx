@@ -37,7 +37,7 @@ type VoyageOption<T extends string> = {
   tagline: string;
   summary: string;
   experimental: boolean;
-  // [H9: the unlock code] Whether this voyage has to be opened with a
+  // Whether this voyage has to be opened with a
   // phrase. Read from the mode record rather than from the unlock table,
   // because the question the card answers is about the voyage it is
   // offering and the table only says which doorway that is.
@@ -103,7 +103,7 @@ export function VoyageCards<T extends string>({
                       {t("Experimental")}
                     </Pill>
                   )}
-                  {/* [H9: the unlock code] The seal, beside the state above
+                  {/* The seal, beside the state above
                       rather than in it. A card can wear both, and they say
                       different things: one is how finished the voyage is
                       and one is how a host gets into it. The key is the

@@ -1,10 +1,9 @@
 // =====================================================================
 // Realtime layer: the module market's board.
 //
-// [F3: modules in the shipyard ladder, and trading them between captains]
 // The board a captain lists a bolted on module from at the Parley table.
 // The machinery that holds it is the consent factory all three of this
-// epic's markets are made of (see ./consent), and what is left here is the
+// mode's markets are made of (see ./consent), and what is left here is the
 // binding: the event the market speaks on and the payload it speaks in.
 //
 // This kind adds nothing to the shared visibility filter, for the reason

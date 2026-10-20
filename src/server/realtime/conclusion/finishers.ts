@@ -35,7 +35,7 @@ import {
 } from "@/lib/game/victory";
 import type { ObjectiveTraceEntry } from "@/lib/game/types";
 import { buildChronicle } from "@/lib/game/engine/chronicle";
-import { cardById } from "@/lib/game/cards";
+import { cardById, cardRunsInMode } from "@/lib/game/cards";
 import { MAX_HELD_CARDS } from "@/lib/game/combinations";
 import { normalizeCharter, normalizeHeldBoons } from "@/lib/game/held-cards";
 import { unlockLineFor } from "@/lib/unlock";
@@ -138,6 +138,7 @@ function extractChronicleExtras(
   data: Record<string, unknown> | null,
   forged: boolean,
   fallbackReputation: number,
+  mode: VoyageRun["mode"],
 ): {
   peakReputation: number;
   largestTrade: number;
@@ -156,7 +157,7 @@ function extractChronicleExtras(
       // Gold it reported, which is to say not at all, so it is dropped the
       // same way the peak reputation is.
       objectiveTrace: [],
-      // [F7: the combination instrument] And the held set is dropped for
+      // And the held set is dropped for
       // the same reason, one step sharper: the instrument exists to find
       // which combinations win, and a finish the integrity pass would not
       // read is a claim about winning over a claim about holding.
@@ -176,7 +177,7 @@ function extractChronicleExtras(
     lendCount: Array.isArray(data.loansGiven) ? data.loansGiven.length : 0,
     borrowCount: Array.isArray(data.debts) ? data.debts.length : 0,
     objectiveTrace: readObjectiveTrace(data.objectiveTrace),
-    heldCards: readHeldCards(data),
+    heldCards: readHeldCards(data, mode),
   };
 }
 
@@ -190,7 +191,7 @@ const MAX_TRACE_ENTRIES = 64;
 // Reads the captain's own commission record back out of a save. Every field
 // is treated as untrusted, the same discipline snapshotFromSave applies to
 // money and score: an entry that is not exactly the shape expected is
-// dropped rather than repaired, because a half read leg would be worse than
+// dropped rather than repaired, because a half read round would be worse than
 // an absent one. The most recent entries are the ones kept.
 function readObjectiveTrace(raw: unknown): ObjectiveTraceEntry[] {
   if (!Array.isArray(raw)) return [];
@@ -222,7 +223,7 @@ function readObjectiveTrace(raw: unknown): ObjectiveTraceEntry[] {
   return entries;
 }
 
-// [F7: the combination instrument] Reads the durable cards out of a save
+// Reads the durable cards out of a save
 // for the instrument's column. Shape first and pool second, the trace's
 // discipline with one addition: every id is resolved through the pool the
 // same way the save's own heal resolves it, so the reading is the durable
@@ -230,8 +231,10 @@ function readObjectiveTrace(raw: unknown): ObjectiveTraceEntry[] {
 // belong in the field and a round draft's id all read the way a reload
 // would read them) rather than whatever strings a client typed. The boons
 // and the charter go through the save's own healing readers for exactly
-// that reason; the modules are records rather than ids on the save, so
-// their ids are pulled here and held to the module kind.
+// that reason, and the mode the voyage finished under rides with them, so
+// a card the mode does not run is not a durable card of that voyage; the
+// modules are records rather than ids on the save, so their ids are
+// pulled here and held to the module kind and the same mode gate.
 //
 // A repeat among the boons is dropped by that same heal (it is one held
 // card); a repeated module id is kept, because two of the same module
@@ -241,8 +244,11 @@ function readObjectiveTrace(raw: unknown): ObjectiveTraceEntry[] {
 // one home there rather than here because both ends of the column need
 // it: this writer, and the reader that has to imitate it for a row that
 // was written by hand.
-function readHeldCards(data: Record<string, unknown>): string[] {
-  const ids: string[] = [...normalizeHeldBoons(data.heldBoons)];
+function readHeldCards(
+  data: Record<string, unknown>,
+  mode: VoyageRun["mode"],
+): string[] {
+  const ids: string[] = [...normalizeHeldBoons(data.heldBoons, mode)];
   const modules = Array.isArray(data.equippedModules)
     ? data.equippedModules
     : [];
@@ -250,10 +256,11 @@ function readHeldCards(data: Record<string, unknown>): string[] {
     if (!item || typeof item !== "object" || Array.isArray(item)) continue;
     const id = (item as Record<string, unknown>).id;
     if (typeof id !== "string") continue;
-    if (cardById(id)?.kind !== "module") continue;
+    const card = cardById(id);
+    if (card?.kind !== "module" || !cardRunsInMode(card, mode)) continue;
     ids.push(id);
   }
-  const charter = normalizeCharter(data.charter);
+  const charter = normalizeCharter(data.charter, mode);
   if (charter !== null) ids.push(charter);
   return ids.slice(0, MAX_HELD_CARDS);
 }
@@ -463,8 +470,13 @@ function readCaptainRecord(
   // chronicle's extras and the win verdict. A captain the read found no
   // row for reads as the absence an unreadable save gives.
   const save = ctx.saves.get(f.userId) ?? null;
-  const extras = extractChronicleExtras(save, outcome.forged, f.reputation);
-  // [H4: the Broker] Whether this captain won the game their card set
+  const extras = extractChronicleExtras(
+    save,
+    outcome.forged,
+    f.reputation,
+    ctx.run.mode,
+  );
+  // Whether this captain won the game their card set
   // them. A forged finish wins nothing, the same way it banks no Renown:
   // the account keeps no memory of the voyage at all, and the verdict is
   // the last thing that should survive it. A captain the table dealt no
@@ -491,7 +503,7 @@ function readCaptainRecord(
           ending,
         })
       : false;
-  // [H7: Maroon and the Harbormaster] Whether the harbor voted this
+  // Whether the harbor voted this
   // captain ashore, read from the server's own record of the vote rather
   // than from the captain's status. It is the one fact in this row the
   // server watched happen, so it is the one fact that does not have to be
@@ -528,7 +540,7 @@ function chronicleInput(
     // src/lib/game/constants/reputation.ts), so the value handed over
     // stays the one the table is written in.
     merchantRating: merchantRatingForScore(f.reputation).label,
-    // [H9: the unlock code] The harbor's own line, on the one voyage it
+    // The harbor's own line, on the one voyage it
     // belongs to. Read from the count this loop just wrote rather than
     // from the row it read, because the row holds the count from before
     // this voyage: a captain whose tenth voyage this was is the one the
@@ -597,7 +609,7 @@ async function writeChronicleRow(
         objectiveId: ctx.run.objective?.id ?? "",
         objectiveMet,
         objectiveTrace: JSON.stringify(extras.objectiveTrace),
-        // [F7: the combination instrument] The held set rides beside the
+        // The held set rides beside the
         // trace, written from the same read of the same save.
         heldCards: JSON.stringify(extras.heldCards),
         alignment: card?.role ?? "",
@@ -616,7 +628,7 @@ function revealRow(
   record: CaptainRecord,
   roundsAllowed: number,
 ): RevealedCaptain {
-  // [H8: the reveal and the replay ledger] This captain's row on the
+  // This captain's row on the
   // ledger, built from the verdict and the marks decided just above. Two
   // fields are withheld from a forged finish rather than printed: what
   // they claimed to have handed the commission and what they claimed to
@@ -640,7 +652,7 @@ function revealRow(
     peerTradeProfit: outcome.forged ? 0 : ending.peerTradeProfit,
     delivered: outcome.forged ? {} : ending.delivered,
     // The manifest is read with the voyage's own length as its ceiling:
-    // a line dated past the last leg is a line no round of this voyage
+    // a line dated past the last round is a line no round of this voyage
     // could have run, so it is dropped rather than printed on the harbor's
     // ledger (see normalizeOrderFills).
     fills: outcome.forged
@@ -658,7 +670,7 @@ function standingRow(
 ): StandingRow {
   // Every field here is read by a screen. A row used to carry `gold`,
   // `renownLevel` and `renownTitle` as well, and nothing ever read any
-  // of the three: the Endgame panel draws final funds from the captain's
+  // of the three: the Endgame panel draws final Gold from the captain's
   // own game state, and the Renown level and title from the legacy
   // record it fetches alongside this payload.
   return {
@@ -702,7 +714,7 @@ type FinisherTally = {
 // The fact this answers is about the fleet rather than about any one
 // client, so it is read the way the reveal ledger below reads it: every
 // honest finisher's own record of how the board stood, merged by max
-// per good per leg. A captain whose client missed the last leg is the one
+// per good per round. A captain whose client missed the last round is the one
 // this merge exists for. Read per captain, their row would have read
 // short while the ledger under it painted the commission filled, and the
 // verdict under their own goal would have been decided on their
@@ -739,9 +751,9 @@ export async function concludeFinishers(
   finished: FinishedCaptain[],
   ctx: FinisherContext,
 ): Promise<FinisherTally> {
-  // [H8: the reveal and the replay ledger] What the table is about to be
+  // What the table is about to be
   // told, and the two things it is told it with: one row per captain, and
-  // every captain's own record of how the commission stood leg by leg. The
+  // every captain's own record of how the commission stood round by round. The
   // rows are built here, inside the loop that is already reading each
   // captain's save and deciding their verdict, so the ledger prints what
   // the rules decided rather than a second walk over the same facts.
@@ -762,7 +774,7 @@ export async function concludeFinishers(
   for (const f of finished) {
     const rows = await concludeFinisher(f, ctx, objectiveMet);
     revealed.push(rows.revealed);
-    // What this captain's client saw the fleet hand over, leg by leg, kept
+    // What this captain's client saw the fleet hand over, round by round, kept
     // for the merge below. A forged captain's record is dropped for the
     // same reason their trace never reached the Chronicle row.
     if (!rows.revealed.forged) traces.push(rows.trace);

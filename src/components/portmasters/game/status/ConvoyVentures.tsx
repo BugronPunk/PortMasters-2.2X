@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Notice, PanelLabel } from "../../shared";
 
-// [MANIFEST 04: Convoy Ventures] Lives in the Dues tab, right beside
+// Lives in the Dues tab, right beside
 // Outstanding Loans, since both are peer to peer Gold commitments a captain
 // is tracking against the rest of the harbor.
 export function ConvoyVentures({

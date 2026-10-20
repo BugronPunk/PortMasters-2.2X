@@ -78,7 +78,7 @@ export async function quotaRungSuite(
     pairedCrew,
     pairedRoomId,
   } = inputs;
-  // H5's difficulty rung: the commission's quotas scale with the size of
+  // The difficulty rung: the commission's quotas scale with the size of
   // the fleet the voyage was dealt to, so the sabotage window is the same
   // width at four seats as at six. The gate that rung exists for is a
   // claim about win rates, so there are two halves here and both matter:
@@ -194,7 +194,7 @@ export async function quotaRungSuite(
 
   // ========== The instrument the gate is read with ==========
   // Pure arithmetic over rows, exercised here because every claim the
-  // epic's evaluation will make is made through it. The Classic row is
+  // gate makes is made through it. The Classic row is
   // the one that has to fall out: no card was dealt there, and counting
   // its won flag would drag every rate toward zero.
   const voyageRows: VoyageOutcome[] = [

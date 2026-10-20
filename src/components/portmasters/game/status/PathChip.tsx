@@ -22,10 +22,10 @@ import { Repeat } from "lucide-react";
 import { Notice } from "../../shared";
 
 /**
- * [D7: the draft, and switching] What this captain sails as.
+ * What this captain sails as.
  *
  * The identity is a line on the captain's own rail rather than a card in
- * the stage, and the reason is the company it keeps: round, waters, funds,
+ * the stage, and the reason is the company it keeps: round, waters, Gold,
  * reputation and what round end will take are all readings about this
  * captain, and what they sail as is the sixth. In the stage it was a card
  * about a person standing in a column of cards about the table, and it cost
@@ -52,7 +52,7 @@ import { Notice } from "../../shared";
  * third of a rail that has to hold a hold, a ship and a ledger. What the
  * chip opens says the whole price before the click, including the half of
  * it that is not a number: the forfeiture and the publication. That is the
- * plan's own design point read as a screen: "the price of changing your
+ * design's own point read as a screen: "the price of changing your
  * identity is that everyone knows."
  *
  * What the popover prints of a refusal is the engine's own sentence
@@ -114,7 +114,7 @@ export function PathChip({
 
   // One call for every destination the popover offers, because the guard's
   // answer is the same for all of them: the window, the seat, the once a
-  // voyage stamp and the price are facts about this captain and this leg
+  // voyage stamp and the price are facts about this captain and this round
   // rather than about where they are going. The one per destination answer
   // ("you already hold that path") is the path this captain is on, which is
   // the one the list below does not offer.
@@ -153,7 +153,7 @@ export function PathChip({
           </p>
           <p className="text-[11px] leading-relaxed text-muted-foreground">
             {t(
-              "Once a voyage, at a port in legs {PATH_SWITCH_FROM_ROUND} through {PATH_SWITCH_TO_ROUND}, for {fee} Gold at your Renown. Unfulfilled pathbound orders are forfeited, and the whole fleet sees the change written into the voyage log.",
+              "Once a voyage, at a port in rounds {PATH_SWITCH_FROM_ROUND} through {PATH_SWITCH_TO_ROUND}, for {fee} Gold at your Renown. Unfulfilled pathbound orders are forfeited, and the whole fleet sees the change written into the voyage log.",
               { PATH_SWITCH_FROM_ROUND, PATH_SWITCH_TO_ROUND, fee },
             )}
           </p>

@@ -1,11 +1,9 @@
 // PortMasters 2.2 Parallel Release, smoke run: The crew and the Larder.
 //
-// [HYG-5] The second of the two coverage articles the studio audit's
-// hygiene finding asked for: the artisan walk the audit found only ever
-// incident in other suites (hire, assign and fire by name, with the wage
-// and maintenance lines said as the engine says them), and a leg the
-// crew goes hungry, driven end to end from the meal to the work it
-// slows and back out through provisioning.
+// The second of the two coverage articles: the artisan walk (hire, assign
+// and fire by name, with the wage and maintenance lines said as the
+// engine says them), and a round the crew goes hungry, driven end to end
+// from the meal to the work it slows and back out through provisioning.
 //
 // Nothing here opens a harbor: the walk runs one state in process from
 // its first hire to its last dismissal, which is the shape the wage
@@ -104,8 +102,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
   check(
     broke.workers.weaver.length === 0 &&
       brokeLogs.length === 1 &&
-      ledgerSentences(brokeLogs)[0] ===
-        "❌ Insufficient funds to hire workers!",
+      ledgerSentences(brokeLogs)[0] === "❌ Not enough Gold to hire artisans!",
     "and a hire the purse cannot cover is refused in one line with the bench left as it was, rather than taken and billed later by a payroll the captain never agreed to",
   );
 
@@ -134,7 +131,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     "and a task the hold cannot cover is refused by naming every material against what is on hand, flagging the short ones, with the idle hand still idle and the last Hemp still in the hold rather than spent on a line that never started",
   );
 
-  // ========== C. Two fed legs: the work lands, and the hand learns it ==========
+  // ========== C. Two fed rounds: the work lands, and the hand learns it ==========
   // The survival layer is held on for the meal below the way the launch
   // gates' article holds it: the rules read the same whatever the
   // operator set at the door.
@@ -160,7 +157,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
         roster[0].producedCount === 1 &&
         roster[1].producedCount === 1 &&
         roster[2].producedCount === 0,
-      "the crew eats one ration a head and the two assigned hands work: a leg of grain comes off the count with the line saying what it cost, both hands bring home one finished good each on the bench's own finished line, which names the trade rather than the hand, and the idle hand's count stands at zero rather than being carried by the other two",
+      "the crew eats one ration a head and the two assigned hands work: a round of grain comes off the count with the line saying what it cost, both hands bring home one finished good each on the bench's own finished line, which names the trade rather than the hand, and the idle hand's count stands at zero rather than being carried by the other two",
     );
 
     g.currentRound = 2;
@@ -183,7 +180,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
         roster[1].isSkilled &&
         !roster[2].isSkilled &&
         g.inventory[TASK] === 4,
-      "and the second leg promotes both working hands the moment their second item lands, so a captain meets a Master on the roster the same way they met the recruit: the promotion arrives after the work that earned it, not instead of it, and the hand that never worked stays unskilled",
+      "and the second round promotes both working hands the moment their second item lands, so a captain meets a Master on the roster the same way they met the recruit: the promotion arrives after the work that earned it, not instead of it, and the hand that never worked stays unskilled",
     );
 
     // ========== D. The payroll says what it takes, and what it cannot ==========
@@ -210,7 +207,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     check(
       shortPaid === "bankruptcy" &&
         ledgerSentences(shortPayLogs).includes(
-          `⚠️ Insufficient funds! Needed: ${getHireCost(underpaid, "weaver")} Gold, Have: 3 Gold`,
+          `⚠️ Not enough Gold! Needed: ${getHireCost(underpaid, "weaver")}, Have: 3`,
         ) &&
         ledgerSentences(shortPayLogs).includes(
           "💥 Could not pay wages, the crew is left unpaid.",
@@ -255,7 +252,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
           `⚠️ Forced payment of 5 Gold (Needed ${thin.fixedCost + thin.maintenancePenalty} Gold)`,
         ) &&
         ledgerSentences(thinLogs).includes(
-          "⚠️ Funds depleted: the maintenance fee goes unpaid.",
+          "⚠️ Gold depleted: the maintenance fee goes unpaid.",
         ) &&
         thin.money === 0 &&
         thin.maintenanceCosts === 5 &&
@@ -276,7 +273,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
         `💔 Dismissed ${names[0]} the ${weaver.label}. Severance: ${wage} Gold`,
       ) &&
         ledgerSentences(fireLogs).includes(
-          `  This worker was making: ${TASK}`,
+          `  This artisan was making: ${TASK}`,
         ) &&
         g.money === beforeFire - wage &&
         g.workers.weaver.length === 2 &&
@@ -294,13 +291,13 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     check(
       poorLogs.length === 1 &&
         ledgerSentences(poorLogs)[0] ===
-          `❌ Insufficient funds for ${weaver.label}'s severance: ${getHireCost(poor, "weaver")} Gold` &&
+          `❌ Not enough Gold for ${weaver.label}'s severance: ${getHireCost(poor, "weaver")}` &&
         poor.workers.weaver.length === 1,
       "and a severance the purse cannot pay leaves the hand aboard rather than dismissing them into a debt, with the refusal naming the trade and the figure the dismissal would have taken",
     );
   });
 
-  // ========== G. The hungry leg, end to end ==========
+  // ========== G. The hungry round, end to end ==========
   withEnv("NEXT_PUBLIC_SURVIVAL", "1", () => {
     const h = voyageState();
     h.money = 1000;
@@ -310,12 +307,12 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     const hand = h.workers.weaver[0];
     h.larder = LARDER_START;
 
-    // Two fed legs first, through the engine's own order: feed, assign,
-    // work. They are what makes the shortage leg readable, because the
+    // Two fed rounds first, through the engine's own order: feed, assign,
+    // work. They are what makes the shortage round readable, because the
     // lone hand has to have come into its skill before hunger has
     // anything to take off it.
-    for (let leg = 0; leg < 2; leg++) {
-      h.currentRound = leg + 1;
+    for (let round = 0; round < 2; round++) {
+      h.currentRound = round + 1;
       feedCrew(h, []);
       h.inventory["Hemp"] = (h.inventory["Hemp"] ?? 0) + 2;
       assignTask(h, "weaver", TASK, []);
@@ -326,11 +323,11 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
         h.larder === LARDER_START - 2 &&
         h.inventory[TASK] === 2 &&
         !onShortRations(h),
-      "two fed legs bring the lone hand to its skill through the work itself, one finished good a leg, with the larder one ration lighter each time and the shortage still silent",
+      "two fed rounds bring the lone hand to its skill through the work itself, one finished good a round, with the larder one ration lighter each time and the shortage still silent",
     );
 
-    // The leg the larder runs dry on: the meal eats the last ration, the
-    // announcement lands on that same leg, and the work that follows it
+    // The round the larder runs dry on: the meal eats the last ration, the
+    // announcement lands on that same round, and the work that follows it
     // is done under the rule the announcement just stated.
     h.currentRound = 3;
     h.larder = 1;
@@ -350,7 +347,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
         ledgerSentences(hungryMeal)[0].includes(
           `${Math.round(SHORT_RATIONS_YIELD * 100)}%`,
         ),
-      "the leg the last ration goes is the leg the shortage is announced on: the meal is still eaten, the count reads empty rather than in debt, and the line states the pace the engine is about to apply rather than a warning that arrives after it",
+      "the round the last ration goes is the round the shortage is announced on: the meal is still eaten, the count reads empty rather than in debt, and the line states the pace the engine is about to apply rather than a warning that arrives after it",
     );
     check(
       ledgerSentences(hungryWork).includes(hungryProductionNote()) &&
@@ -359,11 +356,11 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
         ) &&
         !ledgerSentences(hungryWork).some((line) => line.includes("(Bonus)")) &&
         h.inventory[TASK] === 3,
-      "and the hungry leg costs exactly what the rule says: the skilled hand that finished two the leg before brings home one, the line counts the one it brought home rather than promising the two its skill would have made, and the note above it names the state and the way back before the smaller number is read",
+      "and the hungry round costs exactly what the rule says: the skilled hand that finished two the round before brings home one, the line counts the one it brought home rather than promising the two its skill would have made, and the note above it names the state and the way back before the smaller number is read",
     );
 
     // The way back: provisions bought at a market, through the same
-    // function the panel's buttons call, and the next leg is fed.
+    // function the panel's buttons call, and the next round is fed.
     const provisionLogs: LedgerLine[] = [];
     const bought = provisionFood(h, "Grain", 2, provisionLogs);
     readLines.push(...provisionLogs);
@@ -376,7 +373,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
         h.money === 1000 - 2 * RATION_PRICE &&
         h.foodSpend === 2 * RATION_PRICE &&
         !onShortRations(h),
-      "and the way back is a purchase rather than a wait: two legs of grain bought at the one provisioning function the market panel calls, charged to the purse and counted to the voyage's food spending at the same till, and the shortage is over the moment the count passes zero",
+      "and the way back is a purchase rather than a wait: two rounds of grain bought at the one provisioning function the market panel calls, charged to the purse and counted to the voyage's food spending at the same till, and the shortage is over the moment the count passes zero",
     );
 
     h.currentRound = 4;
@@ -396,7 +393,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
           `✅ Skilled ${weaver.label} finished 2× ${ICONS[TASK]}${TASK}!`,
         ) &&
         h.inventory[TASK] === 5,
-      "and the leg after the purchase is the fed leg again: the same hand on the same task brings home two where the hungry leg brought home one, the hunger note is gone rather than standing as a habit, and the shortage has cost the voyage exactly the goods the one leg was short",
+      "and the round after the purchase is the fed round again: the same hand on the same task brings home two where the hungry round brought home one, the hunger note is gone rather than standing as a habit, and the shortage has cost the voyage exactly the goods the one round was short",
     );
   });
 

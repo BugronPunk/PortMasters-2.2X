@@ -1,6 +1,6 @@
 "use client";
 
-import { basePriceRange } from "@/lib/game/engine";
+import { basePriceRange, workerBaseYield } from "@/lib/game/engine";
 import { unlockedProducts, unlockedResources } from "@/lib/game/pools";
 import { SHORT_RATIONS_YIELD } from "@/lib/game/constants/supplies";
 import { t } from "@/lib/game/i18n";
@@ -138,6 +138,11 @@ export function CargoHold({
                 term={r.label}
                 count={r.list.length}
                 skilled={r.list.filter((x) => x.isSkilled).length}
+                yieldPerRound={workerBaseYield(
+                  game,
+                  true,
+                  r.id === "weaver" || r.id === "master",
+                )}
                 muted
               />
             ))}
@@ -210,6 +215,7 @@ function InvItem({
   count,
   muted,
   skilled,
+  yieldPerRound,
   priceContent,
 }: {
   icon: React.ReactNode;
@@ -219,6 +225,7 @@ function InvItem({
   count: number;
   muted?: boolean;
   skilled?: number;
+  yieldPerRound?: number;
   priceContent?: React.ReactNode;
 }) {
   return (
@@ -245,10 +252,11 @@ function InvItem({
              the constant's own, the same percentage the larder's own
              short rations line carries. */
           title={t(
-            "{skilled} of {count} trained: each produces 2 per round, working at {pacePct}% pace while the crew goes hungry",
+            "{skilled} of {count} trained: each produces {yield} per round, working at {pacePct}% pace while the crew goes hungry",
             {
               skilled,
               count,
+              yield: yieldPerRound ?? 2,
               pacePct: Math.round(SHORT_RATIONS_YIELD * 100),
             },
           )}

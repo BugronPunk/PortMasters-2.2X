@@ -1,7 +1,7 @@
 "use client";
 
 // =====================================================================
-// [H7: Maroon and the Harbormaster] The harbor's heavier vote, and the
+// The harbor's heavier vote, and the
 // hand it leaves behind.
 //
 // Four surfaces in one file, for the reason the audit's two are in one:
@@ -9,7 +9,7 @@
 // while the harbor still has it. The strip is what the harbor carries
 // afterwards, for the rest of the voyage. The shift strip is what the
 // table trades against, while it is in force and while it is only a call.
-// The console is what the captain it named does with the legs they have
+// The console is what the captain it named does with the rounds they have
 // left, and it is the only surface here that one captain sees and the
 // rest do not.
 //
@@ -125,11 +125,11 @@ export function MaroonVoteCard({
       // site; it is the same string the server's own threshold is
       // written beside.
       rule={t(
-        "{MAROON_VOTE_SHARE} of the captains still sailing, rounded up, can put one captain ashore. The vote is public. Once a vote carries it is spent for the whole voyage, a vote that falls short can be called again on a later leg, and the captain who loses it keeps their seat at the table.",
+        "{MAROON_VOTE_SHARE} of the captains still sailing, rounded up, can put one captain ashore. The vote is public. Once a vote carries it is spent for the whole voyage, a vote that falls short can be called again on a later round, and the captain who loses it keeps their seat at the table.",
         { MAROON_VOTE_SHARE: t(MAROON_VOTE_SHARE) },
       )}
       closed={t(
-        "This vote opens at leg {rung}, and this is leg {game.currentRound}. {MAROON_VOTE_SHARE} of the captains still sailing, rounded up, then put one captain ashore: the ship and its hold go to the harbor, half their Gold stays aboard, and the Harbormaster's hand is theirs for the rest of the voyage. One vote can carry a voyage, and a vote that falls short can be called again on a later leg.",
+        "This vote opens at round {rung}, and this is round {game.currentRound}. {MAROON_VOTE_SHARE} of the captains still sailing, rounded up, then put one captain ashore: the ship and its hold go to the harbor, half their Gold stays aboard, and the Harbormaster's hand is theirs for the rest of the voyage. One vote can carry a voyage, and a vote that falls short can be called again on a later round.",
         {
           rung,
           "game.currentRound": game.currentRound,
@@ -202,9 +202,9 @@ export function MaroonResultStrip({ result }: { result: MaroonResult | null }) {
 /**
  * The market condition the table is trading against.
  *
- * Two tenses from one notice, which is why the leg comes in with it: a
- * call made this leg has not opened a market yet, and a call made last
- * leg is the one every price on screen was drawn from. The strip is not
+ * Two tenses from one notice, which is why the round comes in with it: a
+ * call made this round has not opened a market yet, and a call made last
+ * round is the one every price on screen was drawn from. The strip is not
  * dismissible while it is in force, because it is not news: it is a rule
  * about the numbers on the cards in every captain's hand.
  */
@@ -236,11 +236,11 @@ export function PortShiftStrip({
       <p className="mt-1 text-[10px] leading-relaxed text-muted-foreground/80">
         {landed
           ? t(
-              "Called in leg {shift.round}. Every price at that port this leg was drawn against it.",
+              "Called in round {shift.round}. Every price at that port this round was drawn against it.",
               { "shift.round": shift.round },
             )
           : t(
-              "Called in leg {shift.round}. The market that opens next leg is the one that answers it, and a later call in this leg replaces it.",
+              "Called in round {shift.round}. The market that opens next round is the one that answers it, and a later call in this round replaces it.",
               { "shift.round": shift.round },
             )}
       </p>
@@ -279,7 +279,7 @@ export function HarbormasterConsole({
       </h3>
       <p className="text-center text-xs text-muted-foreground mb-3 leading-relaxed">
         {t(
-          "The harbor put you ashore and left you its own lever: once a leg, name a port and lean every price at it by {shiftPct} percent, up or down. The call is public, and the market that opens next leg is the one that answers it.",
+          "The harbor put you ashore and left you its own lever: once a round, name a port and lean every price at it by {shiftPct} percent, up or down. The call is public, and the market that opens next round is the one that answers it.",
           { shiftPct: PORT_SHIFT_PERCENT },
         )}
       </p>
@@ -318,12 +318,14 @@ export function HarbormasterConsole({
       />
       {pending && (
         <p className="text-center text-[11px] mt-2">
-          {t("Your call stands for leg {leg}:", { leg: pending.round + 1 })}{" "}
+          {t("Your call stands for round {round}:", {
+            round: pending.round + 1,
+          })}{" "}
           <span className="font-medium">{portShiftLine(pending)}</span>
         </p>
       )}
       <p className="text-center text-[10px] text-muted-foreground/80 mt-2">
-        {t("A later call in this leg replaces this one.")}
+        {t("A later call in this round replaces this one.")}
       </p>
     </div>
   );

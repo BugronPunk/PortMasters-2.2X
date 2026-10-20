@@ -79,7 +79,7 @@ export function WorkerMgmt({
       </div>
       <p className="text-center text-sm text-muted-foreground mb-4">
         {t(
-          "💰 Current Funds: {game.money} Gold | 📦 See Inventory on the left",
+          "💰 Current Gold: {game.money} Gold | 📦 See Inventory on the left",
           { "game.money": game.money },
         )}
       </p>
@@ -99,7 +99,7 @@ export function WorkerMgmt({
       )}
 
       <HuePanel tone="market" className="p-4 mb-4">
-        <PanelHeading>{t("🔨 Hire Workers")}</PanelHeading>
+        <PanelHeading>{t("🔨 Hire Artisans")}</PanelHeading>
         <div className="text-xs space-y-1 mb-3">
           {roster.map((r) => (
             <div key={r.id} className={artisanTint(r.id)}>

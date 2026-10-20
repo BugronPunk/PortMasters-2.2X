@@ -1,9 +1,10 @@
 "use client";
 
-import { cargoCarriesTag } from "@/lib/game/cards";
 import {
   brokersFavorCommission,
   calcTransportCost,
+  cargoUnitsWithAllTags,
+  cargoUnitsWithTag,
   explainVAT,
   fleetOfTreasuresUnits,
   lockedBehind,
@@ -33,7 +34,7 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
 
   const plans: Plan[] = game.customerCards
     .filter((o) => !game.completedOrders.includes(o.id))
-    // [D2] Locked cards are left out of the plan, not listed as impossible
+    // Locked cards are left out of the design, not listed as impossible
     // ones: this panel answers what to sail for, and a card waiting on a path
     // the captain does not hold is not a thing to sail for, whatever the hold
     // is carrying. The board already prints those three cards in full, so
@@ -48,22 +49,23 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
           missing.push({ item: r.type, have, need });
         }
       }
-      const hasWoven = cargoCarriesTag(o.resources, "woven");
       // The freight comes through the same read the fill charges through,
-      // the Fleet of Treasures units included (see fleetOfTreasuresUnits),
-      // so this plan's net is the net the fill actually banks.
+      // the woven and luxury units included (see cargoUnitsWithTag and
+      // fleetOfTreasuresUnits), so this plan's net is the net the fill
+      // actually banks.
       const transport = calcTransportCost(
         game,
         o.totalItems,
-        hasWoven,
+        cargoUnitsWithTag(o.resources, "woven"),
         fleetOfTreasuresUnits(game, o.resources),
+        cargoUnitsWithAllTags(o.resources, "woven", "luxury"),
       );
       let net = o.reward - transport;
       let vatTotal = 0;
       if (o.isProductOrder) {
         // The engine's own reading of the taxed line (see completeOrder):
         // a product card with no line, or a line with no count, adds no
-        // VAT to the estimate rather than throwing the plan out with a
+        // VAT to the estimate rather than throwing the design out with a
         // non null assertion.
         const productRef = o.resources[0];
         const productUnits = productRef?.required ?? 0;
@@ -80,7 +82,7 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
       // The percentage bonuses the fill will credit, read through the
       // settlement's own chain off the same post VAT reward it starts
       // from (see orderRewardBonusSteps), so the totals this panel sums
-      // and the Gold a fill lands are one arithmetic. The plan also used
+      // and the Gold a fill lands are one arithmetic. The design also used
       // to carry the reward itself, and nothing read it, so the field
       // went: a panel that showed a gross of its own would have had to
       // price the order a second time, and the board's gross is the one

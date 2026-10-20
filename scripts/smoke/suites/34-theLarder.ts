@@ -1,9 +1,9 @@
 // PortMasters 2.2 Parallel Release, smoke run: The Larder, and the crew
 // that eats from it.
 //
-// Goal C1, and the mode boundary that stands in front of it. The crew is
+// The Larder, and the mode boundary that stands in front of it. The crew is
 // the artisan roster and the Larder is what it eats: one ration a head a
-// leg, bought at the market, and a shortage when the count reaches zero.
+// round, bought at the market, and a shortage when the count reaches zero.
 //
 // The lines this article writes for a captain are handed back to the run
 // rather than read here, because the house rule covers the whole set and
@@ -16,7 +16,7 @@ import {
   RATION_PRICE,
   SHORT_RATIONS_YIELD,
 } from "@/lib/game/constants/supplies";
-import { crewLossRuleOn, normalizeHungryLegs } from "@/lib/game/crew";
+import { crewLossRuleOn, normalizeHungryRounds } from "@/lib/game/crew";
 import { assignTask, hireWorker, nextPhase, refitsOn } from "@/lib/game/engine";
 import {
   bazaarRumorsOn,
@@ -59,21 +59,21 @@ import {
 
 export function theLarderSuite(): LedgerLine[] {
   // ========== The Larder, and the crew that eats from it ==========
-  // [C1: the Larder and Short Rations] The crew is the artisan roster and
-  // the Larder is what it eats: one ration a head a leg, bought at the
+  // The crew is the artisan roster and
+  // the Larder is what it eats: one ration a head a round, bought at the
   // market, and a shortage when the count reaches zero. Three things are
   // checked here and they are worth naming before the first assertion.
   //
   // The switch is read from both sides inside one run, which is the whole
-  // reason survivalLayerOn is not cached. Rollback is the plan's own test
-  // of this layer: with the flag off a captain eats nothing, nothing is
+  // reason survivalLayerOn is not cached. Rollback is the test of this
+  // layer: with the flag off a captain eats nothing, nothing is
   // slower and nothing is drawn, and a suite that could only hold one
   // value would be checking a build the operator is not necessarily
   // running.
   //
   // The reduction is checked through the engine's own settlement rather
   // than beside it. Walking the lap from Orders into Resolve is what
-  // every captain does every leg, so if the slowdown only worked when
+  // every captain does every round, so if the slowdown only worked when
   // processProduction was called directly, this is where that shows.
   //
   // The buy is checked against both ceilings, because the hold's room and
@@ -109,8 +109,8 @@ export function theLarderSuite(): LedgerLine[] {
   // here rather than inside each family's own block.
   //
   // The families below each check their own switch against the
-  // environment, because that is the dial their slice of the plan
-  // promised. What none of them can check is the rule that stands in
+  // environment, because that is the switch their own family reads. What
+  // none of them can check is the rule that stands in
   // front of all ten, because the rule is about them together: Classic
   // is the shipped release and no system this branch added may reach it,
   // whatever an operator exported into the process. A check written per
@@ -148,7 +148,7 @@ export function theLarderSuite(): LedgerLine[] {
 
   // The same boundary for the systems that have no switch of their own,
   // because they are gated by the mode record rather than by a dial: the
-  // audit's rung, the standing order and the leg clock. A rung of null is
+  // audit's rung, the standing order and the round clock. A rung of null is
   // the whole of the first, and the two booleans below are the whole of
   // the other two.
   check(
@@ -182,11 +182,11 @@ export function theLarderSuite(): LedgerLine[] {
       "hiring artisans is what puts a crew aboard, counted through the one helper that flattens the roster rather than in a second place that could disagree with it",
     );
 
-    // Eating, once a leg. The stamp is what makes "once" true rather than
-    // hopeful, and the check is written as a second call in the same leg
-    // because that is the shape of the defect it prevents: a leg opens
+    // Eating, once a round. The stamp is what makes "once" true rather than
+    // hopeful, and the check is written as a second call in the same round
+    // because that is the shape of the defect it prevents: a round opens
     // through more than one path, and charging a captain twice for one
-    // leg is silent in every screen.
+    // round is silent in every screen.
     larderCrew.larder = 10;
     larderCrew.currentRound = 3;
     feedCrew(larderCrew, survivalLines);
@@ -196,11 +196,11 @@ export function theLarderSuite(): LedgerLine[] {
     feedCrew(larderCrew, survivalLines);
     check(
       ateOnce && larderCrew.larder === 6 && larderCrew.larderFedRound === 4,
-      "the crew eats one ration a head and the leg is stamped, so a second call in the same leg eats nothing more while the next leg eats again",
+      "the crew eats one ration a head and the round is stamped, so a second call in the same round eats nothing more while the next round eats again",
     );
 
     // The floor, and the line that says so. A larder the crew emptied
-    // reads as empty rather than in debt, and the leg the shortage begins
+    // reads as empty rather than in debt, and the round the shortage begins
     // is the one that says it.
     larderCrew.larder = 1;
     larderCrew.currentRound = 5;
@@ -216,7 +216,7 @@ export function theLarderSuite(): LedgerLine[] {
           `${Math.round(SHORT_RATIONS_YIELD * 100)}%`,
         ) &&
         !CARRIES_A_DASH.test(ledgerSentences(shortLines)[0]),
-      "a larder the crew empties reads as empty rather than in debt, and the leg announces the shortage at the pace the rule actually applies",
+      "a larder the crew empties reads as empty rather than in debt, and the round announces the shortage at the pace the rule actually applies",
     );
 
     check(
@@ -253,7 +253,7 @@ export function theLarderSuite(): LedgerLine[] {
       }
       assignTask(state, "weaver", "Linen Clothes", []);
       state.phase = "orders";
-      // Every workshop but the fed one goes into the leg with an empty
+      // Every workshop but the fed one goes into the round with an empty
       // larder, so the shortage is the state under test rather than a
       // side effect of how much the crew happened to have.
       state.larder = label === "fed" ? LARDER_START : 0;
@@ -266,10 +266,10 @@ export function theLarderSuite(): LedgerLine[] {
     // which phase follows Orders is the mode's own decision: the founding
     // lap goes straight from the manifest to the settlement, and the lap
     // this layer belongs to puts the exchange between them. A single press
-    // would walk one of those two modes into a leg that makes nothing and
+    // would walk one of those two modes into a round that makes nothing and
     // the check would read the empty hold as the rule under test. The bound
     // is the longest lap plus a margin, and it is a bound rather than a
-    // count so that a lap that grows a leg still walks.
+    // count so that a lap that grows a round still walks.
     for (const shop of shops) {
       for (let step = 0; step < 8 && shop.state.phase !== "resolve"; step++) {
         nextPhase(shop.state, larderCtx, []);
@@ -281,7 +281,7 @@ export function theLarderSuite(): LedgerLine[] {
     );
     check(
       made[0] === 2 && made[1] === 1,
-      "walking the lap into Resolve makes a skilled artisan's two goods while the crew is fed and one while it is not, so the plan's slower crafting lands through the engine every captain already walks rather than beside it",
+      "walking the lap into Resolve makes a skilled artisan's two goods while the crew is fed and one while it is not, so the design's slower crafting lands through the engine every captain already walks rather than beside it",
     );
     check(
       made[2] === 1,
@@ -299,9 +299,9 @@ export function theLarderSuite(): LedgerLine[] {
     // adds to it rather than what it was already carrying.
     buyer.larder = 0;
     const buyLines: LedgerLine[] = [];
-    const boughtLegs = provisionFood(buyer, "Grain", 2, buyLines);
+    const boughtRounds = provisionFood(buyer, "Grain", 2, buyLines);
     check(
-      boughtLegs === 2 &&
+      boughtRounds === 2 &&
         buyer.larder === 4 &&
         buyer.money === 1000 - 4 * RATION_PRICE &&
         buyer.roundCosts === 4 * RATION_PRICE &&
@@ -310,14 +310,14 @@ export function theLarderSuite(): LedgerLine[] {
         // makes it: the stores' room for the food being bought, over the
         // crew it has to feed.
         Math.floor(foodRoomMeals(buyer, "Grain") / crewSize(buyer)) === 28,
-      "provisioning buys a leg at a time for the crew aboard, and what it spends is booked where every other purchase is booked",
+      "provisioning buys a round at a time for the crew aboard, and what it spends is booked where every other purchase is booked",
     );
     const filledRoom = Math.floor(
       foodRoomMeals(buyer, "Grain") / crewSize(buyer),
     );
-    const filledLegs = provisionFood(buyer, "Grain", 999, buyLines);
+    const filledRounds = provisionFood(buyer, "Grain", 999, buyLines);
     check(
-      filledLegs === filledRoom &&
+      filledRounds === filledRoom &&
         buyer.larder === LARDER_MAX &&
         provisionFood(buyer, "Grain", 1, buyLines) === 0 &&
         ledgerSentences(buyLines)[buyLines.length - 1] ===
@@ -332,7 +332,7 @@ export function theLarderSuite(): LedgerLine[] {
     const thinLines: LedgerLine[] = [];
     check(
       provisionFood(thin, "Grain", 1, thinLines) === 0 && thin.money === 1,
-      "and a purse that cannot cover one leg of rations buys nothing rather than going into debt for it",
+      "and a purse that cannot cover one round of rations buys nothing rather than going into debt for it",
     );
     const crewless = voyageState();
     crewless.money = 100;
@@ -349,8 +349,8 @@ export function theLarderSuite(): LedgerLine[] {
     survivalLines.push(...buyLines, ...thinLines, ...crewlessLines);
 
     // A save read back. The end a count is clamped to is the hold the
-    // build is actually running, which [C4] moved: the stores' own
-    // ceiling under the split and the Larder's old sixty without it. The
+    // build is actually running, which the split hold moved: the stores'
+    // own ceiling under the split and the Larder's old sixty without it. The
     // check reads that end from the model rather than writing it down,
     // so it follows the hold rather than a number the split left behind.
     const larderEnd = holdCapacityOn(GAMBIT) ? storesMealCeiling() : LARDER_MAX;
@@ -364,11 +364,11 @@ export function theLarderSuite(): LedgerLine[] {
         normalizeLarderFedRound(undefined) === 0 &&
         normalizeLarderFedRound(-2) === 0 &&
         normalizeLarderFedRound(2.5) === 2,
-      "a save this build cannot read heals to a full hold rather than to a hungry one, a count outside the hold's ends is clamped rather than dropped, and a missing leg stamp lands on a leg no voyage has",
+      "a save this build cannot read heals to a full hold rather than to a hungry one, a count outside the hold's ends is clamped rather than dropped, and a missing round stamp lands on a round no voyage has",
     );
 
-    // The four saved leg stamps are one reader's work, the Larder's two,
-    // the crew's run of hungry legs and the wardrobe's tick (see wholeStamp
+    // The four saved round stamps are one reader's work, the Larder's two,
+    // the crew's run of hungry rounds and the wardrobe's tick (see wholeStamp
     // in src/lib/game/types.ts, which every one of them heals through).
     // This check holds all four to the same fraction at once, which is the
     // invariant the sharing exists to keep: it sits beside the Larder's own
@@ -378,9 +378,9 @@ export function theLarderSuite(): LedgerLine[] {
     check(
       normalizeLarderFedRound(3.9) === 3 &&
         normalizeLarderSpoilRound(3.9) === 3 &&
-        normalizeHungryLegs(3.9) === 3 &&
+        normalizeHungryRounds(3.9) === 3 &&
         normalizeGarmentsTickRound(3.9) === 3,
-      "and the four leg stamps a save can carry, the Larder's fed and spoil rounds, the crew's hungry legs and the wardrobe's tick round, floor a fraction to the same whole leg, because one reader answers for all four",
+      "and the four round stamps a save can carry, the Larder's fed and spoil rounds, the crew's hungry rounds and the wardrobe's tick round, floor a fraction to the same whole round, because one reader answers for all four",
     );
   });
 

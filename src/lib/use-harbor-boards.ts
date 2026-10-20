@@ -386,7 +386,7 @@ export function useHarborBoards({
     onVentureSettled,
   );
 
-  // [D3: Convoy: the Escort Contract] The last of the relays that only
+  // The last of the relays that only
   // ever touch this captain's own purse: a contract this
   // captain is a side of has moved, and the engine works out what that
   // means for them (see applyEscortSide). Both sides of a contract run this
@@ -407,7 +407,7 @@ export function useHarborBoards({
   );
   const escort = useEscortContracts(socket, roomId, meId, onEscortSettle);
 
-  // [D4: Loom: the Refit] The bench's relay, which is the escort's shape
+  // The bench's relay, which is the escort's shape
   // with one fewer number in it: a refit this captain is a side of has been
   // agreed, and the engine works out what that means for them (see
   // applyRefitSide). The customer pays and their own garment gets the points
@@ -429,7 +429,6 @@ export function useHarborBoards({
   );
   const refit = useRefitContracts(socket, roomId, meId, onRefitSettle);
 
-  // [F3: modules in the shipyard ladder, and trading them between captains]
   // The market's relay, which is the bench's shape exactly: a trade this
   // captain is a side of has been agreed, and the engine works out what
   // that means for them (see applyModuleTradeSide). The buyer pays and
@@ -441,7 +440,7 @@ export function useHarborBoards({
   // reason: a module trade's whole result is the fee and the hull, and the
   // hull is already this captain's own state. The one thing this relay
   // carries that the two above it do not is a durable object changing
-  // hands, which is why its engine side is written the way the plan asked
+  // hands, which is why its engine side is written the way the design asked
   // it to be: the seller's side unequips automatically rather than
   // refusing, so an agreed trade always completes.
   const onModuleSettle = useCallback(
@@ -454,7 +453,7 @@ export function useHarborBoards({
   );
   const modules = useModuleTrades(socket, roomId, meId, onModuleSettle);
 
-  // [D5: Aroma: the Bazaar Rumor] The bazaar's relay, and it is the
+  // The bazaar's relay, and it is the
   // shortest of the three because nothing about a rumor moves anything
   // between captains. There is no settle report to give and no field on
   // GameState to mirror into, which is the difference between this board
@@ -467,7 +466,7 @@ export function useHarborBoards({
   // been told, for the desk and the board to draw.
   const bazaar = useBazaarRumors(socket, roomId);
 
-  // [D7: the draft, and switching] The path draft's relay, which is the one
+  // The path draft's relay, which is the one
   // in this harbor that carries a card addressed to a single captain: the
   // draft deals every seat its own hand and this hook holds the one it was
   // dealt (see ./use-path-draft). It takes `act` where the three markets

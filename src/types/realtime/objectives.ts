@@ -20,31 +20,31 @@ export type ObjectiveReportPayload = {
 };
 
 /**
- * [I1: the telemetry spine] What one captain reports about a leg they
+ * What one captain reports about a round they
  * played: the orders it dealt them, the ones they filled, and the number
  * of different goods their hold closed it carrying.
  *
  * The actor is deliberately not a field. The captain sending this is the
  * captain it is about, and the server reads them off the socket rather
  * than off the payload, so a report cannot be filed against somebody
- * else. `leg` is the client's own, because only the client knows which
- * leg it was playing; the server bounds it against the voyage before
+ * else. `round` is the client's own, because only the client knows which
+ * round it was playing; the server bounds it against the voyage before
  * recording anything.
  *
- * [C4: three foods, spoilage and the split hold] The four optional fields
- * are the captain's own reading of the hold they closed the leg with: how
+ * The four optional fields
+ * are the captain's own reading of the hold they closed the round with: how
  * many slots of the ship were carrying something, and how many meals of
  * each food were aboard. They are optional on the wire rather than
  * defaulted, because they mean something only under the switches that
  * create them: the slots belong to the split hold, the meal counts to the
- * survival layer, and a leg sailed without those carrying a zero would be
+ * survival layer, and a round sailed without those carrying a zero would be
  * a report of an empty ship rather than of an unmeasured one. The server
  * keeps a field it can read, drops one it cannot, and bounds both (see
- * the telemetry:leg handler).
+ * the telemetry:round handler).
  */
-export type LegReport = {
+export type RoundReport = {
   roomId: string;
-  leg: number;
+  round: number;
   ordersDealt: number;
   ordersFilled: number;
   distinctGoods: number;
@@ -52,59 +52,58 @@ export type LegReport = {
   grainMeals?: number;
   saltFishMeals?: number;
   produceMeals?: number;
-  // [D3: Convoy: the Escort Contract] The Convoy's own figures for the leg,
+  // The Convoy's own figures for the round,
   // sent only when the switch that gives them meaning is on, for the reason
-  // the four above are: a leg sailed without the market reports no market
+  // the four above are: a round sailed without the market reports no market
   // rather than a market of zeroes.
   escortSold?: number;
   escortFeesEarned?: number;
   escortAbsorbed?: number;
-  // [D4: Loom: the Refit] The bench's own figures, sent only when the switch
+  // The bench's own figures, sent only when the switch
   // that gives them meaning is on, exactly as the three above are. The
-  // fourth is the leg's weather rather than the bench's trade, and it rides
+  // fourth is the round's weather rather than the bench's trade, and it rides
   // a different switch: a Loom is poor in fair weather and busy in cold, so
-  // the reader comparing one leg's takings with the next needs to know which
-  // legs were cold, and that reading belongs to the wardrobe rather than to
-  // the bench. It is a truth rather than a tally, so a fair leg reports false
+  // the reader comparing one round's takings with the next needs to know which
+  // rounds were cold, and that reading belongs to the wardrobe rather than to
+  // the bench. It is a truth rather than a tally, so a fair round reports false
   // rather than reporting nothing.
   refitsSold?: number;
   refitFeesEarned?: number;
   ragsRewoven?: number;
-  coldLeg?: boolean;
-  // [F3: modules in the shipyard ladder, and trading them between captains]
+  coldRound?: boolean;
   // The market's own two figures, sent only when the switch that gives them
-  // meaning is on, exactly as the two blocks above are sent: a leg sailed
+  // meaning is on, exactly as the two blocks above are sent: a round sailed
   // without the market reports no market rather than a market of zeroes.
-  // The first is the plan's "module trade volume between captains" read at
+  // The first is the design's "module trade volume between captains" read at
   // the seller's end, and the second is what the volume was worth.
   modulesSold?: number;
   moduleFeesEarned?: number;
-  // [D6: Free Captain: Opportunist] How many borrows this voyage has spent,
+  // How many borrows this voyage has spent,
   // sent only when the switch that gives the ability meaning is on, exactly
   // as the three blocks above are sent. It is a count of the once a voyage
-  // allowance rather than a leg's takings, which is what the plan's
+  // allowance rather than a round's takings, which is what the design's
   // evaluation needs: the usage rate is a share of voyages, so a reader
   // counts the voyages that spent one against the voyages that could have.
   // A voyage that never borrowed reports a zero here rather than reporting
   // nothing, because zero is a reading of the allowance and not an absence
   // of the feature.
   opportunistBorrows?: number;
-  // [E1: the Supply Barge] The voyage's two food counters, sent only when
+  // The voyage's two food counters, sent only when
   // the switch that gives them meaning is on, for the reason every block
-  // above is: a leg sailed with no provisions layer has no food spending
-  // to divide. They are the voyage's running totals rather than the leg's,
-  // because the plan's share is a share of a voyage's food spending, and
+  // above is: a round sailed with no provisions layer has no food spending
+  // to divide. They are the voyage's running totals rather than the round's,
+  // because the design's share is a share of a voyage's food spending, and
   // they are the front page number read as a fraction: what the table
   // spent on food at its ports, and how much of that went to the vendor.
   // Both move together and are absent together, so a reader dividing one
   // by the other never has to guess which of the two it is holding.
   foodSpend?: number;
   bargeSpend?: number;
-  // [F4: boons at milestone moments] The voyage's crew losses so far, sent
+  // The voyage's crew losses so far, sent
   // only when the switch that gives them meaning is on, exactly as the
-  // four blocks above are sent: a leg sailed without the loss rule has no
+  // four blocks above are sent: a round sailed without the loss rule has no
   // losses to report. It is the voyage's running total rather than the
-  // leg's, because the plan's evaluation reads retention across a voyage:
+  // round's, because the design's evaluation reads retention across a voyage:
   // the captains who lost a hand are one cohort and the captains who did
   // not are the other, and what is compared is how many of each finished
   // the voyage. One number is enough to sort a captain into a cohort, and
@@ -112,11 +111,11 @@ export type LegReport = {
   // nobody reads (see the crewLost captain line in
   // src/lib/game/telemetry.ts).
   crewLosses?: number;
-  // [F6: charters at leg four] The one claim of this report that is not a
+  // The one claim of this report that is not a
   // number: the id of the charter this captain holds. It is sent on every
-  // leg once the moment has been answered and only while the switch that
+  // round once the moment has been answered and only while the switch that
   // gives the moment meaning is on, because the report is also the frame a
-  // reload files: a captain who answered at leg four, sailed to leg nine
+  // reload files: a captain who answered at round four, sailed to round nine
   // and only then had their screen restored has no other way to be
   // recorded, and the server writes the take once per voyage whatever the
   // client sends (see noteCharterTaken). The report keeps no copy of it.

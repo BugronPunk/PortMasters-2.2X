@@ -145,7 +145,7 @@ export function Lobby({
   // who has chosen a voyage is answered by their choice, while one who has
   // not is answered by the harbor they are browsing (see browsedMode).
   const [modeChosen, setModeChosen] = useState(false);
-  // [H9: the unlock code] What the host typed to open a sealed voyage, sent
+  // What the host typed to open a sealed voyage, sent
   // only when the mode they picked takes a phrase. Cleared once a harbor is
   // opened with it, because a phrase that has already worked is not one the
   // next form needs to hand over again.
@@ -159,17 +159,17 @@ export function Lobby({
   // full reason it is a switch rather than stacked cards).
   const [view, setView] = useState<"browse" | "create">("browse");
 
-  // [MANIFEST: Quick Start Match] While queued, the Quick Start button
+  // While queued, the Quick Start button
   // stays in a loading state and waits for the quickstart:matched socket
   // event before routing the captain into the matched harbor.
   const [quickStarting, setQuickStarting] = useState(false);
 
-  // [MANIFEST: Voyage Chronicle] Dialog state. Fetched on open.
+  // Dialog state. Fetched on open.
   const [chronicleOpen, setChronicleOpen] = useState(false);
   const [chronicles, setChronicles] = useState<VoyageChronicle[]>([]);
   const [chronicleLoading, setChronicleLoading] = useState(false);
 
-  // [MANIFEST: Great Houses] Dialog state. Standings are fetched on open,
+  // Dialog state. Standings are fetched on open,
   // and myHouseId tracks the captain's current pledge so the row that is
   // already pledged shows as such.
   const [houseOpen, setHouseOpen] = useState(false);
@@ -341,7 +341,7 @@ export function Lobby({
     [],
   );
 
-  // [MANIFEST: Quick Start Match] Join the queue and wait to be paired.
+  // Join the queue and wait to be paired.
   //
   // The emit below is what actually enqueues this captain. The queue is a
   // Set in the realtime layer's memory, and the REST route runs in a
@@ -393,7 +393,7 @@ export function Lobby({
     }, 15000);
   }, [difficulty, socket, authed]);
 
-  // [MANIFEST: Quick Start Match] The queue resolves here.
+  // The queue resolves here.
   //
   // The first captain to ask is seated straight away: if no open public
   // harbor is waiting, the realtime layer opens one and makes them the
@@ -460,7 +460,7 @@ export function Lobby({
         isPublic,
         difficulty,
         mode,
-        // [H9: the unlock code] The phrase rides only with the voyage that
+        // The phrase rides only with the voyage that
         // asks for one. The route refuses a phrase whose door is not the
         // mode requested, which is the right answer for a request that
         // names a phrase and an open mode together, so the open modes
@@ -547,7 +547,7 @@ export function Lobby({
       });
   }, []);
 
-  // [MANIFEST: Voyage Chronicle] Fetch the captain's chronicles when the
+  // Fetch the captain's chronicles when the
   // dialog opens. Newest first as returned by /api/chronicle.
   const openChronicle = useCallback(() => {
     setChronicleOpen(true);
@@ -561,7 +561,7 @@ export function Lobby({
       .finally(() => setChronicleLoading(false));
   }, []);
 
-  // [MANIFEST: Great Houses] Fetch harbor wide standings plus the
+  // Fetch harbor wide standings plus the
   // captain's current pledge when the House dialog opens. myHouseId is
   // resynced after a successful pledge so the chosen row stays marked.
   const openHouse = useCallback(() => {
@@ -800,7 +800,7 @@ export function Lobby({
                 </span>
               </span>
               <div className="hidden md:block">
-                <AgeBanner variant="pill" className="pm-tool" />
+                <AgeBanner className="pm-tool" />
               </div>
             </div>
           </div>
@@ -830,7 +830,7 @@ export function Lobby({
           </div>
         )}
         <section className="space-y-3">
-          {/* [MANIFEST: Quick Start Match] One tap joins the queue and routes
+          {/* One tap joins the queue and routes
               the captain into the first available room. It sits above the
               panel rather than down among the room rows, because the rows
               carry the harbor green and this carries the quickstart hue, and
@@ -1146,7 +1146,7 @@ export function Lobby({
                     }}
                   />
 
-                  {/* [H9: the unlock code] The phrase, drawn under the cards
+                  {/* The phrase, drawn under the cards
                       rather than inside one because it is an answer to the
                       choice rather than a third thing to choose, and it is
                       drawn only while the card above it is sealed. The

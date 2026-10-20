@@ -73,7 +73,7 @@ const NOT_A_DEPARTURE = [
 
 // And the seats a press cannot leave that are nonetheless seats of the
 // lap, which is the distinction this whole article turns on: the pier
-// is not a step of the leg, the path draft is a step a captain leaves by
+// is not a step of the round, the path draft is a step a captain leaves by
 // laying their cards, and Dawn is a step a captain leaves by choosing a
 // card rather than by pressing the bar. Everything else the lap walks is
 // a departure by press.
@@ -81,9 +81,9 @@ const LEFT_BY_CHOOSING = ["harbor", "path_draft", "dawn"] as const;
 
 // The cure's own sentence, read off the wire. Held as a fragment rather
 // than as the whole line, so the article is checking that the harbor named
-// the leg it did not hear move, which is the part a captain acts on, and
+// the round it did not hear move, which is the part a captain acts on, and
 // not that somebody once wrote a particular sentence.
-const THE_CURE = "did not hear that leg move";
+const THE_CURE = "did not hear that round move";
 
 type Seat = { round: number; phase: Phase };
 type ReadyFrame = {
@@ -111,7 +111,7 @@ export async function readyCheckThatStallsSuite(run: SmokeRun): Promise<void> {
     for (const phase of pressable) {
       check(
         canLeavePhase({ mode, phase, gameOver: false }) === true,
-        `${mode} sails out of ${phase} by pressing, since it is a seat the leg walks through`,
+        `${mode} sails out of ${phase} by pressing, since it is a seat the round walks through`,
       );
     }
     for (const phase of NOT_A_DEPARTURE) {
@@ -209,7 +209,7 @@ export async function readyCheckThatStallsSuite(run: SmokeRun): Promise<void> {
   // Only the cure's own lines are collected. The harbor talks to its harbor
   // about other things on this channel, a captain walking in being the
   // loudest of them, and a list that held those would count a hello as a
-  // stalled leg.
+  // stalled round.
   const heard: Array<{
     advances: Seat[];
     rescues: string[];
@@ -315,7 +315,7 @@ export async function readyCheckThatStallsSuite(run: SmokeRun): Promise<void> {
   const stood = await stand({ round: 1, phase: "dawn" });
   check(
     stood,
-    "both captains stand at the first seat of the leg in the harbor this article opened",
+    "both captains stand at the first seat of the round in the harbor this article opened",
   );
   ready({ round: 1, phase: "dawn" });
   await settled(() => bothHeard((mine) => mine.advances.length, 1), 8000);
@@ -366,7 +366,7 @@ export async function readyCheckThatStallsSuite(run: SmokeRun): Promise<void> {
   check(
     heard[0].rescues[0] === heard[1].rescues[0] &&
       String(heard[0].rescues[0]).includes("ready check is open again"),
-    "and it is one line said to the harbor rather than one per socket in it, naming the ready check rather than a leg the harbor moved",
+    "and it is one line said to the harbor rather than one per socket in it, naming the ready check rather than a round the harbor moved",
   );
 
   // The cure with its two halves held apart: the votes that were cast are
@@ -394,7 +394,7 @@ export async function readyCheckThatStallsSuite(run: SmokeRun): Promise<void> {
   await settled(() => standing({ round: 1, phase: "orders" }), 8000);
   check(
     standing({ round: 1, phase: "orders" }),
-    "and the harbor stands where that report put it, with the leg behind it settled rather than re opened",
+    "and the harbor stands where that report put it, with the round behind it settled rather than re opened",
   );
   check(
     heard.every((mine) => mine.errors.length === 0),

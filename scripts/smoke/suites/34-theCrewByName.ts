@@ -1,20 +1,20 @@
 // PortMasters 2.2 Parallel Release, smoke run: The crew, by name.
 //
-// Goal C2: two legs hungry in a row cost the newest hand aboard, by name
-// and for good.
+// Two rounds hungry in a row cost the newest hand aboard, by name and for
+// good.
 //
 // The lines this article writes for a captain are handed back to the run
 // rather than read here, because the house rule covers the whole set and
 // the Larder before it writes into the same one.
 import {
-  CREW_LOSS_AFTER_HUNGRY_LEGS,
+  CREW_LOSS_AFTER_HUNGRY_ROUNDS,
   CREW_NAMES,
 } from "@/lib/game/constants/crew";
 import {
   crewLossRuleOn,
   healCrewIdentity,
   normalizeCrewLost,
-  normalizeHungryLegs,
+  normalizeHungryRounds,
   settleHunger,
 } from "@/lib/game/crew";
 import { hireWorker, startBoonDrafting } from "@/lib/game/engine";
@@ -44,14 +44,14 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
   // The lines this family writes, held for the run rather than read here.
   const survivalLines: LedgerLine[] = [];
   // ========== The crew, by name ==========
-  // [C2: crew loss by name] Two legs hungry in a row cost the newest hand
-  // aboard, by name and for good. Three things are checked here, and they
+  // Two rounds hungry in a row cost the newest hand aboard, by name and for
+  // good. Three things are checked here, and they
   // are worth naming before the first assertion.
   //
   // The run is counted rather than reconstructed, so it is checked the way
-  // it is advanced: one call a leg, with the reset read on both sides of
-  // it. The leg the crew eats in between is the one that matters, because
-  // a run that counted hungry legs ever rather than in a row would pass
+  // it is advanced: one call a round, with the reset read on both sides of
+  // it. The round the crew eats in between is the one that matters, because
+  // a run that counted hungry rounds ever rather than in a row would pass
   // every other check down here and still take a hand from a captain who
   // provisioned through the shortage.
   //
@@ -62,11 +62,11 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
   //
   // The tick is checked through the engine's own Dawn rather than beside
   // it, for the reason the Larder's reduction is checked through the lap.
-  // startBoonDrafting is the one function every leg opens through, and a
+  // startBoonDrafting is the one function every round opens through, and a
   // price that only landed when settleHunger was called directly is
   // exactly the defect a check that called it directly would miss. The
-  // second call in the same leg is in there because that is the shape of
-  // the defect it prevents: a leg opens through more than one path.
+  // second call in the same round is in there because that is the shape of
+  // the defect it prevents: a round opens through more than one path.
   //
   // And a save written before any of this existed is read back, because
   // every voyage in flight the day this ships is one of those. The roster
@@ -105,7 +105,7 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
       );
 
       // The run, the hand, and the ledger. The round is set rather than
-      // inherited, so the leg on the record is a number this check chose
+      // inherited, so the round on the record is a number this check chose
       // and a record that wrote the wrong one cannot pass.
       const hungry = voyageState();
       hungry.money = 1000;
@@ -117,12 +117,13 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
       hungry.larder = 0;
       const lossLines: LedgerLine[] = [];
       settleHunger(hungry, lossLines);
-      const oneLegIn = hungry.hungryLegs === 1 && hungry.crewLost.length === 0;
+      const oneRoundIn =
+        hungry.hungryRounds === 1 && hungry.crewLost.length === 0;
       settleHunger(hungry, lossLines);
       survivalLines.push(...lossLines);
       check(
-        oneLegIn &&
-          hungry.hungryLegs === 0 &&
+        oneRoundIn &&
+          hungry.hungryRounds === 0 &&
           hungry.crewLost.length === 1 &&
           hungry.crewLost[0].name === newestAboard &&
           hungry.crewLost[0].round === 7 &&
@@ -132,9 +133,9 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
             line.includes(newestAboard),
           ) &&
           ledgerSentences(lossLines).some((line) =>
-            line.includes(`${CREW_LOSS_AFTER_HUNGRY_LEGS} legs`),
+            line.includes(`${CREW_LOSS_AFTER_HUNGRY_ROUNDS} rounds`),
           ),
-        "the second leg hungry in a row takes the newest hand aboard by name, writes the leg it happened on beside them, resets the run and says so, while the artisan who was already at the bench keeps it",
+        "the second round hungry in a row takes the newest hand aboard by name, writes the round it happened on beside them, resets the run and says so, while the artisan who was already at the bench keeps it",
       );
 
       // A name once spent is not handed out again while the voyage
@@ -154,7 +155,7 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
         "a name this voyage has already spent is not handed to the next hire, and the hand who joins is the newest aboard, so the one lost over the side is not quietly replaced by a stranger wearing their name",
       );
 
-      // A fed leg resets the run rather than pausing it.
+      // A fed round resets the run rather than pausing it.
       const fed = voyageState();
       fed.money = 1000;
       hireWorker(fed, "weaver", survivalLines);
@@ -162,34 +163,34 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
       settleHunger(fed, []);
       fed.larder = 4;
       settleHunger(fed, []);
-      const afterMeal = fed.hungryLegs === 0;
+      const afterMeal = fed.hungryRounds === 0;
       fed.larder = 0;
       settleHunger(fed, []);
       check(
         afterMeal &&
-          fed.hungryLegs === 1 &&
+          fed.hungryRounds === 1 &&
           fed.crewLost.length === 0 &&
           fed.workers.weaver.length === 1,
-        "a leg the crew eats resets the run, so hunger that a purchase breaks and then lets return counts again from the first bad leg rather than taking a hand for a shortage the captain already provisioned through",
+        "a round the crew eats resets the run, so hunger that a purchase breaks and then lets return counts again from the first bad round rather than taking a hand for a shortage the captain already provisioned through",
       );
 
-      // The price is settled at the one moment the leg's meal is, through
-      // the function every leg opens through.
+      // The price is settled at the one moment the round's meal is, through
+      // the function every round opens through.
       const dawn = voyageState();
       dawn.money = 1000;
       hireWorker(dawn, "weaver", survivalLines);
       dawn.larder = 0;
       startBoonDrafting(dawn, []);
       startBoonDrafting(dawn, []);
-      const onceALeg = dawn.hungryLegs === 1 && dawn.crewLost.length === 0;
+      const onceARound = dawn.hungryRounds === 1 && dawn.crewLost.length === 0;
       dawn.currentRound += 1;
       startBoonDrafting(dawn, []);
       check(
-        onceALeg &&
-          dawn.hungryLegs === 0 &&
+        onceARound &&
+          dawn.hungryRounds === 0 &&
           dawn.crewLost.length === 1 &&
           dawn.workers.weaver.length === 0,
-        "the run advances at the one moment a leg's meal is settled, so a Dawn a client reaches twice charges one leg of hunger once and the next leg is the one that takes the hand",
+        "the run advances at the one moment a round's meal is settled, so a Dawn a client reaches twice charges one round of hunger once and the next round is the one that takes the hand",
       );
 
       // A save written before the crew had names. Every member is written
@@ -202,7 +203,7 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
         delete (worker as Partial<Worker>).name;
         delete (worker as Partial<Worker>).seq;
       }
-      legacy.hungryLegs = Number.NaN;
+      legacy.hungryRounds = Number.NaN;
       healCrewIdentity(legacy);
       const healed = flatWorkerRoster(legacy);
       check(
@@ -215,7 +216,7 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
           ) &&
           new Set(healed.map((worker) => worker.name)).size === 2 &&
           new Set(healed.map((worker) => worker.seq)).size === 2 &&
-          legacy.hungryLegs === 0 &&
+          legacy.hungryRounds === 0 &&
           legacy.crewLost.length === 0,
         "a save written before the crew had names heals to a roster of people rather than of blanks, each with a name from the pool and a number of their own, and a run it cannot read heals to nobody hungry yet",
       );
@@ -238,19 +239,19 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
       );
 
       check(
-        normalizeHungryLegs(undefined) === 0 &&
-          normalizeHungryLegs(Number.NaN) === 0 &&
-          normalizeHungryLegs(-3) === 0 &&
-          normalizeHungryLegs(2.9) === 2 &&
+        normalizeHungryRounds(undefined) === 0 &&
+          normalizeHungryRounds(Number.NaN) === 0 &&
+          normalizeHungryRounds(-3) === 0 &&
+          normalizeHungryRounds(2.9) === 2 &&
           normalizeCrewLost(undefined).length === 0 &&
           normalizeCrewLost("Runa").length === 0 &&
           normalizeCrewLost([{ name: "Runa", round: 4.8 }, null, 7, {}])
             .length === 1 &&
           normalizeCrewLost([{ name: "Runa", round: 4.8 }])[0].round === 4,
-        "a run or a record of losses this build cannot read heals to none rather than to an invented hand, while a loss that does name one survives the read with the leg it was taken on",
+        "a run or a record of losses this build cannot read heals to none rather than to an invented hand, while a loss that does name one survives the read with the round it was taken on",
       );
 
-      // The same two legs with the rule switched off, read inside the
+      // The same two rounds with the rule switched off, read inside the
       // layer that is on. Read anywhere else this check would pass for the
       // wrong reason: with the provisions off there is no shortage to lose
       // anyone to, and the check would be measuring that instead.
@@ -265,7 +266,7 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
           settleHunger(spared, sparedLines);
           return (
             !crewLossRuleOn(GAMBIT) &&
-            spared.hungryLegs === 0 &&
+            spared.hungryRounds === 0 &&
             spared.crewLost.length === 0 &&
             spared.workers.weaver.length === 1 &&
             spared.workers.weaver[0].name.length > 0 &&
@@ -287,7 +288,7 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
           settleHunger(unfed, []);
           return (
             crewLossRuleOn(GAMBIT) &&
-            unfed.hungryLegs === 0 &&
+            unfed.hungryRounds === 0 &&
             unfed.crewLost.length === 0 &&
             unfed.workers.weaver.length === 1
           );
@@ -331,12 +332,12 @@ export async function theCrewByNameSuite(run: SmokeRun): Promise<LedgerLine[]> {
         darkLines.length === 0
       );
     }),
-    "with the switch off nothing is eaten, nothing is bought, no leg is stamped and no shortage is claimed, so the base game is exactly as it was",
+    "with the switch off nothing is eaten, nothing is bought, no round is stamped and no shortage is claimed, so the base game is exactly as it was",
   );
 
-  // The fleet sees a hungry crew. The plan asks for the state to be
-  // publicly visible and its implementation clause says the visibility
-  // rides the status broadcast the harbor already carries, so what is
+  // The fleet sees a hungry crew. The state has to be publicly visible,
+  // and its visibility rides the status broadcast the harbor already
+  // carries, so what is
   // checked here is the frame every captain is already listening to
   // rather than a channel built for this. A fed crew reports no mark at
   // all, which is the allow list read run the other way: only an

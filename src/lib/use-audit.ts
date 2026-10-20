@@ -9,7 +9,7 @@
 // harbor into another must never see the last harbor's business on the
 // new one's screen.
 //
-//   The tally is the nominations for one leg, and it is the whole frame
+//   The tally is the nominations for one round, and it is the whole frame
 //   the server sent rather than the map out of it. It arrives after every
 //   vote, including the one that carries, it is answered to this captain
 //   when their card opens and nobody has voted yet (see the state request
@@ -19,7 +19,7 @@
 //   (see ./use-vote-board), which the maroon vote is read through too.
 //
 //   The reveal is the finding, and it is the one thing here that outlives
-//   the leg it happened in. It arrives either as the vote carrying or as
+//   the round it happened in. It arrives either as the vote carrying or as
 //   the join handoff when a captain reloads into a harbor that has
 //   already audited someone (see the room:join handler in
 //   src/server/realtime/wiring/room-join.ts), and the two paths carry the
@@ -32,7 +32,7 @@
 //
 // The local rule for whether this captain may vote is derived rather
 // than asked for, because every part of it is already on this side of the
-// wire: the mode, the phase, the leg and whether the audit is spent. What
+// wire: the mode, the phase, the round and whether the audit is spent. What
 // is NOT derived is the count: how many names carry the vote is the
 // server's arithmetic over a roster this side cannot see, so it rides the
 // tally frame (see AuditTally) and this hook hands it on as it arrived.
@@ -86,7 +86,7 @@ export function useAudit(
   clearError: () => void;
   vote: (targetUserId: string) => void;
 } {
-  // Deliberately not stamped with a leg the way the tally is: one voyage
+  // Deliberately not stamped with a round the way the tally is: one voyage
   // has one reveal, so a reveal with the right harbor is this voyage's.
   const [reveal, setReveal] = useState<AuditRevealPayload | null>(null);
 
@@ -149,7 +149,7 @@ export function useAudit(
       socket.off("audit:error", onRefused);
       socket.off("room:restarted", onRestarted);
     };
-  }, [socket, roomId, myUserId]);
+  }, [socket, roomId, myUserId, setHeld, setPressed, onRefused, reset]);
 
   const thisReveal = reveal?.roomId === roomId ? reveal : null;
   // The captain's own nomination, so the panel can show what they said
@@ -157,7 +157,7 @@ export function useAudit(
   const myVote = thisReveal ? null : (votes[myUserId] ?? null);
 
   // Parley is half of the audit's price and not just its moment: a carried
-  // audit spends the rest of that leg's trading, so the button is offered
+  // audit spends the rest of that round's trading, so the button is offered
   // only where the harbor is standing at the checkpoint the vote is called
   // from.
   //

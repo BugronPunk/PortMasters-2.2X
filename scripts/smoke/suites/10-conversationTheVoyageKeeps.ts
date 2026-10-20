@@ -43,15 +43,9 @@ export async function conversationTheVoyageKeepsSuite(
   thirdSocket: Socket;
 }> {
   const { code, guest, guestSocket, host, hostId, hostSocket, roomId } = inputs;
-  let third: {
-    id: string;
-    token: string;
-    cookie: string;
-    username: string;
-  };
   // The third captain exists for one reason: a private thread is only
   // private if a captain who is not in it cannot be handed it.
-  third = await signUp("third");
+  const third = await signUp("third");
   const thirdJoined = await call<{ room: { id: string } }>("/api/rooms/join", {
     method: "POST",
     cookie: third.cookie,

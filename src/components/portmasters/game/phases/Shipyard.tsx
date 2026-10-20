@@ -49,7 +49,7 @@ export function Shipyard({
     ? game.shipUpgradeCost[game.shipLevel] + game.shipUpgradePenalty
     : 0;
   const affordable = game.money >= upgCost;
-  // [F7: the power budget] The draft's door reads the roll's own
+  // The draft's door reads the roll's own
   // predicate, so a hull the cap has shut is told before the click rather
   // than dealt an empty table: the button disables and the line below it
   // says which of the two reasons it is, the same way every other
@@ -83,7 +83,7 @@ export function Shipyard({
             m: game.shipLevel,
           })}
         </div>
-        {/* [F7: the power budget] The hull's weight on one line, beside
+        {/* The hull's weight on one line, beside
             the slots it fills: the number every gate in the cap speaks
             in, read where the hull's composition is already the subject,
             so a refused pick at the table has something to point at. */}
@@ -95,11 +95,11 @@ export function Shipyard({
         </div>
         {game.equippedModules.length === 0 && (
           <PanelNote className="mt-2 text-xs">
-            {t("No modules installed. Upgrade ship to unlock slots!")}
+            {t("No modules installed. Upgrade the hull to unlock slots!")}
           </PanelNote>
         )}
       </div>
-      {/* The fit folds (W4): the gist names what is aboard and what it
+      {/* The fit folds: the gist names what is aboard and what it
           weighs, and the full descriptions and the synergy analyzer wait
           behind the one chevron, the same fold the market's readings wear
           (see FoldRow). Printing every module's description inline under
@@ -150,10 +150,10 @@ export function Shipyard({
         />
       ) : (
         <div className="flex flex-col gap-2">
-          {/* [B2: hard timers, the server as timekeeper] The clock on the
+          {/* The clock on the
               screen a captain has not acted on, drawn from the same
               published pair the waiting bar above draws. Dusk is a seat of
-              the leg like the others, so a captain deciding what to build
+              the round like the others, so a captain deciding what to build
               is owed the same countdown as one deciding what to buy. */}
           <PhaseClockBar phaseSync={phaseSync} members={members} />
           {canUpgrade && (
@@ -165,7 +165,7 @@ export function Shipyard({
               onClick={() => act((g, l) => upgradeShip(g, l))}
             >
               {t(
-                "⚓ Upgrade Ship (Lvl {nextShipLevel}), Cost {upgCost} Gold | +1 Slot, +{SHIP_DISCOUNT_PER_LEVEL} Discount",
+                "⚓ Hull Upgrade (Lvl {nextShipLevel}), Cost {upgCost} Gold | +1 Slot, +{SHIP_DISCOUNT_PER_LEVEL} Discount",
                 {
                   nextShipLevel: game.shipLevel + 1,
                   upgCost,

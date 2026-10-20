@@ -74,7 +74,7 @@ export function ChatPanel({
   other?: PublicUser;
   initialMessages?: ChatMessage[];
   trade?: ChatTrade;
-  // [MANIFEST 14: Harbor Watch] Set only for the harbor mode instance, only
+  // Set only for the harbor mode instance, only
   // while the host has muted this captain. A muted captain keeps reading
   // harbor chat live same as anyone; they just can't post to it until the
   // voyage ends, which is enforced again server side regardless of this
@@ -218,7 +218,7 @@ export function ChatPanel({
       if (data.roomId !== roomId) return;
       setMessages([]);
     };
-    // [MANIFEST 14: Harbor Watch] Defensive: the disabled prop (driven by
+    // Defensive: the disabled prop (driven by
     // GameRoom.tsx's own room:members tracking) already hides the input
     // the moment a mute takes effect, so this should be unreachable in
     // ordinary use. It only ever fires for a stale client, a tab whose

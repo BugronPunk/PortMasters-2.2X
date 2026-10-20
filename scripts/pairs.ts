@@ -1,8 +1,7 @@
 /**
  * The combination report.
  *
- * [F7: the combination instrument] The plan's evaluation for this goal is
- * one reading per pair: win rate by combination, with any pair past a
+ * The reading is one per pair: win rate by combination, with any pair past a
  * threshold share of wins flagged automatically, because "with forty
  * boons, twenty modules and ten charters the pair matrix is far past what
  * anyone can hand test". This prints every pair the finished voyages have
@@ -12,11 +11,10 @@
  * Run with npm run report:pairs, against whichever database DATABASE_URL
  * names at the time. It only reads.
  *
- * The plan's nightly simulation harness (both sides played without
- * humans) is recorded unbuilt in the plan's Iteration section, so the
- * nightly run the flag is meant for is this report, run by the operator
- * and read as a recorded reading: the flags on this table are what a
- * balance pass would open with, and a pair below the appearance floor
+ * A nightly simulation harness (both sides played without humans) is not
+ * built, so the nightly run the flag is meant for is this report, run by
+ * the operator and read as a recorded reading: the flags on this table are
+ * what a balance pass would open with, and a pair below the appearance floor
  * prints its count and no rate, for the conversion report's own reason
  * (the count is what decides whether the rate means anything).
  */

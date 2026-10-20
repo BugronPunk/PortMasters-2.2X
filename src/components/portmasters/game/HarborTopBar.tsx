@@ -97,7 +97,7 @@ export function HarborTopBar({
           </div>
         </div>
         <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap justify-end">
-          <AgeBanner variant="pill" className="hidden md:inline-flex" />
+          <AgeBanner className="hidden md:inline-flex" />
           <div className="relative hidden sm:block">
             <ActionSuggester game={game} />
           </div>

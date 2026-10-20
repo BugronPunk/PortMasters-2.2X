@@ -6,7 +6,7 @@
  * ally travel inside that same delivery, a verdict is written to one
  * captain's own row and printed to the table once, at the reveal. The
  * paths are correct today, and what this script exists for is the day a
- * later slice adds a second one without knowing it was the second.
+ * change adds a second one without knowing it was the second.
  * Nothing else in the toolchain would notice: TypeScript does not know
  * which fields are secret, ESLint does not read payloads, and the smoke
  * suite only sweeps the harbors it happens to sail.
@@ -20,7 +20,7 @@
  *      client's one hook) and in the suite that sweeps it. A third file
  *      is a second path nobody reviewed.
  *   2. One reader of the alignment table. Only the module that deals the
- *      cards may read the rows back, so a slice that wants a card has to
+ *      cards may read the rows back, so anything that wants a card has to
  *      ask that module rather than the database.
  *   3. The verdict is a property in four places: the balance reader,
  *      the operator window, the wire type and the combination instrument.
@@ -100,8 +100,8 @@ const isSmoke = (file: string): boolean => file.startsWith("scripts/smoke/");
    counts it, the operator window that reads the count, the wire type
    the reveal is shaped by, and the combination instrument, whose whole
    reading is a reduction over rows that carry it (win rate by pair, see
-   src/lib/game/combinations.ts). The fourth was added when the F7
-   instrument landed, and it carries its sentence: the instrument
+   src/lib/game/combinations.ts). The fourth was added when the
+   combination instrument landed, and it carries its sentence: the instrument
    counts verdicts it does not decide, and counting is not travelling. */
 const VERDICT_PROPERTY_FILES = [
   "src/lib/game/balance.ts",

@@ -19,7 +19,7 @@ import {
   type CardRecord,
 } from "@/lib/game/constants/cards";
 import {
-  CHARTER_LEG,
+  CHARTER_ROUND,
   CHARTER_PATH,
   CHARTERS,
 } from "@/lib/game/constants/charters";
@@ -67,14 +67,13 @@ import {
 import type { LedgerLine } from "@/lib/game/ledger";
 
 /**
- * [F7: the power budget and the combination instrument] The plan's third
- * feature of the cycle, in its four halves: the cap that bounds what a
- * captain can hold (the constant and the bounds it is authored between,
- * the two pure reads off the durable set, and every gate at its live
- * site: the two moment tables, the yard roll, the two install paths and
- * the market row), the floor the install paths keep under the panels,
- * the chronicle's held set and the pair matrix reduced off it, and the
- * one home for the bound the conclusion writes.
+ * The power budget and the combination instrument, in four halves: the
+ * cap that bounds what a captain can hold (the constant and the bounds it
+ * is authored between, the two pure reads off the durable set, and every
+ * gate at its live site: the two moment tables, the yard roll, the two
+ * install paths and the market row), the floor the install paths keep
+ * under the panels, the chronicle's held set and the pair matrix reduced
+ * off it, and the one home for the bound the conclusion writes.
  *
  * It sits beside the charter article and joins the group that needs no
  * harbor, for the charters' own reason: every gate is a pure function of
@@ -89,10 +88,10 @@ import type { LedgerLine } from "@/lib/game/ledger";
  * ambient environment would report the deployment's rollback as a
  * verdict about the table it is not testing.
  *
- * The instrument half carries the plan's own health check: "its health
- * check is that it fires on a deliberately planted overpowered pair
- * during development", which is the planted pair the matrix rows below
- * are built around, in both of its flags.
+ * The instrument half carries its own health check: "its health check is
+ * that it fires on a deliberately planted overpowered pair during
+ * development", which is the planted pair the matrix rows below are built
+ * around, in both of its flags.
  */
 export async function powerBudgetSuite(): Promise<void> {
   const gambitOn = <T>(read: () => T): T =>
@@ -401,7 +400,7 @@ export async function powerBudgetSuite(): Promise<void> {
     const state = voyageState();
     state.voyageEpoch = epoch;
     state.path = loomPath;
-    state.currentRound = CHARTER_LEG;
+    state.currentRound = CHARTER_ROUND;
     return state;
   };
   const light = lightCharter(0);
@@ -447,7 +446,7 @@ export async function powerBudgetSuite(): Promise<void> {
     const state = heavyCharterHull();
     state.voyageEpoch = epoch;
     state.path = loomPath;
-    state.currentRound = CHARTER_LEG;
+    state.currentRound = CHARTER_ROUND;
     return state;
   };
   const heavy = heavyCharter(factorEpoch ?? 0);
@@ -478,7 +477,7 @@ export async function powerBudgetSuite(): Promise<void> {
     "steady_watch",
   );
   shut.path = loomPath;
-  shut.currentRound = CHARTER_LEG;
+  shut.currentRound = CHARTER_ROUND;
   const shutLogs: LedgerLine[] = [];
   check(
     charterChoices(shut).length === 0 &&
@@ -949,7 +948,7 @@ export async function powerBudgetSuite(): Promise<void> {
       ledgerSentences(collapsedLogs).some((line) =>
         line.includes("nothing new"),
       ),
-    "the reported collapse reads as a refusal rather than as a repeat: a Classic hull the round has shown every module it could be dealt draws a disabled swap and a press that is answered in words, the table stays where it was, and the once a round use is still the captain's to spend on a leg where the yard has something to deal",
+    "the reported collapse reads as a refusal rather than as a repeat: a Classic hull the round has shown every module it could be dealt draws a disabled swap and a press that is answered in words, the table stays where it was, and the once a round use is still the captain's to spend on a round where the yard has something to deal",
   );
 
   // The three refusals as the captain reads them, held here rather than
@@ -960,7 +959,7 @@ export async function powerBudgetSuite(): Promise<void> {
     ledgerSentences(collapsedLogs).some(
       (line) =>
         line ===
-        "❌ The yard has nothing new to deal this hull: every module it could offer is either aboard or already on the table. Take one of these, sell one at the table, or come back next leg.",
+        "❌ The yard has nothing new to deal this hull: every module it could offer is either aboard or already on the table. Take one of these, sell one at the table, or come back next round.",
     ) && !CARRIES_A_DASH.test(ledgerSentences(collapsedLogs).join(" ")),
     "the refusal a dry pool writes names the three ways forward in one sentence, and every line the press wrote is free of dashes like the rest of the game's copy",
   );
@@ -1191,7 +1190,7 @@ export async function powerBudgetSuite(): Promise<void> {
       (text) =>
         !text.includes("HELD_POWER_CAP") && !text.includes("powerBudgetAllows"),
     ),
-    "the agreed trade's settle never reads the budget: the buyer's guard lives on the buyer's panel and the settle stays unconditional, which is the F3 invariant the cap was deliberately not allowed to reach",
+    "the agreed trade's settle never reads the budget: the buyer's guard lives on the buyer's panel and the settle stays unconditional, which is the module trade invariant the cap was deliberately not allowed to reach",
   );
 
   // The sources are read with their whitespace flattened, so a sentence
@@ -1230,7 +1229,7 @@ export async function powerBudgetSuite(): Promise<void> {
     sourceOf("src/components/portmasters/game/phases/ModuleDraft.tsx"),
   );
   const emptySwapSentence =
-    "Nothing new to deal: every module the yard could offer this hull is either on this table already or aboard. Take one of these, or come back next leg.";
+    "Nothing new to deal: every module the yard could offer this hull is either on this table already or aboard. Take one of these, or come back next round.";
   check(
     draftPanel.includes("moduleSwapPossible(game)") &&
       draftPanel.includes("swapModuleChoices(g, l)") &&
@@ -1311,7 +1310,7 @@ export async function powerBudgetSuite(): Promise<void> {
       planted.share > PAIR_WIN_SHARE &&
       planted.flags.includes("win_rate") &&
       planted.flags.includes("share_of_wins"),
-    "the plan's own health check: a deliberately planted overpowered pair, ten wins in fifty past the ceiling, fires both flags, and neither flag is possible without the appearances the floor asks for",
+    "the design's own health check: a deliberately planted overpowered pair, ten wins in fifty past the ceiling, fires both flags, and neither flag is possible without the appearances the floor asks for",
   );
 
   const atLine = pairOf(pairD, pairE);
@@ -1326,7 +1325,7 @@ export async function powerBudgetSuite(): Promise<void> {
       underLine.rate !== null &&
       underLine.rate < PAIR_WIN_CEILING &&
       underLine.flags.length === 0,
-    "the ceiling is read the way the plan's sentence reads: a pair that has not stayed under sixty two percent has missed the target and is flagged at the line itself, and a pair a hair under it is silence",
+    "the ceiling is read the way the design's sentence reads: a pair that has not stayed under sixty two percent has missed the target and is flagged at the line itself, and a pair a hair under it is silence",
   );
 
   const shareOnly = pairOf(pairH, pairI);

@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useMemo, useReducer, useState } from "react";
 import type { Socket } from "socket.io-client";
-import { createInitialGameState, type GameState } from "@/lib/game/types";
+import {
+  createInitialGameState,
+  type GameContext,
+  type GameState,
+} from "@/lib/game/types";
 import type { GameMode } from "@/lib/game/mode";
 import type { LedgerLine } from "@/lib/game/ledger";
 import { reducer } from "./session/reducer";
-import { useVoyageContext } from "./session/use-voyage-context";
 import { useSeatPin, useSeatPinFrames } from "./session/use-seat-pin";
 import { useVoyageLoad } from "./session/use-voyage-load";
 import { useStatusBeacon } from "./session/use-status-beacon";
@@ -45,7 +48,16 @@ export function useGameSession(
   // against.
   roomMode?: GameMode,
 ) {
-  const ctx = useVoyageContext(roomId, userId);
+  // Folding userId into the seed gives each captain a private market,
+  // order board and Broker intel. harborId stays shared so the public
+  // objective draws the same seed for every seat.
+  const ctx = useMemo<GameContext>(
+    () => ({
+      seedBase: userId ? `${roomId}:${userId}` : roomId,
+      harborId: roomId,
+    }),
+    [roomId, userId],
+  );
   const [state, dispatch] = useReducer(reducer, {
     game: createInitialGameState(),
     logs: [],

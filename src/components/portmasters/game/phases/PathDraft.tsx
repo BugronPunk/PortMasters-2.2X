@@ -20,7 +20,7 @@ import { Notice } from "../../shared";
 // the beat is drawn, because a t() call up here would freeze at whatever
 // language the process started in.
 //
-// The lines are the plan's deal read out loud: "Keep one, pass two to the
+// The lines are the design's deal read out loud: "Keep one, pass two to the
 // left, keep one of the two received, pass one, discard the last." The last
 // beat says what the choice actually is, which is the reading this build
 // settled on (see the header of src/lib/game/draft.ts): the two papers in
@@ -60,15 +60,15 @@ const STEP_FACE: Record<
 const PATH_GUIDE = new Map(pathGuide().map((entry) => [entry.id, entry]));
 
 /**
- * [W2: the path draft] The deal, drawn as the stage a dealing Gambit
+ * The deal, drawn as the stage a dealing Gambit
  * departure opens at.
  *
- * The plan asks for this interface by name: "Forty five seconds with a good
+ * The design asks for this interface by name: "Forty five seconds with a good
  * interface is the target, so the interface is not an afterthought on this
  * one." So the panel is built around the two things a captain needs and
  * nothing else: the cards, and what to do with them this beat. Each card
  * wears its crest, its name, its own signature sentence and the few numbers
- * the record carries, because the choice the plan wants measured ("taking
+ * the record carries, because the choice the design wants measured ("taking
  * it is a choice somebody makes rather than a duty somebody gets assigned")
  * is only a choice if the captain can read what they are choosing between.
  *

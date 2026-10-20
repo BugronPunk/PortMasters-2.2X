@@ -1,7 +1,7 @@
 // =====================================================================
 // Realtime layer: Tidewatch Alerts.
 //
-// [MANIFEST 03] Never a difficulty dial: voyage length, tier content,
+// Never a difficulty dial: voyage length, tier content,
 // and card count baseline all stay entirely the host's choice. This
 // only reads Reputation every captain is already reporting through the
 // ordinary game:status heartbeat and, once the harbor's combined total

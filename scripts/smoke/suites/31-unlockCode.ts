@@ -27,11 +27,11 @@ import type { Socket } from "socket.io-client";
 import type { SmokeRun } from "../run";
 
 export async function unlockCodeSuite(run: SmokeRun): Promise<void> {
-  // [H9] The harbor's one locked door, and the reason it is a phrase
-  // rather than a permission: what the phrase buys a captain is a moment,
+  // The harbor's one locked door, and the reason it is a phrase rather
+  // than a permission: what the phrase buys a captain is a moment,
   // not a fence, and an entitlement kept per account would make the first
   // question at every table an administrative check. This section walks
-  // the whole loop the plan asks for. It reads the table first, because a
+  // the whole loop the feature holds. It reads the table first, because a
   // suite that spelled the words itself would be testing its own copy of
   // them. Then it earns the phrase the way a captain does, on a tenth
   // completed voyage, reads it back out of the log that voyage left
@@ -167,7 +167,7 @@ export async function unlockCodeSuite(run: SmokeRun): Promise<void> {
       roomId: unlLogId,
       round: 8,
       phase: "endgame",
-      phaseLabel: "Voyage Complete",
+      phaseLabel: "Voyage Ended",
       shipLevel: 1,
       gameOver: true,
       marooned: false,

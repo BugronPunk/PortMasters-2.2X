@@ -2,6 +2,7 @@
 
 import {
   basePriceRange,
+  cardLineUnitPrice,
   getCardFinalCost,
   priceRatio,
 } from "@/lib/game/engine";
@@ -42,9 +43,13 @@ export function TradeAdvisor({
     .filter((c) => !game.purchasedCards.includes(c.id))
     .flatMap((c) => {
       const finalCost = getCardFinalCost(game, c);
-      return c.resources.map((r) => {
+      return c.resources.map((r, i) => {
         const range = basePriceRange(r.type) ?? [0, 100];
-        const unit = r.price ?? 0;
+        // The line's share of the charged total, not its list price:
+        // scoring a discounted card off the harbor's list put a card
+        // the captain would pay less for behind one they would pay
+        // more for (see cardLineUnitPrice).
+        const unit = Math.round(cardLineUnitPrice(game, c, i) * 10) / 10;
         const qty = r.quantity ?? 0;
         const baseScore = 1 - priceRatio(unit, range);
         // Boost score for goods that match revealed intel (guaranteed

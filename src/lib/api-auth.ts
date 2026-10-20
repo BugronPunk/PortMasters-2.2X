@@ -124,8 +124,8 @@ function sessionCookie(token: string, maxAgeSec: number, https: boolean) {
   return `${SESSION_COOKIE_NAME}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAgeSec}${https ? "; Secure" : ""}`;
 }
 
-// How long a browser that has seen the game over TLS should keep refusing
-// to go back to plain http for it. Six months, the usual reading, and no
+// How long a browser that has seen the game served over TLS should keep
+// refusing plain http for it. Six months, the usual reading, and no
 // includeSubDomains: a tunnel's hostname is often shared with other
 // services, and pinning their subdomains from here would reach past the
 // game.
