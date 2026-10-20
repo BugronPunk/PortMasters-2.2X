@@ -18,7 +18,7 @@
 // The first is where the rows come from. They are measurement tables: the
 // spine's records (VoyageTelemetry) and the chronicle rows written beside
 // them, both written once, when a voyage is over. Nothing here reads a
-// room, a seat, a save or a live socket, so the page cannot contend with
+// harbor, a seat, a save or a live socket, so the page cannot contend with
 // a voyage that is under way. That is the plan's rollback made structural
 // rather than promised: this module has no way to write anything, so the
 // dashboard can only ever be read only.

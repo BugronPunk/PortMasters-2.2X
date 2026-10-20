@@ -121,7 +121,7 @@ export const BARTER_ITEMS = ["Gold", ...RESOURCES, ...PRODUCTS] as const;
 // Exchange on the round interface and any scripted swap the engine
 // resolves on its own. It is deliberately the strongest social tool in the
 // game: an offer moves goods outside the market entirely, from any phase,
-// to any captain in the room. Two limits hold it in check, and both live
+// to any captain in the harbor. Two limits hold it in check, and both live
 // here so that a screen and the server can never disagree about either one.
 //
 // The first limit is who may take part. Both captains have to be at Renown
@@ -131,8 +131,8 @@ export const BARTER_ITEMS = ["Gold", ...RESOURCES, ...PRODUCTS] as const;
 // captain doing the harder job in a swap is the one accepting: they are the
 // one who has to judge whether what is on the other side is worth what it
 // costs them. Requiring both sides also keeps the feature alive in a mixed
-// room, since two level 10 captains can still trade with each other while a
-// newer captain sits at the same table, and no room is ever vetoed by its
+// harbor, since two level 10 captains can still trade with each other while a
+// newer captain sits at the same table, and no harbor is ever vetoed by its
 // least established member. None of this reaches the Captain's Exchange,
 // which is open to every captain at every level.
 //

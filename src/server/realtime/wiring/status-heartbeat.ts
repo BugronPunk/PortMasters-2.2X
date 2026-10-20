@@ -1,6 +1,6 @@
 // =====================================================================
 // The game status heartbeat: a captain's own reading of the board,
-// remembered for the room and answered in batches.
+// remembered for the harbor and answered in batches.
 //
 // The handler below is an orchestrator. Each decision it makes about the
 // reading it was handed is a named step beside it: the guard that only the
@@ -44,7 +44,7 @@ import { resolveExpiredVentures } from "../ventures";
 import { noteVoyageLog, noteVoyageLogAdvance } from "../voyage-log";
 
 // What a captain's own client reports, which is the only side that can: the
-// reading below lives in the browser's GameState as much as in the room's.
+// reading below lives in the browser's GameState as much as in the harbor's.
 type GameStatusReport = {
   roomId?: string;
   round?: number;
@@ -83,7 +83,7 @@ export function wireStatusHeartbeat(io: Server, socket: Socket): void {
 
     maybeAnnounceSurge(io, roomId);
 
-    // Move the room's synchronized checkpoint forward if this
+    // Move the harbor's synchronized checkpoint forward if this
     // report puts someone further along, and recheck readiness.
     const room = await db.room.findUnique({
       where: { id: roomId },
@@ -105,12 +105,12 @@ export function wireStatusHeartbeat(io: Server, socket: Socket): void {
     }
     const cp = await getCheckpoint(roomId);
     const phase = broadcast.phase;
-    // Both ranks are read in the room's own lap, which the server can
+    // Both ranks are read in the harbor's own lap, which the server can
     // name because it just loaded the row. A rank is an index within one
     // mode's phase order, so comparing a report against the checkpoint
-    // only means anything once both are read the same way. A room that
+    // only means anything once both are read the same way. A harbor that
     // just vanished leaves this undefined, which resolves to the founding
-    // mode; the guard below refuses to move the checkpoint for a room
+    // mode; the guard below refuses to move the checkpoint for a harbor
     // that is gone anyway, so that rank is never acted on.
     const newRank = checkpointRank(room?.mode, broadcast.round, phase);
     const curRank = checkpointRank(room?.mode, cp.round, cp.phase);
@@ -122,12 +122,12 @@ export function wireStatusHeartbeat(io: Server, socket: Socket): void {
     ) {
       await advanceCheckpointFromReport(io, roomId, cp, broadcast);
     }
-    // [B2: hard timers, the server as timekeeper] The seat a room is
+    // [B2: hard timers, the server as timekeeper] The seat a harbor is
     // standing at with no clock behind it. Two cases reach this: a
-    // checkpoint a restarted server hydrated from the room's own row,
+    // checkpoint a restarted server hydrated from the harbor's own row,
     // which holds a seat rather than a moment, and a harbor whose last
     // socket left, where the clock was stopped rather than left to fire
-    // at an empty room. Both are the same room from here, one captain
+    // at an empty harbor. Both are the same harbor from here, one captain
     // standing at a seat nobody is timing, and this is the first report
     // that says somebody is there to be moved. A seat with no budget of
     // its own (the pier, the phases that are not steps of the leg) and a
@@ -147,12 +147,12 @@ export function wireStatusHeartbeat(io: Server, socket: Socket): void {
 // (see PHASE_FACES), so a captain who opens one is reported at Dusk's rank
 // while they are working in a screen of their own.
 //
-// The fold is what keeps the room waiting on a captain inside the yard at
+// The fold is what keeps the harbor waiting on a captain inside the yard at
 // all (see waitingRosterSet), but it cannot stand on its own: a captain
 // who has voted at the seat and then stepped back into a screen is still
-// on the roster with their vote standing, so the room leaves the moment
+// on the roster with their vote standing, so the harbor leaves the moment
 // the rest of the table has voted and that captain's own client runs the
-// catch up every client runs for a seat the room has moved past, which
+// catch up every client runs for a seat the harbor has moved past, which
 // cancels a module draft under the hands of the captain still reading it.
 // The way back is the client's own reload: a vote lives on the server,
 // while the client that cast it comes back with no memory of the wait, so
@@ -160,7 +160,7 @@ export function wireStatusHeartbeat(io: Server, socket: Socket): void {
 // draft with their vote still standing.
 //
 // This is where the two promises meet, and the newer one wins: a report
-// naming a personal screen that stands in the seat the room is standing at
+// naming a personal screen that stands in the seat the harbor is standing at
 // withdraws that captain's vote, and it comes back the way every vote at a
 // seat does, by being cast at the seat again. No screen is named here:
 // whether a phase is a personal screen is read off the registry, which is
@@ -185,9 +185,9 @@ function withdrawVoteForAScreen(
 // naming one was not written by the game, whether it came from a stale
 // build, a modified client, or a replay of another voyage's frame.
 // Admitting it would hand this report the top rank there is, and the
-// whole room would follow the checkpoint to a leg that does not exist:
+// whole harbor would follow the checkpoint to a leg that does not exist:
 // the room's row is written there, the leg clock arms on it, every honest
-// client's catch up fires to stay with the room, and the voyage the
+// client's catch up fires to stay with the harbor, and the voyage the
 // captains are actually playing is behind them.
 //
 // The bound is the voyage's own length read from the room's row, which is
@@ -210,7 +210,7 @@ function namesALegOfTheVoyage(
 }
 
 // Only the newest socket for a user is allowed to update the
-// room's status cache and broadcast. A stale socket that hasn't
+// harbor's status cache and broadcast. A stale socket that hasn't
 // been cleaned up yet would otherwise keep spraying frozen data.
 //
 // The presence map is walked from its newest entry back, so the first
@@ -233,7 +233,7 @@ function reportedMark(value: unknown): true | undefined {
 
 // The frame this report is remembered and rebroadcast as: the captain's own
 // reading, normalized and defaulted for every other captain who will read it
-// out of the room's cache or straight off this broadcast.
+// out of the harbor's cache or straight off this broadcast.
 function buildStatusFrame(
   roomId: string,
   user: PublicUser,
@@ -244,7 +244,7 @@ function buildStatusFrame(
     user,
     round: payload?.round ?? 0,
     // Normalized rather than passed through, because this value is
-    // cached and rebroadcast to every other captain in the room: it is
+    // cached and rebroadcast to every other captain in the harbor: it is
     // read by the roster, by the active roster the ready check waits
     // for, and by the phase report below, and all three need a phase
     // rather than whatever a socket happened to send. A client reports
@@ -276,14 +276,14 @@ function buildStatusFrame(
     marooned: reportedMark(payload?.marooned),
     // [C1: the Larder and Short Rations] The same allow list treatment
     // as the two marks above, and for the same reason: this is a
-    // cached value rebroadcast to every captain in the room, so only
+    // cached value rebroadcast to every captain in the harbor, so only
     // an explicit true is a hungry crew and anything else reads as a
     // fed one at every reader.
     shortRations: reportedMark(payload?.shortRations),
   };
 }
 
-// Tidewatch surge: fires at most once per room per voyage.
+// Tidewatch surge: fires at most once per harbor per voyage.
 function maybeAnnounceSurge(io: Server, roomId: string): void {
   if (
     hasSurged(roomId) ||
@@ -309,9 +309,9 @@ function maybeAnnounceSurge(io: Server, roomId: string): void {
   }
 }
 
-// Moves the room's checkpoint onto the seat this report is standing at. The
+// Moves the harbor's checkpoint onto the seat this report is standing at. The
 // caller has already decided that the report is further along than where the
-// room stands; everything below is what that move carries with it.
+// harbor stands; everything below is what that move carries with it.
 async function advanceCheckpointFromReport(
   io: Server,
   roomId: string,
@@ -322,10 +322,10 @@ async function advanceCheckpointFromReport(
   // The seat this report is standing at rather than the screen it named. A
   // captain reading the module draft is standing in Dusk (see seatOf), and
   // the report ranks as Dusk's, so the checkpoint moved by it has to be Dusk
-  // and not the personal screen: a room standing at a screen no lap lists
-  // would be a room with no gated seat to vote at and no clock of its own,
+  // and not the personal screen: a harbor standing at a screen no lap lists
+  // would be a harbor with no gated seat to vote at and no clock of its own,
   // and every later vote would be refused for naming a round and phase the
-  // room is not on. Guarded at the door, where the move happens, so the
+  // harbor is not on. Guarded at the door, where the move happens, so the
   // checkpoint holds a seat of the lap by construction rather than by which
   // report happened to arrive first.
   cp.phase = seatOf(report.phase);
@@ -334,35 +334,46 @@ async function advanceCheckpointFromReport(
   // The hold is spent per seat (see yardHeld on the Checkpoint), and this
   // is the seat moving: a hold carried onto the next seat would extend it
   // by a budget that seat never spent, and the seat after the yard would
-  // be the one that lost the room its second chance rather than the yard
+  // be the one that lost the harbor its second chance rather than the yard
   // keeping it.
   cp.yardHeld = false;
   // The announcement this report answers has now been answered, so the watch
   // armed for it is done. Cancelled rather than left to fire, because a fire
-  // would find the room already moved and return, and a timer per seat of
+  // would find the harbor already moved and return, and a timer per seat of
   // every voyage is a map that only grows.
   clearAdvanceWatch(roomId);
   // [B2: hard timers, the server as timekeeper] The clock for the
   // seat just entered. Armed from the report rather than from the
-  // timer, so the room's deadline is always the one its own
+  // timer, so the harbor's deadline is always the one its own
   // checkpoint publishes, and armed before the broadcast below so
   // the two go out together: a client that drew the countdown and a
   // client that drew the seat would otherwise disagree for a frame.
   armPhaseClock(io, roomId, cp);
+  // The room row is the harbor's own record of where it stands, and the
+  // checkpoint is the truth the harbor moves on. A write that fails leaves
+  // the row behind the checkpoint, which a later reader would take as the
+  // harbor's real seat, so the failure is worth a line in the log: the
+  // harbor still turns, but the reason the row and the checkpoint
+  // disagree is on the record.
   await db.room
     .update({
       where: { id: roomId },
       data: { currentRound: cp.round, currentPhase: cp.phase },
     })
-    .catch(() => {});
-  // [I1: the telemetry spine] The one place a room's leg actually
+    .catch((err) => {
+      console.error(
+        "[realtime] the harbor's seat did not reach the room row:",
+        err,
+      );
+    });
+  // [I1: the telemetry spine] The one place a harbor's leg actually
   // moves, so the one place the spine is told about it: every
   // event it stamps afterwards belongs to this leg. Recorded only
   // when the leg moved forward, which the note decides, so a
   // a repeated report of the checkpoint they are already standing
   // at cannot fill a record with the same leg twice.
   noteLegAdvanced(roomId, cp.round);
-  // [B4: the log surfaces] And the same move, into the room's log,
+  // [B4: the log surfaces] And the same move, into the harbor's log,
   // which is where every line below is stamped from now on. The
   // note writes the line for the seat being entered and moves the
   // log's own leg with it, so a captain reading at Dusk sees the
@@ -371,7 +382,7 @@ async function advanceCheckpointFromReport(
   sweepLegBoards(io, roomId, cp);
 }
 
-// Every board that dies with the leg the room just left, swept in the order
+// Every board that dies with the leg the harbor just left, swept in the order
 // the sweeps were always run in: the barter board when the Parley closes, the
 // two consent boards on their own rules, and the aid board outside the
 // Resolve.
@@ -419,7 +430,7 @@ function sweepLegBoards(io: Server, roomId: string, cp: Checkpoint): void {
   // [D4: Loom: the Refit] The bench's sweep, which is the same rule
   // read at a different phase: a refit's offer dies with the Market
   // it was posted in, and an agreed one lives the leg it was agreed
-  // for whatever phase of it the room is standing in. Both of those
+  // for whatever phase of it the harbor is standing in. Both of those
   // are on the rows (see expireConsent), so the sweep only has to
   // hand the board the checkpoint it is standing at.
   refitContracts.sweep(io, roomId, {

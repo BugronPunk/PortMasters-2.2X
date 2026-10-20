@@ -23,6 +23,7 @@ import {
   readCardConversion,
   type CardTally,
 } from "@/lib/game/cards";
+import { ratePercent } from "@/lib/game/balance";
 import { parseJsonObject } from "@/lib/game/json";
 import { db } from "@/lib/db";
 import { runReport } from "./report";
@@ -67,7 +68,7 @@ async function main(): Promise<void> {
       String(reading.picked).padStart(7),
       reading.rate === null
         ? "n/a".padStart(7)
-        : `${(reading.rate * 100).toFixed(1)}%`.padStart(7),
+        : ratePercent(reading.rate).padStart(7),
     ];
     console.log(cells.join("  "));
   }

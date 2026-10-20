@@ -6,7 +6,7 @@ import { statusFrame } from "./status-frame";
 import type { SessionState } from "./reducer";
 
 // =====================================================================
-// The two things that tell the room where this captain stands: the
+// The two things that tell the harbor where this captain stands: the
 // debounced broadcast that follows every change to their voyage, and the
 // heartbeat that keeps the server's cache warm for late joiners.
 //
@@ -36,7 +36,7 @@ export function useStatusBeacon({
     [roomId, state.game],
   );
 
-  // Broadcast live status to the room on every game change.
+  // Broadcast live status to the harbor on every game change.
   const broadcastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     if (!enabled || !state.loaded || !socket) return;

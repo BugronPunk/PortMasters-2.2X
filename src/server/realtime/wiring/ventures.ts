@@ -137,7 +137,7 @@ export function wireVentures(io: Server, socket: Socket): void {
         },
       });
       await broadcastVentures(io, roomId);
-      // The posting goes to the whole room, so it goes to every socket
+      // The posting goes to the whole harbor, so it goes to every socket
       // still in the harbor, each in its captain's own language.
       for (const [socketId, state] of sockets) {
         if (state.roomId !== roomId) continue;

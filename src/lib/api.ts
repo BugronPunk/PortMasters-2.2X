@@ -32,13 +32,13 @@ export type RoomSummary = {
   isPublic: boolean;
   started: boolean;
   difficulty: Difficulty;
-  // Which voyage this harbor is playing. The lobby reads it to badge the room
+  // Which voyage this harbor is playing. The lobby reads it to badge the harbor
   // card and to draw the host's mode switch on the right setting, and a
-  // captain who joins reads it to know which lap the room is keeping before
+  // captain who joins reads it to know which lap the harbor is keeping before
   // their own state ever loads. See src/lib/game/mode.ts.
   mode: GameMode;
   // [H9: the unlock code] Which phrase opened this harbor, or null for one
-  // that was never sealed. The lobby reads it to name the door on the room
+  // that was never sealed. The lobby reads it to name the door on the harbor
   // card, so a captain joining a table can see it was opened rather than
   // found. The phrase itself is not on the wire and is not what this is:
   // see src/lib/unlock.ts, where the label lives beside it.
@@ -89,11 +89,11 @@ async function jfetch<T>(url: string, init?: RequestInit): Promise<T> {
   return data as T;
 }
 
-// The two 404 answers more than one route gives, each said once: a room
+// The two 404 answers more than one route gives, each said once: a harbor
 // the caller named that is not there, and a captain the caller named that
 // is not there. Two routes answering one absence with two spellings is
 // how a caller learns to match on prose instead of on the absence.
-export const ROOM_NOT_FOUND = "Room not found";
+export const HARBOR_NOT_FOUND = "Harbor not found";
 export const CAPTAIN_NOT_FOUND = "Captain not found";
 
 export const api = {
@@ -144,7 +144,7 @@ export const api = {
     ),
   logout: () => jfetch<{ ok: true }>("/api/auth/logout", { method: "POST" }),
 
-  // Rooms
+  // Harbors
   listRooms: () => jfetch<{ rooms: RoomSummary[] }>("/api/rooms"),
   createRoom: (body: {
     name: string;
@@ -166,7 +166,7 @@ export const api = {
     }),
   getRoom: (id: string) =>
     jfetch<{ room: RoomDetail; messages: ChatMessage[] }>(`/api/rooms/${id}`),
-  // The room this captain is still seated in, or null. Used on page load to
+  // The harbor this captain is still seated in, or null. Used on page load to
   // put a captain who merely reloaded back aboard instead of stranding them
   // in the Lobby while the harbor waits on their ready vote.
   getActiveRoom: () => jfetch<{ room: RoomDetail | null }>("/api/rooms/active"),
@@ -190,16 +190,16 @@ export const api = {
         voyageEpoch: number;
       } | null;
       difficulty: Difficulty;
-      // The room's mode, which decides the phase order this captain's lap
+      // The harbor's mode, which decides the phase order this captain's lap
       // runs in. Loaded with the save rather than read from anywhere the
-      // client already holds, because the room is the single source of truth
+      // client already holds, because the harbor is the single source of truth
       // for it exactly as it is for difficulty.
       mode: GameMode;
       // [H5: the quota rung] How many captains this voyage was dealt to, as
-      // the room pinned it at departure. The commission's quotas scale with
+      // the harbor pinned it at departure. The commission's quotas scale with
       // it, so a captain who reloads mid voyage draws the board the fleet is
       // actually working on from this rather than from the roster they can
-      // see. 0 means the room has no voyage pinned.
+      // see. 0 means the harbor has no voyage pinned.
       seats: number;
     }>(`/api/game/state?roomId=${roomId}`),
   saveGameState: (roomId: string, data: unknown) =>
@@ -274,7 +274,7 @@ export const api = {
   // [MANIFEST] Captain's Rival: head to head lines for the current user,
   // read by the Captain's Legacy card on the Endgame screen and by the
   // profile modal. Every rivalry the account has is in this one list, so
-  // the card picks the entry for whoever else is in the room rather than
+  // the card picks the entry for whoever else is in the harbor rather than
   // asking for that partner by name.
   listRivals: () => jfetch<{ rivals: RivalEntry[] }>("/api/rivals"),
 

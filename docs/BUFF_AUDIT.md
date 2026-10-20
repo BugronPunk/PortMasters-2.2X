@@ -163,7 +163,7 @@ These are display errors rather than rule errors. The rules are right and the te
 
 The tutorial line hardcodes 100 in a sentence that templates every other number from the difficulty config.
 
-Two entries above have since been corrected. The Purchase panel now reads Harbor Pulse and says the lean is already priced into the board, which is what the pulse genuinely is: the server computes it as the room advances into Phase 1, and startPhase1 hands it straight to genResourceCard, so it describes the prices on the shelf rather than predicting the next round. The Age banner now reads its boundary off the Age's own clock through nextAgeChange, so it counts down instead of claiming a fortnight forever. That branch has no call site at present, so the correction is there for whoever renders it next.
+Two entries above have since been corrected. The Purchase panel now reads Harbor Pulse and says the lean is already priced into the board, which is what the pulse genuinely is: the server computes it as the harbor advances into Phase 1, and startPhase1 hands it straight to genResourceCard, so it describes the prices on the shelf rather than predicting the next round. The Age banner now reads its boundary off the Age's own clock through nextAgeChange, so it counts down instead of claiming a fortnight forever. That branch has no call site at present, so the correction is there for whoever renders it next.
 
 ### Three things that are written and read by nothing
 
@@ -241,7 +241,7 @@ The audit found more working than broken, and it is worth naming the working par
 
 **Both deliberate exclusions are deliberate.** `artisan_inspiration` returns a weight of zero on an empty roster, which is how the draft avoids offering a boon that cannot fire. The `rollModuleChoices` fallback pool is unreachable because tier 0 offers eight modules against a maximum of three slots. Both are correct.
 
-**The Room member candidate filter for Bequest Routing is correct.** It excludes the borrower and the bankrupt captain, which is exactly the set that cannot receive the routing.
+**The Harbor member candidate filter for Bequest Routing is correct.** It excludes the borrower and the bankrupt captain, which is exactly the set that cannot receive the routing.
 
 **The Age memoization and the Tidewatch surge flag are deliberate.** `useAges` is memoized empty on purpose and its comment says so, since a two week cycle does not need a live tick. `tidewatchSurge` is never reset to false on purpose, so a surge lasts the voyage. Neither is a defect.
 

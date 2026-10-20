@@ -29,7 +29,7 @@
 //
 // Five of those values are assigned back into variables declared here
 // rather than destructured at the call site: the three captains and the
-// two harbor ids the cleanup below has to be able to read, whether the
+// two room ids the cleanup below has to be able to read, whether the
 // run passed or threw.
 // =====================================================================
 import "@/server/env";
@@ -73,6 +73,12 @@ import { unlockCodeSuite } from "./suites/31-unlockCode";
 import { telemetrySpineSuite } from "./suites/32-telemetrySpine";
 import { balanceDashboardSuite } from "./suites/33-balanceDashboard";
 import { launchGatesSuite } from "./suites/34-launchGates";
+import { theVoyageLengthSuite } from "./suites/34-theVoyageLength";
+import { theLarderSuite } from "./suites/34-theLarder";
+import { theCrewByNameSuite } from "./suites/34-theCrewByName";
+import { theColdSuite } from "./suites/34-theCold";
+import { thePantrySuite } from "./suites/34-thePantry";
+import { theSurvivalLinesSuite } from "./suites/34-theSurvivalLines";
 import { pathsSuite } from "./suites/35-paths";
 import { pathboundOrderBoardSuite } from "./suites/36-pathboundOrderBoard";
 import { escortContractSuite } from "./suites/37-escortContract";
@@ -106,6 +112,7 @@ import { theFirstVoyageSuite } from "./suites/64-theFirstVoyage";
 import { theHousesAndTheAgesSuite } from "./suites/65-theHousesAndTheAges";
 import { theCrewAndTheLarderSuite } from "./suites/66-theCrewAndTheLarder";
 import { theBilingualHarborSuite } from "./suites/67-theBilingualHarbor";
+import { theLedgerReadsInYourLanguageSuite } from "./suites/68-theLedgerReadsInYourLanguage";
 
 async function main(): Promise<void> {
   console.log(`\nSmoke testing ${BASE}\n`);
@@ -121,7 +128,7 @@ async function main(): Promise<void> {
   let quickStartRoomId: string | null = null;
 
   // Every harbor that already exists before this run starts. Cleanup only
-  // ever deletes a room this run created, so a Quick Start that seats the
+  // ever deletes a harbor this run created, so a Quick Start that seats the
   // test captains into somebody's real open harbor cannot take that harbor
   // down with it.
   const preExistingRoomIds = new Set(
@@ -139,7 +146,7 @@ async function main(): Promise<void> {
     // Harbors opened for the one walk that sails a voyage rather than
     // probing a route. They are this run's, so cleanup deletes them, and
     // they are listed here rather than reused from the fields above
-    // because that walk needs a room whose whole voyage it drives itself.
+    // because that walk needs a harbor whose whole voyage it drives itself.
     lapRoomIds: [] as string[],
     sockets: [] as Socket[],
     // Only armed once the first account has been proven visible to this
@@ -155,7 +162,7 @@ async function main(): Promise<void> {
     // Safety interlock. The account was just written through the API; if
     // this connection cannot see it, the server and this script are on
     // different databases and the cleanup below would silently do
-    // nothing. Stop now, before a second account and a room exist.
+    // nothing. Stop now, before a second account and a harbor exist.
     const visible = await db.user.findUnique({
       where: { username: host.username },
       select: { id: true },
@@ -376,8 +383,14 @@ async function main(): Promise<void> {
       inBandOutcomes,
       liveReading,
     } = balanceDashboard;
+    // The launch gates are one article of the run, and it used to be one
+    // file of 2,305 lines. It is now a run of articles, one theme each,
+    // and the run takes them in the order the checks used to come in. The
+    // four survival families hand their lines back rather than reading
+    // them, so the house rule over the whole set is read once, at the end
+    // of them.
     console.log("\nThe launch gates");
-    await launchGatesSuite(run, {
+    await launchGatesSuite({
       dashRecord,
       emptyReading,
       floorReading,
@@ -385,10 +398,28 @@ async function main(): Promise<void> {
       inBandOutcomes,
       liveReading,
       telHome,
+    });
+    console.log("\nThe voyage's length, and the table that sails it");
+    await theVoyageLengthSuite(run, {
       telSail,
       telStand,
       telWaitForOne,
     });
+    console.log("\nThe Larder, and the crew that eats from it");
+    const larderLines = await theLarderSuite();
+    console.log("\nThe crew, by name");
+    const crewLines = await theCrewByNameSuite(run);
+    console.log("\nThe clothes, and the cold");
+    const coldLines = await theColdSuite();
+    console.log("\nThree foods, spoilage and the split hold");
+    const pantryLines = await thePantrySuite();
+    console.log("\nThe survival layer's own lines");
+    await theSurvivalLinesSuite([
+      larderLines,
+      crewLines,
+      coldLines,
+      pantryLines,
+    ]);
     console.log("\nThe paths");
     await pathsSuite();
     console.log("\nThe pathbound order board");
@@ -544,8 +575,16 @@ async function main(): Promise<void> {
     // ahead of the ready check.
     console.log("\nThe Bilingual Harbor");
     await theBilingualHarborSuite();
+    // The ledger's own article is the language pack's other half: the
+    // book and its readers are the pack, and this is what the pack is
+    // for, a captain's own record reading in the language they are
+    // holding. It opens no harbor either, and it sits with the pack
+    // because the two are one story: the pack is the book's half and
+    // the ledger is the reader's.
+    console.log("\nThe ledger reads in your language");
+    await theLedgerReadsInYourLanguageSuite();
     // The ready check's article is the one that needs a harbor and a wall
-    // clock rather than a table: its cure is a grace the room has to be
+    // clock rather than a table: its cure is a grace the harbor has to be
     // watched through, so it is the last thing the run does and it opens a
     // harbor of its own to spend that time in.
     console.log("\nThe ready check that stalls");

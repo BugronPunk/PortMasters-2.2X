@@ -61,25 +61,21 @@ import type { VoyageLogEntry } from "@/lib/game/voyage-log";
 import { voyageLogLine } from "@/lib/game/voyage-log";
 import {
   GAMBIT,
-  LEDGER_PHRASE,
-  call,
   carriesADash,
   check,
   openAuthedSocket,
-  signUp,
-  suffix,
   switchFor,
   voyageState,
   waitForEvent,
   withEnv,
   withoutComments,
 } from "../harness";
+import { openMarketHarbor, rememberRows, settle } from "../wire";
 import type { Captain, WireHistory } from "../wire";
-import type { Socket } from "socket.io-client";
 import type { SmokeRun } from "../run";
 
 export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
-  // ---- The board, on a captain's own machine ----
+  // ========== The board, on a captain's own machine ==========
   //
   // The switch is switched on for the whole block, the same way the
   // bench's is, so every check below that is not about the switch is
@@ -119,7 +115,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
 
     // The goods a rumor may name, read the way the desk and the server
-    // read them: one leg ahead, against the room's own charter. Fair
+    // read them: one leg ahead, against the harbor's own charter. Fair
     // Winds never opens a tier and Open Waters opens one at leg four,
     // which is what gives the checks below a real commodity the coming
     // market does not trade and a real commodity that unlocks on the
@@ -139,7 +135,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     check(
       !goodsAt("open_waters", 3).includes(tierOne) &&
         goodsAt("open_waters", 4).includes(tierOne),
-      "and a tier is nameable one leg before the port stocks it, because a rumor is a claim about the market the room has not reached yet: a captain can speak about a cargo before the harbor has the goods, which is the fiction the plan asks for",
+      "and a tier is nameable one leg before the port stocks it, because a rumor is a claim about the market the harbor has not reached yet: a captain can speak about a cargo before the harbor has the goods, which is the fiction the plan asks for",
     );
     check(
       rumorGoodAllowed("Hemp", "fair_winds", 3) &&
@@ -156,7 +152,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
 
     // The wait, which is the one rule in this feature a client cannot
-    // carry: it is measured off the room's own rows.
+    // carry: it is measured off the harbor's own rows.
     const speaker = "captain-a";
     const spoke = (rounds: number[], who = speaker) =>
       rounds.map((round) => ({ publisherUserId: who, round }));
@@ -212,7 +208,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     const pinnedLegs = voyageState({ difficulty: "fair_winds" }).maxRounds;
     check(
       pinnedLegs === voyageRoundsFor(GAMBIT, "fair_winds") && pinnedLegs === 12,
-      "the length the closing leg is read against is one number read in exactly one place: the legs a captain's own state pins at departure are the legs the server reads off the room when it decides whether a rumor has a market to land on",
+      "the length the closing leg is read against is one number read in exactly one place: the legs a captain's own state pins at departure are the legs the server reads off the harbor when it decides whether a rumor has a market to land on",
     );
     check(
       rumorCanLand(1, pinnedLegs) &&
@@ -262,7 +258,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       "and the band a rumor leans a price by is the Harbormaster's own tenth rather than a second number kept beside it, which is what makes a rumor a call the table already knows how to read and what keeps the plan's guard on how swingy a price may become one number in one place",
     );
 
-    // One row, as the room holds it and as three readers may see it.
+    // One row, as the harbor holds it and as three readers may see it.
     const rumorRow: BazaarRumor = {
       id: rumorId(speaker, 5),
       publisherUserId: speaker,
@@ -289,7 +285,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         asOther?.direction === null &&
         asLater?.direction === 1 &&
         rumorRow.direction === 1,
-      "the direction is stripped for every reader but its publisher while the rumor stands, and it is public the moment the market it moved is drawn, while the row the room holds keeps it either way: the fleet is handed the captain, the good and the leg rather than the lean, and the row itself is never rewritten",
+      "the direction is stripped for every reader but its publisher while the rumor stands, and it is public the moment the market it moved is drawn, while the row the harbor holds keeps it either way: the fleet is handed the captain, the good and the leg rather than the lean, and the row itself is never rewritten",
     );
     check(
       asOther?.publisherName === "Smoke aroma" &&
@@ -395,7 +391,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       "and a lean off a save is held to the band the constant declares with everything that is not a finite number dropped, so a save edited to lean a good by half is read as a rumor's worth and no more, which is the defensive half of the plan's own guard on how swingy a price may become",
     );
 
-    // The two sentences, which are the ones a captain reads and the room
+    // The two sentences, which are the ones a captain reads and the harbor
     // keeps.
     check(
       rumorDirectionLine({ good: "Silk", direction: 1 }).includes("Silk") &&
@@ -418,10 +414,10 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         !rumorLine.includes("higher") &&
         !rumorLine.includes("lower") &&
         !rumorLine.includes("%"),
-      "the room's log carries the captain and the good and never the direction, because the log is public the instant it is written and the direction is not public until the market answers the row",
+      "the harbor's log carries the captain and the good and never the direction, because the log is public the instant it is written and the direction is not public until the market answers the row",
     );
 
-    // ---- The market the lean lands on ----
+    // ========== The market the lean lands on ==========
     //
     // One leg drawn twice from one seed for two captains who differ in
     // one thing only: what the bazaar told them. The cards have to come
@@ -613,7 +609,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
   });
 
-  // ---- The desk and the handler, read as source ----
+  // ========== The desk and the handler, read as source ==========
   //
   // The panel and the publish handler are read here rather than driven,
   // for the reason the engine block above needs no socket: what these
@@ -667,7 +663,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   // speaking path rather than one.
   check(
     deskSource.includes(
-      "The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through.",
+      "The board keeps those two legs and no more. Older rows moved markets the harbor has already priced and traded through.",
     ) &&
       deskSource.includes("which good they named") &&
       deskSource.includes("each {SELLER_PATH.name}") &&
@@ -722,7 +718,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     "the checkpoint a publish is judged against is read after the room row rather than before it, and nothing between that read and the row being written yields: a phase that moved out of the Parley while the database read was in flight is refused rather than written under, which is the stale phase the two reads were reordered to close",
   );
 
-  // ---- The bazaar, in a real harbor ----
+  // ========== The bazaar, in a real harbor ==========
   //
   // Three captains at a table of their own, for the reason the two blocks
   // above give: the harbor this run shares is still standing at the end
@@ -734,51 +730,16 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   // for the check.
   // Short labels, because a username is capped and the suffix is six
   // characters of it.
-  const bazaarSeller = await signUp("baz_s");
-  const bazaarReader = await signUp("baz_r");
-  const bazaarThird = await signUp("baz_t");
-  run.extraAccounts.push(bazaarSeller, bazaarReader, bazaarThird);
-
-  const bazaarRoom = await call<{ room: { id: string; code: string } }>(
-    "/api/rooms",
-    {
-      method: "POST",
-      cookie: bazaarSeller.cookie,
-      body: JSON.stringify({
-        name: `Smoke bazaar ${suffix}`,
-        isPublic: false,
-        difficulty: "fair_winds",
-        mode: "ocean_gambit",
-        unlock: LEDGER_PHRASE,
-      }),
-    },
-  );
-  if (bazaarRoom.status !== 200) {
-    throw new Error("No harbor to spread a rumor in.");
-  }
-  const bazaarRoomId = bazaarRoom.body.room.id;
-  const bazaarCrew = [bazaarSeller, bazaarReader, bazaarThird];
-  const bazaarJoins = await Promise.all(
-    bazaarCrew.slice(1).map((captain) =>
-      call<{ room: { id: string } }>("/api/rooms/join", {
-        method: "POST",
-        cookie: captain.cookie,
-        body: JSON.stringify({ code: bazaarRoom.body.room.code }),
-      }),
-    ),
-  );
-  check(
-    bazaarJoins.every((join) => join.status === 200),
-    "three captains can sit at a table where rumors are spread",
-  );
-
+  //
+  // The table itself is the shared one the four consent markets sit at, so
+  // what this suite names is the bazaar: the stem of the harbor's name, the
+  // frame its board arrives on and the row it carries.
+  //
   // Each socket's newest board, and every row that board has ever
   // carried, the second being what makes the checks below claims about
   // what a captain was told rather than about what they happened to read
   // last.
   const bazaarBoards = new Map<string, PublicRumor[]>();
-  const bazaarSeen = new Map<string, Set<string>>();
-  const bazaarSockets = new Map<string, Socket>();
   // The one invariant this whole feature is built on, read on every frame
   // that reaches any of the three captains rather than at the two moments a
   // row happens to be published. A standing row is a market that has not
@@ -787,9 +748,9 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   // did. It is empty at the end of the run or the feature is broken
   // somewhere no single check above was pointed at.
   //
-  // Standing is judged against the leg the room was standing on rather
-  // than against a clock: every move of the room in this suite goes through
-  // parkBazaar, so this is never behind the room, and the only frames that
+  // Standing is judged against the leg the harbor was standing on rather
+  // than against a clock: every move of the harbor in this suite goes through
+  // parkBazaar, so this is never behind the harbor, and the only frames that
   // can arrive between two parks are the ones a park itself caused.
   let bazaarLeg = 0;
   const bazaarLeaks: string[] = [];
@@ -798,38 +759,42 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   // ever read is a run whose frames stopped arriving rather than a run with
   // no leaks in it, and the two numbers are read together at the end.
   let bazaarOwnReads = 0;
-  for (const captain of bazaarCrew) {
-    const socket = await openAuthedSocket(captain);
-    run.sockets.push(socket);
-    const seatedHere = waitForEvent<WireHistory>(
-      socket,
-      "chat:history",
-      (payload) => payload?.roomId === bazaarRoomId,
-    );
-    socket.emit("room:join", { roomId: bazaarRoomId });
-    await seatedHere;
-    socket.on("bazaar:update", (payload: BazaarBoard) => {
-      if (payload?.roomId !== bazaarRoomId) return;
-      bazaarBoards.set(captain.id, payload.rumors);
-      const seen = bazaarSeen.get(captain.id) ?? new Set<string>();
-      for (const row of payload.rumors) {
-        seen.add(row.id);
-        if (row.direction === null || row.round < bazaarLeg) continue;
-        if (row.publisherUserId === captain.id) {
-          bazaarOwnReads += 1;
-          continue;
+  const bazaar = await openMarketHarbor(
+    run,
+    {
+      labels: ["baz_s", "baz_r", "baz_t"],
+      harbor: "bazaar",
+      difficulty: "fair_winds",
+      openFailure: "No harbor to spread a rumor in.",
+    },
+    (captain, socket, roomId, seen) => {
+      socket.on("bazaar:update", (payload: BazaarBoard) => {
+        if (payload?.roomId !== roomId) return;
+        bazaarBoards.set(captain.id, payload.rumors);
+        rememberRows(
+          seen,
+          captain.id,
+          payload.rumors.map((row) => row.id),
+        );
+        for (const row of payload.rumors) {
+          if (row.direction === null || row.round < bazaarLeg) continue;
+          if (row.publisherUserId === captain.id) {
+            bazaarOwnReads += 1;
+            continue;
+          }
+          bazaarLeaks.push(`${captain.username} read ${row.id}`);
         }
-        bazaarLeaks.push(`${captain.username} read ${row.id}`);
-      }
-      bazaarSeen.set(captain.id, seen);
-    });
-    bazaarSockets.set(captain.id, socket);
-  }
-  const bazaarSocketOf = (captain: Captain): Socket => {
-    const found = bazaarSockets.get(captain.id);
-    if (!found) throw new Error(`No socket for ${captain.username}.`);
-    return found;
-  };
+      });
+    },
+  );
+  const [bazaarSeller, bazaarReader, bazaarThird] = bazaar.crew;
+  const bazaarRoomId = bazaar.roomId;
+  const bazaarSeen = bazaar.seen;
+  const bazaarSocketOf = bazaar.socketOf;
+  check(
+    bazaar.joins.every((join) => join.status === 200),
+    "three captains can sit at a table where rumors are spread",
+  );
   const bazaarBoardOf = (captain: Captain): PublicRumor[] =>
     bazaarBoards.get(captain.id) ?? [];
   const bazaarDirectionOf = (
@@ -837,7 +802,6 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     rowId: string,
   ): RumorDirection | null | undefined =>
     bazaarBoardOf(captain).find((row) => row.id === rowId)?.direction;
-  const bazaarSettle = () => new Promise((resolve) => setTimeout(resolve, 500));
   // The emit and the wait are one call, for the reason the market above
   // gives: a refusal waited for after the fact is a refusal this run might
   // already have missed.
@@ -866,7 +830,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
   // The boards a claim reads beyond the one it watched a frame on.
   //
-  // A board is delivered per socket rather than per room: the one pass
+  // A board is delivered per socket rather than per harbor: the one pass
   // that writes a frame writes it on each captain's own connection, and
   // the order two of them land in is not the order the server wrote them.
   // So a claim that read a board which had not taken the frame in yet
@@ -892,7 +856,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
         ),
     );
 
-  // The room's own seat, moved the way this suite moves any room's seat.
+  // The harbor's own seat, moved the way this suite moves any harbor's seat.
   // A checkpoint only ever moves forward, so the legs below are walked in
   // order rather than named at random.
   const bazaarRoomRow = async () =>
@@ -921,16 +885,16 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
       await new Promise((resolve) => setTimeout(resolve, 250));
       row = await bazaarRoomRow();
     }
-    // The leg the room is standing on now, which is the leg every frame
+    // The leg the harbor is standing on now, which is the leg every frame
     // this park caused is read against by the scan above. Set after the
-    // room has moved rather than before it, so a frame the park itself
+    // harbor has moved rather than before it, so a frame the park itself
     // caused is judged against the leg it was caused by rather than the one
     // it left.
     bazaarLeg = round;
     return row;
   };
   const bazaarReadyAll = (round: number, phase: Phase) => {
-    for (const captain of bazaarCrew) {
+    for (const captain of bazaar.crew) {
       bazaarSocketOf(captain).emit("phase:ready", {
         roomId: bazaarRoomId,
         round,
@@ -952,9 +916,9 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     );
 
   bazaarSocketOf(bazaarSeller).emit("room:start", { roomId: bazaarRoomId });
-  await bazaarSettle();
+  await settle();
 
-  // The bazaar belongs to the Parley, and the departure puts the room at
+  // The bazaar belongs to the Parley, and the departure puts the harbor at
   // its opening seat rather than at one, so this is refused out of season
   // by construction rather than by a clock the run has to wait on.
   const bazaarAtPort = await parkBazaar(2, "market");
@@ -1063,20 +1027,20 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   // harbor heard is priced by the market it names whether or not the
   // captain who said it is still ashore.
   bazaarSocketOf(bazaarSeller).close();
-  await bazaarSettle();
+  await settle();
   check(
     bazaarBoardOf(bazaarThird).length === 2 &&
       bazaarSeen.get(bazaarThird.id)?.size === 2,
     "and a captain who leaves the table does not take their rumor with them, because a rumor is not a promise: dropping the row would reprice the good for everyone still sailing, which is a settlement applied halfway rather than a cleanup",
   );
 
-  // A captain who comes back is handed the room's board, and the row they
+  // A captain who comes back is handed the harbor's board, and the row they
   // own comes back to them with the lean still on it: the personalization
   // is a property of the payload rather than of the broadcast that
   // happened to be in flight when they left.
   const bazaarReload = await openAuthedSocket(bazaarSeller);
   run.sockets.push(bazaarReload);
-  bazaarSockets.set(bazaarSeller.id, bazaarReload);
+  bazaar.sockets.set(bazaarSeller.id, bazaarReload);
   const bazaarSnapshot = waitForEvent<BazaarBoard>(
     bazaarReload,
     "bazaar:update",
@@ -1115,10 +1079,10 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   check(
     bazaarTooSoon !== null &&
       bazaarTooSoon === rumorCooldownLine(RUMOR_COOLDOWN_ROUNDS),
-    "and a captain who has already spoken this leg is refused in the sentence the desk prints, counted off the rows the room already holds rather than off a counter a doctored client could simply not obey",
+    "and a captain who has already spoken this leg is refused in the sentence the desk prints, counted off the rows the harbor already holds rather than off a counter a doctored client could simply not obey",
   );
 
-  // The room's log, which is the other place the trade is written down.
+  // The harbor's log, which is the other place the trade is written down.
   const bazaarLog = waitForEvent<{
     roomId: string;
     entries: VoyageLogEntry[];
@@ -1148,10 +1112,10 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
           good: bazaarSilkRow.good,
         }),
       ),
-    "the room's log carries the rumor as the bazaar wrote it, with the captain and the good and never the direction, because the log is public the instant it is written and the direction is not public until the market answers the row",
+    "the harbor's log carries the rumor as the bazaar wrote it, with the captain and the good and never the direction, because the log is public the instant it is written and the direction is not public until the market answers the row",
   );
 
-  // ---- The leg the rumors land on ----
+  // ========== The leg the rumors land on ==========
   //
   // The market of leg four is the one both rows were aimed at, and it is
   // opened by the advance out of Dawn, which is the step the server hangs
@@ -1268,7 +1232,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     "and a market nobody spoke about is sent an empty lean rather than no lean at all, because a market that is never told last leg's rumor is over would price the same good twice",
   );
 
-  // ---- The closing leg, which has no market left to move ----
+  // ========== The closing leg, which has no market left to move ==========
   //
   // The last leg of the voyage, walked to rather than sailed to: a
   // checkpoint only ever moves forward and nothing between here and there
@@ -1292,7 +1256,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
     "and the refusal is a refusal rather than a row written and then discarded: the board still carries the voyage's three rows and no fourth, and the captain is told the leg rather than a wait, because the two refusals are two different facts about their table and only one of them is about their own record",
   );
 
-  // ---- A restarted voyage has a bazaar nobody has spoken at ----
+  // ========== A restarted voyage has a bazaar nobody has spoken at ==========
   //
   // The rows go with the voyage that ends, which is the half of that clear
   // that is load bearing rather than tidy: a row is what a captain's
@@ -1300,7 +1264,7 @@ export async function aromaTheBazaarRumorSuite(run: SmokeRun): Promise<void> {
   // would refuse its publisher in the voyage about to begin, for legs they
   // never spoke in, and the desk would draw that wait over a button with
   // nothing behind it. The reading below is what the old rows would have
-  // cost, computed off the very rows the room is holding, paired with what
+  // cost, computed off the very rows the harbor is holding, paired with what
   // the reopened bazaar actually does with them.
   const bazaarOldRows = bazaarBoardOf(bazaarThird);
   const bazaarHeldLeg = bazaarOldRows.find(

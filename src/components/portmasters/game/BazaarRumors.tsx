@@ -38,7 +38,7 @@ import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { RefusalLine } from "../shared";
 import { MarketBlock, MarketEmpty, MarketPanel } from "./OfferBoard";
-import type { Bazaar } from "./phases/PhaseShared";
+import { PathDeskRow, type Bazaar } from "./phases/PhaseShared";
 
 // The speaking path's own record, resolved once at module load rather than
 // on every row, the same way the escort market and the bench resolve
@@ -139,14 +139,14 @@ export function BazaarRumors({
   );
   // The one leg of a voyage where a rumor would move nothing, read off the
   // pinned length on this captain's own state: the same reading the server
-  // makes off the room (see rumorCanLand). The voyage length is pinned
+  // makes off the harbor (see rumorCanLand). The voyage length is pinned
   // rather than recomputed for the reason every reader of it is (see
   // maxRounds in the game types).
   const closesHere = !rumorCanLand(game.currentRound, game.maxRounds);
   const canSpeak = mine && !closesHere && cooldown < 1 && goods.length > 0;
-  // This captain's own row for the leg the room is standing in, which is
+  // This captain's own row for the leg the harbor is standing in, which is
   // the confirmation: a publish is answered by a broadcast rather than by
-  // an acknowledgement, so the desk reads the room's own board back rather
+  // an acknowledgement, so the desk reads the harbor's own board back rather
   // than remembering what it asked for. A client that kept its own receipt
   // would be a second record of a fact the server already holds.
   const myRow = bazaar.rumors.find(
@@ -330,7 +330,7 @@ export function BazaarRumors({
  *
  * The window is the reason the empty board's claim is read off the whole
  * list rather than off the two legs it draws. "Nobody has spoken yet this
- * voyage" is a claim about every row the room holds, and it would be false
+ * voyage" is a claim about every row the harbor holds, and it would be false
  * the moment a captain speaks and then lets a leg or two go by: the
  * fleet's own rumor would be off the board while the board announced that
  * the voyage had been silent. So the claim is read off the whole list and
@@ -352,13 +352,13 @@ function RumorList({
         {rumors.length === 0
           ? t("Nobody has spoken at the bazaar yet this voyage.")
           : t(
-              "Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through.",
+              "Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the harbor has already priced and traded through.",
             )}
       </MarketEmpty>
     );
   }
   // Newest first, and within one leg the last captain to speak first. The
-  // list arrives in the order the room heard it, so a reverse is the whole
+  // list arrives in the order the harbor heard it, so a reverse is the whole
   // of the ordering rather than a sort with a tie break to get wrong.
   const ordered = [...shown].reverse();
   return (
@@ -372,6 +372,11 @@ function RumorList({
 
 /**
  * One row, read by whether the market has answered it and by whose it is.
+ *
+ * The frame is the path desk's own row, the one the market desks draw
+ * their offers on, stacked rather than laid out on one line: a rumor
+ * carries its chip line above the sentence that explains it, and a copy of
+ * the frame would be a copy of a shape the tree already wears.
  *
  * The direction is drawn as the clause the engine writes (see
  * rumorDirectionLine) rather than as a sentence built here, so the number a
@@ -404,7 +409,7 @@ function RumorRow({
   const landsOn = rumorLandsOn(row);
   // The port's own answer to the row, which is readable on exactly the leg
   // it priced the row and off exactly the cards this captain holds: from
-  // the next leg on, the state's market is the leg the room is standing
+  // the next leg on, the state's market is the leg the harbor is standing
   // in, and the reader answers null for a market that has not been drawn
   // (see rumorLandedLine). It is drawn on this captain's own rows because
   // it is written about their own rumor: a rumor moves each reader's own
@@ -414,14 +419,7 @@ function RumorRow({
   const outcome =
     mine && !standing ? rumorLandedLine(row, game.resourceCards) : null;
   return (
-    <div
-      className={cn(
-        "rounded-md px-3 py-2 text-xs border",
-        mine
-          ? "bg-due/[0.06] border-due/20"
-          : "bg-background/60 border-black/5 dark:border-white/10",
-      )}
-    >
+    <PathDeskRow mine={mine} stack>
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <span className="text-sm leading-none" aria-hidden>
           {SELLER_PATH.crest}
@@ -464,6 +462,6 @@ function RumorRow({
               outcome ? ` ${outcome}` : ""
             }`}
       </p>
-    </div>
+    </PathDeskRow>
   );
 }

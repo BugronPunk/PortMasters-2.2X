@@ -32,6 +32,7 @@
 import { cardById } from "./cards";
 import { HELD_POWER_CAP } from "./constants/cards";
 import type { CardRecord } from "./constants/cards";
+import { normalizeIdList } from "./id-list";
 import type { GameState, ModifierKey } from "./types";
 
 // ========== The save ==========
@@ -51,12 +52,15 @@ import type { GameState, ModifierKey } from "./types";
  * durable by accident, which is the one way this field can lie about the
  * record it was written from. A repeat is dropped the same way, because
  * the merge below would read it twice for nothing.
+ *
+ * What a list is, and what an entry of it may be, is read by the one
+ * reader every list of ids shares (see normalizeIdList in ./id-list), so
+ * this healing and the voyage's queued moments cannot drift on what a
+ * save is allowed to say.
  */
 export function normalizeHeldBoons(raw: unknown): string[] {
-  if (!Array.isArray(raw)) return [];
   const held: string[] = [];
-  for (const id of raw) {
-    if (typeof id !== "string" || held.includes(id)) continue;
+  for (const id of normalizeIdList(raw)) {
     const card = cardById(id);
     if (card === null || card.kind !== "boon") continue;
     if (card.trigger === "boon_draft") continue;

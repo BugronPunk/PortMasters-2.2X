@@ -5,7 +5,9 @@ import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Term } from "../../Term";
+import { PanelLabel } from "../../shared";
 import { loanSettleLine } from "../phases/SettlementAid";
+import { PanelTotal } from "../phases/PhasePanels";
 import { Row, SubRow } from "./Rows";
 import type { RosterEntry } from "../GameStatusPanel";
 
@@ -79,19 +81,19 @@ export function DuesTab({
                 value={t("{r.due} Gold", { "r.due": r.due })}
               />
             ))}
-          <div
-            className={cn(
-              "mt-1 flex items-center justify-between border-t pt-2",
-              safe ? "border-gain/20" : "border-alarm/30",
-            )}
+          <PanelTotal
+            tone={safe ? "border-gain/20" : "border-alarm/30"}
+            className="mt-1"
+            label={
+              <span className="text-xs font-semibold">{t("💸 Total Due")}</span>
+            }
           >
-            <span className="text-xs font-semibold">{t("💸 Total Due")}</span>
             <span
               className={cn("font-bold", safe ? "text-gain" : "text-alarm")}
             >
               {t("{contract.fee} Gold", { "contract.fee": pendTotal })}
             </span>
-          </div>
+          </PanelTotal>
           {safe ? (
             <div className="mt-1.5 text-center text-[10px] text-gain">
               {t("✅ Funds sufficient for round end")}
@@ -110,9 +112,9 @@ export function DuesTab({
 
       {hasLoans && (
         <div className="mt-3 border-t border-black/5 pt-2 dark:border-white/10">
-          <div className="mb-1 text-[10px] font-semibold tracking-wide text-muted-foreground">
+          <PanelLabel tone="text-muted-foreground" className="mb-1">
             {t("━━ Outstanding Loans ━━")}
-          </div>
+          </PanelLabel>
           {debts.map((d) => (
             <div
               key={d.id}

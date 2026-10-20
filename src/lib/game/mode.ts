@@ -2,14 +2,14 @@
 // PortMasters 2.2 Parallel Release: game modes
 //
 // One data record defines every mode, the same shape ./difficulty.ts uses
-// for tiers, and for the same reason: a mode is a ROOM property, so the
+// for tiers, and for the same reason: a mode is a HARBOR property, so the
 // host picks it once and every captain in the harbor resolves the same
 // record. Read MODES[normalizeMode(x)] and nothing else.
 //
 // The reason modes exist as a separate axis from difficulty is that the
 // two answer different questions. Difficulty says how hard the voyage is:
 // how long, how wide the market, how likely a raid. Mode says which game
-// you are playing: which phases the room synchronizes on, in what order,
+// you are playing: which phases the harbor synchronizes on, in what order,
 // and what happens to a seat that fails. Classic is the voyage PortMasters
 // 2 Parallel Release has always run: the same ports, the same table, the
 // same manifest, with the goods sorted before the conversation. Both modes
@@ -28,7 +28,7 @@
 // to this record for the same reason. The briefing on the Welcome screen,
 // the rule for a failed seat, and the list of ways the mode plays
 // differently from the founding voyage all sit here, and every surface
-// that teaches a mode (the lobby's manual, the in room tutorial and the
+// that teaches a mode (the lobby's manual, the in harbor tutorial and the
 // guide) reads them out of here rather than wording its own. That is what
 // keeps three teachers from teaching three modes, which is not a
 // hypothetical: the tutorial spent a release telling a Gambit captain that
@@ -85,8 +85,8 @@ type ModeBriefing =
 
 interface ModeConfig {
   // Display metadata. The voyage card reads icon, badge, tagline and
-  // summary, and the room card reads icon and badge. There is deliberately
-  // no long display name: badge is what the interface has room to show, and
+  // summary, and the harbor card reads icon and badge. There is deliberately
+  // no long display name: badge is what the interface has harbor to show, and
   // the surfaces that show it agree because they read it from here.
   badge: string;
   icon: string;
@@ -109,7 +109,7 @@ interface ModeConfig {
   // step anybody takes, so a fold would hand the captain a leg they never
   // play. And the shipped mode's line speaks of four moves where the leg
   // has six phases, because a captain reads a round as the handful of
-  // decisions they make rather than as the room's gates: the two are not
+  // decisions they make rather than as the harbor's gates: the two are not
   // the same list and were never meant to be. The chart is held to the lap
   // from the other side instead: every leg names the phase it is, and the
   // suite proves the legs cover the mode's own leg phases once each, in
@@ -154,7 +154,7 @@ interface ModeConfig {
   experimental: boolean;
 
   // Flags a mode a host cannot simply pick: the harbor takes a phrase, and
-  // the phrase is the one the room remembers (see src/lib/unlock.ts, which
+  // the phrase is the one the harbor remembers (see src/lib/unlock.ts, which
   // holds the table of them and is the only thing that decides which one
   // opens which mode).
   //
@@ -167,12 +167,12 @@ interface ModeConfig {
   sealed: boolean;
 
   // The synchronized lap of one round, in order, for this mode. Only these
-  // phases are gated behind the room wide ready check; personal substates
+  // phases are gated behind the harbor wide ready check; personal substates
   // like module drafting and terminal ones like bankruptcy are never
   // checkpoints. See ./checkpoint.ts, which is the only consumer.
   //
   // A rank computed from one mode's order is meaningless in another, since
-  // the rank is the index times the lap length. Everyone in a room shares a
+  // the rank is the index times the lap length. Everyone in a harbor shares a
   // mode, so this is safe by construction, and checkpointRank takes the mode
   // as an argument rather than reading a global so that it stays true when a
   // future screen compares two voyages side by side.
@@ -228,7 +228,7 @@ interface ModeConfig {
   // the tally that counts it read this one record, so neither can move it
   // without the other. Null on the shipped mode, which is the whole of the
   // gate: a Classic voyage is not a voyage where a captain's sheet is ever
-  // opened to the room, and a rung of null says so in the same breath as
+  // opened to the harbor, and a rung of null says so in the same breath as
   // the field that would carry it.
   //
   // The plan's rollback note for this slice is "so the mode should go off
@@ -286,7 +286,7 @@ interface ModeConfig {
   // ladder decides the length.
   //
   // [I5: session length, and table size] A pinned length is the mode's
-  // answer to a question the tier cannot answer: how much room the
+  // answer to a question the tier cannot answer: how much harbor the
   // deduction has to develop. The plan's words are that eight is too short
   // for it and sixteen is too long to hold the tension, so Gambit runs
   // twelve legs on every tier while the tier keeps every other dial it
@@ -309,7 +309,7 @@ interface ModeConfig {
   // GameState.maxRounds, while the server side readers that recompute from
   // this record read the new number until that voyage ends. That window is
   // one voyage wide and closes itself, which is why the length is
-  // configuration here rather than a column on the room: a column would
+  // configuration here rather than a column on the harbor: a column would
   // have to be written at departure, delivered to every client and cleared
   // on restart to buy what the save already carries.
   voyageLegs: number | null;
@@ -390,7 +390,7 @@ export const MODES: Record<GameMode, ModeConfig> = {
     // it moved: the manifest is filled after the table has been read.
     //
     // The artisan bench lives inside Market rather than beside it (see
-    // ../game/phases.ts), so the round from the harbour's side is six
+    // ../game/phases.ts), so the round from the harbor's side is six
     // gates where it used to be eight. A Classic captain's own round is
     // the one they know: buy, trade at the table, set the crew, fill the
     // manifest.
@@ -423,7 +423,7 @@ export const MODES: Record<GameMode, ModeConfig> = {
       "Trade orders are committed before the social window opens, so a promise about what you are going to do can be broken invisibly.",
     experimental: true,
     // [H9: the unlock code] Sealed, so a host cannot charter this harbor
-    // without the phrase, and the phrase is a room setting rather than an
+    // without the phrase, and the phrase is a harbor setting rather than an
     // account one: whoever heard it can open the table for everybody
     // sitting at it. The gate itself lives in the create route, because
     // the mode is fixed at creation exactly as the tier is.
@@ -473,7 +473,7 @@ export const MODES: Record<GameMode, ModeConfig> = {
     // trade, because they are who this mode moved the leg to reach. And
     // the orders wear the verb the mode is built on rather than the one
     // Classic uses (see the tagline above): the manifest is filled and
-    // closed before the room starts talking, so nothing in it can be
+    // closed before the harbor starts talking, so nothing in it can be
     // revised once it does.
     //
     // The chart buys two things the line cannot carry. Every leg gets the
@@ -529,7 +529,7 @@ export const MODES: Record<GameMode, ModeConfig> = {
     // The mode's own words for the rules above, and the length it pins.
     // They are read on three surfaces and written on one, which is the
     // whole reason the fields above exist: a captain who opens the lobby's
-    // manual, the in room tutorial and the guide is reading the same
+    // manual, the in harbor tutorial and the guide is reading the same
     // sentences in all three, and a rule that moves moves them together.
     // Every figure inside them is quoted rather than retyped, for the same
     // reason: the maroon's share is read off the constant the vote itself
@@ -552,13 +552,13 @@ export const MODES: Record<GameMode, ModeConfig> = {
       "The manifest closes before the table opens: Orders runs ahead of Parley, so you commit to your sheet first and nothing on it can be revised once the fleet starts talking.",
       `Every voyage here runs ${GAMBIT_LEGS} rounds, whatever tier you sail. That is the length the harbor's two votes are tuned to.`,
       "Every captain is dealt a private card when the voyage leaves the dock, and no one else can see it: most are Honest Captains sailing the fleet's public objective, while a table of four or more hides a Pirate in the fleet and a table of six or more may hide a Broker beside them. Every card turns face up when the voyage ends.",
-      `From round ${AUDIT_FROM_ROUND}, a simple majority of the fleet can open one captain's manifest at a Parley. The room is shown ${AUDIT_REVEAL_COUNT} of that captain's last ${AUDIT_WINDOW} fills, and calling the vote spends the rest of that Parley's trading.`,
+      `From round ${AUDIT_FROM_ROUND}, a simple majority of the fleet can open one captain's manifest at a Parley. The harbor is shown ${AUDIT_REVEAL_COUNT} of that captain's last ${AUDIT_WINDOW} fills, and calling the vote spends the rest of that Parley's trading.`,
       `From round ${GAMBIT_MAROON_FROM}, ${MAROON_VOTE_SHARE.toLowerCase()} of the captains still sailing can vote one captain ashore, once a voyage. The ship and its hold go to the harbor, half that captain's Gold stays aboard, and they take up the Harbormaster's hand: once a round, they name a port and lean every price there ${PORT_SHIFT_PERCENT} percent either way.`,
     ],
     // The one structural change this mode makes on day one, and it is the
     // center of the whole design argument: the trade manifest moves ahead of
     // the cross captain trade board. Ordering and committing happen
-    // simultaneously and hidden, and only then does the room talk. Reverse
+    // simultaneously and hidden, and only then does the harbor talk. Reverse
     // those two and a captain can simply wait, watch what everyone else
     // bought, and trade against known information, which is what makes the
     // classic order a market game rather than a table game. Every phase
@@ -596,7 +596,7 @@ export const MODES: Record<GameMode, ModeConfig> = {
 // second, so the safe choice is the one a captain sees first.
 export const MODE_ORDER: readonly GameMode[] = ["classic", "ocean_gambit"];
 
-// Any unknown value, meaning a stale save, a room created before modes
+// Any unknown value, meaning a stale save, a harbor created before modes
 // existed, or a malformed request, falls back to the founding mode rather
 // than throwing. Same defensive shape normalizeDifficulty uses.
 export function normalizeMode(value: unknown): GameMode {

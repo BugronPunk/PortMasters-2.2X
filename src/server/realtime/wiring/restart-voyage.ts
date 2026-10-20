@@ -94,7 +94,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
           // [I1: the telemetry spine] The reopened lobby's clock starts
           // now. Room.createdAt is the harbor's birthday and never moves,
           // so a voyage dealt from this reopened table would otherwise
-          // report a fill time counting every hour since the room was
+          // report a fill time counting every hour since the harbor was
           // first chartered; the record's openedAt reads this column at
           // departure instead (see openVoyageTelemetry).
           lobbyOpenedAt: new Date(),
@@ -158,14 +158,14 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
       // tally merges by max, so a zero report leaves the old number
       // standing and the new voyage would inherit the old one's board.
       //
-      // The clear takes the room's commission claim first, and that is the
+      // The clear takes the harbor's commission claim first, and that is the
       // half that makes it a clear rather than a race: a report raises its
       // line against the commission it read, and one whose read is still in
       // flight here would raise that line into the fresh board a moment
       // after this ran, where no report of zero can ever take it back out
       // again (see claimObjectiveRoom in ../presence). So this waits for
-      // the reports standing in the room to finish, and a report that
-      // arrives behind this claim reads the room again and finds the new
+      // the reports standing in the harbor to finish, and a report that
+      // arrives behind this claim reads the harbor again and finds the new
       // voyage's commission rather than the dead one's.
       const releaseObjective = await claimObjectiveRoom(roomId);
       try {
@@ -176,7 +176,7 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
       // And the audit goes with them, for the harsher version of the same
       // reason: the reveal is the flag that makes the audit once per
       // voyage, so a new voyage that kept the old one would start having
-      // already spent it, and the room's first vote would vanish with no
+      // already spent it, and the harbor's first vote would vanish with no
       // frame to explain why.
       clearAudits(roomId);
       // [F5: public offers] And the fleet's ledger, which is the same
@@ -226,8 +226,8 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
       // [I1: the telemetry spine] The voyage that was under way stops
       // here, and it stops by the host's hand rather than by an ending,
       // which is the outcome this record carries. Written before the
-      // frame that tells the room it is over, so a record exists by the
-      // time any captain can ask the room what just happened, and
+      // frame that tells the harbor it is over, so a record exists by the
+      // time any captain can ask the harbor what just happened, and
       // deliberately not awaited: the write is a measurement, and a slow
       // disk is not allowed to hold up a table waiting to play again.
       void closeVoyageTelemetry(
@@ -240,9 +240,9 @@ export function wireRestartVoyage(io: Server, socket: Socket): void {
         voyageEpoch: restarted.voyageEpoch,
         difficulty: restarted.difficulty,
         // Rides along for the same reason difficulty does. A restart resets
-        // the voyage but not the harbor, so the mode is whatever the room
+        // the voyage but not the harbor, so the mode is whatever the harbor
         // was created with, and every captain rebuilding their state here
-        // has to rebuild it on the lap the room is actually keeping. The
+        // has to rebuild it on the lap the harbor is actually keeping. The
         // restart deliberately cannot change it: a host switching laps
         // between voyages would be switched out from under the table, so
         // the mode is fixed at creation exactly as the tier is.

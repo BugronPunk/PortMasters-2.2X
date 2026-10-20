@@ -32,6 +32,6 @@ export function formatDate(d: Date | string): string {
 
 // Forwarded from ./rooms so the Lobby and GameRoom can keep importing
 // normalizeRoomName from "@/lib/utils" as the original single process build
-// did. The function itself lives in ./rooms beside the room code that also
+// did. The function itself lives in ./rooms beside the harbor code that also
 // uses it.
 export { normalizeRoomName } from "./rooms";

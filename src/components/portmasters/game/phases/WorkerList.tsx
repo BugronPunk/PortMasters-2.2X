@@ -11,7 +11,8 @@ import {
   frozenBenchLine,
   idleBenchLine,
 } from "@/lib/game/status-copy";
-import type { GameState, Worker } from "@/lib/game/types";
+import type { LedgerAct } from "@/lib/game/ledger";
+import type { Worker } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import {
   HuePanel,
@@ -70,7 +71,7 @@ function WorkerList({
       can say which hand the cold has taken. Passed in rather than pulled off
       a state this component does not hold, the same as cost above. */
   round: number;
-  act: (fn: (g: GameState, logs: string[]) => void) => void;
+  act: LedgerAct;
 }) {
   if (!list.length) return null;
   return (
@@ -90,7 +91,11 @@ function WorkerList({
       </div>
       {list.map((w, i) => (
         <div
-          key={i}
+          // The hand's own name, which is what tells one hand from another
+          // and what the row prints. A hand leaves the list when it is
+          // dismissed and another takes its place, so a row keyed by its
+          // place would be a different hand every time the list changed.
+          key={w.name}
           className="flex items-center justify-between bg-background/70 rounded-md px-3 py-1.5 my-1 text-xs border border-black/5 dark:border-white/10"
         >
           {/* The row leads with the person rather than with their trade:

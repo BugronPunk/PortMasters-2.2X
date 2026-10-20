@@ -25,7 +25,7 @@ import {
  * floor under this). The roll's filter promised the card fits over the
  * heaviest module on the hull, so at least one row here always fits.
  *
- * The room's bar is drawn under the header for the reason the draft's is:
+ * The harbor's bar is drawn under the header for the reason the draft's is:
  * this screen is a seat the ready check waits on, and the captain standing
  * in it is the one who should be able to see the table waiting.
  */

@@ -56,7 +56,7 @@ import type { GameState } from "./types";
  * Both switches, and the order matters: the capacity model is a rule
  * about provisions, so a table without the provisions layer plays the
  * base game exactly, whatever the split switch says. With both on, the
- * hold is two capacities; with either off, every room this module
+ * hold is two capacities; with either off, every harbor this module
  * answers is unbounded and food is capped by the Larder's own ceiling in
  * ./larder, which is what this game has always done.
  */
@@ -140,9 +140,9 @@ export function storesSlots(): number {
  * a half meals of salt fish takes two.
  *
  * Deliberately not clamped at zero from above: a hold over its ceiling
- * (see the module header) answers with a negative room, and the reader
+ * (see the module header) answers with a negative harbor, and the reader
  * that cares clamps it. Callers deciding whether something fits ask
- * whether the room is at least what they want, which a negative answers
+ * whether the harbor is at least what they want, which a negative answers
  * correctly.
  */
 export function storeRoomMeals(

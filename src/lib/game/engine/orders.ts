@@ -16,14 +16,15 @@
 // obvious, so it stays as one readable top to bottom settlement.
 //
 // One block is the exception, and it is the one other surfaces have to
-// read: the percentage bonuses the reward carries live in
-// orderRewardBonusSteps above, because the board's quotes, the planner's
-// totals and the advisor's sentence have to price an order through the
-// same arithmetic the fill pays it through. The precedent is the freight
-// reader in ./pricing, which the settlement, the tooltip and every quote
-// come through as well; the ordering the paragraph above protects holds
-// inside that block too, and it stays written down there in its own
-// comment.
+// read: what an order pays lives in quoteOrder above, which runs the
+// chain the fill pays through (the percentage bonuses themselves live in
+// orderRewardBonusSteps, one step further along), because the board's
+// quotes, the planner's totals and the advisor's sentence have to price
+// an order through the same arithmetic the fill pays it through. The
+// precedent is the freight reader in ./pricing, which the settlement,
+// the tooltip and every quote come through as well; the ordering the
+// paragraph above protects holds inside that quote too, and it stays
+// written down there in its own comment.
 //
 // The order generators come from ./market: Market and Orders draw from
 // the same seeded deck, so there is exactly one implementation of them.
@@ -36,6 +37,7 @@
 // =====================================================================
 import { cardLead, cargoCarriesTag } from "../cards";
 import { ICONS } from "../constants/brand";
+import { joined, line, type LedgerLine } from "@/lib/game/ledger";
 import { t } from "@/lib/game/i18n";
 import { PRODUCTS, RESOURCES } from "../constants/goods";
 import { PATH_ORDER_SLOTS } from "../constants/paths";
@@ -52,7 +54,7 @@ import {
   marketCountsFor,
 } from "../difficulty";
 import { pathOrdersOn } from "../flags";
-import { lockingPathFor, pathLockLine, type PathId } from "../paths";
+import { lockingPathFor, pathLockLedgerLine, type PathId } from "../paths";
 import {
   isCharterGood,
   isTier1CharterGood,
@@ -62,7 +64,7 @@ import { createRng, type Rng } from "../rng";
 import type { GameContext, GameState, OrderCard } from "../types";
 import { hasModule } from "./core";
 import {
-  opportunistLine,
+  opportunistLedgerLine,
   opportunistMayBorrow,
   opportunistPayout,
 } from "./opportunist";
@@ -78,9 +80,10 @@ import { queueMilestoneMoment } from "./milestones";
 import {
   brokersFavorCommission,
   calcTransportCost,
-  calcVAT,
+  explainVAT,
   fleetOfTreasuresUnits,
   getIntelCost,
+  type PriceBreakdown,
 } from "./pricing";
 
 // The hold's own guard on an order, as one function rather than a loop
@@ -200,7 +203,7 @@ export function openOrderCount(state: GameState): number {
 
 // One step of the reward chain below, as the settle's log loop and any
 // reader that wants the itemized uplift consume it.
-export type OrderRewardStep = { cardId: string; pct: number; amount: number };
+type OrderRewardStep = { cardId: string; pct: number; amount: number };
 
 // The percentage bonuses a completed order's reward carries, read as one
 // chain rather than at each surface that shows or pays the number.
@@ -260,7 +263,7 @@ export function orderRewardBonusSteps(
   // fact rather than the good's. There is no tag for "arrived with the
   // second charter" and there should not be one, because a tag that
   // means a schedule would be the same good tagged differently in two
-  // rooms. So the cards name their scope in their text (the first
+  // harbors. So the cards name their scope in their text (the first
   // charter's goods, the second charter's) and the scope is read off
   // the pool the schedule unlocks.
   //
@@ -304,10 +307,144 @@ export function orderRewardBonusSteps(
   return { reward, steps };
 }
 
+/**
+ * One order's money, read the way the settlement reads it: the pieces the
+ * reward is made of, the reward itself, and what the run costs to carry
+ * the goods.
+ *
+ * The reward is the number the harbor credits and the net is the number
+ * the captain banks, so a panel that shows either of them is showing the
+ * settlement's own arithmetic rather than a second reading of it.
+ */
+export type OrderQuote = {
+  /**
+   * The number the chain starts from: the card's face value, or the
+   * payout a borrow would pay when the fill is a borrow.
+   */
+  basis: number;
+  /**
+   * The VAT the sale pays, taken off the basis before any bonus is
+   * applied to what is left.
+   */
+  vat: number;
+  /**
+   * The VAT line by line, per unit, for the tooltip that shows where the
+   * tax came from. Null where the order pays no VAT at all, which is a
+   * card that sells nothing rather than a card that pays nothing.
+   */
+  vatBreakdown: PriceBreakdown | null;
+  /**
+   * The steps of the percentage bonus chain, one per arm that paid, for
+   * the settlement's log.
+   */
+  bonusSteps: OrderRewardStep[];
+  /**
+   * The Broker's commission, taken last, and on the card's face value.
+   */
+  commission: number;
+  /**
+   * The commission as a share of the face value, the way the ledger
+   * prints it.
+   */
+  commissionPct: number;
+  /**
+   * What the harbor credits for the goods: the basis, less the VAT, plus
+   * the bonuses, less the commission.
+   */
+  reward: number;
+  /**
+   * What the run costs to carry the goods.
+   */
+  freight: number;
+  /**
+   * What the captain banks: the reward less the freight.
+   */
+  net: number;
+};
+
+/**
+ * What an order pays, read through the one chain the settlement runs.
+ *
+ * Every surface that prices an order reads this: the settlement that
+ * credits the money, the board's card, the advisor's sentence. The chain
+ * is arithmetic with an order to it, and three copies of it is how the
+ * board came to quote the face value (which adds the VAT back and
+ * forgets the Broker's cut) while the fill credited something else, and
+ * how the advisor's sentence came to name a figure the harbor was never
+ * going to pay.
+ *
+ * The order the chain takes is the order the settlement has always taken,
+ * and the order is the rule:
+ *
+ *   the borrow's penalty first, so every step below scales the reduced
+ *     payout rather than the card's advertised one;
+ *   the VAT next, per unit, off what is left;
+ *   the percentage bonuses on what the VAT left, each arm scaling the
+ *     running reward;
+ *   the Broker's commission last, and on the card's face value, which is
+ *     what the settlement has always charged it on;
+ *   the freight outside the reward altogether, because the Salvage Crane
+ *     can refund it and a refund is a roll at the fill, not a price.
+ *
+ * The crane's refund and the Tax Evasion audit are both rolls at the
+ * fill, so no quote can carry them: the net here is the net before them.
+ */
+export function quoteOrder(
+  state: GameState,
+  order: OrderCard,
+  options: { borrowed?: boolean } = {},
+): OrderQuote {
+  const basis = options.borrowed
+    ? opportunistPayout(state, order.reward)
+    : order.reward;
+  // The taxed line is read once, and only a line that actually sells
+  // something is taxed: a card with no resource lines, or a line without
+  // a count, pays its reward and no VAT rather than dividing by an
+  // absence and carrying a NaN payout into the ledger.
+  const productRef = order.isProductOrder ? order.resources[0] : undefined;
+  const productUnits = productRef?.required ?? 0;
+  let vat = 0;
+  let vatBreakdown: PriceBreakdown | null = null;
+  if (productRef && productUnits > 0) {
+    vatBreakdown = explainVAT(state, productRef.type, basis / productUnits);
+    vat = vatBreakdown.final * productUnits;
+  }
+  const chain = orderRewardBonusSteps(state, order, basis - vat);
+  // The commission is a share of the card's face value and not of what
+  // the chain left, which is what the settlement has always charged it
+  // on: a borrowed order pays less, and the Broker still takes his cut of
+  // the advertised reward.
+  const commission = order.isBrokerFavor
+    ? brokersFavorCommission(order.reward)
+    : 0;
+  const commissionPct =
+    order.reward > 0 ? Math.round((commission / order.reward) * 100) : 0;
+  // The chain's own figure is the reward the bonuses were applied to, so
+  // the commission comes off that rather than off the face value.
+  const reward = chain.reward - commission;
+  const freight = calcTransportCost(
+    state,
+    order.totalItems,
+    cargoCarriesTag(order.resources, "woven"),
+    fleetOfTreasuresUnits(state, order.resources),
+  );
+  return {
+    basis,
+    vat,
+    vatBreakdown,
+    bonusSteps: chain.steps,
+    commission,
+    commissionPct,
+    reward,
+    freight,
+    net: reward - freight,
+  };
+}
+
 export function completeOrder(
   state: GameState,
   orderId: number,
-  logs: string[],
+  logs: LedgerLine[],
   borrow = false,
 ) {
   const order = state.customerCards.find((o) => o.id === orderId);
@@ -327,13 +464,13 @@ export function completeOrder(
   // false, so a refusal that arrives from anywhere else is the flat one.
   const locked = lockedBehind(state, order);
   if (locked && !(borrow && opportunistMayBorrow(state, locked))) {
-    logs.push(`❌ ${pathLockLine(locked)}`);
+    logs.push(pathLockLedgerLine(locked));
     return;
   }
   const short = orderShortfall(state, order);
   if (short) {
     logs.push(
-      t("❌ Inventory short! Need {short.type}×{short.required}", {
+      line("❌ Inventory short! Need {short.type}×{short.required}", {
         "short.type": short.type,
         "short.required": short.required ?? 0,
       }),
@@ -359,25 +496,29 @@ export function completeOrder(
   // subtracted from the quoted freight after the fact, which is how the
   // board came to quote one number and this fill charge another.
   const luxuryUnits = fleetOfTreasuresUnits(state, order.resources);
-  let transport = calcTransportCost(
-    state,
-    order.totalItems,
-    hasWoven,
-    luxuryUnits,
-  );
+  // The order priced through the one reader every surface shares (see
+  // quoteOrder above): the borrow's penalty, the VAT, the percentage
+  // bonuses and the Broker's commission, in the order the settlement has
+  // always taken them. The freight comes through the same read, so the
+  // Gold charged here and the figures the board and the advisor print are
+  // one arithmetic.
+  const quote = quoteOrder(state, order, { borrowed: locked !== null });
+  let transport = quote.freight;
   // Read through the same absence the shortfall check above reads: a line
   // without a count takes nothing, rather than subtracting an undefined
   // and poisoning every number the hold reports for the rest of the
   // voyage.
   for (const r of order.resources) state.inventory[r.type] -= r.required ?? 0;
-  let reward = order.reward;
-  // [D6: Free Captain: Opportunist] The borrow's penalty lands here, on the
-  // face value and before anything else touches the number, so every step
+  // The reward the fill credits, read out of the quote above.
+  const reward = quote.reward;
+  // [D6: Free Captain: Opportunist] The borrow's penalty lands on the face
+  // value and before anything else touches the number, so every step
   // below (product VAT, the charter percentages, the Woven Monopoly) scales
   // the reduced payout rather than the card's advertised one. That is the
   // order the plan's own price implies: a captain who borrowed the order is
   // paid the borrowed order's reward, and a percentage bonus read off the
-  // unreduced face value would quietly refund part of the penalty.
+  // unreduced face value would quietly refund part of the penalty. The
+  // quote above takes that penalty as its basis for exactly this reason.
   //
   // The spend sits at the same line as the payout, which is safe because
   // every guard above has already passed and nothing below can refuse: an
@@ -386,22 +527,18 @@ export function completeOrder(
   // allowance cannot be spent twice for one fill.
   if (locked) {
     state.opportunistBorrows += 1;
-    reward = opportunistPayout(state, order.reward);
-    logs.push(opportunistLine(state, order.reward, reward));
+    logs.push(opportunistLedgerLine(state, order.reward, quote.basis));
   }
-  let totalVat = 0;
-  // The taxed line is read once, and only a line that actually sells
-  // something is taxed: a card with no resource lines, or a line without
-  // a count, pays its reward and no VAT rather than dividing by an
-  // absence and carrying a NaN payout into the ledger.
-  const productRef = order.isProductOrder ? order.resources[0] : undefined;
-  const productUnits = productRef?.required ?? 0;
-  if (productRef && productUnits > 0) {
-    const unitVat = calcVAT(state, productRef.type, reward / productUnits);
-    totalVat = unitVat * productUnits;
-    reward -= totalVat;
-    state.vatPaid += totalVat;
-    logs.push(t("🧾 Product Sales VAT: {totalVat} Gold", { totalVat }));
+  // The VAT the sale pays, out of the quote above and into the captain's
+  // books, and onto the ledger where it has always been written. The
+  // taxed line itself is read once, in the quote: a card with no resource
+  // lines, or a line without a count, pays its reward and no VAT rather
+  // than dividing by an absence.
+  if (quote.vatBreakdown) {
+    state.vatPaid += quote.vat;
+    logs.push(
+      line("🧾 Product Sales VAT: {totalVat} Gold", { totalVat: quote.vat }),
+    );
   }
   // The Fleet of Treasures receipt, read here so the line still lands
   // before the money moves. It reports the Gold the discount actually
@@ -422,8 +559,8 @@ export function completeOrder(
       calcTransportCost(state, order.totalItems, hasWoven) - transport;
     if (freightOff > 0) {
       logs.push(
-        t("{fleetLead}: {freightOff}g off freight", {
-          fleetLead: cardLead("fleet_of_treasures"),
+        line("{fleetLead}: {freightOff}g off freight", {
+          fleetLead: (locale) => cardLead("fleet_of_treasures", locale),
           freightOff,
         }),
       );
@@ -434,38 +571,36 @@ export function completeOrder(
   state.totalCosts += transport;
   const origTransport = transport;
   // The percentage bonuses the reward carries, applied as one shared
-  // chain: this settle and every surface that quotes the order read the
-  // same function (see orderRewardBonusSteps above), so the board's
-  // Reward and Net figures, the planner's totals, the advisor's sentence
-  // and the Gold actually credited here are one arithmetic. The log
-  // prints each step under the lead its arm has always named.
-  const bonus = orderRewardBonusSteps(state, order, reward);
-  reward = bonus.reward;
-  for (const step of bonus.steps) {
+  // chain: the quote above ran it, and every surface that quotes the
+  // order reads that same quote, so the board's Reward and Net figures,
+  // the planner's totals, the advisor's sentence and the Gold actually
+  // credited here are one arithmetic. The log prints each step under the
+  // lead its arm has always named.
+  for (const step of quote.bonusSteps) {
     logs.push(
-      t("{lead}: +{pct}% Reward!", {
-        lead: cardLead(step.cardId),
+      line("{lead}: +{pct}% Reward!", {
+        lead: (locale) => cardLead(step.cardId, locale),
         pct: step.pct,
       }),
     );
   }
   // [F4: boons at milestone moments] The path question, read once here
   // for the moment queue at the bottom of this function; the reward
-  // chain above asks the same question about the same card through
-  // orderRewardBonusSteps, which is the reader every surface shares. The
-  // gate is the lock's own reader rather than the card's raw marker, so
-  // the D2 switch is held at both ends (with path orders off no card is
-  // anyone's path order and no order pays the bonus), and the pathless
-  // captain is asked about before the comparison rather than through it,
-  // since a null path matching a null derivation would pay a bonus for
-  // following no path at all.
+  // chain above asks the same question about the same card through the
+  // quote, which reads orderRewardBonusSteps, the reader every surface
+  // shares. The gate is the lock's own reader rather than the card's raw
+  // marker, so the D2 switch is held at both ends (with path orders off no
+  // card is anyone's path order and no order pays the bonus), and the
+  // pathless captain is asked about before the comparison rather than
+  // through it, since a null path matching a null derivation would pay a
+  // bonus for following no path at all.
   const followsPath =
     state.path !== null && pathOrderOf(order, state.mode) === state.path;
   if (hasModule(state, "salvage_crane") && Math.random() < 0.3) {
     state.money += transport;
     logs.push(
-      t("{lead}: Refunded {transport} Gold transport!", {
-        lead: cardLead("salvage_crane"),
+      line("{lead}: Refunded {transport} Gold transport!", {
+        lead: (locale) => cardLead("salvage_crane", locale),
         transport,
       }),
     );
@@ -474,8 +609,8 @@ export function completeOrder(
   if (hasModule(state, "tax_evasion") && Math.random() < 0.15) {
     state.money -= 20;
     logs.push(
-      t("🚨 AUDIT! {taxEvasionLead} triggered. Lost 20 Gold!", {
-        taxEvasionLead: cardLead("tax_evasion"),
+      line("🚨 AUDIT! {taxEvasionLead} triggered. Lost 20 Gold!", {
+        taxEvasionLead: (locale) => cardLead("tax_evasion", locale),
       }),
     );
   }
@@ -489,17 +624,14 @@ export function completeOrder(
     state.totalCosts -= diff;
   }
   // Broker's Favor commission: the Broker takes a cut of the order's
-  // reward (see brokersFavorCommission), so the captain's own money,
-  // revenue, and score all reflect the amount net of the commission.
+  // reward (see brokersFavorCommission, and the quote above that reads
+  // it), so the captain's own money, revenue, and score all reflect the
+  // amount net of the commission.
   if (order.isBrokerFavor) {
-    const commission = brokersFavorCommission(order.reward);
-    reward -= commission;
-    const pct =
-      order.reward > 0 ? Math.round((commission / order.reward) * 100) : 0;
     logs.push(
-      t("🤝 Broker's Commission ({pct}%): {commission} Gold", {
-        pct,
-        commission,
+      line("🤝 Broker's Commission ({pct}%): {commission} Gold", {
+        pct: quote.commissionPct,
+        commission: quote.commission,
       }),
     );
   }
@@ -540,36 +672,39 @@ export function completeOrder(
     reward,
   });
   state.orderFills = state.orderFills.slice(-AUDIT_WINDOW);
-  const txt = order.resources
-    .map((r) =>
-      t("{goodIcon}{r.type}×{r.required}", {
+  // The goods are joined at the read rather than at the write, so the
+  // list reads in the reader's language.
+  const txt = joined(
+    order.resources.map((r) =>
+      line("{goodIcon}{r.type}×{r.required}", {
         goodIcon: ICONS[r.type],
-        "r.type": r.type,
+        "r.type": line(r.type),
         "r.required": r.required ?? 0,
       }),
-    )
-    .join(" + ");
+    ),
+    () => " + ",
+  );
   logs.push(
-    t("📦 Completed Order at {order.demandPort}: {txt}", {
+    line("📦 Completed Order at {order.demandPort}: {txt}", {
       "order.demandPort": order.demandPort,
       txt,
     }),
   );
   logs.push(
-    "   " +
-      t(
-        "💰 Reward: {reward} Gold · ⚓ Freight: {transport} Gold = 📊 Net Profit: {netProfit} Gold",
-        { reward, transport, netProfit: reward - transport },
-      ),
+    line(
+      "💰 Reward: {reward} Gold · ⚓ Freight: {transport} Gold = 📊 Net Profit: {netProfit} Gold",
+      { reward, transport, netProfit: reward - transport },
+      "   ",
+    ),
   );
   logs.push(
-    t("📊 Completed {state.orderCount} transactions", {
+    line("📊 Completed {state.orderCount} transactions", {
       "state.orderCount": state.orderCount,
     }),
   );
   // [MANIFEST 02: Word on the Docks] Fires exactly once per voyage, the
   // instant this captain's own running total crosses the threshold, whether
-  // or not they actually turn out to be first in the room. The React layer
+  // or not they actually turn out to be first in the harbor. The React layer
   // (see GameRoom.tsx) relays this as a claim to the server, which is the
   // one place that actually knows whether anyone else beat them to it.
   if (state.totalOrdersCompleted === WORD_ON_THE_DOCKS_THRESHOLD) {
@@ -590,10 +725,13 @@ export function completeOrder(
 // GameRoom.tsx); every other client that also crossed the threshold just
 // never receives this call, so a losing claim costs nothing and needs no
 // rollback.
-export function claimWordOnTheDocksReward(state: GameState, logs: string[]) {
+export function claimWordOnTheDocksReward(
+  state: GameState,
+  logs: LedgerLine[],
+) {
   state.money += WORD_ON_THE_DOCKS_REWARD;
   logs.push(
-    t(
+    line(
       "📣 Word on the Docks: you were first to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage! +{WORD_ON_THE_DOCKS_REWARD} Gold",
       { WORD_ON_THE_DOCKS_THRESHOLD, WORD_ON_THE_DOCKS_REWARD },
     ),
@@ -606,7 +744,7 @@ export function claimWordOnTheDocksReward(state: GameState, logs: string[]) {
 // so a hold full of otherwise unsellable stock still has a guaranteed buyer.
 // Like the paid Broker's Whisper guarantee in startOrders, it draws with
 // this captain's own Math.random and only appends to their own
-// customerCards, so it can never shift the shared, room wide market anyone
+// customerCards, so it can never shift the shared, harbor wide market anyone
 // else sees. Quantity is capped at the captain's own hold rather than the
 // usual one to three or two to five order range, since
 // brokersFavorCommission (see
@@ -616,12 +754,12 @@ export function callBrokersFavor(
   state: GameState,
   item: string,
   quantity: number,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   if (state.phase !== "orders") return;
   if (state.renownLevel < BROKERS_FAVOR_UNLOCK_LEVEL) {
     logs.push(
-      t(
+      line(
         "❌ Broker's Favor unlocks at Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL}",
         {
           BROKERS_FAVOR_UNLOCK_LEVEL,
@@ -631,26 +769,28 @@ export function callBrokersFavor(
     return;
   }
   if (state.brokersFavorUsed) {
-    logs.push(t("❌ You've already called in a Broker's Favor this voyage"));
+    logs.push(line("❌ You've already called in a Broker's Favor this voyage"));
     return;
   }
   const isRaw = (RESOURCES as readonly string[]).includes(item);
   const isProduct = (PRODUCTS as readonly string[]).includes(item);
   if (!isRaw && !isProduct) {
-    logs.push(t("❌ The Broker can't find a buyer for {item}", { item }));
+    logs.push(line("❌ The Broker can't find a buyer for {item}", { item }));
     return;
   }
   const held = state.inventory[item] || 0;
   if (held <= 0) {
     logs.push(
-      t("❌ You have no {item} in the hold for the Broker to sell", { item }),
+      line("❌ You have no {item} in the hold for the Broker to sell", {
+        item,
+      }),
     );
     return;
   }
   const qty = Math.floor(quantity);
   if (!Number.isFinite(qty) || qty < 1 || qty > held) {
     logs.push(
-      t("❌ Choose between 1 and {held} {item} for the Broker to sell", {
+      line("❌ Choose between 1 and {held} {item} for the Broker to sell", {
         held,
         item,
       }),
@@ -674,30 +814,30 @@ export function callBrokersFavor(
     )
     .join(" + ");
   logs.push(
-    t(
+    line(
       "🤝 Broker's Favor called in: a buyer at {order.demandPort} now wants {txt}. The bigger the ask, the bigger the Broker's cut.",
       { "order.demandPort": order.demandPort, txt },
     ),
   );
 }
 
-export function purchaseIntel(state: GameState, logs: string[]) {
+export function purchaseIntel(state: GameState, logs: LedgerLine[]) {
   // Sold on the Market board and only there, because that is the one screen
   // whose banner makes the promise this purchase depends on: the whisper is
   // cashed by startOrders below, so a rumor bought after the board is dealt
   // could never be honoured. The dialog can outlive the market leg, so the
   // engine refuses a late press rather than charging for it.
   if (state.phase !== "market") {
-    logs.push(t("🔮 The Broker only deals during Market."));
+    logs.push(line("🔮 The Broker only deals during Market."));
     return;
   }
   if (!state.marketDemandTags.length) {
-    logs.push(t("🔮 The Broker has no more whispers..."));
+    logs.push(line("🔮 The Broker has no more whispers..."));
     return;
   }
   const cost = getIntelCost(state);
   if (state.money < cost) {
-    logs.push(t("❌ Need {cost} Gold for a rumor", { cost }));
+    logs.push(line("❌ Need {cost} Gold for a rumor", { cost }));
     return;
   }
   // One press is one purchase, and one fee: what the hull's modules
@@ -735,7 +875,7 @@ export function purchaseIntel(state: GameState, logs: string[]) {
     ) {
       state.brokerTippedPirates = true;
       logs.push(
-        t(
+        line(
           "🕵️ That broker was corrupt. The word is good, but your position leaked: raid risk is up {riskPoints} points this round.",
           { riskPoints: Math.round(cfg.brokerCorruptionRisk * 100) },
         ),
@@ -747,13 +887,13 @@ export function purchaseIntel(state: GameState, logs: string[]) {
 export function startOrders(
   state: GameState,
   ctx: GameContext,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   state.phase = "orders";
   state.orderCount = 0;
   state.completedOrders = [];
   logs.push(
-    t("\n🤝=== Round {state.currentRound} · Orders: Trade Transaction ===", {
+    line("\n🤝=== Round {state.currentRound} · Orders: Trade Transaction ===", {
       "state.currentRound": state.currentRound,
     }),
   );
@@ -783,8 +923,8 @@ export function startOrders(
       ...genMixedOrder(orderRng, orderPools),
     });
     logs.push(
-      t("{lead}: One extra order appeared.", {
-        lead: cardLead("merchants_converge"),
+      line("{lead}: One extra order appeared.", {
+        lead: (locale) => cardLead("merchants_converge", locale),
       }),
     );
   }
@@ -801,7 +941,7 @@ export function startOrders(
   // Both halves of the rumor are honoured, which is the whole of what the
   // word guarantee means on the four screens that print it: the good the
   // whisper names is the good the card asks for (the generators' filter)
-  // and the harbour it names is the harbour the card pays at
+  // and the harbor it names is the harbor the card pays at
   // (portOverride). The port half used to be left to the draw, which
   // quietly made a word that reads as a fact ("Word from Tortuga: High
   // demand for Silk") false on every card that paid somewhere else.
@@ -827,7 +967,7 @@ export function startOrders(
   // Emperor commissions a single large order. Fixed template data with no rng,
   // appended after the seeded draw, so it shifts nobody's stream, and the same
   // template for everyone on that round, since the tier and round it reads are
-  // the room's rather than this captain's. Flagged isProductOrder: false, since
+  // the harbor's rather than this captain's. Flagged isProductOrder: false, since
   // an imperial levy is never charged VAT.
   const mandateIdx = mandateIndexFor(state.difficulty, state.currentRound);
   const mandate =
@@ -861,7 +1001,7 @@ export function startOrders(
       )
       .join(" + ");
     logs.push(
-      t(
+      line(
         "📜 Imperial Mandate at {mandate.port}: {need} for {mandate.reward} Gold. The Emperor's commission is exempt from VAT.",
         {
           "mandate.port": mandate.port,

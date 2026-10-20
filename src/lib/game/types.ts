@@ -356,7 +356,7 @@ export type ObjectiveTraceEntry = {
 //
 // The shape is the allow list, which is why it is this short. An
 // alignment, a hold, a purse or a card would each need a field here to
-// reach the room, and there is no field for any of them, so no version of
+// reach the harbor, and there is no field for any of them, so no version of
 // the reveal can carry one. Widening this type is the only way to widen
 // what the audit can show, and it should be a deliberate change with the
 // smoke suite's sweep updated on the same commit.
@@ -373,7 +373,7 @@ export type OrderFill = {
 // keeps one movement from being applied twice, and the seller's name, for
 // the line the log prints and the panel shows. A claim is what
 // resolvePirateAttack leaves behind when a covered raid finds the hold: the
-// Gold the raid would have taken, carried to the seller through the room.
+// Gold the raid would have taken, carried to the seller through the harbor.
 export type EscortCover = {
   contractId: string;
   sellerName: string;
@@ -396,7 +396,7 @@ export type EscortClaim = {
 // and `moment` names the milestone the answer belonged to, absent for a
 // compass draw. Every id here is a boon the public catalogue knows, which
 // is what lets the server bound a report against the same catalogue the
-// room reads (see readBoonReport in src/server/realtime/wiring/boons).
+// harbor reads (see readBoonReport in src/server/realtime/wiring/boons).
 export type BoonRecord = {
   round: number;
   shown: string[];
@@ -407,23 +407,36 @@ export type BoonRecord = {
 export type GameState = {
   inventory: Record<string, number>;
   money: number;
+  // The captain's Reputation, the standing this voyage has earned so far.
+  //
+  // The field keeps the name it has always had, and the name is not what
+  // the value is called: every screen that prints it says Reputation.
+  // It stays because three things read it by that name and all three
+  // are records rather than code: the save a captain comes back to, the
+  // wire that carries the state, and the Ledger Integrity Pass, which
+  // judges this field by name when it decides whether a save was forged
+  // (see ./integrity). Renaming it would mean a save written by one
+  // build is read by another under a different key, and the integrity
+  // pass's own reading of a forged save would have to change with it.
+  // The account's best voyage, which is the same measure kept for good,
+  // is called bestReputation (see ./legacy).
   score: number;
   currentRound: number;
   maxRounds: number;
-  // The room's difficulty tier (see src/lib/game/difficulty.ts), stamped onto
-  // this state when the voyage is created and refreshed from the room on every
+  // The harbor's difficulty tier (see src/lib/game/difficulty.ts), stamped onto
+  // this state when the voyage is created and refreshed from the harbor on every
   // load, so the engine derives voyage length, market breadth, and raid odds
-  // from a single room wide source. Every captain in a room carries their own
-  // copy of the same room value, which is what keeps their conclusion aligned.
+  // from a single harbor wide source. Every captain in a harbor carries their own
+  // copy of the same harbor value, which is what keeps their conclusion aligned.
   difficulty: Difficulty;
-  // The room's game mode (see src/lib/game/mode.ts), stamped onto this state
-  // when the voyage is created and refreshed from the room on every load, the
+  // The harbor's game mode (see src/lib/game/mode.ts), stamped onto this state
+  // when the voyage is created and refreshed from the harbor on every load, the
   // same way difficulty is. Difficulty says how hard the voyage is; mode says
   // which voyage it is, which is what decides the order this captain's phases
-  // run in. Every captain in a room carries the same value, so they agree on
+  // run in. Every captain in a harbor carries the same value, so they agree on
   // the lap without the server ever having to name a phase.
   mode: GameMode;
-  // The room's voyage epoch (see Room.voyageEpoch in prisma/schema.prisma),
+  // The harbor's voyage epoch (see Room.voyageEpoch in prisma/schema.prisma),
   // stamped onto this state when the voyage is created and folded into the
   // deterministic seed so a restart (which bumps the epoch) rerolls every
   // captain's market, orders, and Broker intel into a brand new voyage.
@@ -600,7 +613,7 @@ export type GameState = {
   marketDemandTags: string[];
   revealedIntel: IntelItem[];
   // [MANIFEST 01: The Harbor Pulse] A per resource price nudge for this
-  // round's Market, keyed by resource name (Hemp, Silk, Tea), derived room
+  // round's Market, keyed by resource name (Hemp, Silk, Tea), derived harbor
   // wide from what the whole harbor bought last round (see
   // computeHarborPulse in src/lib/game/harborPulse.ts) and delivered on the same
   // phase:advance broadcast that already carries every captain into Market
@@ -612,7 +625,7 @@ export type GameState = {
   // else's.
   harborPulse: Record<string, number>;
   // [H7: Maroon and the Harbormaster] The other hand on a port's prices,
-  // and the one that is a captain rather than a room. A marooned captain
+  // and the one that is a captain rather than a harbor. A marooned captain
   // names one port and a direction at the Parley of each leg, and every
   // price at that port is read against this from the next port market
   // until the one after it (see genResourceCard in engine/market.ts, which
@@ -621,12 +634,12 @@ export type GameState = {
   // nothing in arrives as null and clears it.
   //
   // Public by design rather than by accident: the record of who leaned
-  // what is broadcast to the room the moment it is called, and this field
+  // what is broadcast to the harbor the moment it is called, and this field
   // is only the market's copy of it. Null on every voyage with no
   // Harbormaster, which is every Classic voyage and most Gambit ones.
   portShift: PortShift | null;
   // [D5: Aroma: the Bazaar Rumor] The third hand on a price, and the one
-  // that is a good rather than a port or a room. A rumor published at the
+  // that is a good rather than a port or a harbor. A rumor published at the
   // Parley of one leg leans one commodity's band in the market of the
   // next, keyed by good and signed in the direction the publisher named
   // (see rumorLean in src/lib/game/engine/bazaar.ts, which sums the
@@ -643,7 +656,7 @@ export type GameState = {
   bazaarLean: Record<string, number>;
   // [B3: standing orders] What this captain wants done at the seats they
   // are not standing at, written once and read by the engine when the
-  // room's clock plays a seat out from under them. The vocabulary, the
+  // harbor's clock plays a seat out from under them. The vocabulary, the
   // default and the normalizer live in ../game/standing, and the
   // evaluation that reads it lives in ./engine/standing; this field is
   // only the record.
@@ -694,7 +707,7 @@ export type GameState = {
   // reader in the conclusion finishers), which is its only reader.
   largestTrade: number;
   // [MANIFEST 03: Tidewatch Alerts] Flips true, once, the moment the whole
-  // room's combined Reputation crosses TIDEWATCH_SURGE_THRESHOLD (see the
+  // harbor's combined Reputation crosses TIDEWATCH_SURGE_THRESHOLD (see the
   // game:status handler in src/server/realtime/wiring/status-heartbeat.ts,
   // which is where every captain's Reputation is already visible). Read by
   // startMarket to add one extra card to this captain's board from the next
@@ -705,7 +718,7 @@ export type GameState = {
   // The captain's persistent Renown level (see src/lib/game/legacy.ts),
   // copied onto the voyage state so the engine can gate Renown locked skills
   // like Broker's Favor without reaching back into account data. Personal to
-  // each captain, exactly like money, so it never touches the shared room
+  // each captain, exactly like money, so it never touches the shared harbor
   // seed. Refreshed from the captain's legacy on every load / restart.
   renownLevel: number;
   // Broker's Favor is a once per voyage skill (unlocks at Renown Level 5, see
@@ -790,12 +803,12 @@ export type GameState = {
   // the log rather than hidden. Reset every round in startBoonDrafting.
   brokerTippedPirates: boolean;
   // [D3: the escort contract] The leg's cover as this captain's own engine
-  // reads it: set from the room's contract board when this captain is the
+  // reads it: set from the harbor's contract board when this captain is the
   // buyer of an agreed contract for the round, cleared with the rest of the
   // round's facts in startBoonDrafting. The board is the contract's home
-  // (room state, see src/server/realtime/contracts) and this is the mirror
+  // (harbor state, see src/server/realtime/contracts) and this is the mirror
   // the raid roll consults, so the engine never reaches for the network and
-  // a captain whose seller left the room sails unprotected rather than
+  // a captain whose seller left the harbor sails unprotected rather than
   // protected by a contract nobody is on the other end of.
   escortCover: EscortCover | null;
   // The claim a covered raid raises, left on the state for the React layer
@@ -928,7 +941,7 @@ export type GameState = {
   // voyage start so the engine can read it without reaching back into
   // account data. null means the captain hasn't picked a House yet; the
   // perk simply doesn't apply until they do. Personal to each captain,
-  // exactly like renownLevel, so it never touches the shared room seed.
+  // exactly like renownLevel, so it never touches the shared harbor seed.
   houseId: HouseId | null;
   // [MANIFEST: Great Houses] The per voyage flags the House perks flip on.
   // Kept separate from modifierFlags so the ModifierKey union stays pinned
@@ -959,9 +972,9 @@ function initialInventory(): Record<string, number> {
 //
 // Every reader that heals a stored stamp into a round uses this
 // one function: the Larder's fed and spoil rounds, the crew's hungry legs,
-// the wardrobe's tick round, the refit leg stamp (itself written once for
-// two fields), and the opportunist's borrow count. Each reader keeps its own
-// paragraph about its own field; the arithmetic lives here once.
+// the wardrobe's tick round, the refit's two leg stamps, and the
+// opportunist's borrow count. Each reader keeps its own paragraph about its
+// own field; the arithmetic lives here once.
 export function wholeStamp(raw: unknown): number {
   if (typeof raw !== "number" || !Number.isFinite(raw)) return 0;
   return Math.max(0, Math.floor(raw));
@@ -1004,6 +1017,19 @@ function emptyWorkerRoster(): Record<WorkerTypeId, Worker[]> {
 export function flatWorkerRoster(game: Pick<GameState, "workers">): Worker[] {
   const roster = game.workers ?? emptyWorkerRoster();
   return Object.values(roster).flat();
+}
+
+/**
+ * The crew: the artisan roster, counted.
+ *
+ * The count lives beside the roster it reads rather than beside the
+ * screens that print it, so the Larder, the voyage summary, the status
+ * rail and the wage sheet are all counting the same hands. The wage
+ * sheet counts the bill and the rail counts the roster, and the two
+ * agree only because both walk the same list.
+ */
+export function crewSize(game: Pick<GameState, "workers">): number {
+  return flatWorkerRoster(game).length;
 }
 
 // Accepts whatever a save actually holds and returns a complete roster: any
@@ -1050,7 +1076,7 @@ export type GameContext = {
   // intel, reproducible on reload but different from every other captain and
   // rerolled whenever the host restarts the voyage.
   seedBase: string;
-  // The room's own identity, without the captain's. The one draw that has
+  // The harbor's own identity, without the captain's. The one draw that has
   // to come out the same for everybody in the harbor rather than differ per
   // captain is the public objective, so it seeds from this instead of from
   // seedBase. Derived from the room id rather than by stripping the captain
@@ -1073,19 +1099,19 @@ export type VoyageSetup = {
   // Defaults to 1, which leaves Broker's Favor locked, for any caller that
   // does not yet know the captain's Renown.
   renownLevel?: number;
-  // Defaults to 0, the room's first voyage. Callers that know the room's
+  // Defaults to 0, the harbor's first voyage. Callers that know the harbor's
   // current epoch pass it so a fresh voyage is seeded distinctly from the
   // ones before it.
   voyageEpoch?: number;
   // Defaults to the entry tier (see DEFAULT_DIFFICULTY) so any caller that
-  // does not yet know the room's tier still produces a valid state. Callers
+  // does not yet know the harbor's tier still produces a valid state. Callers
   // that know it pass it so maxRounds, starting Gold, and maintenance all
-  // follow the room's chosen tier.
+  // follow the harbor's chosen tier.
   difficulty?: Difficulty;
   // Defaults to the founding mode (see DEFAULT_MODE) so any caller that does
-  // not yet know the room's mode still produces a valid, shippable voyage
+  // not yet know the harbor's mode still produces a valid, shippable voyage
   // rather than accidentally landing a captain in an experimental one.
-  // Callers that know it pass it so the phase lap matches the room's.
+  // Callers that know it pass it so the phase lap matches the harbor's.
   mode?: GameMode;
   // The captain's pledged Great House, read from their CaptainLegacy row.
   // Defaults to null, which is the honest answer for a captain who has not

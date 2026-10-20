@@ -17,8 +17,8 @@
  * reading the mode field exists to move, and a pool whose shape nobody has
  * looked at is one that widens by accident.
  */
-import { CARDS, shippedCards, validateCards } from "@/lib/game/cards";
-import { MODE_POWER_CEILING } from "@/lib/game/constants/cards";
+import { modePoolShape, shippedCards, validateCards } from "@/lib/game/cards";
+import { CARD_KINDS, MODE_POWER_CEILING } from "@/lib/game/constants/cards";
 import type { GameMode } from "@/lib/game/mode";
 
 const subject = shippedCards();
@@ -27,19 +27,17 @@ const findings = validateCards(subject);
 // How many cards each mode runs, and how much power the widest of them
 // carries. Read off the same records the validator reads rather than off a
 // second count kept here.
+const pools = modePoolShape();
 const modes = Object.keys(MODE_POWER_CEILING) as GameMode[];
 const shape = modes
   .map((mode) => {
-    const carried = CARDS.filter((card) => (card.modes[mode] ?? 0) > 0);
-    const widest = carried.reduce((top, card) => Math.max(top, card.power), 0);
-    return `${mode} ${carried.length} cards (widest power ${widest}, ceiling ${MODE_POWER_CEILING[mode]})`;
+    const pool = pools[mode];
+    return `${mode} ${pool.count} cards (widest power ${pool.widest}, ceiling ${MODE_POWER_CEILING[mode]})`;
   })
   .join(", ");
-const kinds = ["boon", "module", "charter"]
-  .map(
-    (kind) => `${kind} ${subject.cards.filter((c) => c.kind === kind).length}`,
-  )
-  .join(", ");
+const kinds = CARD_KINDS.map(
+  (kind) => `${kind} ${subject.cards.filter((c) => c.kind === kind).length}`,
+).join(", ");
 
 if (findings.length === 0) {
   console.log(

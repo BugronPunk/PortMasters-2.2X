@@ -44,8 +44,8 @@ import {
 } from "@/lib/game/telemetry";
 
 // One voyage in flight, as the spine sees it. The fields above the events
-// are the record's header, read from the room once at departure rather
-// than looked up again at the end: a room can be renamed, and the seats a
+// are the record's header, read from the harbor once at departure rather
+// than looked up again at the end: a harbor can be renamed, and the seats a
 // voyage sailed with are the rung it was judged on, which must not follow
 // the roster as captains come and go.
 interface VoyageAccumulator {
@@ -61,7 +61,7 @@ interface VoyageAccumulator {
   // Every captain this voyage has seen: the roster it was dealt at
   // departure, anyone who joined a seat mid voyage, and anyone who gave
   // one up. A captain who leaves is the reason this is a set of its own
-  // rather than a read of the room's roster at the end, since the roster
+  // rather than a read of the harbor's roster at the end, since the roster
   // that closes a voyage no longer names the captains who left it.
   captains: Set<string>;
   // The captains already recorded as gone. A set of its own rather than a
@@ -100,7 +100,7 @@ interface VoyageAccumulator {
   truncated: boolean;
 }
 
-// room -> the voyage that room is sailing. Cleared when the voyage closes,
+// harbor -> the voyage that harbor is sailing. Cleared when the voyage closes,
 // which is every ending this module knows about.
 const voyageTelemetry = new Map<string, VoyageAccumulator>();
 
@@ -138,11 +138,11 @@ function isSampledVoyage(roomId: string, voyageEpoch: number): boolean {
  * creation and bumped by every restart; see prisma/schema.prisma and
  * wiring/restart-voyage.ts). A caller driving this function with
  * hand-built facts instead of a row, which is how the smoke run exercises
- * the spine in process, names the room's own creation, and for a room
+ * the spine in process, names the harbor's own creation, and for a harbor
  * that has never replayed a voyage the two are the same moment: the first
- * lobby is the room's birth. The record's fill time is measured from
+ * lobby is the harbor's birth. The record's fill time is measured from
  * whichever of the two arrives, and the restart bump is what keeps the
- * second voyage out of the first voyage's waiting room.
+ * second voyage out of the first voyage's waiting harbor.
  */
 function lobbyOpenedAtOf(
   room: { lobbyOpenedAt: Date } | { createdAt: Date },
@@ -151,7 +151,7 @@ function lobbyOpenedAtOf(
 }
 
 /**
- * A voyage left the dock. Opens the accumulator, or leaves the room
+ * A voyage left the dock. Opens the accumulator, or leaves the harbor
  * unrecorded when the sampler says so.
  *
  * Called from the one place a voyage starts, after the room row has been
@@ -412,7 +412,7 @@ export function noteLegReport(
  * without the record growing a line per leg.
  *
  * The path and the alignment are the caller's to attach and are read
- * before this is called, off the room's own books, never off the wire:
+ * before this is called, off the harbor's own books, never off the wire:
  * this writer records what it is handed, for the reason every note above
  * takes the accumulator's own numbers. It follows that there is no
  * reader here of the alignment table, and check:private's rule about how
@@ -471,7 +471,7 @@ export function noteCharterTaken(
  * Only a captain the voyage has already counted can leave it. The voyage
  * counts the roster it was dealt at departure and anyone who reported a
  * leg, and this guard is what keeps a spectator who wandered into the
- * room's channel and wandered back out from appearing in the record as a
+ * harbor's channel and wandered back out from appearing in the record as a
  * captain who abandoned the voyage. A seat held by someone who never
  * sailed a leg and never reports one is, from the voyage's own point of
  * view, indistinguishable from a spectator, and the record stays silent
@@ -510,7 +510,7 @@ export function noteCaptainLeft(roomId: string, actor: string): void {
  * about how the voyage stands when it ends.
  *
  * It marks a captain the voyage may not have counted yet, and that is
- * deliberate where noteCaptainLeft refuses to. A carried vote names a room
+ * deliberate where noteCaptainLeft refuses to. A carried vote names a harbor
  * member the harbor sits in judgement of, which is a fact about the voyage
  * even when the captain never filed a leg report, and the close folds
  * anyone marked here into the lines it writes.
@@ -547,7 +547,7 @@ export function noteCaptainMuted(roomId: string, actor: string): void {
  * The voyage stopped. Writes the record and forgets the voyage.
  *
  * The list handed in is the whole truth about the end: the captains still
- * standing in the harbor at this moment, which is the room's live sockets
+ * standing in the harbor at this moment, which is the harbor's live sockets
  * in every caller. A captain in it was there, and every other captain
  * this voyage saw reads as gone from it, whether they gave up their seat
  * a leg ago or were simply not looking at the screen when the voyage
@@ -655,14 +655,14 @@ export async function closeVoyageTelemetry(
     });
   } catch (error) {
     console.warn(
-      `[telemetry] could not store the record for room ${roomId}:`,
+      `[telemetry] could not store the record for harbor ${roomId}:`,
       error,
     );
   }
 }
 
-/** Forget a room without writing anything. For the paths where a voyage
- *  did not happen at all: a room deleted before it sailed, or a harbor
+/** Forget a harbor without writing anything. For the paths where a voyage
+ *  did not happen at all: a harbor deleted before it sailed, or a harbor
  *  the operator closed down. Their absence is not a voyage that stopped,
  *  so it is not a record. */
 export function dropVoyageTelemetry(roomId: string): void {

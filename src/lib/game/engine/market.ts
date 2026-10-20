@@ -3,7 +3,7 @@
 // costs them, and the deterministic draw that decides the board.
 //
 // The generators here are the reason this file matters. They run on a
-// seeded RNG (see ../rng) keyed to the captain, the room and the voyage
+// seeded RNG (see ../rng) keyed to the captain, the harbor and the voyage
 // epoch, so every captain gets their own market that is reproducible
 // across a reload but different from everyone else's. That only holds
 // while the draw depends on nothing but the seed and the charter, which
@@ -18,6 +18,7 @@
 // =====================================================================
 import { cardLead } from "../cards";
 import { ICONS } from "../constants/brand";
+import { joined, line, type LedgerLine } from "@/lib/game/ledger";
 import { t } from "@/lib/game/i18n";
 import {
   COMMODITIES,
@@ -54,12 +55,12 @@ import { getCardFinalCost } from "./pricing";
 // instead of leaving it to the usual randInt roll below.
 //
 // portOverride is the intel guarantee's own (see startOrders): a Broker's
-// Whisper names a harbour as well as a good, and the order it promises has
-// to pay at the harbour it named, so the caller that pins the good pins the
+// Whisper names a harbor as well as a good, and the order it promises has
+// to pay at the harbor it named, so the caller that pins the good pins the
 // port too rather than leaving it to the usual pick below. Both overrides
 // are read the way the filter is, as absent for every other caller, so the
 // six ordinary orders and the paths' own errands keep the draw they had.
-// What the market may draw from this round: whatever the room's tier has
+// What the market may draw from this round: whatever the harbor's tier has
 // unlocked by now (see ./pools). Passed in rather than read from module scope
 // so these generators stay pure functions of (rng, pools) and a captain's
 // seeded draw depends only on the seed and the charter, never on mutable state.
@@ -233,7 +234,7 @@ function genProductPurchaseCard(
 
 // [MANIFEST 01: The Harbor Pulse] pulse holds a per resource multiplier for
 // this round, e.g. { Silk: 0.08 } meaning Silk runs 8% pricier this round
-// because the room leaned into it last round. Optional and defaulted to an
+// because the harbor leaned into it last round. Optional and defaulted to an
 // empty object so every existing call site (and every test of the
 // preserved verbatim economy) keeps producing identical prices when no
 // pulse is in play, which is always true on round 1.
@@ -322,7 +323,7 @@ function genResourceCard(
 // bought a finished Sachet. Read once, right before completeMarket clears
 // purchasedCards/resourceCards, and relayed to the server (see
 // src/lib/use-phase-sync.ts) so it can fold this captain's draw into the
-// room wide tally the next round's pulse is built from.
+// harbor wide tally the next round's pulse is built from.
 export function tallyPurchasesByResource(
   state: GameState,
 ): Record<string, number> {
@@ -354,7 +355,7 @@ export function tallyCardPurchases(
   return out;
 }
 
-// [MANIFEST 01: The Harbor Pulse] Stamps the room wide pulse the server
+// [MANIFEST 01: The Harbor Pulse] Stamps the harbor wide pulse the server
 // computed for this round onto local state, so genResourceCard picks it up
 // the moment startMarket runs below. A plain setter kept as its own function,
 // the same convention purchaseIntel/receiveLoan/etc already follow, called
@@ -382,7 +383,7 @@ export function applyPortShift(state: GameState, shift: PortShift | null) {
 // state, on the same advance the two hands above ride, so the market about
 // to be drawn is already leaned when genResourceCard runs. It is a third
 // setter rather than a widening of one of the other two because the three
-// are three different facts: the pulse is the room's own buying, the shift
+// are three different facts: the pulse is the harbor's own buying, the shift
 // is one captain's call at one port, and the lean is one good moved by
 // whoever spoke at the bazaar.
 //
@@ -440,7 +441,7 @@ export function applyMarketLeans(state: GameState, leans: MarketLeans): void {
   if (leans.bazaarLean) applyBazaarLean(state, leans.bazaarLean);
 }
 
-// [MANIFEST 03: Tidewatch Alerts] Applied on every client in the room the
+// [MANIFEST 03: Tidewatch Alerts] Applied on every client in the harbor the
 // instant the server confirms the combined Reputation threshold was crossed
 // (see the game:status handler in
 // src/server/realtime/wiring/status-heartbeat.ts). A one direction flip:
@@ -448,24 +449,28 @@ export function applyMarketLeans(state: GameState, leans: MarketLeans): void {
 // voyage, and a fresh voyage already resets it through
 // createInitialGameState. Logged once here, at the moment it happens,
 // rather than every round afterward in startMarket.
-export function applyTidewatchSurge(state: GameState, logs: string[]) {
+export function applyTidewatchSurge(state: GameState, logs: LedgerLine[]) {
   if (state.tidewatchSurge) return;
   state.tidewatchSurge = true;
   logs.push(
-    t(
+    line(
       "🌊 Tidewatch Alert: the harbor takes notice of a bustling crew! One more cargo lot joins the Port Purchase board, every round, for the rest of this voyage.",
     ),
   );
 }
 
-export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
+export function purchaseCard(
+  state: GameState,
+  cardId: number,
+  logs: LedgerLine[],
+) {
   const card = state.resourceCards.find((c) => c.id === cardId);
   if (!card) return;
   if (state.purchasedCards.includes(card.id)) return;
   const cost = getCardFinalCost(state, card);
   if (state.money < cost) {
     logs.push(
-      t("❌ Insufficient funds! Need {cost} Gold, Have {state.money} Gold", {
+      line("❌ Insufficient funds! Need {cost} Gold, Have {state.money} Gold", {
         cost,
         "state.money": state.money,
       }),
@@ -484,7 +489,7 @@ export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
   const room = cargoRoom(state);
   if (units > room) {
     logs.push(
-      t(
+      line(
         "❌ No room in the hold for that lot: it takes {units} {slotWord} and {room} {beWord} free.",
         {
           units,
@@ -518,12 +523,12 @@ export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
     const r = card.resources[0];
     if (r) {
       logs.push(
-        t(
+        line(
           "🛒 Bought Product at {card.port}: {icon}{type}×{quantity} (@{price} Gold/item, Mat Cost {matCost} Gold), Total {cost} Gold",
           {
-            "card.port": t(card.port),
+            "card.port": line(card.port),
             icon: ICONS[r.type],
-            type: t(r.type),
+            type: line(r.type),
             quantity: r.quantity ?? 0,
             price: r.price ?? 0,
             matCost: r.materialCost ?? 0,
@@ -533,40 +538,50 @@ export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
       );
     } else {
       logs.push(
-        t("🛒 Bought Product at {card.port}, Total {cost} Gold", {
-          "card.port": t(card.port),
+        line("🛒 Bought Product at {card.port}, Total {cost} Gold", {
+          "card.port": line(card.port),
           cost,
         }),
       );
     }
-    logs.push("   " + t("💡 Tip: VAT applies when selling finished products"));
+    logs.push(
+      line(
+        "💡 Tip: VAT applies when selling finished products",
+        undefined,
+        "   ",
+      ),
+    );
   } else {
-    const txt = card.resources
-      .map((r) =>
-        t("{goodIcon}{r.type}×{r.quantity}({r.price} Gold/item)", {
+    // The goods are joined at the read rather than at the write, so the
+    // list reads in the reader's language and the separator is the one
+    // that language joins with.
+    const txt = joined(
+      card.resources.map((r) =>
+        line("{goodIcon}{r.type}×{r.quantity}({r.price} Gold/item)", {
           goodIcon: ICONS[r.type],
-          "r.type": t(r.type),
+          "r.type": line(r.type),
           "r.quantity": r.quantity ?? 0,
           "r.price": r.price ?? 0,
         }),
-      )
-      .join(" + ");
+      ),
+      () => " + ",
+    );
     logs.push(
-      t("🛒 Bought at {card.port}: {txt}, Total {cost} Gold", {
-        "card.port": t(card.port),
+      line("🛒 Bought at {card.port}: {txt}, Total {cost} Gold", {
+        "card.port": line(card.port),
         txt,
         cost,
       }),
     );
     if (cost < card.totalCost)
       logs.push(
-        t("   ✨ Boon Discount Applied! Saved {saved} Gold", {
+        line("   ✨ Boon Discount Applied! Saved {saved} Gold", {
           saved: card.totalCost - cost,
         }),
       );
   }
   logs.push(
-    t("📊 Purchased {state.purchaseCount} cargo batches", {
+    line("📊 Purchased {state.purchaseCount} cargo batches", {
       "state.purchaseCount": state.purchaseCount,
     }),
   );
@@ -591,7 +606,7 @@ export function purchaseCard(state: GameState, cardId: number, logs: string[]) {
  */
 export function revealRumor(
   state: GameState,
-  logs: string[],
+  logs: LedgerLine[],
   sentence: string,
   params: Record<string, string | number> = {},
 ): void {
@@ -601,7 +616,7 @@ export function revealRumor(
   const openPorts = unlockedPorts(state.difficulty, state.currentRound);
   const port = openPorts[Math.floor(Math.random() * openPorts.length)];
   state.revealedIntel.push({ item, port });
-  logs.push(t(sentence, { port, item, ...params }));
+  logs.push(line(sentence, { port, item, ...params }));
 }
 
 // Named for the phase it opens rather than for its position in the leg. See
@@ -609,7 +624,7 @@ export function revealRumor(
 export function startMarket(
   state: GameState,
   ctx: GameContext,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   state.phase = "market";
   state.purchaseCount = 0;
@@ -642,12 +657,14 @@ export function startMarket(
     );
   }
   logs.push(
-    t("\n⚓=== Round {state.currentRound} · Market: Port Purchase ===", {
+    line("\n⚓=== Round {state.currentRound} · Market: Port Purchase ===", {
       "state.currentRound": state.currentRound,
     }),
   );
   logs.push(
-    t("💰 Current Funds: {state.money} Gold", { "state.money": state.money }),
+    line("💰 Current Funds: {state.money} Gold", {
+      "state.money": state.money,
+    }),
   );
   // [ONLINE] Deterministic port market: this captain's seed, this
   // voyage, this round.
@@ -655,7 +672,7 @@ export function startMarket(
     `${ctx.seedBase}:V${state.voyageEpoch}:R${state.currentRound}:market`,
   );
   state.resourceCards = [];
-  // [DIFFICULTY] Card count comes from the room's tier and the current round
+  // [DIFFICULTY] Card count comes from the harbor's tier and the current round
   // (see marketCountsFor): flat for Fair Winds, widening on the harder tiers.
   const tierPurchaseCount = marketCountsFor(
     state.difficulty,
@@ -665,10 +682,10 @@ export function startMarket(
   // reads as an event rather than an unexplained jump in card count. Fair
   // Winds schedules none, so this never fires on the entry tier. Based on
   // the tier's own count, not the Tidewatch bonus below, so the charter
-  // banner never takes credit for a card the room itself earned.
+  // banner never takes credit for a card the harbor itself earned.
   if (silkRoadCharterOpensOn(state.difficulty, state.currentRound)) {
     logs.push(
-      t(
+      line(
         "🗺️ The Silk Road Charter opens! The harbor grows busier: {tierPurchaseCount} cargo lots and as many buyers from this voyage on.",
         { tierPurchaseCount },
       ),
@@ -681,9 +698,9 @@ export function startMarket(
   // rather than repeating the announcement.
   // [MANIFEST: Great Houses] Vermilion Gate's pledge adds one more cargo lot
   // to this captain's board every round, on top of the tier's own count and
-  // the room's Tidewatch surge. Read straight off the per voyage flags
+  // the harbor's Tidewatch surge. Read straight off the per voyage flags
   // rather than folded into the tier count above, so the charter banner goes
-  // on reporting what the room earned and never takes credit for the House.
+  // on reporting what the harbor earned and never takes credit for the House.
   const houseLot = state.housePerks.vermilionExtraCard ? 1 : 0;
   const purchaseCount =
     tierPurchaseCount + (state.tidewatchSurge ? 1 : 0) + houseLot;
@@ -711,11 +728,11 @@ export function startMarket(
   }
 }
 
-export function completeMarket(state: GameState, logs: string[]) {
-  if (state.purchaseCount === 0) logs.push(t("⏭️ Purchasing skipped"));
+export function completeMarket(state: GameState, logs: LedgerLine[]) {
+  if (state.purchaseCount === 0) logs.push(line("⏭️ Purchasing skipped"));
   else
     logs.push(
-      t("✅ Purchasing ended, bought {state.purchaseCount} batches", {
+      line("✅ Purchasing ended, bought {state.purchaseCount} batches", {
         "state.purchaseCount": state.purchaseCount,
       }),
     );

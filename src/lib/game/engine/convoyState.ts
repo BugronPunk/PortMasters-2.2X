@@ -5,7 +5,8 @@
 // ../convoy.ts; this file is only the part that moves money.
 // =====================================================================
 import type { GameState } from "../types";
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
+import { debitGold } from "./settlement";
 
 // [MANIFEST 04: Convoy Ventures] Escrows a contribution immediately, the
 // same moment barter posting escrows an offer (see postBarterOffer) rather
@@ -18,20 +19,18 @@ import { t } from "@/lib/game/i18n";
 export function contributeToVenture(
   state: GameState,
   amount: number,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
-  if (amount <= 0) return;
-  if (state.money < amount) {
-    logs.push(
-      t("❌ Need {amount} Gold to back that Venture, have {state.money}", {
+  debitGold(state, amount, logs, {
+    short: line(
+      "❌ Need {amount} Gold to back that Venture, have {state.money}",
+      {
         amount,
         "state.money": state.money,
-      }),
-    );
-    return;
-  }
-  state.money -= amount;
-  logs.push(t("⚓ Backed a Venture with {amount} Gold", { amount }));
+      },
+    ),
+    taken: line("⚓ Backed a Venture with {amount} Gold", { amount }),
+  });
 }
 
 // [MANIFEST 04: Convoy Ventures] The payout side, for any of three outcomes.
@@ -50,18 +49,21 @@ export function contributeToVenture(
 export function receiveVentureSettlement(
   state: GameState,
   amount: number,
-  logs: string[],
+  logs: LedgerLine[],
   outcome: "filled" | "failed" | "destroyed",
 ) {
   state.money += amount;
   logs.push(
     outcome === "filled"
-      ? t("⚓ Venture filled! Your share: {amount} Gold", { amount })
+      ? line("⚓ Venture filled! Your share: {amount} Gold", { amount })
       : outcome === "failed"
-        ? t("⚓ Venture missed its deadline. Partial refund: {amount} Gold", {
-            amount,
-          })
-        : t(
+        ? line(
+            "⚓ Venture missed its deadline. Partial refund: {amount} Gold",
+            {
+              amount,
+            },
+          )
+        : line(
             "⚓ Venture canceled: another venture in the harbor already claimed this voyage's one chance. Full refund: {amount} Gold",
             { amount },
           ),

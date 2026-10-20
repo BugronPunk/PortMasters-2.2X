@@ -52,7 +52,7 @@ export async function theCaptainsExchangeInItsOwnPhaseSuite(inputs: {
     "room:members",
     (payload) => (payload?.mutedUserIds ?? []).length === 0,
   );
-  // The exchange only opens while the room is actually in the Parley,
+  // The exchange only opens while the harbor is actually in the Parley,
   // and the checkpoint only follows a report from a voyage that has set
   // sail, so both of those have to happen before the board will take one.
   hostSocket.emit("room:start", { roomId: roomId });

@@ -21,7 +21,7 @@ import { t } from "@/lib/game/i18n";
 const HOUSE_ICON = new Map(HOUSES.map((h) => [h.id, h.icon]));
 
 type SortKey =
-  "renownXP" | "seaMasterCrowns" | "bestScore" | "voyagesCompleted";
+  "renownXP" | "seaMasterCrowns" | "bestReputation" | "voyagesCompleted";
 
 // The four ways the harbor can be sorted, one row each: the button that
 // picks it, the field on an entry it reads, and the two labels it prints.
@@ -50,11 +50,11 @@ const SORT_OPTIONS: {
     format: (e) => `${e.seaMasterCrowns}`,
   },
   {
-    key: "bestScore",
+    key: "bestReputation",
     label: "Best Rep",
     caption: "Best Rep",
     icon: Trophy,
-    format: (e) => `${e.bestScore}`,
+    format: (e) => `${e.bestReputation}`,
   },
   {
     key: "voyagesCompleted",

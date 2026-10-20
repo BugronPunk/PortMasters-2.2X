@@ -15,14 +15,14 @@ import { listJoiner, t } from "@/lib/game/i18n";
 
 /**
  * Voyage Difficulty Advisor. Suggests which difficulty tier to pick
- * based on the captain's Renown level, past voyage count, best score,
+ * based on the captain's Renown level, past voyage count, best Reputation,
  * and solvent streak. The advisor is advisory only, the captain can
  * still pick any tier.
  *
  * Three bands, read from the top down, and the first one a captain clears
- * is the advice. Monsoon asks for Renown 8, 10 voyages, a best score of
+ * is the advice. Monsoon asks for Renown 8, 10 voyages, a best Reputation of
  * 200, and a solvent streak of 3. Open Waters asks for Renown 5, 5
- * voyages, and a best score of 100. Anything below that is pointed at Fair
+ * voyages, and a best Reputation of 100. Anything below that is pointed at Fair
  * Winds. The bands were described here as four once, with numbers that two
  * of the three branches did not check.
  *
@@ -60,7 +60,7 @@ function getAdvice(
   mode: GameMode,
   renownLevel: number,
   voyagesCompleted: number,
-  bestScore: number,
+  bestReputation: number,
   solventStreak: number,
 ): Advice {
   let recommended: Difficulty = "fair_winds";
@@ -91,7 +91,7 @@ function getAdvice(
   if (
     renownLevel >= 8 &&
     voyagesCompleted >= 10 &&
-    bestScore >= 200 &&
+    bestReputation >= 200 &&
     solventStreak >= 3
   ) {
     recommended = "monsoon";
@@ -106,7 +106,7 @@ function getAdvice(
   } else if (
     renownLevel >= OPEN_WATERS_RENOWN &&
     voyagesCompleted >= 5 &&
-    bestScore >= 100
+    bestReputation >= 100
   ) {
     recommended = "open_waters";
     reason = t(
@@ -159,7 +159,7 @@ export function DifficultyAdvisor({
   mode,
   renownLevel,
   voyagesCompleted,
-  bestScore,
+  bestReputation,
   solventStreak,
 }: {
   selectedDifficulty: Difficulty;
@@ -168,7 +168,7 @@ export function DifficultyAdvisor({
   mode: GameMode;
   renownLevel: number;
   voyagesCompleted: number;
-  bestScore: number;
+  bestReputation: number;
   solventStreak: number;
 }) {
   const [dismissed, setDismissed] = useState(false);
@@ -177,7 +177,7 @@ export function DifficultyAdvisor({
     mode,
     renownLevel,
     voyagesCompleted,
-    bestScore,
+    bestReputation,
     solventStreak,
   );
 

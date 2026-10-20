@@ -24,7 +24,7 @@
 // ./constants/charters, which is the single home of that pairing), and
 // one wildcard from the other eight, drawn at even weight through F2's
 // own draw. The seed leaves the round out on purpose, the same reading
-// milestoneChoices documents: a room advance, a checkpoint, a reload
+// milestoneChoices documents: a harbor advance, a checkpoint, a reload
 // and a host start can all land between the moment becoming due and the
 // captain answering, and none of them may reshuffle the three cards
 // under a captain's eyes.

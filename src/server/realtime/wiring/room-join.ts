@@ -1,5 +1,5 @@
 // =====================================================================
-// Room join and leave: taking a seat at a table, and giving it up.
+// Harbor join and leave: taking a seat at a table, and giving it up.
 // =====================================================================
 
 import { type ObjectiveProgressPayload } from "@/types/realtime/objectives";
@@ -7,7 +7,7 @@ import type { Server, Socket } from "socket.io";
 
 import { db } from "@/lib/db";
 import { normalizeMode } from "@/lib/game/mode";
-import { NOT_A_ROOM_MEMBER } from "@/lib/game/constants/copy";
+import { NOT_A_HARBOR_MEMBER } from "@/lib/game/constants/copy";
 import { tFor } from "@/lib/game/i18n";
 import { aidList, removeUserAidRequest } from "../aid";
 import { auditRevealFor } from "../audit";
@@ -46,9 +46,9 @@ export function wireRoomJoin(
     const roomId = payload?.roomId;
     if (!roomId) return;
 
-    // Verify membership in DB, and take the room's mode in the same read.
-    // The mode is a room property rather than a frame's claim, and every
-    // switch the handlers below read has to be answered with the room's own
+    // Verify membership in DB, and take the harbor's mode in the same read.
+    // The mode is a harbor property rather than a frame's claim, and every
+    // switch the handlers below read has to be answered with the harbor's own
     // (see SocketState in ../types). It rides along on the membership
     // select rather than being a second query, because this is the one
     // moment a socket learns which harbor it is sitting in and the row is
@@ -60,12 +60,12 @@ export function wireRoomJoin(
     if (!member) {
       socket.emit("room:error", {
         roomId,
-        error: tFor(s.locale, NOT_A_ROOM_MEMBER),
+        error: tFor(s.locale, NOT_A_HARBOR_MEMBER),
       });
       return;
     }
 
-    // Leave previous room channel if any.
+    // Leave previous harbor channel if any.
     if (s.roomId) {
       const previousRoomId = s.roomId;
       socket.leave(roomChannel(previousRoomId));
@@ -75,10 +75,10 @@ export function wireRoomJoin(
       // same rule the barter and aid sweeps just under this line apply.
       // It used to ask whether this was the captain's last socket, which
       // is a question about a socket that is still connected and still
-      // registered, so the answer was always no and the previous room
+      // registered, so the answer was always no and the previous harbor
       // kept a status row for a captain who had sailed on. Later joiners
       // were then handed it as if they were there, and it counted toward
-      // the old room's Tidewatch total. A captain who does come back
+      // the old harbor's Tidewatch total. A captain who does come back
       // sends their status again on the next phase, so nothing is lost
       // by dropping it here.
       forgetStatus(previousRoomId, s.userId);
@@ -88,9 +88,9 @@ export function wireRoomJoin(
       // longer be told about, which credits the taker and never credits
       // them.
       removeUserBarterOffers(io, previousRoomId, s.userId);
-      // The notice is read by the whole room, so it goes to every socket
+      // The notice is read by the whole harbor, so it goes to every socket
       // still in the old harbor, each in its captain's own language. The
-      // departing socket is already out of that room (roomId was cleared
+      // departing socket is already out of that harbor (roomId was cleared
       // above), so the walk leaves it out.
       for (const [socketId, state] of sockets) {
         if (state.roomId !== previousRoomId) continue;
@@ -111,12 +111,12 @@ export function wireRoomJoin(
 
     s.roomId = roomId;
     // Read through the normalizer rather than trusted, the same way the
-    // room's mode is read everywhere else: a room row written before modes
+    // harbor's mode is read everywhere else: a room row written before modes
     // existed answers the founding mode.
     s.mode = normalizeMode(member.room.mode);
     socket.join(roomChannel(roomId));
     if (!wasReconnecting) {
-      // The room-wide rule again: every socket in the harbor reads the
+      // The harbor-wide rule again: every socket in the harbor reads the
       // entry line in its own language, the joining socket included.
       for (const [socketId, state] of sockets) {
         if (state.roomId !== roomId) continue;
@@ -134,7 +134,7 @@ export function wireRoomJoin(
     }
     void emitRoomMembers(io, roomId);
     // Hydrate the joiner with everyone's last known game status, the
-    // room's current checkpoint + who's already readied up, and the
+    // harbor's current checkpoint + who's already readied up, and the
     // live Bartering/aid boards.
     sendStatusBatchTo(io, roomId, socket.id);
     const cp = await getCheckpoint(roomId);
@@ -146,7 +146,7 @@ export function wireRoomJoin(
     // [D3: Convoy: the Escort Contract] And the market's board, on the
     // same reasoning as the barter one above: a reload mid leg has to get
     // its own view of it back from here, and the view is this captain's
-    // rather than the room's because two captains can legitimately be
+    // rather than the harbor's because two captains can legitimately be
     // owed two different boards.
     io.to(socket.id).emit(
       "contract:update",
@@ -155,7 +155,7 @@ export function wireRoomJoin(
     // [D4: Loom: the Refit] And the bench's, on the same reasoning: a
     // captain who reloads at a port asks for the work on offer and is
     // answered with their own view of the board, because a direct offer
-    // is one captain's business and the room's board is not.
+    // is one captain's business and the harbor's board is not.
     io.to(socket.id).emit(
       "refit:update",
       refitContracts.payloadFor(roomId, s.userId),
@@ -164,13 +164,13 @@ export function wireRoomJoin(
     // captains] And the module market's, on the same reasoning as the two
     // above: a captain who reloads at the Parley table asks what is on it
     // and is answered with their own view, because a direct offer is one
-    // captain's business and the room's board is not.
+    // captain's business and the harbor's board is not.
     io.to(socket.id).emit(
       "module:update",
       moduleTrades.payloadFor(roomId, s.userId),
     );
     // [D5: Aroma: the Bazaar Rumor] And the bazaar's, which needs one
-    // thing the two boards above do not: the room's leg. A row of this
+    // thing the two boards above do not: the harbor's leg. A row of this
     // board reads differently depending on which leg is reading it, since
     // that is what decides whether a rumor is still standing and whose
     // direction is therefore public (see publicRumors), so the payload is
@@ -187,7 +187,7 @@ export function wireRoomJoin(
     });
     // The session conversation. It lives only in this process, so a
     // reload mid voyage has to get it back from here: there is no REST
-    // history for a room any more, by design. The direct half is
+    // history for a harbor any more, by design. The direct half is
     // filtered to the threads this captain is part of, so joining can
     // never surface someone else's private conversation.
     io.to(socket.id).emit("chat:history", {
@@ -197,14 +197,14 @@ export function wireRoomJoin(
     });
     // And the one card in this game that is this captain's alone, if the
     // voyage they are sitting in has dealt them one. It goes straight to
-    // the socket that just asked, never to the room: a reload replays
+    // the socket that just asked, never to the harbor: a reload replays
     // what this captain is already holding and tells the table nothing.
     void sendAlignment(io, roomId, s.userId);
     // [D7: the draft, and switching] And the hand this captain is holding,
     // where the voyage is still being dealt. It goes to the socket that
     // just joined for the reason the card above does, and it is the one
     // frame in the draft that is private in its whole shape: nobody else in
-    // the room is sent a view, and a captain who is not in the draft gets a
+    // the harbor is sent a view, and a captain who is not in the draft gets a
     // null, which is what the client draws nothing for. A reload is the
     // only way this request can arrive mid deal, and it has to work: the
     // hand lives in this process and nowhere else.
@@ -215,9 +215,9 @@ export function wireRoomJoin(
     // the client's own heartbeat report, which is what rebuilds the
     // board after a server restart.
     //
-    // Only when the room has a board to hand over. An empty tally is a
+    // Only when the harbor has a board to hand over. An empty tally is a
     // client's own default, so a harbor nobody has delivered in costs no
-    // query and gets no frame, and a room that has just restarted is
+    // query and gets no frame, and a harbor that has just restarted is
     // indistinguishable from one that never set sail.
     if (roomObjectiveTallies.has(roomId)) {
       const objective = await objectiveForRoom(roomId);
@@ -230,7 +230,7 @@ export function wireRoomJoin(
       }
     }
     // The audit's reveal is public in the same way and for a sharper
-    // reason: the room voted for it. A captain who reloads or joins after
+    // reason: the harbor voted for it. A captain who reloads or joins after
     // the vote has to see what the harbor was shown, or the verdict the
     // table is arguing about is missing from their screen and the
     // argument makes no sense to them. Sent to the joining socket only,
@@ -263,7 +263,7 @@ export function wireRoomJoin(
     // a finished table is looking at a screen whose story is already
     // told, and the cards are not something their own client ever held.
     // Sent to the joining socket only, so a captain who arrives late is
-    // told what everybody saw rather than telling the room again.
+    // told what everybody saw rather than telling the harbor again.
     const reveal = revealFor(roomId);
     if (reveal) io.to(socket.id).emit("voyage:reveal", reveal);
     broadcastPresence(io);
@@ -287,17 +287,17 @@ export function wireRoomJoin(
     // accumulator, and it ignores anyone the voyage never counted as a
     // captain, so a spectator's exit costs the record nothing.
     noteCaptainLeft(roomId, s.userId);
-    // [B4: the log surfaces] The same departure, into the room's log,
+    // [B4: the log surfaces] The same departure, into the harbor's log,
     // which is the other place a captain's exit is worth a line: the
     // system message above scrolls away with the conversation, and a
     // table that lost a seat read why at Dusk. The log refuses a seat
     // it has already recorded, so the reap below cannot print this
     // twice.
     noteVoyageLogDeparture(io, roomId, s.userId, s.user.displayName);
-    // The notice is read by the whole room, so it goes to every socket
+    // The notice is read by the whole harbor, so it goes to every socket
     // still in the harbor, each in its captain's own language: the same
     // walk the set-sail notice above takes, and the departing socket is
-    // already out of the room (roomId was cleared above), so the walk
+    // already out of the harbor (roomId was cleared above), so the walk
     // leaves it out the way the old broadcast did.
     for (const [socketId, state] of sockets) {
       if (state.roomId !== roomId) continue;

@@ -3,6 +3,18 @@
 // Prisma schema covering accounts, sessions, rooms, membership, per
 // player game state, chat, captain legacy, merits, convoy ventures,
 // loans, voyage chronicles, captain rivals, and house standings.
+//
+// A note on the columns nothing reads yet. Several tables carry a
+// createdAt or an updatedAt that no query asks for, and one carries a
+// drawnAt and an earnedAt that are written on purpose and read by
+// nobody. They are kept rather than dropped because of how the schema
+// reaches a live database: the start command pushes this file with
+// `prisma db push`, which refuses to drop a column unless the command
+// also carries --accept-data-loss, and a start command that accepts
+// data loss on every deploy is a worse trade than a few columns that
+// cost a row nothing. The day the owner wants them gone, the migration
+// is one deliberate deploy with a backup behind it, and the flag goes
+// back off in the same hour.
 // =====================================================================
 
 generator client {
@@ -153,8 +165,10 @@ model GameState {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
+  // The unique serves every userId lookup on its own, because its
+  // leftmost column is userId. A second index on userId would be the
+  // same tree twice.
   @@unique([userId, roomId])
-  @@index([userId])
   @@index([roomId])
 }
 
@@ -198,7 +212,6 @@ model VoyageRole {
 
   @@unique([roomId, userId])
   @@index([roomId])
-  @@index([userId])
 }
 
 model CaptainLegacy {
@@ -208,8 +221,16 @@ model CaptainLegacy {
   renownXP         Int    @default(0)
   voyagesCompleted Int    @default(0)
   seaMasterCrowns  Int    @default(0)
-  bestScore        Int    @default(0)
+  // The captain's best voyage Reputation. The name on disk is still the
+  // old one, because the column is a column and a rename in the database
+  // is a rename in every save a captain has ever made. The word the
+  // column carried was wrong rather than absent: it holds a Reputation,
+  // and everything a captain reads already calls it that.
+  bestReputation   Int    @default(0) @map("bestScore")
   consecutiveSolventVoyages Int @default(0)
+  // The per tier breakdown, as a JSON blob. The keys inside it are data
+  // rather than columns, so the reader in ../legacy reads the old key
+  // and the new one, and the writer writes the new one.
   statsByDifficulty String @default("{}")
   checkInCount    Int     @default(0)
   lastCheckInDate String?
@@ -227,8 +248,10 @@ model CaptainMerit {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // The unique serves every userId lookup on its own, because its
+  // leftmost column is userId. A second index on userId would be the
+  // same tree twice.
   @@unique([userId, meritId])
-  @@index([userId])
 }
 
 model ConvoyVenture {
@@ -287,7 +310,11 @@ model Loan {
 
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
-  @@index([roomId, voyageEpoch])
+  // The loans of a harbor are cleared by harbor, so the index is on the
+  // harbor alone. The voyage epoch is read in the room's own code and
+  // compared there, never in a where clause, so putting it in the index
+  // would only make the tree wider.
+  @@index([roomId])
 }
 
 // =====================================================================
@@ -508,5 +535,4 @@ model Report {
   @@unique([reporterId, targetUserId, roomId, voyageEpoch])
   @@index([roomId])
   @@index([targetUserId])
-  @@index([createdAt])
 }

@@ -41,6 +41,7 @@ import { pathConfig } from "@/lib/game/paths";
 import type { GameState } from "@/lib/game/types";
 import { MarketBlock, MarketEmpty, OfferRow } from "./OfferBoard";
 import { RefusalLine } from "../shared";
+import type { LedgerAct } from "@/lib/game/ledger";
 import type { Refit } from "./phases/PhaseShared";
 
 // The selling path's own record, resolved once at module load rather than on
@@ -67,14 +68,14 @@ function tailorWorkText(): string {
  * [D4: Loom: the Refit] The Loom's bench, drawn on the port board of the
  * Market phase because that is where the plan puts it: a garment put right
  * in one leg, sold by a Loom captain to another captain at a price the two
- * of them agree, and read by the room for the rest of the leg.
+ * of them agree, and read by the harbor for the rest of the leg.
  *
  * Four things stand on this panel and they are one economy read from four
  * ends. The offer form is the trade itself. The harbor pile is the Loom's
  * supply, and it is also the reason to hold the path at all. The harbor
  * tailors are what every other captain can do alone, and without a price to
  * be cheaper than, "faster and cheaper than they could manage alone" would
- * be a sentence rather than a trade. And the board is the room's view of who
+ * be a sentence rather than a trade. And the board is the harbor's view of who
  * has offered what.
  *
  * Everything a captain can do here is a socket frame or an engine call on
@@ -97,7 +98,7 @@ export function RefitBench({
   members,
 }: {
   game: GameState;
-  act: (fn: (g: GameState, logs: string[]) => void) => void;
+  act: LedgerAct;
   refit: Refit;
   me: PublicUser;
   members: PublicUser[];

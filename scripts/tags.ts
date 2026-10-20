@@ -18,15 +18,15 @@
  * widen, and a vocabulary whose distribution nobody has looked at is one
  * that grows by accident.
  */
-import { TAGS, type Tag } from "@/lib/game/constants/tags";
-import { taggedEntries, validateTagging } from "@/lib/game/tags";
+import { MAX_TAGS_PER_ENTRY, TAGS, type Tag } from "@/lib/game/constants/tags";
+import { TAGGED_KINDS, taggedEntries, validateTagging } from "@/lib/game/tags";
 
 const entries = taggedEntries();
 const findings = validateTagging();
 
 // How the entries carry the twelve, tag by tag, which is the reading the
 // iteration clause of this goal asks for: the pairs matter more than the
-// totals, but a tag carried by one entry is a tag with one card of room.
+// totals, but a tag carried by one entry is a tag with one card of harbor.
 const carried = new Map<Tag, number>(TAGS.map((tag) => [tag, 0]));
 for (const entry of entries) {
   for (const tag of entry.tags) carried.set(tag, (carried.get(tag) ?? 0) + 1);
@@ -38,7 +38,7 @@ const pairs = entries.filter((e) => e.tags.length === 2).length;
 
 if (findings.length === 0) {
   console.log(
-    `The tags hold. ${entries.length} entries across six catalogues, at most two tags each, ${pairs} of them carrying a pair.`,
+    `The tags hold. ${entries.length} entries across ${TAGGED_KINDS.length} catalogues, at most ${MAX_TAGS_PER_ENTRY} tags each, ${pairs} of them carrying a pair.`,
   );
   console.log(`Every tag is carried: ${distribution}.`);
   process.exit(0);

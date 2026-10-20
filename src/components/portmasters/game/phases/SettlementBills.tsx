@@ -8,20 +8,20 @@ import {
   wagesDue,
 } from "@/lib/game/engine";
 import { listJoiner, t } from "@/lib/game/i18n";
+import { crewSize } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { AlertTriangle } from "lucide-react";
-import {
-  PhaseError,
-  PhaseHeading,
-  ReadyFooter,
-  type PhasePanelProps,
-} from "./PhaseShared";
+import { PhaseHeading, ReadyFooter, type PhasePanelProps } from "./PhaseShared";
+import { Notice } from "../../shared";
 import { HarborAid } from "./SettlementAid";
 import { LoanBacking } from "./SettlementBacking";
+import { LedgerRow } from "../status/Rows";
 
 // One line of a bill: a name on the left and a figure on the right, in the
 // size that section prints. The settle screen had six of these written out
-// by hand, three of them in the same block.
+// by hand, three of them in the same block, and they are the ledger line
+// the Ship and Dues tabs draw (see LedgerRow), so the bill borrows it
+// rather than keeping a second one of its own.
 function BillRow({
   size = "text-[13px]",
   className,
@@ -34,10 +34,9 @@ function BillRow({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("flex justify-between py-0.5", size, className)}>
-      <span>{label}</span>
+    <LedgerRow size={size} className={className} label={label}>
       {children}
-    </div>
+    </LedgerRow>
   );
 }
 
@@ -72,7 +71,7 @@ export function SettlementBills({
   // breath later.
   const bill = wageBill(game);
   const wages = wagesDue(game);
-  const nWorkers = bill.reduce((sum, b) => sum + b.count + b.sponsored, 0);
+  const nWorkers = crewSize(game);
   const sponsored = bill.reduce((sum, b) => sum + b.sponsored, 0);
   const maintCost = maintenanceDue(game);
   const totalDue = wages + maintCost;
@@ -217,18 +216,20 @@ export function SettlementBills({
       <LoanBacking game={game} backing={backing} myUserId={myUserId} />
 
       {backing.error && (
-        <PhaseError
+        <Notice
           message={backing.error}
           onDismiss={backing.clearError}
           className="mb-3.5"
+          size="sm"
         />
       )}
 
       {aid.error && (
-        <PhaseError
+        <Notice
           message={aid.error}
           onDismiss={aid.clearError}
           className="mb-3.5"
+          size="sm"
         />
       )}
 

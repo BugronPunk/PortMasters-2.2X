@@ -12,11 +12,11 @@
 // worth saying which reading each one took.
 //
 // At every port. The vendor does not move with the fleet by accident: the
-// port it stands at is drawn from the room's own unlocked ports by the
+// port it stands at is drawn from the harbor's own unlocked ports by the
 // leg, so the whole table walks past one Barge at one quay and a reload
 // answers the same way twice. Drawn rather than announced, which is what
-// keeps it out of the server: nothing here needs a room to agree on
-// anything, because the room's numbers are the seed.
+// keeps it out of the server: nothing here needs a harbor to agree on
+// anything, because the harbor's numbers are the seed.
 //
 // Deterministic from port and leg. The lot is a draw on the port and the
 // leg together, so a table that met the same eight rations at every quay
@@ -36,7 +36,7 @@
 // a shelf: what the vendor has for a captain this leg is drawn at most
 // that high, and what the captain takes off it is their own record. That
 // is the one piece of state this feature adds, and it is a captain's own
-// save rather than anything the room holds, which is what the plan's "no
+// save rather than anything the harbor holds, which is what the plan's "no
 // new state" is actually about. A vendor with a shelf would need the
 // server to hold it, and a shelf two clients could not see each other
 // spending would be a desynchronization wearing a merchant's coat. The
@@ -59,7 +59,7 @@
 // already carry, and no build of this branch can be sailing the mode
 // without the vendor standing at the quay.
 // =====================================================================
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import {
   BARGE_PRICE_MULTIPLIER,
   BARGE_RATIONS_PER_LEG,
@@ -114,12 +114,12 @@ export function bargeOn(mode: unknown): boolean {
  * The port the Barge is standing at this leg, or null when there is no
  * quay to stand at.
  *
- * Drawn from the room's own unlocked ports rather than from the whole
+ * Drawn from the harbor's own unlocked ports rather than from the whole
  * chart, so the vendor arrives with the charters the table is already
  * trading on and never names a quay nobody can reach yet. The pool is
  * read at the voyage's current leg, which is the same read the goods and
  * the market breadth take, so the Barge cannot be standing somewhere the
- * rest of the room cannot see.
+ * rest of the harbor cannot see.
  *
  * Null is an answer rather than an error: a table with no quay open has
  * no vendor, and every reader below treats that as an empty lot rather
@@ -248,13 +248,13 @@ export function bargePurseRations(state: GameState): number {
 export function buyFromBarge(
   state: GameState,
   rations: number,
-  logs: string[],
+  logs: LedgerLine[],
 ): number {
   if (!bargeOn(state.mode)) return 0;
   if (provisioningCrew(state, logs) === null) return 0;
   const left = bargeLeftAtPort(state);
   if (left < 1) {
-    logs.push(t("⛵ The barge has nothing left for you this leg."));
+    logs.push(line("⛵ The barge has nothing left for you this leg."));
     return 0;
   }
   reconcileLarder(state);
@@ -264,12 +264,12 @@ export function buyFromBarge(
   const wanted = Math.min(Math.floor(rations), left, room, affordable);
   if (wanted < 1) {
     if (Math.floor(rations) < 1) {
-      logs.push(t("❌ Name how many rations to buy from the barge."));
+      logs.push(line("❌ Name how many rations to buy from the barge."));
     } else if (room < 1) {
-      logs.push(t(LARDER_FULL_LINE));
+      logs.push(line(LARDER_FULL_LINE));
     } else {
       logs.push(
-        t(
+        line(
           "❌ The barge charges {price} Gold a ration, and the purse cannot cover one.",
           { price },
         ),
@@ -291,7 +291,7 @@ export function buyFromBarge(
   }
   state.bargeTaken += wanted;
   logs.push(
-    t(
+    line(
       "⛵ The barge takes {cost} Gold for {wanted} {rationWord} of grain. {rationsLeft} left for you this leg.",
       {
         cost,

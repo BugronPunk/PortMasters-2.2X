@@ -104,7 +104,7 @@ async function chronicleRows(roomId: string, count: number) {
 
 // Two captains, a private Gambit harbor, and the voyage under way: what
 // every live half below starts from. The commission is drawn here exactly
-// as the server draws it at conclusion, from the room's own id, the epoch
+// as the server draws it at conclusion, from the harbor's own id, the epoch
 // it sails under and the seat count pinned at departure, which is what
 // makes the rows' objectiveId a check rather than a hope.
 async function openVoyage(
@@ -189,7 +189,7 @@ const finish = (
   });
 
 export async function theFleetsOwnOutcomeSuite(run: SmokeRun): Promise<void> {
-  // ---- The arithmetic, against a commission of this article's own ----
+  // ========== The arithmetic, against a commission of this article's own ==========
   // The flag the fix decides is the last leg of this merge, so the
   // merge's four load bearing properties are held down first, off a
   // commission drawn for them and no harbor at all.
@@ -241,7 +241,7 @@ export async function theFleetsOwnOutcomeSuite(run: SmokeRun): Promise<void> {
     "and the merge answers the same whichever order the records arrive in, because the reveal is read after the last report rather than in arrival order",
   );
 
-  // ---- A record that stops short, beside one that filled ----
+  // ========== A record that stops short, beside one that filled ==========
   // The field report's own shape: one client missed the final leg and the
   // other kept it. The first captain's own goal is a purse or standing
   // goal their finish clears outright, so the only thing between them and
@@ -452,7 +452,7 @@ export async function theFleetsOwnOutcomeSuite(run: SmokeRun): Promise<void> {
     "and both verdicts are the rule's own answer, read from the hand merge rather than from either client's view",
   );
 
-  // ---- A voyage nobody kept a record of ----
+  // ========== A voyage nobody kept a record of ==========
   // The other branch, which needs a voyage of its own: no client recorded
   // anything, so the merge is empty and every row reads unmet. The Pirate
   // card pays on this branch and only this one, and no concluded voyage in
@@ -598,7 +598,7 @@ export async function theFleetsOwnOutcomeSuite(run: SmokeRun): Promise<void> {
     "and both verdicts are the rule's own answer on the empty record, read from the commission neither client filled",
   );
 
-  // ---- The purse the voyage's own sweeps pay ----
+  // ========== The purse the voyage's own sweeps pay ==========
   // The bug cycle's own shape, fixed in the conclusion this article
   // guards: the win condition was judged on the money a captain held one
   // beat before the conclusion paid them. The conclusion's own sweeps
@@ -619,7 +619,7 @@ export async function theFleetsOwnOutcomeSuite(run: SmokeRun): Promise<void> {
   const settlingDeck = flourishDeck(settling.objective.id);
   // The regression's goal is planted rather than searched for, because
   // the draw decides the commission and only half the decks carry a
-  // purse: half the rooms this article could open have no goal the
+  // purse: half the harbors this article could open have no goal the
   // settled refund could clear. The row the conclusion reads resolves
   // any flourish this build still prints (see cardsFromRows), and a
   // purse is about Gold rather than about the commission's goods, so it

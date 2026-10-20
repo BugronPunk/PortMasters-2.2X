@@ -15,7 +15,7 @@ import { Avatar, Pill } from "../../shared";
  * [MANIFEST 07: Bequest Routing] Extends the already shipped Silent
  * Partner panel below: at the moment bankruptcy is reached, a captain
  * with open loans still owed to them can designate one still active
- * captain in the room to receive future repayments instead of an inert
+ * captain in the harbor to receive future repayments instead of an inert
  * number nobody can spend.
  *
  * [Spectator Mode Enhancement] A bankrupt captain can watch the rest of
@@ -41,9 +41,9 @@ export function Bankruptcy({
   PhasePanelProps,
   "game" | "members" | "backing" | "me" | "roster" | "room"
 > & {
-  // The host's own restart, wired from the room's one handler, so this
+  // The host's own restart, wired from the harbor's one handler, so this
   // panel offers the same call the control bar and the Endgame screen
-  // offer rather than a second path of its own. onLeave is the room's
+  // offer rather than a second path of its own. onLeave is the harbor's
   // leave flow, for a captain who would rather set out for a new harbor
   // than wait on the host.
   onRestart?: () => void;

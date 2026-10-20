@@ -34,7 +34,7 @@ export async function revealAndTheReplaySuite(run: SmokeRun): Promise<{
   // has to be one of its own. A reveal names every alignment at its
   // table, which is exactly what the sweep in the private information
   // spine above forbids in the harbor that sweep is watching, so putting
-  // the two in one room would mean weakening the sharpest check in this
+  // the two in one harbor would mean weakening the sharpest check in this
   // file to make room for the feature that needs the rule relaxed.
   //
   // The hand is written rather than drawn, the way the fleet commission's
@@ -118,11 +118,11 @@ export async function revealAndTheReplaySuite(run: SmokeRun): Promise<{
   );
   check(
     revHeld().length === 0,
-    "and a voyage in flight tells the room nothing about any of them, however loud its own ending will be",
+    "and a voyage in flight tells the harbor nothing about any of them, however loud its own ending will be",
   );
 
   // The commission this harbor is working on, drawn here the way every
-  // client draws it: from the room's own id, epoch and pinned size, with
+  // client draws it: from the harbor's own id, epoch and pinned size, with
   // no captain's name anywhere in the seed. The flourish comes off that
   // commission's own deck for the same reason, since a goal about the
   // goods a fleet is not being asked for is a goal the mode never deals.
@@ -361,7 +361,7 @@ export async function revealAndTheReplaySuite(run: SmokeRun): Promise<{
   const revPaid = revSeen.get(revPirate.id)?.[0];
   check(
     revPaid?.roomId === revRoomId,
-    "a concluded voyage turns every card over to the room",
+    "a concluded voyage turns every card over to the harbor",
   );
   check(
     revArrived(),
@@ -484,7 +484,7 @@ export async function revealAndTheReplaySuite(run: SmokeRun): Promise<{
     revBack !== null &&
       revBack.captains.length === revCrew.length &&
       revBack.captains.some((row) => row.userId === revPirate.id),
-    "a captain who reloads onto the finished voyage is handed the same ledger the room watched",
+    "a captain who reloads onto the finished voyage is handed the same ledger the harbor watched",
   );
 
   // And a restarted voyage hands nobody the last one's cards, which is

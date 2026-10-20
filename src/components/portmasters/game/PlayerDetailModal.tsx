@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cardText } from "@/lib/game/cards";
+import { renderLedger } from "@/lib/game/ledger";
 import type { Difficulty } from "@/lib/game/difficulty";
 import { t } from "@/lib/game/i18n";
 import {
@@ -24,42 +25,14 @@ import { phaseLabel } from "@/lib/game/engine";
 import { SKILLED_LEGEND } from "@/lib/game/status-copy";
 import { cn } from "@/lib/utils";
 import { itemColorResolver } from "@/lib/use-color-preference";
+import { useLanguage } from "@/lib/use-language-preference";
 import { Avatar, Pill, ItemIcon } from "../shared";
+import { FigureTile } from "../profile/FigureTile";
 import { workerStatusLine } from "./phases/WorkerList";
 import { FoldRow } from "./FoldRow";
 import { CaptainLegacyCard } from "../CaptainLegacyCard";
 import { CloseFooter } from "./CloseFooter";
 import { Coins, Trophy, Ship, Loader2, Eye } from "lucide-react";
-
-// One stat, its own tile instead of a pill sharing a row with three
-// others. Reused for every number the profile leads with (Gold,
-// Reputation, Ship Level), so a future stat is one more tile, not a
-// rework of a cramped row.
-function ProfileStatTile({
-  icon,
-  value,
-  label,
-  toneClassName,
-}: {
-  icon: React.ReactNode;
-  value: string | number;
-  label: string;
-  toneClassName: string;
-}) {
-  return (
-    <div className="rounded-lg bg-black/[0.03] dark:bg-white/[0.05] py-2 text-center">
-      <div
-        className={cn(
-          "text-sm font-semibold flex items-center justify-center gap-1",
-          toneClassName,
-        )}
-      >
-        {icon} {value}
-      </div>
-      <div className="text-[10px] text-muted-foreground mt-0.5">{label}</div>
-    </div>
-  );
-}
 
 /**
  * One line of a captain's cargo: the good's icon, its name in the good's
@@ -97,7 +70,7 @@ function CargoRow({
 /**
  * The "click a collapsed roster bar, see everything" popup. Doubles as a
  * bankrupt captain's spectator window. There's no separate read only
- * board, watching the rest of the room just means opening their popups.
+ * board, watching the rest of the harbor just means opening their popups.
  *
  * Laid out as a profile: the standings first (an identity header, the
  * headline figures, the comparison against your own seat and the legacy
@@ -142,6 +115,18 @@ export function PlayerDetailModal({
 }) {
   const resolveColor = itemColorResolver(colorFor);
   const [refOpen, setRefOpen] = useState(false);
+
+  // The other captain's ledger, read in this reader's language. The
+  // snapshot carries the material of each line rather than a finished
+  // sentence, so a captain reading somebody else's ledger reads it in the
+  // language they are holding, not in the language that captain happened
+  // to be holding when the line was written.
+  const { locale } = useLanguage();
+  const detailLines = useMemo(
+    () => renderLedger(locale, detail?.logs ?? []),
+    [locale, detail?.logs],
+  );
+
   const workerGroups = detail
     ? unlockedWorkerTypes(difficulty, detail.round).map((w) => {
         const list = detail.workers?.[w.id] ?? [];
@@ -224,23 +209,26 @@ export function PlayerDetailModal({
         ) : (
           <div className="space-y-3.5">
             <div className="grid grid-cols-3 gap-2">
-              <ProfileStatTile
-                icon={<Coins className="h-3.5 w-3.5" />}
+              <FigureTile
+                size="profile"
+                icon={Coins}
                 value={detail.money}
                 label={t("Gold")}
-                toneClassName="text-gold-ink"
+                valueClassName="text-gold-ink"
               />
-              <ProfileStatTile
-                icon={<Trophy className="h-3.5 w-3.5" />}
+              <FigureTile
+                size="profile"
+                icon={Trophy}
                 value={detail.score}
                 label={t("Reputation")}
-                toneClassName="text-favor"
+                valueClassName="text-favor"
               />
-              <ProfileStatTile
-                icon={<Ship className="h-3.5 w-3.5" />}
+              <FigureTile
+                size="profile"
+                icon={Ship}
                 value={detail.shipLevel}
                 label={t("Ship Level")}
-                toneClassName="text-sea"
+                valueClassName="text-sea"
               />
             </div>
 
@@ -338,9 +326,12 @@ export function PlayerDetailModal({
                                   count: g.list.length,
                                 })}
                               </div>
-                              {g.list.map((w, i) => (
+                              {g.list.map((w) => (
                                 <div
-                                  key={i}
+                                  // The hand's own name, which is what
+                                  // tells one hand from another, the same
+                                  // identity the bench draws it by.
+                                  key={w.name}
                                   className="text-[11px] text-muted-foreground"
                                 >
                                   {workerStatusLine(w, detail.round)}
@@ -388,7 +379,7 @@ export function PlayerDetailModal({
                         </p>
                       ) : (
                         <div className="space-y-0.5 font-mono text-[11px] leading-relaxed">
-                          {detail.logs.map((l, i) => (
+                          {detailLines.map((l, i) => (
                             <div
                               key={i}
                               className="whitespace-pre-wrap break-words"

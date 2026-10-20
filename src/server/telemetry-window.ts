@@ -78,9 +78,9 @@ export async function readOperatorWindow(): Promise<DashboardInput> {
 
   // The chronicle rows for exactly the voyages in the window: the win
   // verdicts, which the record deliberately does not carry, since a
-  // captain's card must never enter a blob that outlives the room. The
-  // rooms are queried in one pass and the voyage each row belongs to is
-  // matched here rather than by a query, because a room can host several
+  // captain's card must never enter a blob that outlives the harbor. The
+  // harbors are queried in one pass and the voyage each row belongs to is
+  // matched here rather than by a query, because a harbor can host several
   // voyages and the epoch is what tells them apart.
   const outcomes: DashboardOutcome[] = [];
   if (voyages.size > 0) {

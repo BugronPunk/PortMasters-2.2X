@@ -40,6 +40,7 @@
 // =====================================================================
 import { cardByFlag, cardText } from "../cards";
 import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import { OPPORTUNIST_PENALTY, OPPORTUNIST_USES } from "../constants/paths";
 import { pathOrdersOn } from "../flags";
 import type { PathId } from "../paths";
@@ -221,6 +222,14 @@ function borrowLead(state: Pick<GameState, "path" | "modifierFlags">): string {
 }
 
 /**
+ * The English the borrow is described with, named beside its two readers
+ * so the card and the ledger are one sentence told twice rather than two
+ * sentences that can drift.
+ */
+const OPPORTUNIST_SENTENCE =
+  "{lead}: {payout} Gold instead of {reward}. One order filled without joining the path.";
+
+/**
  * The one sentence the borrow is described with, printed on the card that
  * offers it and written into the ledger when it is spent.
  *
@@ -236,10 +245,53 @@ export function opportunistLine(
   reward: number,
   payout: number,
 ): string {
-  return t(
-    "{lead}: {payout} Gold instead of {reward}. One order filled without joining the path.",
-    { lead: borrowLead(state), payout, reward },
-  );
+  return t(OPPORTUNIST_SENTENCE, {
+    lead: borrowLead(state),
+    payout,
+    reward,
+  });
+}
+
+/**
+ * The same sentence, as a line for a captain's own ledger.
+ *
+ * The card that offers the borrow and the ledger that records it are
+ * reading about one transaction, so they are made of the same English and
+ * the same values. The line is held as material rather than as a finished
+ * sentence, so a captain who reads their ledger in another language reads
+ * the borrow in that language too, and the name of the door it came
+ * through travels with the sentence rather than being frozen into it.
+ */
+export function opportunistLedgerLine(
+  state: Pick<GameState, "path" | "modifierFlags">,
+  reward: number,
+  payout: number,
+): LedgerLine {
+  return line(OPPORTUNIST_SENTENCE, {
+    lead: borrowLeadLine(state),
+    payout,
+    reward,
+  });
+}
+
+/**
+ * The lead the borrow's ledger line is printed under, as material.
+ *
+ * The same reading borrowLead takes, held so the line reads in the
+ * reader's language. The Factor's own name is a card's name rather than
+ * a word the pack carries, so it travels as a reader of the language
+ * rather than as a string the voyage froze.
+ */
+function borrowLeadLine(
+  state: Pick<GameState, "path" | "modifierFlags">,
+): LedgerLine {
+  if (state.path === OPPORTUNIST_PATH) return line("🎭 Free Captain");
+  const factor = cardByFlag("factor_borrows");
+  return factor === null
+    ? line("🎭 Borrow")
+    : line("🎭 {factorName}", {
+        factorName: (locale) => cardText(factor, locale).name,
+      });
 }
 
 /**

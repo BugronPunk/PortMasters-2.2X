@@ -26,39 +26,31 @@ import type { GameState, Phase } from "@/lib/game/types";
 import type { VoyageLogEntry } from "@/lib/game/voyage-log";
 import { voyageLogLine } from "@/lib/game/voyage-log";
 import {
-  CLASSIC,
-  GAMBIT,
-  LEDGER_PHRASE,
-  call,
   carriesADash,
   check,
-  openAuthedSocket,
-  signUp,
-  suffix,
+  CLASSIC,
+  GAMBIT,
+  ledgerSentences,
   switchFor,
   voyageState,
   waitForEvent,
   withEnv,
   withoutComments,
 } from "../harness";
-import type { Captain, WireHistory } from "../wire";
-import type { Socket } from "socket.io-client";
+import { openMarketHarbor, rememberRows, settle } from "../wire";
+import type { Captain } from "../wire";
 import type { SmokeRun } from "../run";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 export async function moduleTradesSuite(
   run: SmokeRun,
   inputs: {
-    host: {
-      id: string;
-      token: string;
-      cookie: string;
-      username: string;
-    };
+    host: Captain;
   },
 ): Promise<void> {
   const { host } = inputs;
 
-  // ---- The market, on a captain's own machine ----
+  // ========== The market, on a captain's own machine ==========
   //
   // The market's own switch is switched on for everything but the checks
   // that are about that switch. A run that left it at whatever the
@@ -213,7 +205,7 @@ export async function moduleTradesSuite(
       shipUpgradePenalty: 15,
       maintenancePenalty: 10,
     });
-    const sellerLogs: string[] = [];
+    const sellerLogs: LedgerLine[] = [];
     check(
       applyModuleTradeSide(sellerState, agreed, "seller", sellerLogs) &&
         sellerState.equippedModules.length === 1 &&
@@ -224,7 +216,9 @@ export async function moduleTradesSuite(
         sellerState.modulesSold === 1 &&
         sellerState.moduleFeesEarned === 40 &&
         sellerState.modulesTraded.bulk_hauler === 1 &&
-        sellerLogs.some((line) => line.includes("leaves your hull")),
+        ledgerSentences(sellerLogs).some((line) =>
+          line.includes("leaves your hull"),
+        ),
       "the seller's side is the plan's automatic unequip: the module comes off the hull by itself, the accounting it carried is unwound with it, so the hauler's upgrade surcharge goes while the overdrive's own penalty stays, the agreed fee lands in the purse, and the ledger writes down that this module moved",
     );
 
@@ -232,13 +226,15 @@ export async function moduleTradesSuite(
       currentRound: 3,
       equippedModules: [overdrive],
     });
-    const ghostLogs: string[] = [];
+    const ghostLogs: LedgerLine[] = [];
     check(
       applyModuleTradeSide(ghosted, agreed, "seller", ghostLogs) &&
         ghosted.equippedModules.length === 1 &&
         ghosted.money === 540 &&
         ghosted.modulesSold === 1 &&
-        !ghostLogs.some((line) => line.includes("leaves your hull")),
+        !ledgerSentences(ghostLogs).some((line) =>
+          line.includes("leaves your hull"),
+        ),
       "and a seller whose hull no longer carries the module settles as an empty hand: the fee still moves because the agreement was made in the open, and no module is conjured off a hull that never had it",
     );
 
@@ -246,7 +242,7 @@ export async function moduleTradesSuite(
       currentRound: 3,
       equippedModules: [smuggler],
     });
-    const buyerLogs: string[] = [];
+    const buyerLogs: LedgerLine[] = [];
     check(
       applyModuleTradeSide(buyerState, agreed, "buyer", buyerLogs) &&
         buyerState.equippedModules.length === 2 &&
@@ -254,8 +250,12 @@ export async function moduleTradesSuite(
         buyerState.money === 460 &&
         buyerState.modulesBought === 1 &&
         buyerState.moduleFeesPaid === 40 &&
-        buyerLogs.some((line) => line.includes("paid 40 Gold")) &&
-        buyerLogs.some((line) => line.includes("bolted to the hull")),
+        ledgerSentences(buyerLogs).some((line) =>
+          line.includes("paid 40 Gold"),
+        ) &&
+        ledgerSentences(buyerLogs).some((line) =>
+          line.includes("bolted to the hull"),
+        ),
       "the buyer's side pays the price the two captains agreed and bolts the module onto the hull, and the only machine the module ever lands on is the buyer's own",
     );
 
@@ -284,13 +284,13 @@ export async function moduleTradesSuite(
     );
 
     const broke = hullState({ currentRound: 3, money: 5 });
-    const brokeLogs: string[] = [];
+    const brokeLogs: LedgerLine[] = [];
     check(
       applyModuleTradeSide(broke, agreed, "buyer", brokeLogs) &&
         broke.money === 0 &&
         broke.moduleFeesPaid === 5 &&
         broke.equippedModules.some((card) => card.id === "bulk_hauler") &&
-        brokeLogs.some((line) => line.includes("paid 5 Gold")),
+        ledgerSentences(brokeLogs).some((line) => line.includes("paid 5 Gold")),
       "a purse that moved between the accept and the settlement pays what it holds rather than a negative hold, and the module still lands, because the price was agreed in the open and the purse is the buyer's own business",
     );
 
@@ -303,23 +303,25 @@ export async function moduleTradesSuite(
     // buyer's wallet moves what it held. The second half is what a desk
     // without the guard let an honest buyer reach.
     const coveredPurse = hullState({ currentRound: 3, money: 100 });
-    const coveredLogs: string[] = [];
+    const coveredLogs: LedgerLine[] = [];
     check(
       canPayFee(coveredPurse, agreed.fee) &&
         applyModuleTradeSide(coveredPurse, agreed, "buyer", coveredLogs) &&
         coveredPurse.moduleFeesPaid === agreed.fee &&
         coveredPurse.money === 100 - agreed.fee &&
-        coveredLogs.some((line) => line.includes(`paid ${agreed.fee} Gold`)),
+        ledgerSentences(coveredLogs).some((line) =>
+          line.includes(`paid ${agreed.fee} Gold`),
+        ),
       "a buyer whose purse covers the fee pays it whole, so the payment the buyer's side moves and the price the seller's side credits are one number on both machines",
     );
 
     const shortPurse = hullState({ currentRound: 3, money: 5 });
-    const shortPurseLogs: string[] = [];
+    const shortPurseLogs: LedgerLine[] = [];
     const shortBook = hullState({
       currentRound: 3,
       equippedModules: [hauler],
     });
-    const shortBookLogs: string[] = [];
+    const shortBookLogs: LedgerLine[] = [];
     check(
       !canPayFee(shortPurse, agreed.fee) &&
         applyModuleTradeSide(shortPurse, agreed, "buyer", shortPurseLogs) &&
@@ -332,7 +334,7 @@ export async function moduleTradesSuite(
     );
 
     const unknown = hullState({ currentRound: 3 });
-    const unknownLogs: string[] = [];
+    const unknownLogs: LedgerLine[] = [];
     check(
       applyModuleTradeSide(
         unknown,
@@ -348,12 +350,14 @@ export async function moduleTradesSuite(
       ) &&
         unknown.equippedModules.length === 0 &&
         unknown.money === 470 &&
-        unknownLogs.some((line) => line.includes("The yard has no")),
+        ledgerSentences(unknownLogs).some((line) =>
+          line.includes("The yard has no"),
+        ),
       "and a row naming a module this build's pool has never heard of costs the captain their fee and a sentence rather than a crash or a nameless card on the hull, which is the branch for a save that moved between two builds rather than for an ordinary leg",
     );
 
     const again = hullState({ currentRound: 3, equippedModules: [hauler] });
-    const onceLogs: string[] = [];
+    const onceLogs: LedgerLine[] = [];
     check(
       applyModuleTradeSide(again, agreed, "seller", onceLogs) &&
         !applyModuleTradeSide(again, agreed, "seller", onceLogs) &&
@@ -517,81 +521,49 @@ export async function moduleTradesSuite(
     );
   });
 
-  // ---- The market, in a real harbor ----
+  // ========== The market, in a real harbor ==========
   //
   // Three captains at a table of their own, for the reason the two markets
   // above gave: the harbor this run shares is still standing at the end of
   // this section, and the checks after it read that one.
-  const modSeller = await signUp("mod_s");
-  const modBuyer = await signUp("mod_b");
-  const modForeigner = await signUp("mod_f");
-  run.extraAccounts.push(modSeller, modBuyer, modForeigner);
-
-  const modRoom = await call<{ room: { id: string; code: string } }>(
-    "/api/rooms",
-    {
-      method: "POST",
-      cookie: modSeller.cookie,
-      body: JSON.stringify({
-        name: `Smoke modules ${suffix}`,
-        isPublic: false,
-        mode: "ocean_gambit",
-        unlock: LEDGER_PHRASE,
-      }),
-    },
-  );
-  if (modRoom.status !== 200) {
-    throw new Error("No harbor to trade a module in.");
-  }
-  const modRoomId = modRoom.body.room.id;
-  const modCrew = [modSeller, modBuyer, modForeigner];
-  const modJoins = await Promise.all(
-    modCrew.slice(1).map((captain) =>
-      call<{ room: { id: string } }>("/api/rooms/join", {
-        method: "POST",
-        cookie: captain.cookie,
-        body: JSON.stringify({ code: modRoom.body.room.code }),
-      }),
-    ),
-  );
-  check(
-    modJoins.every((join) => join.status === 200),
-    "three captains can sit at a table where modules change hands",
-  );
-
+  //
+  // The table itself is the shared one the four consent markets sit at, so
+  // what this suite names is the module market: the stem of the harbor's
+  // name, the frame its board arrives on and the row it carries.
+  //
   // Each socket's newest board, and every row that board has ever carried.
   // The second is what makes the privacy check below a claim about what a
   // captain was told rather than about what they happened to read last.
   const modBoards = new Map<string, ModuleTrade[]>();
-  const modSeen = new Map<string, Set<string>>();
-  const modSockets = new Map<string, Socket>();
-  for (const captain of modCrew) {
-    const socket = await openAuthedSocket(captain);
-    run.sockets.push(socket);
-    const seatedHere = waitForEvent<WireHistory>(
-      socket,
-      "chat:history",
-      (payload) => payload?.roomId === modRoomId,
-    );
-    socket.emit("room:join", { roomId: modRoomId });
-    await seatedHere;
-    socket.on("module:update", (payload: ModuleTradeBoard) => {
-      if (payload?.roomId !== modRoomId) return;
-      modBoards.set(captain.id, payload.moduleTrades);
-      const seen = modSeen.get(captain.id) ?? new Set<string>();
-      for (const trade of payload.moduleTrades) seen.add(trade.id);
-      modSeen.set(captain.id, seen);
-    });
-    modSockets.set(captain.id, socket);
-  }
-  const modSocketOf = (captain: Captain): Socket => {
-    const found = modSockets.get(captain.id);
-    if (!found) throw new Error(`No socket for ${captain.username}.`);
-    return found;
-  };
+  const mod = await openMarketHarbor(
+    run,
+    {
+      labels: ["mod_s", "mod_b", "mod_f"],
+      harbor: "modules",
+      openFailure: "No harbor to trade a module in.",
+    },
+    (captain, socket, roomId, seen) => {
+      socket.on("module:update", (payload: ModuleTradeBoard) => {
+        if (payload?.roomId !== roomId) return;
+        modBoards.set(captain.id, payload.moduleTrades);
+        rememberRows(
+          seen,
+          captain.id,
+          payload.moduleTrades.map((trade) => trade.id),
+        );
+      });
+    },
+  );
+  const [modSeller, modBuyer, modForeigner] = mod.crew;
+  const modRoomId = mod.roomId;
+  const modSeen = mod.seen;
+  const modSocketOf = mod.socketOf;
+  check(
+    mod.joins.every((join) => join.status === 200),
+    "three captains can sit at a table where modules change hands",
+  );
   const modBoardOf = (captain: Captain): ModuleTrade[] =>
     modBoards.get(captain.id) ?? [];
-  const modSettle = () => new Promise((resolve) => setTimeout(resolve, 500));
   // The emit and the wait are one call, for the reason the two markets
   // above give: a refusal waited for after the fact is a refusal this run
   // might already have missed.
@@ -620,9 +592,9 @@ export async function moduleTradesSuite(
     );
 
   modSocketOf(modSeller).emit("room:start", { roomId: modRoomId });
-  await modSettle();
+  await settle();
 
-  // The market belongs to the Parley, and the departure puts the room at
+  // The market belongs to the Parley, and the departure puts the harbor at
   // its opening seat rather than at one, so this is posted out of season by
   // construction rather than by a clock the run has to wait on.
   const modOffSeason = await modRefused(modSeller, "module:post", {
@@ -634,7 +606,7 @@ export async function moduleTradesSuite(
     "a module cannot be listed outside the Parley, and the refusal names the phase that opens the market, because a module changes hands at the table rather than mid leg",
   );
 
-  // The room's seat, moved the way this suite moves any room's seat.
+  // The harbor's seat, moved the way this suite moves any harbor's seat.
   const modSeat = (captain: Captain, round: number, phase: Phase) =>
     modSocketOf(captain).emit("game:status", {
       roomId: modRoomId,
@@ -647,7 +619,7 @@ export async function moduleTradesSuite(
       gameOver: false,
     });
   modSeat(modSeller, 1, "parley");
-  await modSettle();
+  await settle();
 
   const modBadFee = await modRefused(modSeller, "module:post", {
     fee: CONSENT_FEE_MAX + 1,
@@ -721,7 +693,7 @@ export async function moduleTradesSuite(
   );
   check(
     modOpenRow !== undefined && modBoardOf(modForeigner).length === 1,
-    "and it is the only row the third captain is handed, because a listing to the room is the one every captain may take",
+    "and it is the only row the third captain is handed, because a listing to the harbor is the one every captain may take",
   );
 
   const modRelisted = await modRefused(modSeller, "module:post", {
@@ -759,7 +731,7 @@ export async function moduleTradesSuite(
     modDirectRow !== undefined && modDirectRow.fee === 30,
     "a direct offer lands for the captain it names, at the price that was asked",
   );
-  await modSettle();
+  await settle();
   check(
     modDirectRow !== undefined &&
       modSeen.get(modBuyer.id)?.has(modDirectRow.id) === true &&
@@ -782,7 +754,7 @@ export async function moduleTradesSuite(
     modOpenRow !== undefined &&
       modAnsweredBoard.length === 1 &&
       modAnsweredBoard[0]?.id === modOpenRow.id,
-    "a captain who asks for the board is handed the same board the room broadcast, personalised by the same rules, so the row addressed to somebody else is absent from the answer as well",
+    "a captain who asks for the board is handed the same board the harbor broadcast, personalised by the same rules, so the row addressed to somebody else is absent from the answer as well",
   );
 
   const modTakenByThird = await modRefused(modForeigner, "module:accept", {
@@ -931,7 +903,7 @@ export async function moduleTradesSuite(
     "and a captain who is not the seller of a row cannot take it back, which the server answers with silence rather than with an error",
   );
 
-  // The room's log, which is the other place the trade is written down.
+  // The harbor's log, which is the other place the trade is written down.
   const modLog = waitForEvent<{
     roomId: string;
     entries: VoyageLogEntry[];
@@ -963,7 +935,7 @@ export async function moduleTradesSuite(
   // The open row's own sale, which is the line the duplicate press above
   // would have doubled if the second accept had settled anything: one
   // line for one agreement is what a single settlement looks like on the
-  // surface the whole room reads.
+  // surface the whole harbor reads.
   const modSoldOpenLine = voyageLogLine({
     kind: "module_sold",
     captain: modOpenTakenRow?.sellerName ?? "",
@@ -977,13 +949,13 @@ export async function moduleTradesSuite(
       modLines.includes(modPostedLine) &&
       modLines.includes(modSoldLine) &&
       modLines.filter((line) => line === modSoldOpenLine).length === 1,
-    "the room's log carries the trade as the board wrote it, the listing and the sale, with the price and the module on both lines and the taker named on the second, and the sale the third captain took stands on exactly one line rather than two",
+    "the harbor's log carries the trade as the board wrote it, the listing and the sale, with the price and the module on both lines and the taker named on the second, and the sale the third captain took stands on exactly one line rather than two",
   );
 
   // The leg moves on. Everything on the board was sold for the leg that
   // just ended, so the sweep is what takes the whole of it away.
   modSeat(modSeller, 2, "parley");
-  await modSettle();
+  await settle();
   check(
     modBoardOf(modSeller).length === 0 &&
       modBoardOf(modBuyer).length === 0 &&
@@ -1014,7 +986,7 @@ export async function moduleTradesSuite(
   // the sweep took the row off every board, and the accept is refused
   // rather than resurrecting an offer the voyage has already left behind.
   modSeat(modSeller, 3, "parley");
-  await modSettle();
+  await settle();
   const modExpiredRefused = await modRefused(modForeigner, "module:accept", {
     tradeId: modReopenedRow?.id ?? "",
   });
@@ -1064,7 +1036,7 @@ export async function moduleTradesSuite(
     "a listing aimed at a named captain is the only open offer that seller may have standing with them: a second listing addressed to the same captain is refused with the sentence that names them, which is the primitive's own bound met in the harbor rather than on a row built by hand",
   );
 
-  // The third transition the room's own expiry reads: the close of the
+  // The third transition the harbor's own expiry reads: the close of the
   // phase a listing was posted in. The sweep runs on the seat move, so a
   // listing still standing when the Parley ends is off every board at
   // Resolve, and the accept a captain left open is answered rather than
@@ -1073,7 +1045,7 @@ export async function moduleTradesSuite(
   // ahead of the phase check, so a row the closing phase took no longer
   // exists to be refused for its phase.
   modSeat(modSeller, 3, "resolve");
-  await modSettle();
+  await settle();
   const modPhaseRefused = await modRefused(modBuyer, "module:accept", {
     tradeId: modNamedRow?.id ?? "",
   });
@@ -1146,7 +1118,7 @@ export async function moduleTradesSuite(
       marketDesk.includes('from "@/lib/game/constants/ships"'),
     "the slot ceiling this market quotes is the last ship level the yard's own ladder ends at rather than a figure typed into the sentence, so the intro a buyer reads and the ladder the hull climbs are one number",
   );
-  // The two sentences the escort desk shares with the rooms that refuse the
+  // The two sentences the escort desk shares with the harbors that refuse the
   // same things: the fee's bounds, which the wires quote and this desk
   // hints at, and the rule that an offer dies, which the glossary tooltip prints
   // as well. Both are the copy module's own spelling, read here the same

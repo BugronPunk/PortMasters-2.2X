@@ -44,6 +44,7 @@ import {
   drawOffer,
   goodsCarryingTag,
   holdOfTag,
+  modePoolShape,
   normalizeCardTally,
   noteCardOffer,
   noteCardPick,
@@ -106,7 +107,7 @@ function cardOrThrow(id: string): CardRecord {
 const CJK = /\p{Script=Han}/u;
 
 export async function cardRecordSuite(): Promise<void> {
-  // ---- The shape ----
+  // ========== The shape ==========
   // The plan's ten fields, written here as the schedule lists them rather
   // than read back off the interface the check is about, so a field that
   // moved out of the record is a failed check and not a green one.
@@ -192,7 +193,7 @@ export async function cardRecordSuite(): Promise<void> {
     "the flag reader finds the card that writes a modifier key, which is how the pricing breakdowns name the source of an adjustment now that the flags live on the record: a module carries no flags at all, so the reader walks past every hull card without a special case for them",
   );
 
-  // ---- The mode field ----
+  // ========== The mode field ==========
   check(
     CARDS.every(
       (card) =>
@@ -212,14 +213,13 @@ export async function cardRecordSuite(): Promise<void> {
       ),
     "no mode runs a card above its own ceiling, read over both modes for every record: a card above the ceiling has to carry a zero there, and that pair is what makes the ceiling a ceiling rather than a comment somebody wrote beside the power number",
   );
-  const classicRuns = CARDS.filter((card) => card.modes.classic > 0);
-  const gambitRuns = CARDS.filter((card) => card.modes.ocean_gambit > 0);
+  const pools = modePoolShape();
   const aboveClassic = CARDS.filter(
     (card) => card.power > MODE_POWER_CEILING.classic,
   );
   check(
-    gambitRuns.length === CARDS.length &&
-      classicRuns.length === CARDS.length - aboveClassic.length &&
+    pools.ocean_gambit.count === CARDS.length &&
+      pools.classic.count === CARDS.length - aboveClassic.length &&
       aboveClassic.every(
         (card) => card.modes.classic === 0 && card.modes.ocean_gambit > 0,
       ),
@@ -227,8 +227,8 @@ export async function cardRecordSuite(): Promise<void> {
   );
   check(
     MODE_POWER_CEILING.ocean_gambit > MODE_POWER_CEILING.classic &&
-      classicRuns.some((card) => card.power === MODE_POWER_CEILING.classic) &&
-      gambitRuns.some((card) => card.power === MODE_POWER_CEILING.ocean_gambit),
+      pools.classic.widest === MODE_POWER_CEILING.classic &&
+      pools.ocean_gambit.widest === MODE_POWER_CEILING.ocean_gambit,
     "and both ceilings are reached by content rather than holding headroom nobody spends: the widest card each mode runs sits exactly at that mode's number, so the ceiling is the figure the next card has to argue with instead of a limit that happens to be loose",
   );
 
@@ -293,7 +293,7 @@ export async function cardRecordSuite(): Promise<void> {
     "and every weight the pool hands back is positive, which is the half of the zero that matters: a card this mode does not run, or this captain has no use for, is filtered out here rather than drawn with a zero chance, so nothing downstream has to reason about a card that can never come up",
   );
 
-  // ---- The condition arms ----
+  // ========== The condition arms ==========
   const condition = (id: string): CardCondition => cardOrThrow(id).condition;
   const flat = voyageState();
   check(
@@ -361,7 +361,7 @@ export async function cardRecordSuite(): Promise<void> {
     "while a role the roster cannot hold answers the false arm rather than crashing or answering for a crew nobody could have: the role arrives from a card's record, so a typo or a retired trade is a card that is offered plainly rather than a round that ends on a missing key",
   );
 
-  // ---- The lean and the weight ----
+  // ========== The lean and the weight ==========
   check(
     pathLean(cardOrThrow("silk_wind"), "loom") === 2 &&
       pathLean(cardOrThrow("silk_wind"), "convoy") === 1 &&
@@ -406,7 +406,7 @@ export async function cardRecordSuite(): Promise<void> {
     "the weight is the product of the three fields and nothing else: the mode's weight, the condition's answer and the path's lean, each read off the record rather than off a table here. The last line is the field doing its whole job, since a gambit only card weighs nothing at all in the base mode and the pool drops it before any draw sees it",
   );
 
-  // ---- The draw ----
+  // ========== The draw ==========
   const three: Array<[CardRecord, number]> = [
     [cardOrThrow("silk_wind"), 1],
     [cardOrThrow("favorable_tides"), 1],
@@ -439,7 +439,7 @@ export async function cardRecordSuite(): Promise<void> {
     "asking a pool for more cards than it holds answers with everything it has rather than looping or crashing, and an empty pool is a draw of nothing: both are ordinary states near the end of a voyage, when most of what a captain could be offered is already bolted to the hull",
   );
 
-  // ---- The two drafts, through the engine ----
+  // ========== The two drafts, through the engine ==========
   const voyage = voyageState();
   startBoonDrafting(voyage, []);
   check(
@@ -528,7 +528,7 @@ export async function cardRecordSuite(): Promise<void> {
     "while a module picked with a slot open installs, moves the leg on, drops out of the table since the pick is final, and is counted as taken where the card actually lands: a module parked for a swap can still be backed out of, and only a card that joined the hull is a card that was taken",
   );
 
-  // ---- Backing out is not a reroll ----
+  // ========== Backing out is not a reroll ==========
   // The bug cycle's own shape: the "Back to Shipyard" press cleared the
   // round's table, and startModuleDrafting rolls a fresh pool whenever the
   // table is empty, so Back followed by Draft again dealt an unlimited run
@@ -559,7 +559,7 @@ export async function cardRecordSuite(): Promise<void> {
     "backing out to the shipyard parks the half chosen swap and nothing else: the round's trio is the record's own stored draw and reopening the draft reshows it card for card, so Back is a way out rather than a free reroll",
   );
 
-  // ---- The tally and the report ----
+  // ========== The tally and the report ==========
   check(
     Object.keys(normalizeCardTally(undefined)).length === 0 &&
       Object.keys(normalizeCardTally(null)).length === 0 &&
@@ -636,7 +636,7 @@ export async function cardRecordSuite(): Promise<void> {
     "a save that comes back off the server carrying a card this build does not know heals to the cards it does, through the same load pass every other saved field goes through: the tally is a measurement, so a stale id would print as a nameless row in the report rather than as a card nobody can explain",
   );
 
-  // ---- The tag reads, in production ----
+  // ========== The tag reads, in production ==========
   check(
     carriesTag("good", "Hemp", "bulk") &&
       carriesTag("good", "Silk", "woven") &&
@@ -663,7 +663,7 @@ export async function cardRecordSuite(): Promise<void> {
     "and an order's own manifest is read through the same vocabulary, which is what lets a card pay on the freight a captain actually signed for: an empty manifest carries nothing, for the reason an empty hold holds nothing",
   );
 
-  // ---- The validator ----
+  // ========== The validator ==========
   const shipped = shippedCards();
   check(
     validateCards(shipped).length === 0,
@@ -835,7 +835,7 @@ export async function cardRecordSuite(): Promise<void> {
     })?.includes("no card writes transport_silk_discount") === true,
     "while a key no card writes is caught in the other direction, because every key the vocabulary names has a read site in the engine: a renamed key on one side of that pair is a read site waiting on a flag that never arrives, and this clause is what fails the build the day the two sides part",
   );
-  // ---- F6's pairing clause ----
+  // ========== F6's pairing clause ==========
   // The clause reads the charter id to path map rather than the records,
   // so its fixtures patch the map and the findings are read in pairs:
   // what the map itself got wrong, then the count that same mistake
@@ -927,7 +927,7 @@ export async function cardRecordSuite(): Promise<void> {
     "while the same scan reads a name rather than a word: the artisan's workshop says that its workers produce, and Produce is a food, so the scan is case sensitive on purpose. A scan that could not tell those apart would fail the build over a verb",
   );
 
-  // ---- The house rule ----
+  // ========== The house rule ==========
   check(
     [
       "src/lib/game/constants/cards.ts",

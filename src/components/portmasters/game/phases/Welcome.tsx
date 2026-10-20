@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/lib/game/constants/brand";
 import { START_VOYAGE } from "@/lib/game/constants/copy";
-import { STARTING_STOCK } from "@/lib/game/constants/goods";
+import { RESOURCES_TIER0, STARTING_STOCK } from "@/lib/game/constants/goods";
 import { INCOME_TAX_RATE, VAT_RATE } from "@/lib/game/engine";
 import { openingPhase } from "@/lib/game/checkpoint";
 import { difficultyConfig, pirateOddsLabel } from "@/lib/game/difficulty";
@@ -91,7 +91,7 @@ function InfoCard({
 }
 
 // Welcome is the pre voyage lobby. The voyage has not started yet, so it
-// ignores act/ctx and the other in voyage hooks; it only reads the room
+// ignores act/ctx and the other in voyage hooks; it only reads the harbor
 // (to derive whether the viewer is the host), the roster (for the harbor
 // avatars) and phaseSync (for the startGame action and the ready list).
 // onTutorialOpen is the one extra beyond PhasePanelProps.
@@ -105,15 +105,15 @@ export function Welcome({
 }: Pick<PhasePanelProps, "game" | "phaseSync" | "members" | "me" | "room"> & {
   onTutorialOpen?: () => void;
 }) {
-  // The captains in the harbor, read from room membership rather than
+  // The captains in the harbor, read from harbor membership rather than
   // from the ready check's roster. The two were the same list until the
   // waiting roster learned to exclude the pier (the harbor is not a seat
-  // the room readies out of, see waitingRosterSet in
+  // the harbor readies out of, see waitingRosterSet in
   // src/server/realtime/checkpoint.ts): every captain standing here fell
   // out of it, the start button disabled itself with "Need at least one
   // captain in the harbor" for a host standing in a full one, and the
   // server's own guard, which counts membership, would have taken the
-  // start. Who is in the harbor is a fact about the room; the roster is
+  // start. Who is in the harbor is a fact about the harbor; the roster is
   // an answer about the seat.
   const harborIds = members.map((m) => m.id);
   // Solo Practice Mode: a captain may start the voyage alone. The
@@ -131,22 +131,24 @@ export function Welcome({
   // describe two different voyages.
   const play = modeConfig(game.mode);
   const briefing = play.briefing;
-  // The seat the departure walks the room into, read off the mode's own
+  // The seat the departure walks the harbor into, read off the mode's own
   // lap rather than named here (see openingPhase). For a dealing Gambit
   // build it is the path draft, and the round pill below names it as the
   // first thing that will be asked of the captain.
   const opening = openingPhase(game.mode);
-  // The InfoCard numbers derive from the room's difficulty tier, so each
+  // The InfoCard numbers derive from the harbor's difficulty tier, so each
   // tier advertises its real dials: Fair Winds reads exactly like the
   // founding trade figures (20% raid, 15 Gold maintenance), while Open
   // Waters and Monsoon print their own.
   const cfg = difficultyConfig(game.difficulty);
   // The three starting goods as the card prints them: each pair reads
   // through its own row (see manual.048 in the pack), and the list joins
-  // with the separator the language writes a list with.
-  const stockLine = ["Hemp", "Silk", "Tea"]
-    .map((r) => t("{r}×{stockQty}", { r: t(r), stockQty: STARTING_STOCK[r] }))
-    .join(listJoiner());
+  // with the separator the language writes a list with. The goods are the
+  // founding tier's own list rather than a second copy of it, so a
+  // change to what a voyage opens with reaches this card.
+  const stockLine = RESOURCES_TIER0.map((r) =>
+    t("{r}×{stockQty}", { r: t(r), stockQty: STARTING_STOCK[r] }),
+  ).join(listJoiner());
   // income tax is not yet a DifficultyConfig dial: every charter still
   // uses the founding 10%, which is what calcIncomeTax charges.
   const taxRate = INCOME_TAX_RATE;

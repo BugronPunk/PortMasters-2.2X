@@ -1,8 +1,9 @@
 "use client";
 
 import { BarterOffer } from "@/types/realtime/boards";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
+import { refusalHandler } from "@/lib/refusals";
 
 // Forwarded so the Parley panel can import the wire shape
 // from the same place it imports the hook. The canonical home is
@@ -29,10 +30,10 @@ export type PostedOffer = {
 };
 
 /**
- * Whether a post and something the room said about one are the same
+ * Whether a post and something the harbor said about one are the same
  * offer. A refusal frame echoes the fields the poster sent and a board
  * row carries the same fields on the offer it made, so those fields are
- * all a match can read: the room mints the offer id after the post is
+ * all a match can read: the harbor mints the offer id after the post is
  * accepted, and a refusal names an offer that never got one.
  *
  * Two offers of one shape are indistinguishable and are allowed to exist,
@@ -67,7 +68,7 @@ function takeRefusedPost(
 }
 
 /**
- * The other way a post's wait ends: the room listed it. A post the room
+ * The other way a post's wait ends: the harbor listed it. A post the harbor
  * accepted comes back as an offer of mine on the board, and from that
  * moment its escrow has a home on the board and nothing is owed back, so
  * it leaves the waiting list. Only this captain's own fresh rows are
@@ -85,9 +86,9 @@ function dropConfirmedPosts(
 }
 
 /**
- * The room's shared open offer board: a thin relay around the barter:*
+ * The harbor's shared open offer board: a thin relay around the barter:*
  * socket events, kept separate from GameState the same way
- * usePlayerDetail is, since an open offer is real room wide state no
+ * usePlayerDetail is, since an open offer is real harbor wide state no
  * single client's deterministic engine can compute on its own. This hook
  * only tracks the board; the actual inventory effect (escrow on post,
  * credit and debit on a completed trade, escrow returned on a departure)
@@ -128,7 +129,7 @@ function dropConfirmedPosts(
  * The board also arrives whole on every join, which is what makes a
  * reload mid voyage come back with the right escrow ledger.
  *
- * `onPostRefused` fires with a post of mine the room turned away. That
+ * `onPostRefused` fires with a post of mine the harbor turned away. That
  * post's offered goods are already out of my hold (the caller escrows
  * before it posts, and the engine's own post is what takes them), so this
  * is the one route by which a refusal gives them back. Without it a press
@@ -187,7 +188,7 @@ export function useBarter(
     onPostRefusedRef.current = onPostRefused;
   }, [onPostRefused]);
 
-  // The posts this client has sent that the room has not answered yet, in
+  // The posts this client has sent that the harbor has not answered yet, in
   // the order they went out, each one holding the shape its escrow was
   // taken in. One answer takes one of them: the oldest, the one a
   // refusal's frame names, or the one a board row matches.
@@ -206,7 +207,7 @@ export function useBarter(
       setFlexibleOffersAccepted(data.flexibleOffersAccepted ?? 0);
       const next = new Map<string, BarterOffer>();
       // The rows this client had not seen a moment ago, which is how a
-      // post of mine is answered the other way: the room listing it. Read
+      // post of mine is answered the other way: the harbor listing it. Read
       // against the board as it was before this update replaces it.
       const fresh: BarterOffer[] = [];
       for (const o of data.offers) {
@@ -237,15 +238,13 @@ export function useBarter(
       settledRef.current.add(data.offer.id);
       onFulfilledRef.current(data.offer, data.accepterId);
     };
-    const onAcceptFail = (data: {
-      roomId: string;
-      offerId: string;
-      reason: string;
-    }) => {
-      if (data.roomId !== roomId) return;
-      setError(data.reason);
-    };
-    // A post the room turned away. The frame names the offer it refused
+    const onAcceptFail = refusalHandler(
+      roomId,
+      setError,
+      (data: { roomId: string; offerId: string; reason: string }) =>
+        data.reason,
+    );
+    // A post the harbor turned away. The frame names the offer it refused
     // (see the post handler in src/server/realtime/wiring/barter), which
     // is what lets the escrow that has to come back be found rather than
     // guessed at. The sentence is the frame's own and lands in this hook's
@@ -307,7 +306,7 @@ export function useBarter(
   // Withdrawing only asks, and clears the previous refusal first. The goods
   // come back the way a swept offer's do, when the board stops listing it,
   // and never at this moment: a buyer's accept can already be on the wire,
-  // and paying the goods back on an offer the room has just sold would pay
+  // and paying the goods back on an offer the harbor has just sold would pay
   // the poster twice. So nothing is refunded and nothing is marked settled
   // here: the refund a departure earns is decided by what the board
   // reported, the same rule for every offer that leaves it.
@@ -329,13 +328,23 @@ export function useBarter(
     [socket, roomId],
   );
 
-  return {
-    offers,
-    error,
-    clearError: () => setError(null),
-    flexibleOffersAccepted,
-    post,
-    cancel,
-    accept,
-  };
+  // The dismiss, named rather than written inline, so that it is one
+  // function across renders and the answer below can be held to one
+  // identity.
+  const clearError = useCallback(() => setError(null), []);
+
+  // The answer, held to one identity until something inside it changes.
+  // The board that draws the offers takes this whole object as a prop.
+  return useMemo(
+    () => ({
+      offers,
+      error,
+      clearError,
+      flexibleOffersAccepted,
+      post,
+      cancel,
+      accept,
+    }),
+    [offers, error, clearError, flexibleOffersAccepted, post, cancel, accept],
+  );
 }

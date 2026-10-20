@@ -9,8 +9,8 @@
 // restart's fresh epoch can never resolve, or even see, a venture from
 // a voyage that no longer exists.
 //
-// One filled venture per voyage, room wide: once any venture in a
-// room's current voyage has ever reached filled, nothing else can.
+// One filled venture per voyage, harbor wide: once any venture in a
+// harbor's current voyage has ever reached filled, nothing else can.
 // hasRoomClaimedVenture is the one check both venture:post and
 // venture:contribute run before doing anything else.
 // =====================================================================
@@ -55,10 +55,10 @@ function ventureSummary(v: {
   };
 }
 
-/* The board as one socket reads it: the open ventures of the room's current
-   voyage, and the switch that says whether the room's one payout has been
-   claimed. The same shape the broadcast sends to the room, read once because
-   there are two readers of it: the room at large when the board moves, and
+/* The board as one socket reads it: the open ventures of the harbor's current
+   voyage, and the switch that says whether the harbor's one payout has been
+   claimed. The same shape the broadcast sends to the harbor, read once because
+   there are two readers of it: the harbor at large when the board moves, and
    the single captain who asks for it on walking in. A second reader that
    rebuilt this payload would be a second answer to what is on the board. */
 type VentureBoard = {
@@ -114,7 +114,7 @@ export async function hasRoomClaimedVenture(
 // their stake times the payout multiplier), failed (refunding half the
 // stake, its own deadline ran out short of target), or destroyed
 // (refunding the full stake because a different venture in the same
-// room's voyage reached filled first). Either way every contributor
+// harbor's voyage reached filled first). Either way every contributor
 // gets a personal payout figure.
 export async function settleVenture(
   io: Server,
@@ -139,7 +139,7 @@ export async function settleVenture(
     // not the same fact, so it goes out one socket at a time, each in the
     // language that socket presented. The walk is the departure notice's
     // (see reapDeparture in ./presence), kept in the same shape so the
-    // two room wide notices cannot come apart in how they address a room.
+    // two harbor wide notices cannot come apart in how they address a harbor.
     for (const [socketId, state] of sockets) {
       if (state.roomId !== venture.roomId) continue;
       io.to(socketId).emit("room:system", {
@@ -151,7 +151,7 @@ export async function settleVenture(
 }
 
 // Called once, immediately after any venture is settled as filled:
-// every other still open venture in that same room and voyage is
+// every other still open venture in that same harbor and voyage is
 // destroyed on the spot, refunded in full, rather than left to sit
 // open and silently violate the one shared chance per voyage rule.
 export async function destroyOtherOpenVentures(
@@ -171,11 +171,11 @@ export async function destroyOtherOpenVentures(
   for (const v of others) await settleVenture(io, v, "destroyed");
 }
 
-// Checked whenever a room's round advances and once more,
+// Checked whenever a harbor's round advances and once more,
 // unconditionally, when a voyage concludes or restarts, so no venture
 // can ever sit open forever past its own deadline or past the voyage it
 // belongs to. A venture stays open through its own deadline round, and
-// only expires once the room's round moves past it.
+// only expires once the harbor's round moves past it.
 export async function resolveExpiredVentures(
   io: Server,
   roomId: string,

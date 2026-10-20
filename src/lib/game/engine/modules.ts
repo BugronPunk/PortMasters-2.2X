@@ -53,7 +53,7 @@
 // and not a pair of hands: what bounds a sale is that one module can only
 // leave once, which is the per module lock below, and what bounds a
 // purchase is the buyer's own slot count, read on the buyer's own panel
-// rather than counted by the room. Neither is a rule the server can check,
+// rather than counted by the harbor. Neither is a rule the server can check,
 // and the server does not pretend to: it keeps the ordering (one row per
 // module per seller per leg, one open offer per seller per buyer) and
 // leaves the hulls to their owners.
@@ -77,17 +77,12 @@
 // in ./core).
 // =====================================================================
 import { cardById, cardName, cardsOfKind } from "../cards";
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import { moduleTradesOn } from "../flags";
 import type { GameState } from "../types";
-import {
-  floorTallies,
-  markMovement,
-  movementApplied,
-  type ConsentTerms,
-} from "./consent";
-import { addOwnedAmount, paidFee } from "./core";
+import { floorTallies, type ConsentTerms } from "./consent";
 import { installModuleAccounting, unequipModuleAccounting } from "./boons";
+import { settleConsentTrade } from "./settlement";
 
 /**
  * Whether this captain has anything to sell, which is the panel's question
@@ -153,115 +148,95 @@ export function moduleListedThisLeg(
 /**
  * Applies this captain's side of a module trade, once.
  *
- * One function for both sides, the shape both sibling markets settle
- * through, and for the same reason: the two cases differ in who they are
- * and in which direction the Gold and the module move, and agree on
- * everything else. The seller is the one whose hull the module leaves, so
- * the seller's machine is what takes it off and what unwinds the
- * accounting the module carried; the buyer is the one who pays, and the
- * price that moves is the price the two captains agreed rather than what
- * the buyer's purse could cover, exactly as a contract's fee is.
- *
- * The ledger is the idempotence (see movementApplied in ./consent): a
- * reload between the agreement and the broadcast that carries it must not
- * charge the same fee twice, and a board that reports the same row again
- * must not move the module again either.
- *
- * Returns whether the state changed, which is what the React layer reads to
- * decide whether it owes the captain a fresh render.
+ * The settlement itself is the shared one (see settleConsentTrade in
+ * ./settlement), and what this function adds is the module. The seller is
+ * the one whose hull the module leaves, so the seller's own machine is
+ * what takes it off and what unwinds the accounting the module carried,
+ * and the buyer is the one who pays and bolts it on.
  */
 export function applyModuleTradeSide(
   state: GameState,
   trade: ModuleTrade,
   meId: string,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
-  if (!moduleTradesOn(state.mode)) return false;
-  if (trade.status !== "agreed") return false;
-  const isSeller = trade.sellerUserId === meId;
-  const isBuyer = trade.buyerUserId === meId;
-  if (!isSeller && !isBuyer) return false;
-  const key = `${trade.id}:fee`;
-  if (movementApplied(state, key)) return false;
-  const name = cardName(trade.module);
-
-  if (isBuyer) {
-    // Paid by a purse that is allowed to be empty, the reading both sibling
-    // markets take, and the asymmetry is deliberate: the guard that keeps an
-    // honest buyer out of this branch is not here, because the server has
-    // never read a purse and this settle has to complete on both machines
-    // whether the buyer's can cover the fee or not. It lives one layer up,
-    // on the desks a captain clicks from, where it is the same predicate the
-    // module market's blocked chain and the refit bench's own row read (see
-    // canPayFee in ./core). A shortfall that reaches this line is a purse
-    // that moved between the two clicks, and the honest answer is the Gold
-    // that is actually there rather than a negative hold. The seller credits
-    // the agreed price, because the price rather than the payment is what
-    // the two captains shook hands on.
-    const paid = paidFee(state, trade.fee);
-    addOwnedAmount(state, "Gold", -paid);
-    state.modulesBought += 1;
-    state.moduleFeesPaid += paid;
-    logs.push(
-      t("🤝 Module trade: paid {paid} Gold to {trade.sellerName} for {name}.", {
-        paid,
-        "trade.sellerName": trade.sellerName,
-        name,
-      }),
-    );
-    // The pool is asked rather than the row trusted, so a board written by a
-    // build that knew a module this one does not costs the captain their fee
-    // and a sentence rather than a crash or a nameless card on the hull. The
-    // post refuses such a row and both ends run the same pool, so this is
-    // the branch for a save that moved between two builds, which is the
-    // same reachability the bench's missing garment branch has.
-    const card = cardById(trade.module);
-    if (card !== null && card.kind === "module") {
-      state.equippedModules.push(card);
-      // Bolting a module on is the one door onto a hull that bypasses
-      // equipModule (its slot guard must not stand between an agreed trade
-      // and its settle), so it calls the same install accounting every
-      // other landing site calls. Without it the card landed bare: the
-      // surcharge two modules carry was never charged, and the first
-      // unwind then subtracted one that was never added, which read as a
-      // negative bill that paid the captain every Resolve (see
-      // installModuleAccounting in ./boons).
-      installModuleAccounting(state, card);
-      logs.push(t("🔧 {name} is bolted to the hull.", { name }));
-    } else {
-      logs.push(t("❌ The yard has no {name} to bolt on.", { name }));
-    }
-  } else {
-    // The automatic unequip the plan names, and it is found by position
-    // rather than by identity because the hull holds card records: the
-    // first copy is the one that goes, so a captain carrying two of the
-    // same module through the draft's fallback pool still has one left.
-    const at = state.equippedModules.findIndex((m) => m.id === trade.module);
-    if (at >= 0) {
-      unequipModuleAccounting(state, state.equippedModules[at]);
-      state.equippedModules = state.equippedModules.filter((_, i) => i !== at);
-      logs.push(
-        t("🔧 {name} leaves your hull for {buyerName}.", {
-          name,
-          buyerName: trade.buyerName ?? t("a captain"),
+  return settleConsentTrade(state, logs, {
+    on: moduleTradesOn,
+    status: "agreed",
+    row: trade,
+    meId,
+    counters: {
+      bought: "modulesBought",
+      feesPaid: "moduleFeesPaid",
+      sold: "modulesSold",
+      feesEarned: "moduleFeesEarned",
+    },
+    copy: {
+      buyer: (paid) =>
+        line(
+          "🤝 Module trade: paid {paid} Gold to {trade.sellerName} for {name}.",
+          {
+            paid,
+            "trade.sellerName": trade.sellerName,
+            name: cardName(trade.module),
+          },
+        ),
+      seller: (fee) =>
+        line("🤝 Module trade: {buyerName} paid {trade.fee} Gold for {name}.", {
+          buyerName: trade.buyerName ?? line("A captain"),
+          "trade.fee": fee,
+          name: cardName(trade.module),
         }),
-      );
-    }
-    addOwnedAmount(state, "Gold", trade.fee);
-    state.modulesSold += 1;
-    state.moduleFeesEarned += trade.fee;
-    state.modulesTraded[trade.module] =
-      (state.modulesTraded[trade.module] ?? 0) + 1;
-    logs.push(
-      t("🤝 Module trade: {buyerName} paid {trade.fee} Gold for {name}.", {
-        buyerName: trade.buyerName ?? t("A captain"),
-        "trade.fee": trade.fee,
-        name,
-      }),
-    );
-  }
-  markMovement(state, key);
-  return true;
+    },
+    onBuy: (state, logs) => {
+      // The pool is asked rather than the row trusted, so a board written by a
+      // build that knew a module this one does not costs the captain their fee
+      // and a sentence rather than a crash or a nameless card on the hull. The
+      // post refuses such a row and both ends run the same pool, so this is
+      // the branch for a save that moved between two builds, which is the
+      // same reachability the bench's missing garment branch has.
+      const name = cardName(trade.module);
+      const card = cardById(trade.module);
+      if (card !== null && card.kind === "module") {
+        state.equippedModules.push(card);
+        // Bolting a module on is the one door onto a hull that bypasses
+        // equipModule (its slot guard must not stand between an agreed trade
+        // and its settle), so it calls the same install accounting every
+        // other landing site calls. Without it the card landed bare: the
+        // surcharge two modules carry was never charged, and the first
+        // unwind then subtracted one that was never added, which read as a
+        // negative bill that paid the captain every Resolve (see
+        // installModuleAccounting in ./boons).
+        installModuleAccounting(state, card);
+        logs.push(line("🔧 {name} is bolted to the hull.", { name }));
+      } else {
+        logs.push(line("❌ The yard has no {name} to bolt on.", { name }));
+      }
+    },
+    onSell: (state, logs) => {
+      // The automatic unequip the plan names, and it is found by position
+      // rather than by identity because the hull holds card records: the
+      // first copy is the one that goes, so a captain carrying two of the
+      // same module through the draft's fallback pool still has one left.
+      const at = state.equippedModules.findIndex((m) => m.id === trade.module);
+      if (at >= 0) {
+        unequipModuleAccounting(state, state.equippedModules[at]);
+        state.equippedModules = state.equippedModules.filter(
+          (_, i) => i !== at,
+        );
+        logs.push(
+          line("🔧 {name} leaves your hull for {buyerName}.", {
+            name: cardName(trade.module),
+            buyerName: trade.buyerName ?? line("a captain"),
+          }),
+        );
+      }
+    },
+    onSold: (state) => {
+      state.modulesTraded[trade.module] =
+        (state.modulesTraded[trade.module] ?? 0) + 1;
+    },
+  });
 }
 
 /**
@@ -356,13 +331,13 @@ export type ModuleTrafficSave = {
  * name is the only thing the report needs from a record and a subject built
  * by hand in a suite should not have to author a whole card to be read.
  */
-export interface ModuleTrafficSubject {
+interface ModuleTrafficSubject {
   modules: readonly { id: string; name: string }[];
   saves: readonly ModuleTrafficSave[];
 }
 
 /** One module's two numbers, which is a row of the report. */
-export type ModuleTrafficRow = {
+type ModuleTrafficRow = {
   id: string;
   name: string;
   /** How many of these saves carry this module on the hull right now. */

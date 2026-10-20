@@ -21,7 +21,7 @@
 // move stops being a confession.
 //
 // What is here: the cooldown, the visibility rule, the lean itself, and
-// the order of the three. What is not here: the room's board, which lives
+// the order of the three. What is not here: the harbor's board, which lives
 // beside the socket that speaks on it (see src/server/realtime/bazaar.ts),
 // and the copy, which is written where it is printed.
 //
@@ -60,7 +60,7 @@ export const BAZAAR_SELLER_PATH: PathId = "aroma";
 export type RumorDirection = 1 | -1;
 
 /**
- * One published rumor, as the room holds it. The direction is part of the
+ * One published rumor, as the harbor holds it. The direction is part of the
  * row and is the secret this feature is built around, which is why the
  * shape the fleet is sent is PublicRumor below rather than this one.
  *
@@ -133,7 +133,7 @@ export function canPublishRumor(
  * the engine as a row that did nothing.
  *
  * The leg is the leg the rumor prices, which is the next one, because a
- * rumor is a claim about the port the room has not reached yet. A good
+ * rumor is a claim about the port the harbor has not reached yet. A good
  * that unlocks on the very leg it would move is therefore nameable in the
  * leg before it, which is the reading the plan's fiction wants: a captain
  * hears about a cargo before the harbor has it.
@@ -169,7 +169,7 @@ export function rumorGoodAllowed(
 /**
  * Whether a rumor spoken in this leg has a market to move.
  *
- * A rumor is a claim about the port the room has not reached yet, so the
+ * A rumor is a claim about the port the harbor has not reached yet, so the
  * market that answers it is the one after the leg it was spoken in, which
  * is the same expression rumorLean below reads from the other end. That
  * makes the closing leg the one leg of a voyage where a rumor has nothing
@@ -187,7 +187,7 @@ export function rumorGoodAllowed(
  *
  * The length is passed in rather than read off a mode in here, because
  * this module knows the rule and not the voyage: the server reads the
- * length off the room and the desk reads it off the pinned length on its
+ * length off the harbor and the desk reads it off the pinned length on its
  * own state (see maxRounds in ../types).
  */
 export function rumorCanLand(round: number, voyageRounds: number): boolean {
@@ -225,7 +225,7 @@ export function rumorClosingLine(): string {
  * them until then cannot be counting from two places. The cooldown is
  * measured off this rather than off a counter wound down each leg, which
  * is the same choice the refit's leg stamps make and for the same reason:
- * a row is a fact the room already holds, a counter would be a second
+ * a row is a fact the harbor already holds, a counter would be a second
  * place the same fact is written, and the second one is the one that
  * survives a reload.
  *
@@ -297,7 +297,7 @@ export function rumorNextLeg(
  * reason rumorCanLand gives: this module knows the rule and not the
  * voyage. The desk reads it off the length its own state pinned at
  * departure (see maxRounds in ../types) and the server reads it off the
- * room when it refuses a row (see voyageRoundsFor in ../mode).
+ * harbor when it refuses a row (see voyageRoundsFor in ../mode).
  *
  * Total rather than guarded, like rumorCooldownLine: a captain the bazaar
  * will hear is told so, so the desk never has to ask two questions in the
@@ -460,7 +460,7 @@ export function rumorLandedLine(
 }
 
 /**
- * The board as one named captain may read it: every row in the room, with
+ * The board as one named captain may read it: every row in the harbor, with
  * the direction stripped from the ones that are still standing and are
  * not theirs.
  *
@@ -492,7 +492,7 @@ export function publicRumors(
  * hand already uses (see portShiftFor in src/server/realtime/checkpoint):
  * a call made in one leg is read by the market of the next. Written here
  * as the same expression from the other end, `row.round + 1 === round`,
- * so a rumor published as the room leaves Parley is priced by the very
+ * so a rumor published as the harbor leaves Parley is priced by the very
  * next market and by no other.
  *
  * Two captains who name the same good are summed and then clamped, which
@@ -535,7 +535,7 @@ export function rumorLean(
 }
 
 /**
- * The rumor as the room reads it, which is the only rendering there is.
+ * The rumor as the harbor reads it, which is the only rendering there is.
  *
  * A clause rather than a sentence, exactly as the Harbormaster's own call
  * is (see portShiftLine in ../maroon), and for the same reason: whoever

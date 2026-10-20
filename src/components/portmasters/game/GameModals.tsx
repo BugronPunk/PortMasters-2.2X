@@ -15,7 +15,8 @@ import { APP_NAME } from "@/lib/game/constants/brand";
 import { guideText, tutorialSteps } from "@/lib/game/constants/copy";
 import { tipsHeading, tipsText } from "@/lib/game/constants/tips";
 import type { Difficulty } from "@/lib/game/difficulty";
-import { getLocale, t } from "@/lib/game/i18n";
+import { t } from "@/lib/game/i18n";
+import { useLanguage } from "@/lib/use-language-preference";
 // The two modals below that quote a voyage's length take the mode as well
 // as the tier, because the length is the voyage's rather than the tier's
 // alone (see voyageLegs in src/lib/game/mode). The caller reads both off
@@ -25,6 +26,7 @@ import type { GameMode } from "@/lib/game/mode";
 import type { GameState } from "@/lib/game/types";
 import { getIntelCost } from "@/lib/game/engine";
 import { cn, formatTime } from "@/lib/utils";
+import { RichText } from "../RichText";
 import { CloseFooter } from "./CloseFooter";
 import {
   Sparkles,
@@ -309,22 +311,36 @@ export function RumorBoardModal({
 }
 
 /**
- * Host only confirmation before a restart goes out over the wire. A
- * restart resets every captain currently in the harbor back to round one,
- * not just whoever clicks the button, and reopens the room to new joins,
- * so it's worth one extra click to make sure that's actually intended.
+ * The dialog that asks before a thing that cannot be undone: the restart
+ * that resets the harbor and the leave that writes a seat off. The two
+ * had been written out twice line for line, down to the alarm chip and
+ * the pair of buttons, and two copies of a destructive confirm is how one
+ * of them drifts into a friendly one without anybody deciding to. The
+ * parts that differ are the four the caller hands over: the glyph, the
+ * question, the sentence under it, and the name of the press that goes
+ * through.
  *
- * Wears the vermilion gradient so the consequence reads at a glance: a
- * restart is the most destructive action in the room, and the destructive
- * accent is what surfaces that without needing the body copy to land first.
+ * The chip wears the alarm wash and the alarm ink together, so the glyph
+ * inside inherits the colour rather than being told it, and the confirm
+ * press wears the same alarm against the background: the dialog that
+ * takes rather than gives is the one that says so before it is answered.
  */
-export function RestartConfirmModal({
+function ConfirmDialog({
   open,
   onOpenChange,
+  icon: Icon,
+  title,
+  description,
+  confirmLabel,
   onConfirm,
 }: {
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  /** The glyph the chip carries. The chip sizes the box it sits in. */
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  description: string;
+  confirmLabel: string;
   onConfirm: () => void;
 }) {
   return (
@@ -332,19 +348,12 @@ export function RestartConfirmModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {/* The one dialog in the session that takes rather than gives:
-                restarting sends every captain back to round one and cannot
-                be undone, so it wears the colour that means a loss. */}
-            <span className="bg-alarm/5 inline-flex h-7 w-7 items-center justify-center rounded-lg">
-              <RotateCcw className="h-4 w-4 text-alarm" />
+            <span className="bg-alarm/5 inline-flex h-7 w-7 items-center justify-center rounded-lg text-alarm">
+              <Icon className="h-4 w-4" />
             </span>
-            {t("Restart the voyage?")}
+            {title}
           </DialogTitle>
-          <DialogDescription>
-            {t(
-              "Every captain currently in this harbor goes back to round one: gold, cargo, workers, and ship upgrades all reset. The harbor also reopens, so new captains can join again. This can't be undone.",
-            )}
-          </DialogDescription>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="flex justify-end gap-2 mt-2">
           <Button variant="secondary" onClick={() => onOpenChange(false)}>
@@ -357,11 +366,47 @@ export function RestartConfirmModal({
               onConfirm();
             }}
           >
-            {t("Restart for Everyone")}
+            {confirmLabel}
           </Button>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/**
+ * Host only confirmation before a restart goes out over the wire. A
+ * restart resets every captain currently in the harbor back to round one,
+ * not just whoever clicks the button, and reopens the harbor to new joins,
+ * so it's worth one extra click to make sure that's actually intended.
+ *
+ * Wears the vermilion gradient so the consequence reads at a glance: a
+ * restart is the most destructive action in the harbor, and the destructive
+ * accent is what surfaces that without needing the body copy to land
+ * first. It is the one dialog in the session that takes rather than
+ * gives, so it wears the colour that means a loss.
+ */
+export function RestartConfirmModal({
+  open,
+  onOpenChange,
+  onConfirm,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      icon={RotateCcw}
+      title={t("Restart the voyage?")}
+      description={t(
+        "Every captain currently in this harbor goes back to round one: gold, cargo, workers, and ship upgrades all reset. The harbor also reopens, so new captains can join again. This can't be undone.",
+      )}
+      confirmLabel={t("Restart for Everyone")}
+      onConfirm={onConfirm}
+    />
   );
 }
 
@@ -381,37 +426,17 @@ export function LeaveConfirmModal({
   onConfirm: () => void;
 }) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <span className="bg-alarm/5 inline-flex h-7 w-7 items-center justify-center rounded-lg">
-              <DoorOpen className="h-4 w-4 text-alarm" />
-            </span>
-            {t("Leave the voyage?")}
-          </DialogTitle>
-          <DialogDescription>
-            {t(
-              "The harbor sails on without you: your seat is written off, and the gold and cargo you were carrying go with it. You can start or join a new harbor right away. This can't be undone.",
-            )}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="flex justify-end gap-2 mt-2">
-          <Button variant="secondary" onClick={() => onOpenChange(false)}>
-            {t("Cancel")}
-          </Button>
-          <Button
-            className="bg-alarm text-background"
-            onClick={() => {
-              onOpenChange(false);
-              onConfirm();
-            }}
-          >
-            {t("Leave the Voyage")}
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      icon={DoorOpen}
+      title={t("Leave the voyage?")}
+      description={t(
+        "The harbor sails on without you: your seat is written off, and the gold and cargo you were carrying go with it. You can start or join a new harbor right away. This can't be undone.",
+      )}
+      confirmLabel={t("Leave the Voyage")}
+      onConfirm={onConfirm}
+    />
   );
 }
 
@@ -425,7 +450,10 @@ export function TutorialModal({
   // The step copy is composed for the language in force when it is built
   // (see tutorialSteps), so the language is part of the memo's own key: a
   // flip rebuilds the steps rather than leaving the last one on screen.
-  const locale = getLocale();
+  // The language is read through the provider rather than through the
+  // module reader, because the module reader is a plain read and the
+  // memo would keep the steps it built for the language before the flip.
+  const { locale } = useLanguage();
   const steps = useMemo(
     () => tutorialSteps(mode, difficulty),
     [mode, difficulty, locale],
@@ -467,9 +495,9 @@ export function TutorialModal({
           </DialogDescription>
         </DialogHeader>
         <Progress value={pct} className="h-1.5 shrink-0" />
-        <div
+        <RichText
           className="min-h-0 flex-1 overflow-y-auto pr-1 text-[13.5px] leading-relaxed text-foreground [&_p]:mb-2 [&_div]:mb-1"
-          dangerouslySetInnerHTML={{ __html: s.content }}
+          html={s.content}
         />
         <div className="shrink-0 grid grid-cols-[1fr_auto_1fr] items-center gap-3 pt-3 border-t">
           <Button

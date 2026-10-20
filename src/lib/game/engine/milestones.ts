@@ -31,14 +31,14 @@
 //
 // Every path into here is idempotent, which matters because every one of
 // them can be entered twice: the dawn and the settlement both run again
-// when a captain catches up to the room (the same second entry the ticks'
+// when a captain catches up to the harbor (the same second entry the ticks'
 // own round stamps exist for), the queue guard keeps a waiting moment
 // from being armed again, and the marks only move forward, so the worst
 // a second entry does is arm the next unanswered moment of a repeatable
 // trigger when its terms already hold.
 // =====================================================================
 import { cardLead, noteCardOffer, noteCardPick } from "../cards";
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import {
   MILESTONE_MOMENTS,
   type MilestoneTrigger,
@@ -65,7 +65,7 @@ import type { GameState } from "../types";
  */
 export function queueMilestoneMoment(
   state: GameState,
-  logs: string[],
+  logs: LedgerLine[],
   trigger: MilestoneTrigger,
 ): void {
   if (!milestoneBoonsOn(state.mode)) return;
@@ -98,12 +98,12 @@ export function queueMilestoneMoment(
   // carries the moment's glyph and its own words whole, and the title
   // arrives as a token value the way a label always does.
   logs.push(
-    t("\n{moment.icon}=== {moment.title} ===", {
+    line("\n{moment.icon}=== {moment.title} ===", {
       "moment.icon": moment.icon,
-      "moment.title": t(moment.title),
+      "moment.title": line(moment.title),
     }),
   );
-  logs.push(t(moment.line));
+  logs.push(line(moment.line));
 }
 
 /**
@@ -115,7 +115,7 @@ export function queueMilestoneMoment(
  * reason: the plan's cheapest engagement save is the choice handed to a
  * captain at the moment the hand goes, and the hand goes at dawn.
  */
-export function noteDawnMilestones(state: GameState, logs: string[]): void {
+export function noteDawnMilestones(state: GameState, logs: LedgerLine[]): void {
   queueMilestoneMoment(state, logs, "crew_loss");
 }
 
@@ -131,7 +131,7 @@ export function noteDawnMilestones(state: GameState, logs: string[]): void {
  */
 export function noteSettlementMilestones(
   state: GameState,
-  logs: string[],
+  logs: LedgerLine[],
 ): void {
   queueMilestoneMoment(state, logs, "cold_leg");
   queueMilestoneMoment(state, logs, "renown_rung");
@@ -151,7 +151,7 @@ export function noteSettlementMilestones(
 export function answerMilestone(
   state: GameState,
   cardId: string,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
   const trigger = state.milestoneOffers[0];
   if (trigger === undefined) return false;
@@ -179,9 +179,9 @@ export function answerMilestone(
   // moment's glyph and the card's lead arrive as its tokens, and the lead
   // carries the card's own words in the language already.
   logs.push(
-    t("{icon} Milestone boon: {lead}", {
+    line("{icon} Milestone boon: {lead}", {
       icon: MILESTONE_MOMENTS[trigger].icon,
-      lead: cardLead(card.id),
+      lead: (locale) => cardLead(card.id, locale),
     }),
   );
   return true;

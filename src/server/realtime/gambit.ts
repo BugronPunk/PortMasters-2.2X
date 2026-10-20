@@ -190,7 +190,7 @@ export async function dealAlignments(
   } catch (error) {
     // The held read above is a check and this write is its act, and the
     // two are three awaits apart (the objective, the roster, the draw),
-    // which is all the room a second departure needs to arrive between
+    // which is all the harbor a second departure needs to arrive between
     // them with a hand of its own. The table refuses the second row set
     // on its own key, room and captain, and that refusal is the promise
     // in the header above read at the one moment it can fail: the rows
@@ -279,7 +279,7 @@ type HeldCard = {
  * have any business knowing them.
  *
  * The voyage's end is the first: it records whether each captain won the
- * game their card set them. The room is read once rather than per
+ * game their card set them. The harbor is read once rather than per
  * captain, because the conclusion walks every finisher anyway and this is
  * one indexed read of a table with one row per seat. It is called after
  * the last captain has finished, so nothing of that read is in flight

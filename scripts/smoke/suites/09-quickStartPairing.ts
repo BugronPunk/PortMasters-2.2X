@@ -16,9 +16,9 @@ export async function quickStartPairingSuite(inputs: {
   // harbor before either has created one, so each opens its own.
   // The host asks for a long voyage and the guest for a short one. The
   // host's request is sent first, so the host is the captain who opens
-  // the room, and the room should carry the host's tier. The guest is
-  // seated into that same room and sails at its tier, exactly as if they
-  // had typed the room code in.
+  // the harbor, and the harbor should carry the host's tier. The guest is
+  // seated into that same harbor and sails at its tier, exactly as if they
+  // had typed the harbor code in.
   const [hostMatch, guestMatch] = await Promise.all([
     requestQuickMatch(hostSocket, "monsoon"),
     requestQuickMatch(guestSocket, "fair_winds"),

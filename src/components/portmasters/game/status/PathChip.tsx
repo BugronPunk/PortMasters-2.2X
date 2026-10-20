@@ -19,7 +19,7 @@ import { PATH_IDS, pathConfig } from "@/lib/game/paths";
 import type { PathId } from "@/lib/game/paths";
 import type { GameState } from "@/lib/game/types";
 import { Repeat } from "lucide-react";
-import { PhaseError } from "../phases/PhaseShared";
+import { Notice } from "../../shared";
 
 /**
  * [D7: the draft, and switching] What this captain sails as.
@@ -59,8 +59,8 @@ import { PhaseError } from "../phases/PhaseShared";
  * wherever the engine has one: the line above the buttons is the same
  * guard the press runs (see pathSwitchBlocked), so the reason a destination
  * is refused and the reason the engine would refuse it are one sentence
- * rather than two that could drift. The error under the chip is the room's,
- * and it carries the room's own two for the cases the engine is never
+ * rather than two that could drift. The error under the chip is the harbor's,
+ * and it carries the harbor's own two for the cases the engine is never
  * handed, a frame naming a path this build does not have and a build with
  * the switch off (see the path:switch handler).
  */
@@ -74,7 +74,7 @@ export function PathChip({
   game: GameState;
   /** Whether the path deal is open to this captain right now (a live
       draft view). Passed in rather than read off the game, because the
-      deal is the room's record rather than the save's. */
+      deal is the harbor's record rather than the save's. */
   inDeal: boolean;
   error: string | null;
   onSwitch: (path: PathId) => void;
@@ -185,10 +185,11 @@ export function PathChip({
       </Popover>
 
       {error && (
-        <PhaseError
+        <Notice
           message={error}
           onDismiss={onDismissError}
           className="mt-1.5"
+          size="sm"
         />
       )}
     </div>

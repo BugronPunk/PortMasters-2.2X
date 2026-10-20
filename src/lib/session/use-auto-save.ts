@@ -60,7 +60,7 @@ export function useAutoSave({
   }, [game, loaded, roomId, enabled]);
 
   // Flush any unsaved changes immediately. Call this before deliberately
-  // leaving a room so the debounce window above can't silently drop the
+  // leaving a harbor so the debounce window above can't silently drop the
   // player's last action.
   const flush = useCallback(async () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -74,7 +74,7 @@ export function useAutoSave({
     }
   }, [roomId]);
 
-  // Safety net: if the component unmounts (or the room changes) while a save
+  // Safety net: if the component unmounts (or the harbor changes) while a save
   // is still pending, flush it instead of silently losing the player's most
   // recent action. Covers any future unmount path that doesn't call flush().
   useEffect(() => {

@@ -8,10 +8,10 @@
 // one rule this kind adds to the shared visibility filter, which is that a
 // claimed contract's raid figure belongs to its seller.
 //
-// The board is room state because an agreement between two captains is an
+// The board is harbor state because an agreement between two captains is an
 // object no single client can be the authority over, and both clients apply
 // their own side of it to their own state (see applyEscortSide in
-// @/lib/game/engine/contracts). Every reader and writer in the room's
+// @/lib/game/engine/contracts). Every reader and writer in the harbor's
 // socket layer goes through this object: an escort board has no second door.
 // =====================================================================
 import { visibleContracts, type EscortContract } from "@/lib/game/engine";

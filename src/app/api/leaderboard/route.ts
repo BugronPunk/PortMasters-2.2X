@@ -2,7 +2,7 @@
 //
 // Reads the CaptainLegacy rows, joins the User table for the display names
 // and avatar hues, and returns them highest Renown XP first. Requires
-// authentication but is not room scoped.
+// authentication but is not harbor scoped.
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getCurrentUser, unauthorizedResponse } from "@/lib/api-auth";
@@ -39,7 +39,7 @@ export async function GET() {
     renownXP: r.renownXP,
     voyagesCompleted: r.voyagesCompleted,
     seaMasterCrowns: r.seaMasterCrowns,
-    bestScore: r.bestScore,
+    bestReputation: r.bestReputation,
     consecutiveSolventVoyages: r.consecutiveSolventVoyages,
     houseId: normalizeHouseId(r.houseId),
   }));

@@ -82,7 +82,7 @@ export async function tagVocabularySuite(): Promise<void> {
     "the ceiling is the plan's two, so every assignment in the tree is at or under the number the rule module enforces rather than under a second number kept beside it",
   );
 
-  // ---- The walk ----
+  // ========== The walk ==========
   const entries = taggedEntries();
   const of = (kind: string) => entries.filter((e) => e.kind === kind).length;
   check(
@@ -124,7 +124,7 @@ export async function tagVocabularySuite(): Promise<void> {
     "and the whole of the rule holds over the shipped content, which is the reading the build acts on: the same call, over the same walk, is what scripts/tags.ts runs before it lets a page be compiled",
   );
 
-  // ---- Reading one entry ----
+  // ========== Reading one entry ==========
   check(
     tagsOf("good", "Silk") === GOOD_TAGS["Silk"] &&
       tagsOf("good", "Rags")?.includes("woven") === true,
@@ -140,7 +140,7 @@ export async function tagVocabularySuite(): Promise<void> {
     "and every entry the tree ships can be read back by its own kind and id, so the answer for real content is a list and never the absence that means a missing entry",
   );
 
-  // ---- The questions an effect will ask ----
+  // ========== The questions an effect will ask ==========
   const cold = entriesWithTag("cold").map((entry) => entry.id);
   const wardrobe = Object.keys(GARMENTS);
   check(
@@ -198,7 +198,7 @@ export async function tagVocabularySuite(): Promise<void> {
     "and not one of the twelve is the name of a good or a food, even read case blind, which is the plan's rule about item keys applied to the vocabulary itself: a tag a captain cannot point at on a shelf is what keeps an effect about a class of trade rather than about Silk",
   );
 
-  // ---- Every rule, watched firing ----
+  // ========== Every rule, watched firing ==========
   // The subject is a parameter for exactly this: each rule below is handed
   // the shipped content with one thing changed, and each is asked for its
   // finding and for nothing else, since a rule that fires alongside three
@@ -308,7 +308,7 @@ export async function tagVocabularySuite(): Promise<void> {
     "as is the water that sails a corrupt broker without carrying contraband, read off the same record's own flag rather than off a list kept in the checker",
   );
 
-  // ---- The house rule ----
+  // ========== The house rule ==========
   check(
     [
       "src/lib/game/constants/tags.ts",

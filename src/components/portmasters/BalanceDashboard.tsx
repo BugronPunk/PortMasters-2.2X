@@ -90,7 +90,7 @@ const LAUNCH: Record<LaunchState, { tone: ChipTone; word: string }> = {
 };
 
 export function BalanceDashboard() {
-  // This page renders outside the harbor room, so it subscribes to the
+  // This page renders outside the harbor harbor, so it subscribes to the
   // captain's language at its own root: a flip redraws the screen
   // through the state write below rather than waiting for the next
   // route change.
@@ -338,7 +338,7 @@ function GapList({ gaps }: { gaps: string[] }) {
 // read at body size, in the quieter ink the rest of the page's prose uses.
 // The size itself grows with the window rather than sitting at one value,
 // because this is the one number the page is opened to find and a wall
-// display has the room to say so.
+// display has the harbor to say so.
 function FrontNumber({ line }: { line: DashboardReadingLine }) {
   const chip = VERDICT[line.verdict];
   const judged =

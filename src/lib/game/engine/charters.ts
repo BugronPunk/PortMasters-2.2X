@@ -48,7 +48,7 @@
 // the half this writer cannot do because it runs on the captain's own
 // machine.
 // =====================================================================
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import { cardLead, noteCardOffer, noteCardPick } from "../cards";
 import { CHARTER_MOMENT } from "../constants/charters";
 import { charterChoices, charterPending } from "../charters";
@@ -70,7 +70,7 @@ import type { GameState } from "../types";
 export function answerCharter(
   state: GameState,
   cardId: string,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
   if (!charterPending(state)) return false;
   const choices = charterChoices(state);
@@ -81,9 +81,9 @@ export function answerCharter(
   for (const offered of choices) noteCardOffer(state.cardTally, offered);
   noteCardPick(state.cardTally, card);
   logs.push(
-    t("{CHARTER_MOMENT.icon} Your charter: {charterLead}", {
+    line("{CHARTER_MOMENT.icon} Your charter: {charterLead}", {
       "CHARTER_MOMENT.icon": CHARTER_MOMENT.icon,
-      charterLead: cardLead(card.id),
+      charterLead: (locale) => cardLead(card.id, locale),
     }),
   );
   return true;

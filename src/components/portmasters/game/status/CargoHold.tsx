@@ -7,7 +7,7 @@ import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { itemColorResolver } from "@/lib/use-color-preference";
 import { Term } from "../../Term";
-import { ItemIcon } from "../../shared";
+import { ItemIcon, PanelLabel } from "../../shared";
 import { priceAwareTermContent } from "../PriceTooltips";
 import { Coins } from "lucide-react";
 import type { RosterEntry } from "../GameStatusPanel";
@@ -86,9 +86,9 @@ export function CargoHold({
       })()}
       {heldResources.length > 0 && (
         <>
-          <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mb-0.5">
+          <PanelLabel tone="text-muted-foreground" className="mb-0.5">
             {t("━━ Raw Materials ━━")}
-          </div>
+          </PanelLabel>
           {heldResources.map((r) => (
             <InvItem
               key={r}
@@ -103,9 +103,9 @@ export function CargoHold({
       )}
       {heldProducts.length > 0 && (
         <>
-          <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mt-2 mb-0.5">
+          <PanelLabel tone="text-muted-foreground" className="mt-2 mb-0.5">
             {t("━━ Finished Goods ━━")}
-          </div>
+          </PanelLabel>
           {heldProducts.map((p) => (
             <InvItem
               key={p}
@@ -125,9 +125,9 @@ export function CargoHold({
       )}
       {workerCount > 0 ? (
         <>
-          <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mt-2 mb-0.5">
+          <PanelLabel tone="text-muted-foreground" className="mt-2 mb-0.5">
             {t("━━ Artisans ━━")}
-          </div>
+          </PanelLabel>
           {roster
             .filter((r) => r.list.length > 0)
             .map((r) => (

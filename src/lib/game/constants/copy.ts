@@ -16,7 +16,13 @@ import {
 // record itself: its badge, its tagline, its round, the rule for a failed
 // seat and the list of what it changes. Copy about a mode is only safe
 // beside the mode, so it lives in ./mode and these surfaces render it.
-import { modeConfig, MODES, voyageRoundsFor, type GameMode } from "../mode";
+import {
+  modeConfig,
+  MODES,
+  voyageRoundsFor,
+  type GameMode,
+  type RoundLeg,
+} from "../mode";
 // The phase faces are what a round is called and drawn with, and they are
 // read here rather than typed: the record names a leg by its phase, and the
 // name a captain reads is the face's rather than the mode's. One import and
@@ -50,7 +56,7 @@ import { getLocale, listJoiner, t, tFor, type Locale } from "@/lib/game/i18n";
 
 // =====================================================================
 // Player facing copy. The wording is preserved from the original game; the
-// numbers are not baked in any more, because they now depend on the room's
+// numbers are not baked in any more, because they now depend on the harbor's
 // difficulty tier (see ./difficulty). Every figure a captain could act on
 // (voyage length, raid odds, escort fee, mandate rounds) is derived from the
 // tier's config, so the guide can never quote a number the engine doesn't use.
@@ -77,10 +83,10 @@ export const OFFER_FOR_ANOTHER_CAPTAIN =
 export const REFIT_ALREADY_TAKEN =
   "That captain has already taken on a refit this leg.";
 export const LEG_ALREADY_COVERED = "You are already covered for this leg.";
-// The refusal both doors into a room answer with, the socket's join
+// The refusal both doors into a harbor answer with, the socket's join
 // handler and the REST save route: one sentence, so a stranger knocking
 // at either door hears the same thing.
-export const NOT_A_ROOM_MEMBER = "Not a member of that room";
+export const NOT_A_HARBOR_MEMBER = "Not a member of that harbor";
 // The barter rule both composing surfaces state before a post, the trade
 // form on the boards and the one on a chat: the good offered and the good
 // asked for cannot be the same.
@@ -112,14 +118,14 @@ export const MUTED_NOTICE =
   "The host has muted you in the harbor chat for the rest of this voyage.";
 // The departure button's label, shared by the control bar and the harbor
 // screen's own start button: two spellings of one action on two screens of
-// one room is how a table learns to distrust the pair. The solo labels
+// one harbor is how a table learns to distrust the pair. The solo labels
 // stay distinct on purpose, because a harbor of one is practicing rather
 // than racing, and both screens say so.
 export const START_VOYAGE = "Start the Voyage";
 export const RENOWN_BONUS_LINE =
   "Each Renown level grants a small Gold bonus at the start of your next fresh voyage";
 // The refusal a wire answers when the captain it was aimed at is not
-// visible to the room. The two chat handlers and the four trading wires
+// visible to the harbor. The two chat handlers and the four trading wires
 // all say this one sentence, spelled the long way on purpose: the smoke
 // run asserts it word for word, so the shorter form the wires drifted
 // into is the one that left.
@@ -196,6 +202,41 @@ function escortPct(cfg: DifficultyConfig): string {
 type TutorialStep = { title: string; content: string };
 
 /**
+ * One leg of a mode's briefing, read: the phase's own face, and the two
+ * lines the mode says about it.
+ *
+ * The tutorial charts the leg and the guide prints it, and both read the
+ * same leg, so the reading lives here rather than in each of them. A mode
+ * that changes what it says about a phase changes it in one place, and
+ * the chart and the guide cannot end up describing the same leg two ways.
+ *
+ * The words are read here rather than at each use, because the guide and
+ * the tutorial are read at the moment they are drawn and the mode's own
+ * words are read the same way: what a captain sees is what the record
+ * says, in the language they are reading in.
+ */
+type BriefingLeg = {
+  phase: string;
+  icon: string;
+  label: string;
+  body: string;
+  setsUp: string;
+};
+
+function briefingLegs(legs: readonly RoundLeg[]): BriefingLeg[] {
+  return legs.map((leg) => {
+    const face = phaseFace(leg.phase);
+    return {
+      phase: leg.phase,
+      icon: face.icon,
+      label: t(face.label),
+      body: t(leg.body),
+      setsUp: t(leg.setsUp),
+    };
+  });
+}
+
+/**
  * One round, as the tutorial renders it: the mode's own briefing, in the
  * shape the mode chose to brief in.
  *
@@ -216,17 +257,16 @@ function roundStepHtml(mode: GameMode): string {
       { "briefing.text": t(briefing.text) },
     );
   }
-  const legs = briefing.legs
+  const legs = briefingLegs(briefing.legs)
     .map((leg) => {
-      const face = phaseFace(leg.phase);
       return `  ${t(
         '<div style="background:color-mix(in oklch, var(--w-{leg.phase}) 12%, transparent);border-radius:6px;padding:10px;border-left:3px solid var(--w-{leg.phase});color:var(--foreground)">\n    <strong>{face.icon} {face.label}</strong><br>\n    <span style="font-size:13px">{leg.body}</span><br>\n    <span style="font-size:12px;color:var(--muted-foreground)">{leg.setsUp}</span>\n  </div>',
         {
           "leg.phase": leg.phase,
-          "face.icon": face.icon,
-          "face.label": t(face.label),
-          "leg.body": t(leg.body),
-          "leg.setsUp": t(leg.setsUp),
+          "face.icon": leg.icon,
+          "face.label": leg.label,
+          "leg.body": leg.body,
+          "leg.setsUp": leg.setsUp,
         },
       )}`;
     })
@@ -250,10 +290,9 @@ function roundStepHtml(mode: GameMode): string {
 function roundLines(mode: GameMode): string {
   const { briefing } = modeConfig(mode);
   if (briefing.kind === "line") return t(briefing.text);
-  const legs = briefing.legs.map((leg) => {
-    const face = phaseFace(leg.phase);
-    return `• ${face.icon} ${t(face.label)}: ${t(leg.body)}\n  ${t(leg.setsUp)}`;
-  });
+  const legs = briefingLegs(briefing.legs).map(
+    (leg) => `• ${leg.icon} ${leg.label}: ${leg.body}\n  ${leg.setsUp}`,
+  );
   return [...legs, t(briefing.closes)].join("\n");
 }
 
@@ -365,7 +404,7 @@ export function tutorialSteps(
     {
       title: t("🔄 How a round runs"),
       content: t(
-        '<p>A round is one lap of the voyage, and this voyage runs {rounds} of them. Each round walks the phases below in the order your voyage puts them:</p>\n{roundSteps}\n<p style="font-size:12px;color:var(--muted-foreground);margin:4px 0 0"><kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+N</kbd> readies you for the next phase without clicking (the room sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.</p>',
+        '<p>A round is one lap of the voyage, and this voyage runs {rounds} of them. Each round walks the phases below in the order your voyage puts them:</p>\n{roundSteps}\n<p style="font-size:12px;color:var(--muted-foreground);margin:4px 0 0"><kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+N</kbd> readies you for the next phase without clicking (the harbor sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.</p>',
         { rounds, roundSteps: roundStepHtml(mode) },
       ),
     },

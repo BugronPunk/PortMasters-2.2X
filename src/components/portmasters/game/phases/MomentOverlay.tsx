@@ -1,5 +1,6 @@
 "use client";
 
+import type { LedgerLine } from "@/lib/game/ledger";
 import { cardText } from "@/lib/game/cards";
 import type { CardRecord } from "@/lib/game/constants/cards";
 import { t } from "@/lib/game/i18n";
@@ -93,7 +94,7 @@ export function MomentOverlay({
   actionLabel: string;
   // The answer a press writes: the card's id goes to the engine, which
   // derives the trio again and refuses a stale click.
-  answer: (game: GameState, cardId: string, logs: string[]) => void;
+  answer: (game: GameState, cardId: string, logs: LedgerLine[]) => void;
 }) {
   // Nothing at all rather than an empty frame: a question that is not
   // standing is an absence, and the board under this overlay is the

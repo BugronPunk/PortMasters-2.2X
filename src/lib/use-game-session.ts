@@ -4,6 +4,7 @@ import { useCallback, useReducer, useState } from "react";
 import type { Socket } from "socket.io-client";
 import { createInitialGameState, type GameState } from "@/lib/game/types";
 import type { GameMode } from "@/lib/game/mode";
+import type { LedgerLine } from "@/lib/game/ledger";
 import { reducer } from "./session/reducer";
 import { useVoyageContext } from "./session/use-voyage-context";
 import { useSeatPin, useSeatPinFrames } from "./session/use-seat-pin";
@@ -17,8 +18,8 @@ import { useAutoSave } from "./session/use-auto-save";
 //
 // The hook is the wiring. Each concern beside it in ./session is the
 // thing itself: the reducer that holds a voyage, the heal applied to one
-// loaded off the server, the seat pin the room publishes, the two
-// broadcasts that tell the room where this captain stands, and the
+// loaded off the server, the seat pin the harbor publishes, the two
+// broadcasts that tell the harbor where this captain stands, and the
 // autosave that keeps their work.
 // =====================================================================
 
@@ -27,11 +28,11 @@ export function useGameSession(
   socket: Socket | null,
   enabled: boolean,
   userId: string = "",
-  // The room's mode, as its summary already carries it, handed in by the
+  // The harbor's mode, as its summary already carries it, handed in by the
   // caller that was sitting in the lobby a moment ago. Only the two fallback
   // paths below read it, and they need it for a reason the successful load
   // does not have: they fire precisely when the server could not be reached,
-  // which is the one moment this hook has no way to ask the room what lap it
+  // which is the one moment this hook has no way to ask the harbor what lap it
   // is keeping. Seeding those captains Classic would put them on the wrong
   // phase order for the whole voyage, and because both laps list the same
   // number of phases, their checkpoint ranks would still compare cleanly
@@ -40,7 +41,7 @@ export function useGameSession(
   //
   // Difficulty is deliberately not threaded the same way. A wrong tier is a
   // captain playing a slightly different game on their own; a wrong mode is a
-  // captain playing a different lap than the room they are being synchronized
+  // captain playing a different lap than the harbor they are being synchronized
   // against.
   roomMode?: GameMode,
 ) {
@@ -75,7 +76,7 @@ export function useGameSession(
   useSeatPinFrames({ roomId, socket, enabled, setSeatPin });
 
   const act = useCallback(
-    (fn: (g: GameState, logs: string[]) => void) =>
+    (fn: (g: GameState, logs: LedgerLine[]) => void) =>
       dispatch({ type: "APPLY", fn }),
     [],
   );

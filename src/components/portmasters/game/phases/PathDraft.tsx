@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { t } from "@/lib/game/i18n";
 import { pathFactText, pathGuide } from "@/lib/game/paths";
 import type { DraftStep } from "@/types/realtime/draft";
-import { PhaseError, PhaseHeading, type PhasePanelProps } from "./PhaseShared";
+import { PhaseHeading, type PhasePanelProps } from "./PhaseShared";
+import { Notice } from "../../shared";
 
 // The three beats, in the words a captain reads them in.
 //
@@ -72,30 +73,30 @@ const PATH_GUIDE = new Map(pathGuide().map((entry) => [entry.id, entry]));
  * is only a choice if the captain can read what they are choosing between.
  *
  * Two things this panel deliberately does not have, and both were field
- * findings rather than taste. There is no countdown: the room waits at this
+ * findings rather than taste. There is no countdown: the harbor waits at this
  * seat for its captains, each step turns over when every seat has answered,
  * and a clock face here was telling captains a timer was deciding for them
  * when nothing of the sort was true (see DRAFT_WATCH_MS, which is a
  * reconnect window nobody is shown). And the cards are full width rows
  * rather than a grid of tiles: the same three offers in one row of narrow
  * columns is what made the last two steps feel like the table was taking
- * the options away, and a row that holds one card with room to read it is
+ * the options away, and a row that holds one card with harbor to read it is
  * the shape a captain can actually weigh. A hand of two rows the same size
  * as a hand of three is the point rather than a side effect.
  *
  * A captain who has laid their card down sees the wait instead of the rows,
  * which is the shape the boon draft takes: the picker goes away so the same
  * card cannot be laid twice, and what is left is the count of the table
- * still choosing. The count is the room's own number (see DraftView.open)
+ * still choosing. The count is the harbor's own number (see DraftView.open)
  * and it is painted from the frames the server sends as the other seats
- * answer, so it moves while they do. The wait is the room's own reading of
+ * answer, so it moves while they do. The wait is the harbor's own reading of
  * the seat as well as this screen's (see DraftView.picked), which is what
  * carries it across a reconnect: a captain whose tab went dark mid step
- * comes back to the wait the room has been keeping for them, rather than
- * to cards whose press the room would refuse.
+ * comes back to the wait the harbor has been keeping for them, rather than
+ * to cards whose press the harbor would refuse.
  */
 export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
-  // The beat this captain has answered, stamped with the room and the step
+  // The beat this captain has answered, stamped with the harbor and the step
   // so no reset logic is needed anywhere: a new step is a new stamp, and a
   // step this captain answered is simply not this one any more.
   const [picked, setPicked] = useState<{
@@ -104,7 +105,7 @@ export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
   } | null>(null);
 
   const view = draft.view;
-  // The beat between the room moving to this seat and this captain's hand
+  // The beat between the harbor moving to this seat and this captain's hand
   // landing, which is a socket hop wide. A captain who was not dealt in (a
   // late arrival) never sees a view either, and reads the empty state the
   // identity chip in the rail draws for them; here the stage only has to
@@ -129,10 +130,10 @@ export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
   if (view.step === "done") return null;
 
   const face = STEP_FACE[view.step];
-  // The wait a captain reads is the room's own answer first and this
+  // The wait a captain reads is the harbor's own answer first and this
   // screen's own stamp second. The view's `picked` is what carries it
   // across a reconnect, where the press that laid the card was not this
-  // screen's: a seat whose card the room laid while they were gone comes
+  // screen's: a seat whose card the harbor laid while they were gone comes
   // back to the wait rather than to cards that would refuse the press
   // (see DraftView.picked). The local stamp covers the beat between a
   // press and the frame confirming it, which is a socket hop wide.
@@ -162,10 +163,11 @@ export function PathDraft({ draft }: Pick<PhasePanelProps, "draft">) {
       </p>
 
       {draft.error && (
-        <PhaseError
+        <Notice
           message={draft.error}
           onDismiss={draft.clearError}
           className="mb-3"
+          size="sm"
         />
       )}
 

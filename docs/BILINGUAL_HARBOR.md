@@ -4,7 +4,7 @@ This is the complete pass at the Chinese. The vocabulary and the card records ca
 
 Two facts shape everything below. First, the card records were built bilingual from the start (`LANGUAGES`, `SHIPPED_LANGUAGE` in `src/lib/game/constants/cards.ts`), so this is a translation pass, not a change to the record. Second, all 43 records already carry zh strings, and most of them are good. I kept 52 of the 86 card strings exactly as they stand. The other 34 are listed card by card below with a reason for each.
 
-The Bilingual Harbor was built once before and removed at your request, and the docs pin it as not returning without a fresh call. This pass is that call, shaped as the plan's J3. When it ships I'll update `PROPOSAL.md`, `RELEASE_NOTES.md` and `SYSTEM_ANALYSIS.md` together, since all three currently say it stays dropped.
+The Bilingual Harbor was built once before and removed at your request, and the docs pinned it as not returning without a fresh call. This pass was that call, shaped as the plan's J3, and it shipped. `PROPOSAL.md`, `RELEASE_NOTES.md` and `SYSTEM_ANALYSIS.md` were updated together the day it did, and the pack they point at is the file in the tree.
 
 **How to read this.** Each table is a list of decisions. Quote a row and say what you want, for example "the market phase: 集市, not 开市" or "Smuggler's Hold, drop the 采购成本 change". Anything you leave unmentioned I'll take as it stands. The sentence tables below the labels are the bulk of the document: every remaining line a captain can read in the game, one row per string. When the last row settles, these tables and the complete file draft at the end become `src/lib/game/i18n/zh.json`.
 
@@ -20,7 +20,7 @@ The words every screen leans on, spelled one way everywhere.
 | ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
 | Gold                | 金币     | matches all 43 shipped strings ("4 金币")                                                                           |
 | Captain             | 船长     |                                                                                                                     |
-| Harbor (the room)   | 港湾     | as in "gather in the harbor", 在港湾集合                                                                            |
+| Harbor              | 港湾     | as in "gather in the harbor", 在港湾集合                                                                            |
 | Port                | 港       | 泉州港, 大食港                                                                                                      |
 | Host                | 港主     | the one who opens the harbor                                                                                        |
 | Seat                | 席位     |                                                                                                                     |
@@ -454,7 +454,7 @@ What the changes amount to, in one place.
 
 ## The whole surface, sentence by sentence
 
-The slices above settle the vocabulary, the cards and the labels that carried a decision. These tables hold the rest: every remaining line a captain can actually read, one row per string, gathered over ten sweeps and grouped by the file it lives in, 2,193 rows in all. They are here in the same order the `sentences` group of the mapping file reads, so any row can be quoted by its key.
+The slices above settle the vocabulary, the cards and the labels that carried a decision. These tables hold the rest: every remaining line a captain can actually read, one row per string, gathered over ten sweeps and grouped by the file it lives in, 2,188 rows in all. They are the working record of those sweeps. The block at the end of this document is the file that ships, and it is the block rather than the tables that every check reads, so a row the tree no longer reaches can stay here as a record of the sweep it came from without being carried into the pack.
 
 ### The shell (20)
 
@@ -563,7 +563,7 @@ The reference shelf: glossary entries, price tooltips, and what the harbor says 
 | \<p>The voyage opens with a deal rather than a market. Three cards land face down in front of you, and at each beat you keep one and pass the rest on. What you hold when the deal ends is your path, and it sails with you to the end of the voyage. One change of papers is allowed: at a port, for a fee in Gold that grows with your Renown, the path chip in your rail offers the switch.\</p>\n\<p>Your path decides three things about your seat: your hold, how far your Renown can climb, and which trade orders lock to you. An order demanding a locked good can only be filled by the captain holding the path that carries it.\</p>\n\<ul style="padding-left:18px;line-height:1.7;font-size:14px">\n${rows}\n\</ul>\n\<p style="font-size:12px;color:var(--muted-foreground);margin:8px 0 0">Every card in the deal carries these numbers, so what you read here is what the table deals you.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | \<p>这趟航程以发牌开局，而不是开市。三张牌背面朝上落在你面前，一路留一张、传走其余。发牌结束时留在手上的，就是你的商道，它会陪你走到航程尽头。商道可以换一次：在港口花一笔金币，价格随声望涨，船长栏里的商道小牌就能换。\</p>\n\<p>你的商道定下你席位的三件事：货舱多大、声望最高能爬到哪、哪些订单只认这条道。遇上要专属货物的订单，全桌只有持那条商道的船长接得下。\</p>\n\<ul style="padding-left:18px;line-height:1.7;font-size:14px">\n{rows}\n\</ul>\n\<p style="font-size:12px;color:var(--muted-foreground);margin:8px 0 0">牌桌上的每张牌都带这些数字，这里读到的就是你会拿到的。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | \<p>${APP_NAME} puts you on the ancient Silk Road: one voyage of ${rounds} rounds, limited gold, and a lot of merchants trying to outmaneuver you at every port.\</p>\n\<p>You are sailing \<strong>${play.badge}\</strong>: ${play.tagline}\</p>\n\<p>These waters are \<strong>${cfg.name}\</strong>: ${cfg.tagline}\</p>\n\<p>The rules are easy to pick up, but money is tight early on and a string of bad calls compounds quickly. This covers the things that catch new captains out most.\</p>\n\<p style="color:var(--muted-foreground);font-size:13px">Two minutes to read. Saves a lot of frustrated restarts.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | \<p>{APP_NAME} 把你带上了古丝路：{rounds}轮的航程，有限的金币，还有一群商人，个个都想在每个港口比你多走一步。\</p>\n\<p>你走的是\<strong>{play.badge}\</strong>：{play.tagline}\</p>\n\<p>这片水域是\<strong>{cfg.name}\</strong>：{cfg.tagline}\</p>\n\<p>规则好上手，只是前期手头紧，一连串坏判断很快就会滚成雪球。这里讲的是新船长最容易栽的几件事。\</p>\n\<p style="color:var(--muted-foreground);font-size:13px">两分钟读完，能省下好几次懊恼的重开。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | \<p>After ${rounds} rounds, the captain with the highest Reputation wins the title of \<strong>Sea Master\</strong>. Reputation comes from trade profits and fulfilled orders.\</p>\n\<p>${play.failureRule}\</p>\n\<p>Starting gold is \<strong>${cfg.startingGold}\</strong>. That is enough to get going, but not enough to be careless with.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | \<p>{rounds}轮之后，声誉最高的船长赢得\<strong>沧海之主\</strong>的头衔。声誉来自贸易利润和完成的订单。\</p>\n\<p>{play.failureRule}\</p>\n\<p>初始金币是\<strong>{cfg.startingGold}\</strong>。够起步，不够大手大脚。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| \<p>A round is one lap of the voyage, and this voyage runs ${rounds} of them. Each round walks the phases below in the order your voyage puts them:\</p>\n${roundStepHtml(mode)}\n\<p style="font-size:12px;color:var(--muted-foreground);margin:4px 0 0">\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+N\</kbd> readies you for the next phase without clicking (the room sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | \<p>一轮是航程里的一圈，这趟要走{rounds}轮。每轮依次走过下面的阶段，顺序由你的航程排定：\</p>\n{roundStepHtml(mode)}\n\<p style="font-size:12px;color:var(--muted-foreground);margin:4px 0 0">\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+N\</kbd> 可以不点鼠标直接就绪（所有船长都就绪，港湾才继续）；航程是这些轮连起来的一整趟，不是单独的一轮。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| \<p>A round is one lap of the voyage, and this voyage runs ${rounds} of them. Each round walks the phases below in the order your voyage puts them:\</p>\n${roundStepHtml(mode)}\n\<p style="font-size:12px;color:var(--muted-foreground);margin:4px 0 0">\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+N\</kbd> readies you for the next phase without clicking (the harbor sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | \<p>一轮是航程里的一圈，这趟要走{rounds}轮。每轮依次走过下面的阶段，顺序由你的航程排定：\</p>\n{roundStepHtml(mode)}\n\<p style="font-size:12px;color:var(--muted-foreground);margin:4px 0 0">\<kbd style="background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px">Ctrl+N\</kbd> 可以不点鼠标直接就绪（所有船长都就绪，港湾才继续）；航程是这些轮连起来的一整趟，不是单独的一轮。\</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | \<p>The port market has Hemp, Silk, and Tea at prices that shift every round. Buy here, barter with the other captains at Parley, and fill trade orders at Orders. Which of those two stops comes first is a rule of the voyage you are sailing rather than a choice you make, and your captain's rail always shows the order. That is the core loop.\</p>\n\<p>One thing worth knowing about: the \<strong>Broker\</strong>. Pay a small fee for a demand rumor and a specific trade order is \<em>guaranteed\</em> to appear when Orders opens. Useful when you have stocked a particular good and want to make sure a buyer shows up.\</p>\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 💡 For the first two or three voyages, stick to raw materials. You can fill an order with them the same round you buy them. No waiting and no risk.\n\</div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | \<p>集市里有麻布、丝绸和茶叶，价格每轮都在动。在这里采购，到洽谈去易货，去订单交单。开市和订单谁先谁后，由你所走航程的规则定，没得选，船长栏里一直标着顺序。这就是核心循环。\</p>\n\<p>还有一个人要记住：\<strong>掮客\</strong>。花点小钱买一条需求密语，订单一开，指定的那张\<em>必定\</em>出现。囤着货想保准有买家，就用这个。\</p>\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 💡 最初两三趟航程，先做原材料。买进的当轮就能拿去交订单，不用等，也没有风险。\n\</div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | \<p>The Parley is a short window where captains trade directly with each other instead of through the market. Post an offer, like Hemp you don't need for Silk you do, and any other captain in the harbor can take it with one click.\</p>\n\<p>Where it falls in the round is set by the voyage you are sailing rather than changing from round to round: ${MODES.classic.badge} runs it right after Market, and ${MODES.ocean_gambit.badge} runs it right after Orders, and your captain's rail always shows which. Either way, it is the easiest way to recover from a bad draw. All Tea and no Silk, with a Sachet order already on the board? Someone else in the harbor has probably drawn the opposite problem.\</p>\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n A few ground rules: you can't offer an item for itself, both amounts have to be whole numbers of at least one, and you can never offer more than you currently have. The moment you post an offer, that amount is set aside until someone takes it or you cancel it.\n\</div>\n\<p style="font-size:13px;color:var(--muted-foreground);margin-top:8px">Nobody has to barter. If nothing on the board interests you, or nobody is offering anything, just move on to the next phase.\</p>                                                                                                                                       | \<p>洽谈只开一扇短窗，船长们绕开集市直接易货。挂一份单子，比如拿富余的麻布换你缺的丝绸，港湾里谁都能一点接下。\</p>\n\<p>洽谈落在轮里的哪一步，由你的航程定，不随轮次变：{MODES.classic.badge}排在开市之后，{MODES.ocean_gambit.badge}排在订单之后，船长栏一直标着是哪种。哪种都好，它都是纠坏手气最省事的办法。手里全是茶叶没有丝绸，订单板上却挂着一张香囊单？港湾里多半有人正好反过来。\</p>\n\<div style="background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 几条规矩：不能拿一样货换它本身；两边的数量都得是整数，至少各 1；挂出的数量不能超过你手头的。挂出那一刻，这些货就寄存起来，直到有人接下或你取消。\n\</div>\n\<p style="font-size:13px;color:var(--muted-foreground);margin-top:8px">没人非得易货。板上没你想要的，或者没人挂东西，直接走下一阶段。\</p>                                                                                                                                                                                                                                                                                                                                                                            |
 | \<p>Trade orders appear and you match your cargo to them. Each one shows the goods needed, the reward, and the shipping fee. Your take is whatever is left after fees and tax.\</p>\n\<p>You can fill as many orders as your cargo allows while Orders is open.\</p>\n\<div style="background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 📌 \<strong>Finished goods\</strong> (${PRODUCTS_TIER0.join(", ")}) pay two to three times more than raw materials. The catch is they need artisans, and the artisans deliver at Resolve. That is covered next.\n\</div>\n${mandates.length ?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | \<p>订单上板了，拿货去对。每条都写明要什么货、给多少报酬、收多少运费。运费和税扣完，剩下的都归你。\</p>\n\<p>订单开着的时候，货够就交，能交几条交几条。\</p>\n\<div style="background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5">\n 📌 \<strong>成品\</strong> ({PRODUCTS_TIER0.join("、")})的报酬是原材料的两三倍。可它得靠工匠，工匠要到结算才交货。下一页就讲这个。\n\</div>\n{mandates.length ?                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -878,7 +878,7 @@ The venture lines and the game mode descriptions: what a harbor Venture reads li
 | The manifest closes before the table opens: Orders runs ahead of Parley, so you commit to your sheet first and nothing on it can be revised once the fleet starts talking.                                                                                                                                                           | 舱单先行，桌面后开：订单排在洽谈之前，所以你先对单子落定，船队一开口议价，单子上的内容就不能再改。                                                                                                       |
 | Every voyage here runs 12 rounds, whatever tier you sail. That is the length the harbor's two votes are tuned to.                                                                                                                                                                                                                    | 这里的航程不论难度，都走12轮。港湾的两次表决就是照这个长度调的。                                                                                                                                         |
 | Every captain is dealt a private card when the voyage leaves the dock, and no one else can see it: most are Honest Captains sailing the fleet's public objective, while a table of four or more hides a Pirate in the fleet and a table of six or more may hide a Broker beside them. Every card turns face up when the voyage ends. | 航程离港时，每位船长都发到一张别人看不到的私牌：多数是诚信船长，跟着船队的公开目标走；四人以上的桌上，船队里藏着一个海盗，六人以上还可能多藏一个掮客。航程结束时，所有牌都翻开。                         |
-| From round 5, a simple majority of the fleet can open one captain's manifest at a Parley. The room is shown 2 of that captain's last 5 fills, and calling the vote spends the rest of that Parley's trading.                                                                                                                         | 从第5轮起，船队过半数可以在洽谈时翻开一位船长的舱单。港湾会看到那位船长最近5笔交货中的2笔；发起这次表决，那场洽谈剩下的交易时间就没了。                                                                  |
+| From round 5, a simple majority of the fleet can open one captain's manifest at a Parley. The harbor is shown 2 of that captain's last 5 fills, and calling the vote spends the rest of that Parley's trading.                                                                                                                       | 从第5轮起，船队过半数可以在洽谈时翻开一位船长的舱单。港湾会看到那位船长最近5笔交货中的2笔；发起这次表决，那场洽谈剩下的交易时间就没了。                                                                  |
 | From round 9, two thirds of the captains still sailing can vote one captain ashore, once a voyage. The ship and its hold go to the harbor, half that captain's Gold stays aboard, and they take up the Harbormaster's hand: once a round, they name a port and lean every price there 10 percent either way.                         | 从第9轮起，仍在航程中的船长凑够三分之二，就能投票把一位船长放逐上岸，每趟航程一次。船和舱里的货归港湾，他一半的金币留在船上；此后他接过港务长之手：每轮一次，点一座港口，把那儿的物价往任意一边拨动10%。 |
 
 ### The engine speaks (370)
@@ -960,7 +960,7 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | ❌ Can't barter an item for itself                                                    | ❌ 不能拿同一种货换它自己。                                                     |
 | ❌ Barter amounts must be whole numbers of at least 1                                 | ❌ 易货数量得是整数，至少1。                                                    |
 | swept when the voyage moved on                                                        | 航段推进时清出                                                                  |
-| refused by the room                                                                   | 被众人拒收                                                                      |
+| refused by the harbor                                                                 | 被众人拒收                                                                      |
 | returned as the voyage loaded                                                         | 随航程载入退回                                                                  |
 | ⏭️ Bartering ended                                                                    | ⏭️ 易货结束                                                                     |
 | ❌ Can't offer {offerAmount} {offerItem}, only have {owned}                           | ❌ 拿不出{offerAmount}件{offerItem}，手上只有{owned}件                          |
@@ -1520,9 +1520,9 @@ The engine's own voice: phase headers, the market and its pricing, orders, worke
 | You've already backed this venture as much as any single captain can. It needs another captain to fund the rest. | 你对这份合股的出资已经到单人上限。余下的要等另一位船长出资。                       |
 | That venture is already fully funded.                                                                            | 那份合股已经募足了。                                                               |
 
-### The room, first sweep (349)
+### The harbor, first sweep (349)
 
-The room at play: the harbor frame, the market, orders, parley, escort contracts, the audit and the vote.
+The harbor at play: the harbor frame, the market, orders, parley, escort contracts, the audit and the vote.
 
 **`src/components/portmasters/ActionSuggester.tsx`** (1)
 
@@ -1565,7 +1565,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | The Path Draft is left by laying your cards down. Each step turns over when every hand is in.                                           | 落牌，择道就结束。人人都出完牌，每一步才翻开。                                |
 | Dawn is left by locking in a Boon. Pick one of the cards and it goes with you.                                                          | 锁定一份机缘，破晓就结束。挑一张，它跟着你上路。                              |
 | This voyage is over for you, so there is no seat left to leave.                                                                         | 这趟航程对你已经结束，没有席位可退。                                          |
-| Your own screen has work open on it. Finish or close it and the room moves on.                                                          | 你自己屏幕上还有活没干完。做完或关掉，港湾才能往下走。                        |
+| Your own screen has work open on it. Finish or close it and the harbor moves on.                                                        | 你自己屏幕上还有活没干完。做完或关掉，港湾才能往下走。                        |
 | Crowned Sea Master!                                                                                                                     | 加冕沧海之主！                                                                |
 | Highest Reputation in the harbor this voyage: ${mine.reputation}.                                                                       | 本航程港湾里声誉最高：{mine.reputation}。                                     |
 | 🤝 Broker's Favor unlocked!                                                                                                             | 🤝 掮客的人情已解锁！                                                         |
@@ -1647,7 +1647,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | Good the rumor is about                                                                                                                                                                                                                | 风声说的是哪件货                                                                                                                                                    |
 | No commodity on this route is traded yet, so there is nothing to say.                                                                                                                                                                  | 这条航路上还没有货物成交，没什么可说的。                                                                                                                            |
 | Nobody has spoken at the bazaar yet this voyage.                                                                                                                                                                                       | 本航程还没有人在香市开口。                                                                                                                                          |
-| Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through.                                                               | 本航段和上一段都没人开口。板上只留这两段，再早的不留。更早的行拨动过的集市，全桌早就定价、交易过了。                                                                |
+| Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the harbor has already priced and traded through.                                                             | 本航段和上一段都没人开口。板上只留这两段，再早的不留。更早的行拨动过的集市，全桌早就定价、交易过了。                                                                |
 | Spoken in this leg. The next port prices this good against it, and the table reads which way you leaned the moment it does.                                                                                                            | 本航段已发声。下一港给这件货定价，就对着它来；价一落定，全桌都看得出你押的是哪一边。                                                                                |
 | Spoken in this leg. The direction belongs to the speaker until the next port prices it, so nobody at this table can tell a call from a lie yet.                                                                                        | 本航段已发声。下一港定价之前，方向只有开口的人自己知道，所以全桌此刻分不清这句是真话还是谎话。                                                                      |
 | The market of this leg was priced against it, so the direction is public now.${ outcome ?                                                                                                                                              | 本航段的集市就是对着它定的价，方向如今人人都看得见。{ outcome ?                                                                                                     |
@@ -2005,7 +2005,7 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 
 | English                                                                                                                 | Chinese                                                                      |
 | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| The room&apos;s count has not arrived yet. It comes with this leg&apos;s vote.                                          | 港湾的票数还没到，它随本航段的表决一起来。                                   |
+| The harbor&apos;s count has not arrived yet. It comes with this leg&apos;s vote.                                        | 港湾的票数还没到，它随本航段的表决一起来。                                   |
 | ${leader.name} needs ${ leader.short === 1 ? "1 more name" :                                                            | {leader.name}还需要{ leader.short === 1 ? "1个名字" :                        |
 | } to carry it.                                                                                                          | }才能通过。                                                                  |
 | Your name is not in yet. Pick a captain and press the button.                                                           | 你的名字还没投。选一位船长，按下按钮。                                       |
@@ -2028,9 +2028,9 @@ The room at play: the harbor frame, the market, orders, parley, escort contracts
 | ------- | ------- |
 | Ship    | 船只    |
 
-### The room, second sweep (364)
+### The harbor, second sweep (364)
 
-The room in motion: board drafts, purchase, settlement, the shipyard, bankruptcy and the endgame screens.
+The harbor in motion: board drafts, purchase, settlement, the shipyard, bankruptcy and the endgame screens.
 
 **`src/components/portmasters/game/phases/Bankruptcy.tsx`** (19)
 
@@ -2805,10 +2805,10 @@ The lobby, the roster, the profile, the settings and the chat.
 | Quick Start timed out. Please try again.                                                                                                                                                                           | 快速开局超时了，再试一次。                                                                                                               |
 | Quick Start matched a harbor, but it could not be reached.                                                                                                                                                         | 快速开局配到了港湾，却连不上。                                                                                                           |
 | Quick Start is unavailable right now.                                                                                                                                                                              | 快速开局暂时用不了。                                                                                                                     |
-| Failed to create room                                                                                                                                                                                              | 创建港湾失败                                                                                                                             |
+| Failed to create harbor                                                                                                                                                                                            | 创建港湾失败                                                                                                                             |
 | Harbor codes are 6 characters.                                                                                                                                                                                     | 港湾口令是6个字符。                                                                                                                      |
-| Failed to join room                                                                                                                                                                                                | 加入港湾失败                                                                                                                             |
-| Failed to enter room                                                                                                                                                                                               | 进入港湾失败                                                                                                                             |
+| Failed to join harbor                                                                                                                                                                                              | 加入港湾失败                                                                                                                             |
+| Failed to enter harbor                                                                                                                                                                                             | 进入港湾失败                                                                                                                             |
 | Could not load chronicles                                                                                                                                                                                          | 航程实录加载不了                                                                                                                         |
 | Could not load House standings                                                                                                                                                                                     | 世家排名加载不了                                                                                                                         |
 | Pledged to ${house?.name ?? "House"}                                                                                                                                                                               | 已加入{house?.name ?? "世家"}                                                                                                            |
@@ -2904,16 +2904,16 @@ The lobby, the roster, the profile, the settings and the chat.
 
 **`src/components/portmasters/lobby/HarborBoard.tsx`** (8)
 
-| English                                                                                                                        | Chinese                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
-| Scanning the horizon                                                                                                           | 正在眺望海面                                                                   |
-| No harbors open yet                                                                                                            | 还没有港湾开放                                                                 |
-| Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a room of your own. | 点上面的快速开局，和下一位找港湾的船长配对；或者切到开一个新港湾，自己开一间。 |
-| Private                                                                                                                        | 私密                                                                           |
-| ⛵ Sailing                                                                                                                     | ⛵ 航行中                                                                      |
-| This voyage has already set sail                                                                                               | 本航程已经起航                                                                 |
-| Locked                                                                                                                         | 锁定                                                                           |
-| Enter                                                                                                                          | 进入                                                                           |
+| English                                                                                                                          | Chinese                                                                        |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Scanning the horizon                                                                                                             | 正在眺望海面                                                                   |
+| No harbors open yet                                                                                                              | 还没有港湾开放                                                                 |
+| Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a harbor of your own. | 点上面的快速开局，和下一位找港湾的船长配对；或者切到开一个新港湾，自己开一间。 |
+| Private                                                                                                                          | 私密                                                                           |
+| ⛵ Sailing                                                                                                                       | ⛵ 航行中                                                                      |
+| This voyage has already set sail                                                                                                 | 本航程已经起航                                                                 |
+| Locked                                                                                                                           | 锁定                                                                           |
+| Enter                                                                                                                            | 进入                                                                           |
 
 **`src/components/portmasters/lobby/HarborRail.tsx`** (6)
 
@@ -3095,7 +3095,7 @@ The lobby, the roster, the profile, the settings and the chat.
 
 ### Auth, saves and the odds and ends (75)
 
-Sign in, saves, rooms, victory and the small print the app answers with.
+Sign in, saves, harbors, victory and the small print the app answers with.
 
 **`src/app/api/auth/login/route.ts`** (3)
 
@@ -3119,16 +3119,16 @@ Sign in, saves, rooms, victory and the small print the app answers with.
 
 **`src/app/api/rooms/[id]/join/route.ts`** (1)
 
-| English        | Chinese    |
-| -------------- | ---------- |
-| Room not found | 查无此港湾 |
+| English          | Chinese    |
+| ---------------- | ---------- |
+| Harbor not found | 查无此港湾 |
 
 **`src/app/api/rooms/join/route.ts`** (2)
 
-| English                             | Chinese                |
-| ----------------------------------- | ---------------------- |
-| A 6 character room code is required | 港湾口令得是6个字符    |
-| No room exists with that code       | 这个口令对不上任何港湾 |
+| English                               | Chinese                |
+| ------------------------------------- | ---------------------- |
+| A 6 character harbor code is required | 港湾口令得是6个字符    |
+| No harbor exists with that code       | 这个口令对不上任何港湾 |
 
 **`src/app/api/rooms/route.ts`** (3)
 
@@ -3228,9 +3228,9 @@ Sign in, saves, rooms, victory and the small print the app answers with.
 
 **`src/lib/rooms.ts`** (1)
 
-| English                                                            | Chinese                              |
-| ------------------------------------------------------------------ | ------------------------------------ |
-| This voyage has already set sail. Ask the host to open a new room. | 本航程已经起航。请港主另开一个港湾。 |
+| English                                                              | Chinese                              |
+| -------------------------------------------------------------------- | ------------------------------------ |
+| This voyage has already set sail. Ask the host to open a new harbor. | 本航程已经起航。请港主另开一个港湾。 |
 
 **`src/lib/unlock.ts`** (4)
 
@@ -3238,7 +3238,7 @@ Sign in, saves, rooms, victory and the small print the app answers with.
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- |
 | The Second Ledger                                                                                                                                                        | 第二本账簿                                                                                                    |
 | the second ledger                                                                                                                                                        | 第二本账簿                                                                                                    |
-| One harbor is sealed as well as hard. It opens with a phrase, and the phrase is the second ledger, entered when the room is charted.                                     | 有一座港湾，路难走，门也锁着。开它得用一句暗语，暗语就是第二本账簿，开辟港湾时填上。                          |
+| One harbor is sealed as well as hard. It opens with a phrase, and the phrase is the second ledger, entered when the harbor is charted.                                   | 有一座港湾，路难走，门也锁着。开它得用一句暗语，暗语就是第二本账簿，开辟港湾时填上。                          |
 | The harbor keeps one door shut, and ${UNLOCK_EARNED_AT} completed voyages is what opens it: the phrase is ${unlock.phrase}, and the guide has the line for whoever asks. | 港湾留着一扇门不开，完成{UNLOCK_EARNED_AT}次航程才打得开：暗语是{unlock.phrase}，谁问起，指南里就写着这一句。 |
 
 **`src/lib/use-admin.ts`** (4)
@@ -3309,7 +3309,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | Upgrading costs ${cost} Gold and gives +1 module slot and +${SHIP_DISCOUNT_PER_LEVEL} Gold transport discount. With ${roundsLeft} rounds left, the transport savings alone will pay for the upgrade.                                                                 | 升级要{cost}金币，换来 +1个模块槽位和 +{SHIP_DISCOUNT_PER_LEVEL}金币运费折扣。还剩{roundsLeft}轮，单是省下的运费就够回本。                                                  |
 | You have ${game.equippedModules.length} of ${game.shipLevel} module slots filled. An empty slot is wasted potential. Draft a module now to gain a permanent bonus.                                                                                                   | 你的{game.shipLevel}个模块槽位装了{game.equippedModules.length}个。空着的槽位就是白扔的潜力。现在就去抽一个模块，换一份永久加成。                                           |
 | You have ${game.money} Gold. Spending ${intelCost} Gold on a rumor guarantees a matching order in Orders, then buying the ${bestGoodName} at ${bestCard.resources[0]?.price} Gold per unit sets up a profitable trade.                                               | 你手上有{game.money}金币。花{intelCost}金币买一条掮客密语，订单阶段就保有一条对得上的订单；再按每件{bestCard.resources[0]?.price}金币买进{bestGoodName}，一笔好买卖就成了。 |
-| Best deal this round: ${bestGoodName} at ${bestCard.resources[0]?.price} Gold per unit from ${bestCard.port}. This is ${Math.round(bestScore * 100)}% of the typical price range, making it a good value.                                                            | 本轮最划算：来自{bestCard.port}的{bestGoodName}，每件{bestCard.resources[0]?.price}金币，约为常见价格的{Math.round(bestScore * 100)}%，值得入手。                           |
+| Best deal this round: {bestGoodName} at {bestPrice} Gold per unit from {bestCard.port}. This is {pricePct}% of the typical price range, making it a good value.                                                                                                      | 本轮最划算：来自{bestCard.port}的{bestGoodName}，每件{bestPrice}金币，约为常见价格的{pricePct}%，值得入手。                                                                 |
 
 **`src/components/portmasters/AdminConsole.tsx`** (48)
 
@@ -3425,7 +3425,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | 🔒 Broker's Favor unlocks at Renown ${BROKERS_FAVOR_UNLOCK_LEVEL}, ${renownTitleForLevel(BROKERS_FAVOR_UNLOCK_LEVEL)} (${favorLevelsToGo} level${favorLevelsToGo === 1 ? "" : "s"} to go) | 🔒 掮客的人情在声望{BROKERS_FAVOR_UNLOCK_LEVEL}解锁，即{renownTitleForLevel(BROKERS_FAVOR_UNLOCK_LEVEL)}（还差{favorLevelsToGo}级） |
 | ${legacy.renownXP} XP earned in total                                                                                                                                                     | 累计获得{legacy.renownXP}点声望经验                                                                                                 |
 | ${xpIntoLevel} / ${xpForNextLevel} XP to Renown ${level + 1}                                                                                                                              | {xpIntoLevel} / {xpForNextLevel}点声望经验，升往声望{level + 1}                                                                     |
-| ${stats.crowns} Sea Master crown${stats.crowns === 1 ? "" : "s"} · best Reputation ${stats.bestScore}                                                                                     | {stats.crowns}顶沧海之冠 · 最佳声誉{stats.bestScore}                                                                                |
+| {stats.crowns} Sea Master crown{pluralS} · best Reputation {stats.bestReputation}                                                                                                         | {stats.crowns}顶沧海之冠 · 最佳声誉{stats.bestReputation}                                                                           |
 | Head to head with ${rival.displayName}: ${rival.myWins} wins, ${rival.theirWins} losses, ${rival.ties} ties                                                                               | 与{rival.displayName}的交手：{rival.myWins}胜、{rival.theirWins}负、{rival.ties}平                                                  |
 
 **`src/components/portmasters/DifficultyAdvisor.tsx`** (3)
@@ -3459,9 +3459,9 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 
 **`src/components/portmasters/SettingsModal.tsx`** (1)
 
-| English                                                     | Chinese                              |
-| ----------------------------------------------------------- | ------------------------------------ |
-| Press ? or F2 in a game room to see all keyboard shortcuts. | 在港湾里按 ? 或 F2，查看全部快捷键。 |
+| English                                                  | Chinese                              |
+| -------------------------------------------------------- | ------------------------------------ |
+| Press ? or F2 in a harbor to see all keyboard shortcuts. | 在港湾里按 ? 或 F2，查看全部快捷键。 |
 
 **`src/components/portmasters/chat/MessageList.tsx`** (1)
 
@@ -3752,7 +3752,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 | That offer was addressed to another captain.                                                                                                                                                                                                                                                  | 这个报价是写给另一位船长的。                                                                                                                                                                |
 | That captain has already taken on a refit this leg.                                                                                                                                                                                                                                           | 那位船长本航段已经整补过了。                                                                                                                                                                |
 | You are already covered for this leg.                                                                                                                                                                                                                                                         | 本航段你已经有护卫了。                                                                                                                                                                      |
-| Not a member of that room                                                                                                                                                                                                                                                                     | 不是这个港湾的成员                                                                                                                                                                          |
+| Not a member of that harbor                                                                                                                                                                                                                                                                   | 不是这个港湾的成员                                                                                                                                                                          |
 | Pick two different items to barter.                                                                                                                                                                                                                                                           | 易货得选两样不同的物品。                                                                                                                                                                    |
 | Each Renown level grants a small Gold bonus at the start of your next fresh voyage                                                                                                                                                                                                            | 每级声望都会在你下一次全新航程开局时，送上一小笔金币奖励                                                                                                                                    |
 | That captain is not in this harbor.                                                                                                                                                                                                                                                           | 那位船长不在这个港湾。                                                                                                                                                                      |
@@ -4176,7 +4176,7 @@ The finishing pass: the operator console and the balance dashboard, the gates in
 
 ## The mapping file, complete
 
-One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoning; the block below is the artifact itself, every term one per line, English beside Chinese. It now closes with the `sentences` group: all 2,193 lines from the sentence tables, keyed by sweep and number, in the same order those tables read. It is kept in step with the tables at every revision, and when you approve the last row it lifts into the repo as the file.
+One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoning; the block below is the artifact itself, byte for byte, every row a pair of English and Mandarin. It closes with the `sentences` group, the 2,160 lines the sentence tables hold, keyed by sweep and number, and then the `fragments` group, the nineteen short words and phrases the rest of the interface joins into its sentences and reads by their English rather than by an id. A table row that records a line the tree no longer reaches can stay in the tables as a record of its sweep without being carried into the pack, and the rows the last pass removed were exactly those, since every string the tree hands the readers is still in the book. The block and the file are identical at every revision, because the block is the file.
 
 ```json
 {
@@ -4192,43 +4192,20 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
   "terms": {
     "term.gold": { "en": "Gold", "zh": "金币" },
     "term.captain": { "en": "Captain", "zh": "船长" },
-    "term.harbor": { "en": "Harbor (the room)", "zh": "港湾" },
-    "term.port": { "en": "Port", "zh": "港" },
+    "term.harbor": { "en": "Harbor", "zh": "港湾" },
     "term.host": { "en": "Host", "zh": "港主" },
-    "term.seat": { "en": "Seat", "zh": "席位" },
     "term.renown": { "en": "Renown", "zh": "声望" },
     "term.reputation": { "en": "Reputation", "zh": "声誉" },
-    "term.score": { "en": "Score", "zh": "积分" },
     "term.legacy": { "en": "Captain's Legacy", "zh": "船长传承" },
-    "term.merits": { "en": "Merits", "zh": "功勋" },
     "term.sea_master": { "en": "Sea Master", "zh": "沧海之主" },
-    "term.sea_master_crowns": { "en": "Sea Master crowns", "zh": "沧海之冠" },
     "term.voyage": { "en": "Voyage", "zh": "航程" },
-    "term.round": { "en": "Round", "zh": "轮" },
-    "term.leg": { "en": "Leg", "zh": "航段" },
-    "term.order": { "en": "Trade order", "zh": "订单" },
-    "term.locked_order": { "en": "Locked order", "zh": "专属订单" },
-    "term.manifest": { "en": "Manifest", "zh": "舱单" },
-    "term.path": { "en": "Path", "zh": "商道" },
-    "term.boon": { "en": "Boon (card kind)", "zh": "机缘" },
-    "term.module": { "en": "Module (card kind)", "zh": "模块" },
-    "term.charter": { "en": "Charter (card kind)", "zh": "特许状" },
-    "term.draft": { "en": "To draft (a card)", "zh": "抽取" },
     "term.hold": { "en": "Hold", "zh": "货舱" },
     "term.cargo": { "en": "Cargo", "zh": "货物" },
     "term.stores": { "en": "Stores", "zh": "存粮" },
     "term.larder": { "en": "Larder", "zh": "粮舱" },
-    "term.pantry": { "en": "Pantry", "zh": "伙房" },
     "term.rations": { "en": "Rations", "zh": "口粮" },
-    "term.slot": { "en": "Cargo slot", "zh": "仓位" },
     "term.freight": { "en": "Freight", "zh": "运费" },
-    "term.maintenance": { "en": "Ship maintenance", "zh": "维护费" },
-    "term.wages": { "en": "Wages", "zh": "工钱" },
-    "term.severance": { "en": "Severance", "zh": "遣散费" },
-    "term.vat": { "en": "VAT", "zh": "增值税" },
-    "term.income_tax": { "en": "Income tax", "zh": "所得税" },
-    "term.dues": { "en": "Harbor dues", "zh": "港务费" },
-    "term.settlement": { "en": "Settlement", "zh": "结算" }
+    "term.wages": { "en": "Wages", "zh": "工钱" }
   },
 
   "phases": {
@@ -4263,7 +4240,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "The founding voyage. Buy the port, work the orders, trade with the table between rounds, settle, and refit.",
       "zh": "最初的航程。在港口采购，交付订单，与同席船长易货，结算账目，再整备船只。"
     },
-    "mode.ocean_gambit.name": { "en": "Ocean Gambit", "zh": "暗潮" },
     "mode.ocean_gambit.badge": { "en": "Gambit", "zh": "暗潮" },
     "mode.ocean_gambit.tagline": {
       "en": "Orders lock before the table opens.",
@@ -4329,12 +4305,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "food.grain": { "en": "Grain", "zh": "米粮" },
     "food.salt_fish": { "en": "Salt Fish", "zh": "咸鱼" },
     "food.produce": { "en": "Produce", "zh": "时鲜" },
-    "food.meal": { "en": "Meal", "zh": "餐" },
-    "food.short_rations": { "en": "Short rations", "zh": "减半口粮" },
-    "food.preserve": { "en": "To preserve", "zh": "腌制" },
-    "food.barge": { "en": "Supply Barge", "zh": "补给驳船" },
-    "food.barge_rations": { "en": "Barge rations", "zh": "驳船口粮" },
-    "food.ration_price": { "en": "Ration price", "zh": "口粮单价" }
+    "food.barge": { "en": "Supply Barge", "zh": "补给驳船" }
   },
 
   "crew": {
@@ -4462,8 +4433,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
   },
 
   "houses": {
-    "house.term": { "en": "Great House", "zh": "世家" },
-    "house.standing": { "en": "House Standing", "zh": "世家口碑" },
     "house.jade_pavilion.name": { "en": "Jade Pavilion", "zh": "玉阁" },
     "house.jade_pavilion.motto": {
       "en": "Patience polishes the stone.",
@@ -4504,10 +4473,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Silk Road Sovereign",
       "zh": "丝路霸主"
     },
-    "rating.king_of_silk_road": {
-      "en": "King of Silk Road",
-      "zh": "丝路之王"
-    },
+    "rating.king_of_silk_road": { "en": "King of Silk Road", "zh": "丝路之王" },
     "rating.maritime_tycoon": { "en": "Maritime Tycoon", "zh": "海上贸易大亨" },
     "rating.successful_merchant": {
       "en": "Successful Merchant",
@@ -4515,15 +4481,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "rating.qualified_trader": { "en": "Qualified Trader", "zh": "合格商人" },
     "rating.novice_merchant": { "en": "Novice Merchant", "zh": "新手商人" },
-    "legacy.merchant_ledger": { "en": "The merchant ledger", "zh": "商名录" },
-    "legacy.renown_level": { "en": "Renown Level", "zh": "声望等级" },
-    "legacy.renown_xp": { "en": "Renown XP", "zh": "声望经验" },
-    "legacy.voyages_completed": { "en": "Voyages Completed", "zh": "完成航程" },
-    "legacy.best_score": { "en": "Best Score", "zh": "最佳积分" },
-    "legacy.solvent_streak": {
-      "en": "Consecutive solvent voyages",
-      "zh": "连续不破产航程"
-    }
+    "legacy.renown_xp": { "en": "Renown XP", "zh": "声望经验" }
   },
 
   "merits": {
@@ -4532,7 +4490,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Complete your first voyage.",
       "zh": "完成你的第一次航程。"
     },
-    "merit.first_crown.name": { "en": "Sea Master", "zh": "沧海之主" },
     "merit.first_crown.desc": {
       "en": "Get crowned Sea Master for the first time.",
       "zh": "首次荣登沧海之主。"
@@ -4550,44 +4507,17 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
   },
 
   "tags": {
-    "tag.cold": { "en": "Cold", "zh": "御寒" },
-    "tag.bulk": { "en": "Bulk", "zh": "散货" },
-    "tag.perishable": { "en": "Perishable", "zh": "易腐" },
-    "tag.preserved": { "en": "Preserved", "zh": "耐储" },
-    "tag.woven": { "en": "Woven", "zh": "织物" },
-    "tag.luxury": { "en": "Luxury", "zh": "奢华" },
-    "tag.armed": { "en": "Armed", "zh": "武装" },
-    "tag.crewed": { "en": "Crewed", "zh": "人手" },
-    "tag.contraband": { "en": "Contraband", "zh": "私货" },
-    "tag.sealed": { "en": "Sealed", "zh": "封验" },
-    "tag.public": { "en": "Public", "zh": "公开" },
-    "tag.debt": { "en": "Debt", "zh": "债务" }
+    "tag.public": { "en": "Public", "zh": "公开" }
   },
 
   "systems": {
     "system.broker": { "en": "Broker", "zh": "掮客" },
-    "system.brokers_rumor": { "en": "Broker's Rumor", "zh": "掮客密语" },
-    "system.brokers_whisper": { "en": "Broker's Whisper", "zh": "掮客密语" },
     "system.brokers_favor": { "en": "Broker's Favor", "zh": "掮客的人情" },
-    "system.honest_broker": { "en": "Honest Broker", "zh": "诚信掮客" },
-    "system.corrupt_broker": { "en": "Corrupt Broker", "zh": "通匪掮客" },
     "system.word_on_the_docks": { "en": "Word on the Docks", "zh": "码头风闻" },
     "system.tidewatch": { "en": "Tidewatch Alerts", "zh": "观潮预警" },
-    "system.ventures": { "en": "Ventures", "zh": "合股" },
-    "system.backing": { "en": "Backing (a loan)", "zh": "作保" },
     "system.exchange": { "en": "Captain's Exchange", "zh": "船长行市" },
     "system.audit": { "en": "Manifest Audit", "zh": "舱单稽查" },
-    "system.maroon": { "en": "Maroon (the vote ashore)", "zh": "放逐" },
-    "system.harbormaster": { "en": "Harbormaster", "zh": "港务长" },
-    "system.mandate": { "en": "Imperial Mandate", "zh": "皇命采办" },
-    "system.commission": {
-      "en": "The fleet's commission (the shared objective)",
-      "zh": "公议"
-    },
-    "system.standing_order": { "en": "Standing Order", "zh": "常备订单" },
-    "system.salvage": { "en": "Salvage", "zh": "打捞" },
-    "system.escort": { "en": "Escort", "zh": "护航" },
-    "system.raid": { "en": "Pirate raid", "zh": "海盗劫掠" }
+    "system.harbormaster": { "en": "Harbormaster", "zh": "港务长" }
   },
 
   "moments": {
@@ -4723,8 +4653,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "card.steady_watch.name": { "en": "Steady Watch", "zh": "守望" },
     "card.steady_watch.desc": {
-      "en": "The crew eats one fewer than their number each leg, for the voyage.",
-      "zh": "本航程余下期间，船员每段少耗一份口粮。"
+      "en": "The crew eats one fewer than their number each leg (never fewer than one), for the voyage.",
+      "zh": "本航程余下期间，船员每段少耗一份口粮（至少一份）。"
     },
     "card.cold_hardened.name": { "en": "Cold Hardened", "zh": "耐寒" },
     "card.cold_hardened.desc": {
@@ -4751,10 +4681,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Purchases cost 15% less. Income tax is 20% higher.",
       "zh": "采购成本降低15%，所得税提高20%。"
     },
-    "card.bulk_hauler.name": {
-      "en": "Bulk Hauler Rigging",
-      "zh": "散货索具"
-    },
+    "card.bulk_hauler.name": { "en": "Bulk Hauler Rigging", "zh": "散货索具" },
     "card.bulk_hauler.desc": {
       "en": "Freight is 1 Gold less per item. Ship upgrades cost 15 Gold more.",
       "zh": "每件货物运费减1金币，船只升级费用增加15金币。"
@@ -4902,23 +4829,9 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
   },
 
   "ui": {
-    "ui.hold": { "en": "Hold", "zh": "货舱" },
-    "ui.cargo": { "en": "Cargo", "zh": "货物" },
-    "ui.stores": { "en": "Stores", "zh": "存粮" },
-    "ui.wardrobe": { "en": "Wardrobe", "zh": "衣箱" },
     "ui.warmth": { "en": "Warmth", "zh": "暖意" },
-    "ui.frostbite": { "en": "Frostbite", "zh": "冻伤" },
-    "ui.shipyard": { "en": "Shipyard", "zh": "船坞" },
-    "ui.hull": { "en": "Hull", "zh": "船体" },
-    "ui.upgrade": { "en": "Upgrade", "zh": "升级" },
     "ui.market": { "en": "Market", "zh": "集市" },
-    "ui.port_purchase": { "en": "Port Purchase", "zh": "港口采购" },
     "ui.artisan_bench": { "en": "Artisan Bench", "zh": "匠作台" },
-    "ui.standing_orders": { "en": "Standing Orders", "zh": "常备订单" },
-    "ui.objective": { "en": "Objective", "zh": "公议" },
-    "ui.leaderboard": { "en": "Leaderboard", "zh": "排行榜" },
-    "ui.lobby": { "en": "Lobby", "zh": "大厅" },
-    "ui.standings": { "en": "Standings", "zh": "排名" },
     "ui.cta.gather": { "en": "Gather in the Harbor", "zh": "在港湾集合" },
     "ui.cta.draft_path": { "en": "Draft Your Path", "zh": "抽取你的商道" },
     "ui.cta.draft_boon": { "en": "Draft a Boon", "zh": "抽取机缘" },
@@ -4990,7 +4903,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
 
   "sentences": {
     "shell.001": {
-      "en": "${APP_NAME}: A multiplayer maritime trade game on the ancient Silk Road. Captains gather in a shared harbor, sail in lockstep, and the highest Reputation wins the Sea Master crown.",
+      "en": "{APP_NAME}: A multiplayer maritime trade game on the ancient Silk Road. Captains gather in a shared harbor, sail in lockstep, and the highest Reputation wins the Sea Master crown.",
       "zh": "{APP_NAME}：古丝路上的多人海上贸易游戏。船长们聚在同一个港湾，步调一致地航行，声誉最高者赢得沧海之冠。"
     },
     "shell.002": { "en": "Silk Road", "zh": "丝路" },
@@ -5006,7 +4919,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "连不上服务器，可能只是暂时离线。"
     },
     "shell.008": {
-      "en": "Server error (${res.status}). Please try again later.",
+      "en": "Server error ({res.status}). Please try again later.",
       "zh": "服务器出错了（{res.status}）。请稍后再试。"
     },
     "shell.009": {
@@ -5022,7 +4935,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "尝试太频繁了。缓一缓，再试一次。"
     },
     "shell.011": {
-      "en": "${USERNAME_MIN} to ${USERNAME_MAX} chars, letters, numbers, underscore",
+      "en": "{USERNAME_MIN} to {USERNAME_MAX} chars, letters, numbers, underscore",
       "zh": "{USERNAME_MIN}到{USERNAME_MAX}个字符，字母、数字、下划线"
     },
     "shell.012": {
@@ -5030,7 +4943,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "船长名只能用字母、数字和下划线"
     },
     "shell.013": {
-      "en": "at least ${PASSWORD_MIN} characters",
+      "en": "at least {PASSWORD_MIN} characters",
       "zh": "至少{PASSWORD_MIN}个字符"
     },
     "shell.015": {
@@ -5052,16 +4965,16 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "你要找的页面不存在。地址可能打错了，也可能指向这一版还没有随航的界面。"
     },
     "guides.001": {
-      "en": "<div style=\"background:color-mix(in oklch, var(--w-${leg.phase}) 12%, transparent);border-radius:6px;padding:10px;border-left:3px solid var(--w-${leg.phase});color:var(--foreground)\">\\n    <strong>${face.icon} ${face.label}</strong><br>\\n    <span style=\"font-size:13px\">${leg.body}</span><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">${leg.setsUp}</span>\\n  </div>",
-      "zh": "<div style=\"background:color-mix(in oklch, var(--w-${leg.phase}) 12%, transparent);border-radius:6px;padding:10px;border-left:3px solid var(--w-${leg.phase});color:var(--foreground)\">\\n    <strong>${face.icon} ${face.label}</strong><br>\\n    <span style=\"font-size:13px\">${leg.body}</span><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">${leg.setsUp}</span>\\n  </div>"
+      "en": "<div style=\"background:color-mix(in oklch, var(--w-{leg.phase}) 12%, transparent);border-radius:6px;padding:10px;border-left:3px solid var(--w-{leg.phase});color:var(--foreground)\">\n    <strong>{face.icon} {face.label}</strong><br>\n    <span style=\"font-size:13px\">{leg.body}</span><br>\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">{leg.setsUp}</span>\n  </div>",
+      "zh": "<div style=\"background:color-mix(in oklch, var(--w-{leg.phase}) 12%, transparent);border-radius:6px;padding:10px;border-left:3px solid var(--w-{leg.phase});color:var(--foreground)\">\n    <strong>{face.icon} {face.label}</strong><br>\n    <span style=\"font-size:13px\">{leg.body}</span><br>\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">{leg.setsUp}</span>\n  </div>"
     },
     "guides.002": {
-      "en": "<div style=\"display:grid;gap:8px;margin:12px 0\">\\n${legs}\\n</div>\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\">${briefing.closes}</p>",
-      "zh": "<div style=\"display:grid;gap:8px;margin:12px 0\">\\n${legs}\\n</div>\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\">${briefing.closes}</p>"
+      "en": "<div style=\"display:grid;gap:8px;margin:12px 0\">\n{legs}\n</div>\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\">{briefing.closes}</p>",
+      "zh": "<div style=\"display:grid;gap:8px;margin:12px 0\">\n{legs}\n</div>\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\">{briefing.closes}</p>"
     },
     "guides.003": {
-      "en": "<li><strong>${entry.crest} ${entry.name}</strong>: ${entry.signature}<br><span style=\"font-size:12px;color:var(--muted-foreground)\">${entry.facts\\n          .map(pathFactText)\\n          .join(\" · \")}</span></li>",
-      "zh": "<li><strong>${entry.crest} ${entry.name}</strong>: ${entry.signature}<br><span style=\"font-size:12px;color:var(--muted-foreground)\">${entry.facts\\n          .map(pathFactText)\\n          .join(\" · \")}</span></li>"
+      "en": "<li><strong>{entry.crest} {entry.name}</strong>: {entry.signature}<br><span style=\"font-size:12px;color:var(--muted-foreground)\">{pathFacts}</span></li>",
+      "zh": "<li><strong>{entry.crest} {entry.name}</strong>: {entry.signature}<br><span style=\"font-size:12px;color:var(--muted-foreground)\">{pathFacts}</span></li>"
     },
     "guides.004": { "en": "Base", "zh": "基价" },
     "guides.005": { "en": "Final", "zh": "最终价" },
@@ -5080,86 +4993,83 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "通常 {min} 到 {max} 金币{unit}"
     },
     "guides.010": {
-      "en": "<div style=\"background:color-mix(in oklch, var(--gain) 12%, transparent);border-radius:6px;padding:12px;border-left:3px solid var(--gain);color:var(--foreground);line-height:1.9\">${briefing.text}</div>",
-      "zh": "<div style=\"background:color-mix(in oklch, var(--gain) 12%, transparent);border-radius:6px;padding:12px;border-left:3px solid var(--gain);color:var(--foreground);line-height:1.9\">${briefing.text}</div>"
+      "en": "<div style=\"background:color-mix(in oklch, var(--gain) 12%, transparent);border-radius:6px;padding:12px;border-left:3px solid var(--gain);color:var(--foreground);line-height:1.9\">{briefing.text}</div>",
+      "zh": "<div style=\"background:color-mix(in oklch, var(--gain) 12%, transparent);border-radius:6px;padding:12px;border-left:3px solid var(--gain);color:var(--foreground);line-height:1.9\">{briefing.text}</div>"
     },
     "guides.011": {
-      "en": "<p>This voyage does not play like the founding one. Here is what <strong>${play.badge}</strong> changes about it, all of it:</p>\\n<ul style=\"padding-left:18px;line-height:1.9;font-size:14px\">\\n${items}\\n</ul>\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:8px 0 0\">Everything else is the voyage you would sail in Classic, so everything you learn there carries over. You can read the same list any time with F1.</p>",
-      "zh": "<p>这趟航程跟最初那趟不一样。以下是 <strong>{play.badge}</strong> 带来的全部改动：</p>\\n<ul style=\"padding-left:18px;line-height:1.9;font-size:14px\">\\n{items}\\n</ul>\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:8px 0 0\">其余的跟经典航程一样，你在经典里学到的都管用。随时按 F1 重看这份清单。</p>"
+      "en": "<p>This voyage does not play like the founding one. Here is what <strong>{play.badge}</strong> changes about it, all of it:</p>\n<ul style=\"padding-left:18px;line-height:1.9;font-size:14px\">\n{items}\n</ul>\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:8px 0 0\">Everything else is the voyage you would sail in Classic, so everything you learn there carries over. You can read the same list any time with F1.</p>",
+      "zh": "<p>这趟航程跟最初那趟不一样。以下是 <strong>{play.badge}</strong> 带来的全部改动：</p>\n<ul style=\"padding-left:18px;line-height:1.9;font-size:14px\">\n{items}\n</ul>\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:8px 0 0\">其余的跟经典航程一样，你在经典里学到的都管用。随时按 F1 重看这份清单。</p>"
     },
     "guides.012": {
-      "en": "<p>The voyage opens with a deal rather than a market. Three cards land face down in front of you, and at each beat you keep one and pass the rest on. What you hold when the deal ends is your path, and it sails with you to the end of the voyage. One change of papers is allowed: at a port, for a fee in Gold that grows with your Renown, the path chip in your rail offers the switch.</p>\\n<p>Your path decides three things about your seat: your hold, how far your Renown can climb, and which trade orders lock to you. An order demanding a locked good can only be filled by the captain holding the path that carries it.</p>\\n<ul style=\"padding-left:18px;line-height:1.7;font-size:14px\">\\n${rows}\\n</ul>\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:8px 0 0\">Every card in the deal carries these numbers, so what you read here is what the table deals you.</p>",
-      "zh": "<p>这趟航程以发牌开局，而不是开市。三张牌背面朝上落在你面前，一路留一张、传走其余。发牌结束时留在手上的，就是你的商道，它会陪你走到航程尽头。商道可以换一次：在港口花一笔金币，价格随声望涨，船长栏里的商道小牌就能换。</p>\\n<p>你的商道定下你席位的三件事：货舱多大、声望最高能爬到哪、哪些订单只认这条道。遇上要专属货物的订单，全桌只有持那条商道的船长接得下。</p>\\n<ul style=\"padding-left:18px;line-height:1.7;font-size:14px\">\\n{rows}\\n</ul>\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:8px 0 0\">牌桌上的每张牌都带这些数字，这里读到的就是你会拿到的。</p>"
+      "en": "<p>The voyage opens with a deal rather than a market. Three cards land face down in front of you, and at each beat you keep one and pass the rest on. What you hold when the deal ends is your path, and it sails with you to the end of the voyage. One change of papers is allowed: at a port, for a fee in Gold that grows with your Renown, the path chip in your rail offers the switch.</p>\n<p>Your path decides three things about your seat: your hold, how far your Renown can climb, and which trade orders lock to you. An order demanding a locked good can only be filled by the captain holding the path that carries it.</p>\n<ul style=\"padding-left:18px;line-height:1.7;font-size:14px\">\n{rows}\n</ul>\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:8px 0 0\">Every card in the deal carries these numbers, so what you read here is what the table deals you.</p>",
+      "zh": "<p>这趟航程以发牌开局，而不是开市。三张牌背面朝上落在你面前，一路留一张、传走其余。发牌结束时留在手上的，就是你的商道，它会陪你走到航程尽头。商道可以换一次：在港口花一笔金币，价格随声望涨，船长栏里的商道小牌就能换。</p>\n<p>你的商道定下你席位的三件事：货舱多大、声望最高能爬到哪、哪些订单只认这条道。遇上要专属货物的订单，全桌只有持那条商道的船长接得下。</p>\n<ul style=\"padding-left:18px;line-height:1.7;font-size:14px\">\n{rows}\n</ul>\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:8px 0 0\">牌桌上的每张牌都带这些数字，这里读到的就是你会拿到的。</p>"
     },
     "guides.013": {
-      "en": "<p>${APP_NAME} puts you on the ancient Silk Road: one voyage of ${rounds} rounds, limited gold, and a lot of merchants trying to outmaneuver you at every port.</p>\\n<p>You are sailing <strong>${play.badge}</strong>: ${play.tagline}</p>\\n<p>These waters are <strong>${cfg.name}</strong>: ${cfg.tagline}</p>\\n<p>The rules are easy to pick up, but money is tight early on and a string of bad calls compounds quickly. This covers the things that catch new captains out most.</p>\\n<p style=\"color:var(--muted-foreground);font-size:13px\">Two minutes to read. Saves a lot of frustrated restarts.</p>",
-      "zh": "<p>{APP_NAME} 把你带上了古丝路：{rounds}轮的航程，有限的金币，还有一群商人，个个都想在每个港口比你多走一步。</p>\\n<p>你走的是<strong>{play.badge}</strong>：{play.tagline}</p>\\n<p>这片水域是<strong>{cfg.name}</strong>：{cfg.tagline}</p>\\n<p>规则好上手，只是前期手头紧，一连串坏判断很快就会滚成雪球。这里讲的是新船长最容易栽的几件事。</p>\\n<p style=\"color:var(--muted-foreground);font-size:13px\">两分钟读完，能省下好几次懊恼的重开。</p>"
+      "en": "<p>{APP_NAME} puts you on the ancient Silk Road: one voyage of {rounds} rounds, limited gold, and a lot of merchants trying to outmaneuver you at every port.</p>\n<p>You are sailing <strong>{play.badge}</strong>: {play.tagline}</p>\n<p>These waters are <strong>{cfg.name}</strong>: {cfg.tagline}</p>\n<p>The rules are easy to pick up, but money is tight early on and a string of bad calls compounds quickly. This covers the things that catch new captains out most.</p>\n<p style=\"color:var(--muted-foreground);font-size:13px\">Two minutes to read. Saves a lot of frustrated restarts.</p>",
+      "zh": "<p>{APP_NAME} 把你带上了古丝路：{rounds}轮的航程，有限的金币，还有一群商人，个个都想在每个港口比你多走一步。</p>\n<p>你走的是<strong>{play.badge}</strong>：{play.tagline}</p>\n<p>这片水域是<strong>{cfg.name}</strong>：{cfg.tagline}</p>\n<p>规则好上手，只是前期手头紧，一连串坏判断很快就会滚成雪球。这里讲的是新船长最容易栽的几件事。</p>\n<p style=\"color:var(--muted-foreground);font-size:13px\">两分钟读完，能省下好几次懊恼的重开。</p>"
     },
     "guides.014": {
-      "en": "<p>After ${rounds} rounds, the captain with the highest Reputation wins the title of <strong>Sea Master</strong>. Reputation comes from trade profits and fulfilled orders.</p>\\n<p>${play.failureRule}</p>\\n<p>Starting gold is <strong>${cfg.startingGold}</strong>. That is enough to get going, but not enough to be careless with.</p>",
-      "zh": "<p>{rounds}轮之后，声誉最高的船长赢得<strong>沧海之主</strong>的头衔。声誉来自贸易利润和完成的订单。</p>\\n<p>{play.failureRule}</p>\\n<p>初始金币是<strong>{cfg.startingGold}</strong>。够起步，不够大手大脚。</p>"
+      "en": "<p>After {rounds} rounds, the captain with the highest Reputation wins the title of <strong>Sea Master</strong>. Reputation comes from trade profits and fulfilled orders.</p>\n<p>{play.failureRule}</p>\n<p>Starting gold is <strong>{cfg.startingGold}</strong>. That is enough to get going, but not enough to be careless with.</p>",
+      "zh": "<p>{rounds}轮之后，声誉最高的船长赢得<strong>沧海之主</strong>的头衔。声誉来自贸易利润和完成的订单。</p>\n<p>{play.failureRule}</p>\n<p>初始金币是<strong>{cfg.startingGold}</strong>。够起步，不够大手大脚。</p>"
     },
     "guides.015": {
-      "en": "<p>A round is one lap of the voyage, and this voyage runs ${rounds} of them. Each round walks the phases below in the order your voyage puts them:</p>\\n${roundStepHtml(mode)}\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\"><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+N</kbd> readies you for the next phase without clicking (the room sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.</p>",
-      "zh": "<p>一轮是航程里的一圈，这趟要走{rounds}轮。每轮依次走过下面的阶段，顺序由你的航程排定：</p>\\n{roundStepHtml(mode)}\\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\"><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+N</kbd> 可以不点鼠标直接就绪（所有船长都就绪，港湾才继续）；航程是这些轮连起来的一整趟，不是单独的一轮。</p>"
+      "en": "<p>A round is one lap of the voyage, and this voyage runs {rounds} of them. Each round walks the phases below in the order your voyage puts them:</p>\n{roundSteps}\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\"><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+N</kbd> readies you for the next phase without clicking (the harbor sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.</p>",
+      "zh": "<p>一轮是航程里的一圈，这趟要走{rounds}轮。每轮依次走过下面的阶段，顺序由你的航程排定：</p>\n{roundSteps}\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\"><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+N</kbd> 可以不点鼠标直接就绪（所有船长都就绪，港湾才继续）；航程是这些轮连起来的一整趟，不是单独的一轮。</p>"
     },
     "guides.016": {
-      "en": "<p>The port market has Hemp, Silk, and Tea at prices that shift every round. Buy here, barter with the other captains at Parley, and fill trade orders at Orders. Which of those two stops comes first is a rule of the voyage you are sailing rather than a choice you make, and your captain's rail always shows the order. That is the core loop.</p>\\n<p>One thing worth knowing about: the <strong>Broker</strong>. Pay a small fee for a demand rumor and a specific trade order is <em>guaranteed</em> to appear when Orders opens. Useful when you have stocked a particular good and want to make sure a buyer shows up.</p>\\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  💡 For the first two or three voyages, stick to raw materials. You can fill an order with them the same round you buy them. No waiting and no risk.\\n</div>",
-      "zh": "<p>集市里有麻布、丝绸和茶叶，价格每轮都在动。在这里采购，到洽谈去易货，去订单交单。开市和订单谁先谁后，由你所走航程的规则定，没得选，船长栏里一直标着顺序。这就是核心循环。</p>\\n<p>还有一个人要记住：<strong>掮客</strong>。花点小钱买一条需求密语，订单一开，指定的那张<em>必定</em>出现。囤着货想保准有买家，就用这个。</p>\\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  💡 最初两三趟航程，先做原材料。买进的当轮就能拿去交订单，不用等，也没有风险。\\n</div>"
+      "en": "<p>The port market has Hemp, Silk, and Tea at prices that shift every round. Buy here, barter with the other captains at Parley, and fill trade orders at Orders. Which of those two stops comes first is a rule of the voyage you are sailing rather than a choice you make, and your captain's rail always shows the order. That is the core loop.</p>\n<p>One thing worth knowing about: the <strong>Broker</strong>. Pay a small fee for a demand rumor and a specific trade order is <em>guaranteed</em> to appear when Orders opens. Useful when you have stocked a particular good and want to make sure a buyer shows up.</p>\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\n  💡 For the first two or three voyages, stick to raw materials. You can fill an order with them the same round you buy them. No waiting and no risk.\n</div>",
+      "zh": "<p>集市里有麻布、丝绸和茶叶，价格每轮都在动。在这里采购，到洽谈去易货，去订单交单。开市和订单谁先谁后，由你所走航程的规则定，没得选，船长栏里一直标着顺序。这就是核心循环。</p>\n<p>还有一个人要记住：<strong>掮客</strong>。花点小钱买一条需求密语，订单一开，指定的那张<em>必定</em>出现。囤着货想保准有买家，就用这个。</p>\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\n  💡 最初两三趟航程，先做原材料。买进的当轮就能拿去交订单，不用等，也没有风险。\n</div>"
     },
     "guides.017": {
-      "en": "<p>The Parley is a short window where captains trade directly with each other instead of through the market. Post an offer, like Hemp you don't need for Silk you do, and any other captain in the harbor can take it with one click.</p>\\n<p>Where it falls in the round is set by the voyage you are sailing rather than changing from round to round: ${MODES.classic.badge} runs it right after Market, and ${MODES.ocean_gambit.badge} runs it right after Orders, and your captain's rail always shows which. Either way, it is the easiest way to recover from a bad draw. All Tea and no Silk, with a Sachet order already on the board? Someone else in the harbor has probably drawn the opposite problem.</p>\\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  A few ground rules: you can't offer an item for itself, both amounts have to be whole numbers of at least one, and you can never offer more than you currently have. The moment you post an offer, that amount is set aside until someone takes it or you cancel it.\\n</div>\\n<p style=\"font-size:13px;color:var(--muted-foreground);margin-top:8px\">Nobody has to barter. If nothing on the board interests you, or nobody is offering anything, just move on to the next phase.</p>",
-      "zh": "<p>洽谈只开一扇短窗，船长们绕开集市直接易货。挂一份单子，比如拿富余的麻布换你缺的丝绸，港湾里谁都能一点接下。</p>\\n<p>洽谈落在轮里的哪一步，由你的航程定，不随轮次变：{MODES.classic.badge}排在开市之后，{MODES.ocean_gambit.badge}排在订单之后，船长栏一直标着是哪种。哪种都好，它都是纠坏手气最省事的办法。手里全是茶叶没有丝绸，订单板上却挂着一张香囊单？港湾里多半有人正好反过来。</p>\\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  几条规矩：不能拿一样货换它本身；两边的数量都得是整数，至少各 1；挂出的数量不能超过你手头的。挂出那一刻，这些货就寄存起来，直到有人接下或你取消。\\n</div>\\n<p style=\"font-size:13px;color:var(--muted-foreground);margin-top:8px\">没人非得易货。板上没你想要的，或者没人挂东西，直接走下一阶段。</p>"
+      "en": "<p>The Parley is a short window where captains trade directly with each other instead of through the market. Post an offer, like Hemp you don't need for Silk you do, and any other captain in the harbor can take it with one click.</p>\n<p>Where it falls in the round is set by the voyage you are sailing rather than changing from round to round: {MODES.classic.badge} runs it right after Market, and {MODES.ocean_gambit.badge} runs it right after Orders, and your captain's rail always shows which. Either way, it is the easiest way to recover from a bad draw. All Tea and no Silk, with a Sachet order already on the board? Someone else in the harbor has probably drawn the opposite problem.</p>\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\n  A few ground rules: you can't offer an item for itself, both amounts have to be whole numbers of at least one, and you can never offer more than you currently have. The moment you post an offer, that amount is set aside until someone takes it or you cancel it.\n</div>\n<p style=\"font-size:13px;color:var(--muted-foreground);margin-top:8px\">Nobody has to barter. If nothing on the board interests you, or nobody is offering anything, just move on to the next phase.</p>",
+      "zh": "<p>洽谈只开一扇短窗，船长们绕开集市直接易货。挂一份单子，比如拿富余的麻布换你缺的丝绸，港湾里谁都能一点接下。</p>\n<p>洽谈落在轮里的哪一步，由你的航程定，不随轮次变：{MODES.classic.badge}排在开市之后，{MODES.ocean_gambit.badge}排在订单之后，船长栏一直标着是哪种。哪种都好，它都是纠坏手气最省事的办法。手里全是茶叶没有丝绸，订单板上却挂着一张香囊单？港湾里多半有人正好反过来。</p>\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\n  几条规矩：不能拿一样货换它本身；两边的数量都得是整数，至少各 1；挂出的数量不能超过你手头的。挂出那一刻，这些货就寄存起来，直到有人接下或你取消。\n</div>\n<p style=\"font-size:13px;color:var(--muted-foreground);margin-top:8px\">没人非得易货。板上没你想要的，或者没人挂东西，直接走下一阶段。</p>"
     },
     "guides.018": {
-      "en": "<p>Trade orders appear and you match your cargo to them. Each one shows the goods needed, the reward, and the shipping fee. Your take is whatever is left after fees and tax.</p>\\n<p>You can fill as many orders as your cargo allows while Orders is open.</p>\\n<div style=\"background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  📌 <strong>Finished goods</strong> (${PRODUCTS_TIER0.join(\", \")}) pay two to three times more than raw materials. The catch is they need artisans, and the artisans deliver at Resolve. That is covered next.\\n</div>\\n${mandates.length ?",
-      "zh": "<p>订单上板了，拿货去对。每条都写明要什么货、给多少报酬、收多少运费。运费和税扣完，剩下的都归你。</p>\\n<p>订单开着的时候，货够就交，能交几条交几条。</p>\\n<div style=\"background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  📌 <strong>成品</strong> ({PRODUCTS_TIER0.join(\"、\")})的报酬是原材料的两三倍。可它得靠工匠，工匠要到结算才交货。下一页就讲这个。\\n</div>\\n{mandates.length ?"
+      "en": "<p>Trade orders appear and you match your cargo to them. Each one shows the goods needed, the reward, and the shipping fee. Your take is whatever is left after fees and tax.</p>\n<p>You can fill as many orders as your cargo allows while Orders is open.</p>\n<div style=\"background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\n  📌 <strong>Finished goods</strong> ({tier0List}) pay two to three times more than raw materials. The catch is they need artisans, and the artisans deliver at Resolve. That is covered next.\n</div>\n",
+      "zh": "<p>订单上板了，拿货去对。每条都写明要什么货、给多少报酬、收多少运费。运费和税扣完，剩下的都归你。</p>\n<p>订单开着的时候，货够就交，能交几条交几条。</p>\n<div style=\"background:color-mix(in oklch, var(--intel) 14%, transparent);border:1px solid var(--intel);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\n  📌 <strong>成品</strong> ({tier0List})的报酬是原材料的两三倍。可它得靠工匠，工匠要到结算才交货。下一页就讲这个。\n</div>\n"
     },
     "guides.019": {
-      "en": "<p>Artisans turn raw materials into high value finished goods and collect wages at every Resolve. That part is simple. What catches most new captains is this:</p>\\n<div style=\"background:color-mix(in oklch, var(--alarm) 18%, transparent);border:1px solid var(--alarm);color:var(--foreground);border-radius:6px;padding:12px;margin:12px 0;text-align:center;font-size:14px;font-weight:bold;line-height:1.7\">\\n  Assign a task this round.<br>Wages come due at Resolve either way.\\n</div>\\n<p style=\"font-size:13px;color:var(--muted-foreground);line-height:1.6\">Weavers (${wageOf(\"weaver\")}g), Master Weavers (${wageOf(\"master\")}g), and Sachet Makers (${wageOf(\"sachet_maker\")}g) all charge wages <strong>every round</strong>, even when idle, so the bill comes round whether they worked or not. Only hire once you have enough gold to cover at least two rounds of wages alongside your other bills.</p>",
-      "zh": "<p>工匠把原材料做成高价成品，每个结算都领工钱。这部分很简单。让新船长栽跟头的是这一点：</p>\\n<div style=\"background:color-mix(in oklch, var(--alarm) 18%, transparent);border:1px solid var(--alarm);color:var(--foreground);border-radius:6px;padding:12px;margin:12px 0;text-align:center;font-size:14px;font-weight:bold;line-height:1.7\">\\n  本轮派活。<br>工钱到结算照付不误。\\n</div>\\n<p style=\"font-size:13px;color:var(--muted-foreground);line-height:1.6\">织女（{wageOf(\"weaver\")}g）、纺织大师（{wageOf(\"master\")}g）、香囊师（{wageOf(\"sachet_maker\")}g）的工钱<strong>每轮</strong>都付，闲着照付，干不干活账单都来。手里的金币能盖住至少两轮工钱、还顾得开别的开销，再雇人。</p>"
+      "en": "<p>Artisans turn raw materials into high value finished goods and collect wages at every Resolve. That part is simple. What catches most new captains is this:</p>\n<div style=\"background:color-mix(in oklch, var(--alarm) 18%, transparent);border:1px solid var(--alarm);color:var(--foreground);border-radius:6px;padding:12px;margin:12px 0;text-align:center;font-size:14px;font-weight:bold;line-height:1.7\">\n  Assign a task this round.<br>Wages come due at Resolve either way.\n</div>\n<p style=\"font-size:13px;color:var(--muted-foreground);line-height:1.6\">Weavers ({weaverWage}g), Master Weavers ({masterWage}g), and Sachet Makers ({sachetWage}g) all charge wages <strong>every round</strong>, even when idle, so the bill comes round whether they worked or not. Only hire once you have enough gold to cover at least two rounds of wages alongside your other bills.</p>",
+      "zh": "<p>工匠把原材料做成高价成品，每个结算都领工钱。这部分很简单。让新船长栽跟头的是这一点：</p>\n<div style=\"background:color-mix(in oklch, var(--alarm) 18%, transparent);border:1px solid var(--alarm);color:var(--foreground);border-radius:6px;padding:12px;margin:12px 0;text-align:center;font-size:14px;font-weight:bold;line-height:1.7\">\n  本轮派活。<br>工钱到结算照付不误。\n</div>\n<p style=\"font-size:13px;color:var(--muted-foreground);line-height:1.6\">织女（{weaverWage}g）、纺织大师（{masterWage}g）、香囊师（{sachetWage}g）的工钱<strong>每轮</strong>都付，闲着照付，干不干活账单都来。手里的金币能盖住至少两轮工钱、还顾得开别的开销，再雇人。</p>"
     },
     "guides.020": {
-      "en": ": \"\"}\\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  💡 ${ESCORT_SHARE_RULE} Often worth it once your funds are already thin.\\n</div>",
-      "zh": ": \"\"}\\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\\n  💡 {ESCORT_SHARE_RULE}手头紧的时候，这笔往往划算。\\n</div>"
+      "en": "\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\n  💡 {ESCORT_SHARE_RULE} Often worth it once your funds are already thin.\n</div>",
+      "zh": "\n<div style=\"background:color-mix(in oklch, var(--warn) 14%, transparent);border:1px solid var(--warn);color:var(--foreground);border-radius:6px;padding:9px;font-size:13px;margin-top:10px;line-height:1.5\">\n  💡 {ESCORT_SHARE_RULE}手头紧的时候，这笔往往划算。\n</div>"
     },
     "guides.021": {
-      "en": "<p>Once the pirates are dealt with, two bills come due:</p>\\n<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0\">\\n  <div style=\"background:color-mix(in oklch, var(--w-ship) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\\n    <div style=\"font-size:22px;margin-bottom:4px\">🔧</div>\\n    <strong>Ship Maintenance</strong><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">15 to 22 Gold each round, set by the waters you sail</span>\\n  </div>\\n  <div style=\"background:color-mix(in oklch, var(--w-market) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\\n    <div style=\"font-size:22px;margin-bottom:4px\">👥</div>\\n    <strong>Artisan Wages</strong><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">${ARTISAN_WAGE_MIN} to ${ARTISAN_WAGE_MAX} Gold per person per round</span>\\n  </div>\\n</div>\\n<p style=\"font-size:13px;color:var(--muted-foreground)\">The <strong>Dues</strong> tab of your captain's rail shows exactly what is owed. Check it before spending anything.</p>\\n<p style=\"font-size:13px;color:var(--muted-foreground)\">Coming up short isn't the end on its own. Right there on the settlement screen, you can ask another captain in the harbor for a loan, and they can send it to you on the spot if they've got the Gold to spare. Just repay it before the voyage's last round ends, or it comes out of your funds automatically and goes straight to them.</p>",
-      "zh": "<p>海盗的事了结之后，还有两笔账单：</p>\\n<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0\">\\n  <div style=\"background:color-mix(in oklch, var(--w-ship) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\\n    <div style=\"font-size:22px;margin-bottom:4px\">🔧</div>\\n    <strong>船只维护费</strong><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">每轮15到22金币，由你走的水域决定</span>\\n  </div>\\n  <div style=\"background:color-mix(in oklch, var(--w-market) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\\n    <div style=\"font-size:22px;margin-bottom:4px\">👥</div>\\n    <strong>工匠工钱</strong><br>\\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">每人每轮{ARTISAN_WAGE_MIN}到{ARTISAN_WAGE_MAX}金币</span>\\n  </div>\\n</div>\\n<p style=\"font-size:13px;color:var(--muted-foreground)\">船长栏里的<strong>港务费</strong>页签写着确切欠多少。花钱之前先看一眼。</p>\\n<p style=\"font-size:13px;color:var(--muted-foreground)\">钱不够，本身不是终点。就在结算界面上，你可以向港湾里的其他船长借一笔；对方手头宽裕，当场就能转给你。在航程最后一轮结束前还上就行，还不清，会自动从你的金币里扣出来，交到他手上。</p>"
+      "en": "<p>Once the pirates are dealt with, two bills come due:</p>\n<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0\">\n  <div style=\"background:color-mix(in oklch, var(--w-ship) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\n    <div style=\"font-size:22px;margin-bottom:4px\">🔧</div>\n    <strong>Ship Maintenance</strong><br>\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">15 to 22 Gold each round, set by the waters you sail</span>\n  </div>\n  <div style=\"background:color-mix(in oklch, var(--w-market) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\n    <div style=\"font-size:22px;margin-bottom:4px\">👥</div>\n    <strong>Artisan Wages</strong><br>\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">{ARTISAN_WAGE_MIN} to {ARTISAN_WAGE_MAX} Gold per person per round</span>\n  </div>\n</div>\n<p style=\"font-size:13px;color:var(--muted-foreground)\">The <strong>Dues</strong> tab of your captain's rail shows exactly what is owed. Check it before spending anything.</p>\n<p style=\"font-size:13px;color:var(--muted-foreground)\">Coming up short isn't the end on its own. Right there on the settlement screen, you can ask another captain in the harbor for a loan, and they can send it to you on the spot if they've got the Gold to spare. Just repay it before the voyage's last round ends, or it comes out of your funds automatically and goes straight to them.</p>",
+      "zh": "<p>海盗的事了结之后，还有两笔账单：</p>\n<div style=\"display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0\">\n  <div style=\"background:color-mix(in oklch, var(--w-ship) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\n    <div style=\"font-size:22px;margin-bottom:4px\">🔧</div>\n    <strong>船只维护费</strong><br>\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">每轮15到22金币，由你走的水域决定</span>\n  </div>\n  <div style=\"background:color-mix(in oklch, var(--w-market) 14%, transparent);border-radius:6px;padding:10px;text-align:center;color:var(--foreground)\">\n    <div style=\"font-size:22px;margin-bottom:4px\">👥</div>\n    <strong>工匠工钱</strong><br>\n    <span style=\"font-size:12px;color:var(--muted-foreground)\">每人每轮{ARTISAN_WAGE_MIN}到{ARTISAN_WAGE_MAX}金币</span>\n  </div>\n</div>\n<p style=\"font-size:13px;color:var(--muted-foreground)\">船长栏里的<strong>港务费</strong>页签写着确切欠多少。花钱之前先看一眼。</p>\n<p style=\"font-size:13px;color:var(--muted-foreground)\">钱不够，本身不是终点。就在结算界面上，你可以向港湾里的其他船长借一笔；对方手头宽裕，当场就能转给你。在航程最后一轮结束前还上就行，还不清，会自动从你的金币里扣出来，交到他手上。</p>"
     },
     "guides.022": {
-      "en": "<p>Keep these points in mind as you play:</p>\\n<ul style=\"padding-left:18px;line-height:2.1;font-size:14px\">\\n  <li>Start with raw material orders. Fast money, no complications.</li>\\n  <li>Always keep at least <strong>30 Gold above</strong> what Resolve will cost you.</li>\\n  <li>Hire artisans only when you can cover <strong>two full rounds of wages</strong>.</li>\\n  <li>Dusk ship upgrades compound quickly. Do not skip them.</li>\\n  <li>Caught short by pirates or a bad round? When other captains are aboard, ask the harbor for a loan before you assume the voyage is over.</li>\\n  <li>Every voyage's final Reputation becomes Renown on your account, forever, win or lose. Check your Captain's Legacy any time from the Lobby.</li>\\n  <li><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+S</kbd> saves your voyage &nbsp;·&nbsp; <kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">F1</kbd> opens the full guide.</li>\\n</ul>\\n<div style=\"background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px\">\\n  <strong style=\"font-size:15px\">Good winds and good margins, Captain. ⚓</strong>\\n</div>",
-      "zh": "<p>玩的时候记住这几点：</p>\\n<ul style=\"padding-left:18px;line-height:2.1;font-size:14px\">\\n  <li>先从原材料订单做起。回钱快，不复杂。</li>\\n  <li>手里的金币，始终比结算要收的<strong>多出至少30金币</strong>。</li>\\n  <li>盖得住<strong>整整两轮工钱</strong>再雇工匠。</li>\\n  <li>暮色的船只升级会滚雪球，别跳过。</li>\\n  <li>被海盗或一轮背运打个措手不及？有其他船长在船上时，别急着认输，先向港湾借一笔。</li>\\n  <li>不管输赢，航程结束时的声誉都会永远变成账号上的声望。在大厅随时能看你的船长传承。</li>\\n  <li><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+S</kbd> 保存本航程 &nbsp;·&nbsp; <kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">F1</kbd> 打开完整指南。</li>\\n</ul>\\n<div style=\"background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px\">\\n  <strong style=\"font-size:15px\">顺风又厚利，船长。⚓</strong>\\n</div>"
+      "en": "<p>Keep these points in mind as you play:</p>\n<ul style=\"padding-left:18px;line-height:2.1;font-size:14px\">\n  <li>Start with raw material orders. Fast money, no complications.</li>\n  <li>Always keep at least <strong>30 Gold above</strong> what Resolve will cost you.</li>\n  <li>Hire artisans only when you can cover <strong>two full rounds of wages</strong>.</li>\n  <li>Dusk ship upgrades compound quickly. Do not skip them.</li>\n  <li>Caught short by pirates or a bad round? When other captains are aboard, ask the harbor for a loan before you assume the voyage is over.</li>\n  <li>Every voyage's final Reputation becomes Renown on your account, forever, win or lose. Check your Captain's Legacy any time from the Lobby.</li>\n  <li><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+S</kbd> saves your voyage &nbsp;·&nbsp; <kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">F1</kbd> opens the full guide.</li>\n</ul>\n<div style=\"background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px\">\n  <strong style=\"font-size:15px\">Good winds and good margins, Captain. ⚓</strong>\n</div>",
+      "zh": "<p>玩的时候记住这几点：</p>\n<ul style=\"padding-left:18px;line-height:2.1;font-size:14px\">\n  <li>先从原材料订单做起。回钱快，不复杂。</li>\n  <li>手里的金币，始终比结算要收的<strong>多出至少30金币</strong>。</li>\n  <li>盖得住<strong>整整两轮工钱</strong>再雇工匠。</li>\n  <li>暮色的船只升级会滚雪球，别跳过。</li>\n  <li>被海盗或一轮背运打个措手不及？有其他船长在船上时，别急着认输，先向港湾借一笔。</li>\n  <li>不管输赢，航程结束时的声誉都会永远变成账号上的声望。在大厅随时能看你的船长传承。</li>\n  <li><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+S</kbd> 保存本航程 &nbsp;·&nbsp; <kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">F1</kbd> 打开完整指南。</li>\n</ul>\n<div style=\"background:color-mix(in oklch, var(--gain) 14%, transparent);border:2px solid var(--gain);color:var(--foreground);border-radius:8px;padding:12px;text-align:center;margin-top:14px\">\n  <strong style=\"font-size:15px\">顺风又厚利，船长。⚓</strong>\n</div>"
     },
-    "guides.088": {
-      "en": "⚓ ${APP_NAME}: Rules",
-      "zh": "⚓ {APP_NAME}：规则"
-    },
+    "guides.088": { "en": "⚓ {APP_NAME}: Rules", "zh": "⚓ {APP_NAME}：规则" },
     "guides.089": {
-      "en": "🌊 These Waters: ${cfg.icon} ${cfg.name}",
+      "en": "🌊 These Waters: {cfg.icon} {cfg.name}",
       "zh": "🌊 这片水域：{cfg.icon} {cfg.name}"
     },
     "guides.090": {
-      "en": "🧭 This Voyage: ${play.badge}",
+      "en": "🧭 This Voyage: {play.badge}",
       "zh": "🧭 本航程：{play.badge}"
     },
     "guides.091": {
-      "en": "🎲 How ${play.badge} Differs From ${MODES.classic.badge}:",
+      "en": "🎲 How {play.badge} Differs From {MODES.classic.badge}:",
       "zh": "🎲 {play.badge}和{MODES.classic.badge}哪里不同："
     },
     "guides.092": {
-      "en": "🚢 Objective:\\nSail one voyage of ${rounds} rounds, and finish it with the highest Reputation in the harbor.",
-      "zh": "🚢 目标：\\n走完这趟{rounds}轮的航程，收尾时拥有港湾里最高的声誉。"
+      "en": "🚢 Objective:\nSail one voyage of {rounds} rounds, and finish it with the highest Reputation in the harbor.",
+      "zh": "🚢 目标：\n走完这趟{rounds}轮的航程，收尾时拥有港湾里最高的声誉。"
     },
     "guides.093": { "en": "⚖️ If Your Books Fail:", "zh": "⚖️ 账目撑不住时：" },
     "guides.094": { "en": "📦 Goods System:", "zh": "📦 货物体系：" },
     "guides.095": {
-      "en": "Raw Materials: ${priceRangeLine(RESOURCES_TIER0)}",
-      "zh": "原材料：{priceRangeLine(RESOURCES_TIER0)}"
+      "en": "Raw Materials: {rawPrices}",
+      "zh": "原材料：{rawPrices}"
     },
     "guides.096": {
-      "en": "Finished Goods: ${priceRangeLine(PRODUCTS_TIER0)}",
-      "zh": "成品：{priceRangeLine(PRODUCTS_TIER0)}"
+      "en": "Finished Goods: {productPrices}",
+      "zh": "成品：{productPrices}"
     },
     "guides.097": { "en": "👥 Worker System:", "zh": "👥 工匠体系：" },
     "guides.098": { "en": "Linen or Cotton Clothes", "zh": "麻衣或布衣" },
@@ -5170,12 +5080,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "guides.100": { "en": "Sachets", "zh": "香囊" },
     "guides.101": { "en": "🧾 Tax System:", "zh": "🧾 税费体系：" },
     "guides.102": {
-      "en": "• VAT: ${Math.round(VAT_RATE * 100)}% on finished product profit margin",
-      "zh": "• 增值税：成品利润的 {Math.round(VAT_RATE * 100)}%"
+      "en": "• VAT: {vatPct}% on finished product profit margin",
+      "zh": "• 增值税：成品利润的 {vatPct}%"
     },
     "guides.103": {
-      "en": "• Income Tax: ${Math.round(INCOME_TAX_RATE * 100)}% on your net profit for the round, charged at Resolve after everything else is paid",
-      "zh": "• 所得税：对本轮净利润征 {Math.round(INCOME_TAX_RATE * 100)}% 的税，在结算时、其余账付清之后收"
+      "en": "• Income Tax: {incomeTaxPct}% on your net profit for the round, charged at Resolve after everything else is paid",
+      "zh": "• 所得税：对本轮净利润征 {incomeTaxPct}% 的税，在结算时、其余账付清之后收"
     },
     "guides.104": { "en": "🔮 Broker's Whisper:", "zh": "🔮 掮客密语：" },
     "guides.105": {
@@ -5183,7 +5093,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "• 集市：点掮客密语板，窗口就开"
     },
     "guides.106": {
-      "en": "• Spend ${INTEL_COST} Gold to buy a \"rumor\" about Orders demand",
+      "en": "• Spend {INTEL_COST} Gold to buy a \"rumor\" about Orders demand",
       "zh": "• 花 {INTEL_COST} 金币，买一条关于订单需求的密语"
     },
     "guides.107": {
@@ -5234,12 +5144,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "guides.120": { "en": "🏴‍☠️ Pirates and Escorts:", "zh": "🏴‍☠️ 海盗与护航：" },
     "guides.121": {
-      "en": "• Resolve: ${raidCopy(cfg)} Pirates take every Gold coin you carry.",
-      "zh": "• 结算时：{raidCopy(cfg)}海盗会拿走你身上的每一个金币。"
+      "en": "• Resolve: {raidKind} Pirates take every Gold coin you carry.",
+      "zh": "• 结算时：{raidKind}海盗会拿走你身上的每一个金币。"
     },
     "guides.122": {
-      "en": "• Hire an escort for ${escortPct(cfg)} of current Gold to sail safe",
-      "zh": "• 花当前金币的 {escortPct(cfg)} 雇一艘护航，稳稳驶过"
+      "en": "• Hire an escort for {escortShare} of current Gold to sail safe",
+      "zh": "• 花当前金币的 {escortShare} 雇一艘护航，稳稳驶过"
     },
     "guides.123": {
       "en": "• Decide before the pirate roll happens that round",
@@ -5247,8 +5157,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "guides.124": { "en": "📜 Imperial Mandates:", "zh": "📜 皇命采办：" },
     "guides.125": {
-      "en": "• On round${mandates.length === 1 ? \"\" : \"s\"} ${mandates.join(\", \")} the Emperor commissions one large order at a fixed reward",
-      "zh": "• 第 {mandates.join(\"、\")} 轮上，皇帝下旨采办一大笔订单，报酬固定"
+      "en": "• On round{pluralS} {mandateList} the Emperor commissions one large order at a fixed reward",
+      "zh": "• 第 {mandateList} 轮上，皇帝下旨采办一大笔订单，报酬固定"
     },
     "guides.126": {
       "en": "• A mandate is the only order exempt from VAT",
@@ -5260,7 +5170,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "guides.128": { "en": "📣 Word on the Docks:", "zh": "📣 码头风闻：" },
     "guides.129": {
-      "en": "• Whichever captain is first in the harbor to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders total this voyage wins ${WORD_ON_THE_DOCKS_REWARD} Gold on the spot",
+      "en": "• Whichever captain is first in the harbor to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders total this voyage wins {WORD_ON_THE_DOCKS_REWARD} Gold on the spot",
       "zh": "• 本航程里，港湾中头一个交满 {WORD_ON_THE_DOCKS_THRESHOLD} 笔贸易订单的船长，当场赢得 {WORD_ON_THE_DOCKS_REWARD} 金币"
     },
     "guides.130": {
@@ -5273,7 +5183,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "guides.132": { "en": "🌊 Tidewatch Alerts:", "zh": "🌊 观潮预警：" },
     "guides.133": {
-      "en": "• Once everyone in the harbor's own Reputation adds up past ${TIDEWATCH_SURGE_THRESHOLD}, the harbor takes notice of a bustling crew",
+      "en": "• Once everyone in the harbor's own Reputation adds up past {TIDEWATCH_SURGE_THRESHOLD}, the harbor takes notice of a bustling crew",
       "zh": "• 港湾里所有人的声誉加起来越过 {TIDEWATCH_SURGE_THRESHOLD}，港湾就瞧见这支船队忙起来了"
     },
     "guides.134": {
@@ -5294,12 +5204,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "• 港湾里任何人，发起人自己也算，都能在截止前随时往里投金币"
     },
     "guides.139": {
-      "en": "• Reach the target in time and it fills: every contributor is paid back ${Math.round((CONVOY_VENTURE_PAYOUT_MULTIPLIER - 1) * 100)}% more Gold than they put in, split in exact proportion to their share",
-      "zh": "• 按期凑够就成立：每位出资人拿回比本金多 {Math.round((CONVOY_VENTURE_PAYOUT_MULTIPLIER - 1) * 100)}% 的金币，按出资比例分毫不差地分"
+      "en": "• Reach the target in time and it fills: every contributor is paid back {payoutPct}% more Gold than they put in, split in exact proportion to their share",
+      "zh": "• 按期凑够就成立：每位出资人拿回比本金多 {payoutPct}% 的金币，按出资比例分毫不差地分"
     },
     "guides.140": {
-      "en": "• Miss the deadline and it fails: every contributor only gets back ${Math.round(CONVOY_VENTURE_FAILURE_REFUND_RATE * 100)}% of their own stake, the rest is lost",
-      "zh": "• 过了截止还没凑够就失败：每位出资人只拿回本金的 {Math.round(CONVOY_VENTURE_FAILURE_REFUND_RATE * 100)}%，其余的就没了"
+      "en": "• Miss the deadline and it fails: every contributor only gets back {refundPct}% of their own stake, the rest is lost",
+      "zh": "• 过了截止还没凑够就失败：每位出资人只拿回本金的 {refundPct}%，其余的就没了"
     },
     "guides.141": {
       "en": "• Contributing is a real wager on the rest of the harbor coming through, not a free favor",
@@ -5314,8 +5224,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "• 截止轮次绝不会落在航程的最后一轮：后面总留足至少一整轮，让你真能把拿到的金币花出去"
     },
     "guides.144": {
-      "en": "• No single captain can ever fund more than ${Math.round(CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE * 100)}% of a venture's target alone: it always needs at least one other captain to fund the rest before it can fill",
-      "zh": "• 任何一位船长单独出资都不得超过目标金额的 {Math.round(CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE * 100)}%：想成立，总得另有船长补齐剩下的"
+      "en": "• No single captain can ever fund more than {maxShare}% of a venture's target alone: it always needs at least one other captain to fund the rest before it can fill",
+      "zh": "• 任何一位船长单独出资都不得超过目标金额的 {maxShare}%：想成立，总得另有船长补齐剩下的"
     },
     "guides.145": { "en": "🆘 Financial Aid:", "zh": "🆘 资金援助：" },
     "guides.146": {
@@ -5383,36 +5293,28 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "⚓ 一路顺风，好运相随！"
     },
     "guides.165": {
-      "en": "🧭 ${play.badge}: what is different",
+      "en": "🧭 {play.badge}: what is different",
       "zh": "🧭 {play.badge}：有什么不同"
     },
     "guides.166": {
-      "en": "${item}(${range[0]} to ${range[1]}💰)",
-      "zh": "{item}（{range[0]}到{range[1]}💰）"
+      "en": "{item}({lowPrice} to {highPrice}💰)",
+      "zh": "{item}（{lowPrice}到{highPrice}💰）"
     },
     "guides.023": {
-      "en": "<p>Before the bills below come due each round, the pirates roll for your ship. ${raidCopy(cfg)} A raid takes every coin you're carrying.</p>\\n<p>You get one choice before that roll happens: hire an escort for ${escortPct(cfg)} of your current Gold and sail through guaranteed safe, or set sail anyway and keep the Gold if the pirates don't show.</p>\\n${cfg.brokerCorruption ?",
-      "zh": "<p>每轮账单到期之前，海盗会先为你的船掷上一把。{raidCopy(cfg)}一场劫掠下来，你带的钱会被搜刮一空。</p>\\n<p>掷这一下之前，你还有得选：花现有金币的 {escortPct(cfg)}雇一艘护航，保证平安过关；或者照常起航碰运气，海盗不来，那笔金币就省下。</p>\\n{cfg.brokerCorruption ?"
+      "en": "<p>Before the bills below come due each round, the pirates roll for your ship. {raidKind} A raid takes every coin you're carrying.</p>\n<p>You get one choice before that roll happens: hire an escort for {escortShare} of your current Gold and sail through guaranteed safe, or set sail anyway and keep the Gold if the pirates don't show.</p>\n",
+      "zh": "<p>每轮账单到期之前，海盗会先为你的船掷上一把。{raidKind}一场劫掠下来，你带的钱会被搜刮一空。</p>\n<p>掷这一下之前，你还有得选：花现有金币的 {escortShare}雇一艘护航，保证平安过关；或者照常起航碰运气，海盗不来，那笔金币就省下。</p>\n"
     },
     "guides.024": {
-      "en": "The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the charter sets as a share of your Gold: ${Object.values( DIFFICULTIES, ) .map((c) =>",
-      "zh": "港湾的护航，任何船长都能在结算时雇用：保你免受本轮海盗劫掠，费用按章程定，取现有金币的一个比例：{Object.values( DIFFICULTIES, ) .map((c) =>"
-    },
-    "guides.025": {
-      "en": ") .join(\", \")}. Once hired, the round's pirates are no longer a risk.",
-      "zh": ") .join(\"、\")}。雇下之后，本轮的海盗就不再是威胁。"
+      "en": "The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the charter sets as a share of your Gold: {escortLadder}. Once hired, the round's pirates are no longer a risk.",
+      "zh": "港湾的护航，任何船长都能在结算时雇用：保你免受本轮海盗劫掠，费用按章程定，取现有金币的一个比例：{escortLadder}。雇下之后，本轮的海盗就不再是威胁。"
     },
     "guides.026": {
-      "en": "A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one leg of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off ${Math.round( CONVOY_RAID_COVERAGE * 100, )}% of a raid in that leg, and the rest comes out of the seller's own Gold. ${ESCORT_OFFER_DEATH}",
-      "zh": "暗潮航程里洽谈场上的镖行买卖：镖行船长把一段航段的护卫卖给另一位船长，价格两人自己谈。买家在成交时付清费用，卖家的炮火挡下该航段 {Math.round( CONVOY_RAID_COVERAGE * 100, )}% 的劫掠，剩下的从卖家自己的金币里出。{ESCORT_OFFER_DEATH}"
+      "en": "A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one leg of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off {convoyCoverPct}% of a raid in that leg, and the rest comes out of the seller's own Gold. {ESCORT_OFFER_DEATH}",
+      "zh": "暗潮航程里洽谈场上的镖行买卖：镖行船长把一段航段的护卫卖给另一位船长，价格两人自己谈。买家在成交时付清费用，卖家的炮火挡下该航段 {convoyCoverPct}% 的劫掠，剩下的从卖家自己的金币里出。{ESCORT_OFFER_DEATH}"
     },
     "guides.087": {
-      "en": "A roll at Resolve, before wages and maintenance come due, that can take every Gold coin you're carrying. The charter sets the odds: ${Object.values( DIFFICULTIES, ) .map((c) =>",
-      "zh": "结算时掷上一把，赶在工钱和维护费到期之前，你身上带的每一枚金币都可能被搜刮一空。章程定下概率：{Object.values( DIFFICULTIES, ) .map((c) =>"
-    },
-    "guides.027": {
-      "en": ", ) .join( \", \", )}. Hire an escort beforehand to guarantee safe passage instead of risking it.",
-      "zh": ", ) .join( \", \", )}。想稳当过关，提前雇一艘护航，不用冒这个险。"
+      "en": "A roll at Resolve, before wages and maintenance come due, that can take every Gold coin you're carrying. The charter sets the odds: {pirateLadder}. Hire an escort beforehand to guarantee safe passage instead of risking it.",
+      "zh": "结算时掷上一把，赶在工钱和维护费到期之前，你身上带的每一枚金币都可能被搜刮一空。章程定下概率：{pirateLadder}。想稳当过关，提前雇一艘护航，不用冒这个险。"
     },
     "guides.028": {
       "en": "A cheap raw material, bought at port. Weavers turn it into Linen Clothes, or combine it with Silk for Cotton Clothes.",
@@ -5459,7 +5361,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "你在本航程的积分，大致就是累积的贸易利润。最后一轮结束时声誉最高的人获胜。"
     },
     "guides.039": {
-      "en": "Your standing across every harbor, kept on the account rather than in one voyage: the Reputation you bank becomes Renown XP when a voyage ends. ${RENOWN_BONUS_LINE}. The title beside your level is the ladder's own name for the rung you have reached.",
+      "en": "Your standing across every harbor, kept on the account rather than in one voyage: the Reputation you bank becomes Renown XP when a voyage ends. {RENOWN_BONUS_LINE}. The title beside your level is the ladder's own name for the rung you have reached.",
       "zh": "你在所有港湾之间的地位，记在账号上，不随某次航程走：航程结束时，你攒下的声誉会变成声望经验。{RENOWN_BONUS_LINE}。等级旁的称号，就是这条阶梯给这一级的名字。"
     },
     "guides.040": {
@@ -5467,12 +5369,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "你手头可用的金币。账单还没付完就见底，航程以破产收场。"
     },
     "guides.041": {
-      "en": "A ${Math.round(VAT_RATE * 100)}% tax on the profit margin of finished good sales (selling price minus material cost minus wage). Raw material sales aren't taxed this way.",
-      "zh": "对成品的利润（售价减原料成本再减工钱）征 {Math.round(VAT_RATE * 100)}% 的税。卖原材料不在此列。"
+      "en": "A {vatPct}% tax on the profit margin of finished good sales (selling price minus material cost minus wage). Raw material sales aren't taxed this way.",
+      "zh": "对成品的利润（售价减原料成本再减工钱）征 {vatPct}% 的税。卖原材料不在此列。"
     },
     "guides.042": {
-      "en": "A ${Math.round(INCOME_TAX_RATE * 100)}% tax on your net profit for the round, charged at Resolve after everything else is paid.",
-      "zh": "对本轮净利润征 {Math.round(INCOME_TAX_RATE * 100)}% 的税，在结算时、其余账付清之后收。"
+      "en": "A {incomeTaxPct}% tax on your net profit for the round, charged at Resolve after everything else is paid.",
+      "zh": "对本轮净利润征 {incomeTaxPct}% 的税，在结算时、其余账付清之后收。"
     },
     "guides.043": {
       "en": "The shipping fee for completing a trade order, based on how many items you're moving. Reduced by your ship level and certain boons or modules.",
@@ -5499,11 +5401,9 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "永久的船只升级，有空余槽位时在船坞抽取。装上就一直在，直到你把它换掉。"
     },
     "guides.049": {
-      "en": "Trade directly with another captain instead of through the market, on the Captain's Exchange during the Parley or from the harbor chat once you reach Renown Level ${FLEXIBLE_BARTER_UNLOCK_LEVEL}. Post what you have for what you want; the offered amount is set aside the moment you post it, and comes back to you if it's canceled, if nobody takes it, or if a flexible offer of yours is taken and this one is retired with it.",
+      "en": "Trade directly with another captain instead of through the market, on the Captain's Exchange during the Parley or from the harbor chat once you reach Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}. Post what you have for what you want; the offered amount is set aside the moment you post it, and comes back to you if it's canceled, if nobody takes it, or if a flexible offer of yours is taken and this one is retired with it.",
       "zh": "绕开集市，直接和另一位船长易货：洽谈时的船长行市，或声望到 {FLEXIBLE_BARTER_UNLOCK_LEVEL}级后的港湾聊天。挂出你有的、写明你想要的；挂出的那一刻数量就寄存起来，被取消、没人接，或者你的另一份灵活挂单成交、把它一并带走，都会原样回到你手上。"
     },
-    "guides.050": { "en": "Pirate Attack", "zh": "海盗劫掠" },
-    "guides.051": { "en": "Financial Aid", "zh": "资金援助" },
     "guides.052": {
       "en": "A loan from another captain when you can't cover this round's wages or maintenance on your own. The lender's Gold transfers to you immediately; you owe it back before the voyage ends, or it's deducted automatically and handed to them at the voyage's final round.",
       "zh": "自己盖不住本轮的工钱或维护费时，向另一位船长借的一笔款。对方的金币立刻到账；在航程结束前还清，还不清，最后一轮会自动从你的金币里扣下来，交到他手上。"
@@ -5573,31 +5473,31 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "派一件活，他们就能开工"
     },
     "guides.072": {
-      "en": "🥶 ${FROZEN_CREW.state}: the crew ${FROZEN_CREW.cause}. Back next leg. ${FROZEN_CREW.remedy}.",
+      "en": "🥶 {FROZEN_CREW.state}: the crew {FROZEN_CREW.cause}. Back next leg. {FROZEN_CREW.remedy}.",
       "zh": "🥶 {FROZEN_CREW.state}：船员{FROZEN_CREW.cause}。下个航段就回来。{FROZEN_CREW.remedy}。"
     },
     "guides.073": {
-      "en": "❌ The only free hands are frozen out this leg: the crew ${FROZEN_CREW.cause}, and they are back next leg. ${FROZEN_CREW.remedy}.",
+      "en": "❌ The only free hands are frozen out this leg: the crew {FROZEN_CREW.cause}, and they are back next leg. {FROZEN_CREW.remedy}.",
       "zh": "❌ 仅有的空闲人手本航段冻停了：船员{FROZEN_CREW.cause}，下个航段就回来。{FROZEN_CREW.remedy}。"
     },
     "guides.074": {
-      "en": "🥶 ${name} is frozen out this leg: the crew ${FROZEN_CREW.cause}, and the work on ${task} waits for next leg. ${FROZEN_CREW.remedy}.",
+      "en": "🥶 {name} is frozen out this leg: the crew {FROZEN_CREW.cause}, and the work on {task} waits for next leg. {FROZEN_CREW.remedy}.",
       "zh": "🥶 {name}本航段冻停了：船员{FROZEN_CREW.cause}，{task}的活要等下一个航段。{FROZEN_CREW.remedy}。"
     },
     "guides.075": {
-      "en": "🥶 Frostbite: ${name} the ${label} ${FROZEN_CREW.cause}, and is out of action next leg. ${FROZEN_CREW.remedy}.",
+      "en": "🥶 Frostbite: {name} the {label} {FROZEN_CREW.cause}, and is out of action next leg. {FROZEN_CREW.remedy}.",
       "zh": "🥶 冻伤：{name}，这位{label}{FROZEN_CREW.cause}，下个航段不能出工。{FROZEN_CREW.remedy}。"
     },
     "guides.076": {
-      "en": "❄️ A cold leg: warmth ${warmth} of ${COLD_LEG_WARMTH}",
+      "en": "❄️ A cold leg: warmth {warmth} of {COLD_LEG_WARMTH}",
       "zh": "❄️ 寒程：暖意{warmth}，需要{COLD_LEG_WARMTH}"
     },
     "guides.077": {
-      "en": "${reading}, so the cold will take a hand. ${FROZEN_CREW.remedy}.",
+      "en": "{reading}, so the cold will take a hand. {FROZEN_CREW.remedy}.",
       "zh": "{reading}，寒冷会夺走一名人手。{FROZEN_CREW.remedy}。"
     },
     "guides.078": {
-      "en": "${reading}, and the crew is dressed for it.",
+      "en": "{reading}, and the crew is dressed for it.",
       "zh": "{reading}，船员的御寒够用。"
     },
     "guides.079": {
@@ -5605,39 +5505,39 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "个航段连续断粮，会折损船上最新的人手。"
     },
     "guides.080": {
-      "en": "${CREW_LOSS_AFTER_HUNGRY_LEGS} ${HUNGRY_RULE_TAIL}",
-      "zh": "${CREW_LOSS_AFTER_HUNGRY_LEGS} ${HUNGRY_RULE_TAIL}"
+      "en": "{CREW_LOSS_AFTER_HUNGRY_LEGS} {HUNGRY_RULE_TAIL}",
+      "zh": "{CREW_LOSS_AFTER_HUNGRY_LEGS} {HUNGRY_RULE_TAIL}"
     },
     "guides.081": {
-      "en": "${HUNGRY_CREW.state}: ${HUNGRY_CREW.remedy}",
+      "en": "{HUNGRY_CREW.state}: {HUNGRY_CREW.remedy}",
       "zh": "{HUNGRY_CREW.state}：{HUNGRY_CREW.remedy}"
     },
     "guides.082": {
-      "en": "${IDLE_HAND.state}${skilled ? \" ⭐ Skilled\" : \"\"}: ${IDLE_HAND.cause}, and the wage is still owed at Resolve. ${IDLE_HAND.remedy}.",
-      "zh": "{IDLE_HAND.state}{skilled ? \" ⭐ 熟练\" : \"\"}：{IDLE_HAND.cause}，工钱到结算照付。{IDLE_HAND.remedy}。"
+      "en": "{IDLE_HAND.state}{skillMark}: {IDLE_HAND.cause}, and the wage is still owed at Resolve. {IDLE_HAND.remedy}.",
+      "zh": "{IDLE_HAND.state}{skillMark}：{IDLE_HAND.cause}，工钱到结算照付。{IDLE_HAND.remedy}。"
     },
     "guides.083": {
       "en": "⭐ Skilled: a trained hand makes 2 goods a round where an untrained one makes 1.",
       "zh": "⭐ 熟练：练过的人手每轮做2件，没练过的做1件。"
     },
     "guides.084": {
-      "en": "Going hungry: ${HUNGRY_CREW.cause}, every artisan working at a slower pace, a quarter of the hold closed, and ${hungryRule()} ${HUNGRY_CREW.remedy} at the next Market.",
-      "zh": "挨饿中：{HUNGRY_CREW.cause}，每位工匠干活都变慢，四分之一货舱封闭；{hungryRule()}下次开市时{HUNGRY_CREW.remedy}。"
+      "en": "Going hungry: {HUNGRY_CREW.cause}, every artisan working at a slower pace, a quarter of the hold closed, and {hungryEffect} {HUNGRY_CREW.remedy} at the next Market.",
+      "zh": "挨饿中：{HUNGRY_CREW.cause}，每位工匠干活都变慢，四分之一货舱封闭；{hungryEffect}下次开市时{HUNGRY_CREW.remedy}。"
     },
     "guides.085": {
-      "en": "The larder is empty: ${HUNGRY_CREW.cause}, so every artisan produces less, a quarter of the hold is closed, and ${hungryRule()} ${HUNGRY_CREW.remedy} before the next Dawn.",
-      "zh": "粮舱空了：{HUNGRY_CREW.cause}，每位工匠产出更少，四分之一货舱封闭；{hungryRule()}下次破晓前{HUNGRY_CREW.remedy}。"
+      "en": "The larder is empty: {HUNGRY_CREW.cause}, so every artisan produces less, a quarter of the hold is closed, and {hungryEffect} {HUNGRY_CREW.remedy} before the next Dawn.",
+      "zh": "粮舱空了：{HUNGRY_CREW.cause}，每位工匠产出更少，四分之一货舱封闭；{hungryEffect}下次破晓前{HUNGRY_CREW.remedy}。"
     },
     "guides.086": {
-      "en": "⚠️ The crew is on short rations, so every artisan works the leg at a slower pace, and ${hungryRule()} ${HUNGRY_CREW.remedy} at the next Market.",
-      "zh": "⚠️ 船员吃着减半口粮，每位工匠本航段干活更慢；{hungryRule()}下次开市时{HUNGRY_CREW.remedy}。"
+      "en": "⚠️ The crew is on short rations, so every artisan works the leg at a slower pace, and {hungryEffect} {HUNGRY_CREW.remedy} at the next Market.",
+      "zh": "⚠️ 船员吃着减半口粮，每位工匠本航段干活更慢；{hungryEffect}下次开市时{HUNGRY_CREW.remedy}。"
     },
     "manual.001": { "en": "Tip:", "zh": "提示：" },
     "manual.002": { "en": "Back", "zh": "返回" },
     "manual.003": { "en": "Close guide", "zh": "关闭指南" },
     "manual.004": {
-      "en": "Go to step ${i + 1}: ${s.title}",
-      "zh": "跳到第{i + 1}步：{s.title}"
+      "en": "Go to step {stepNo}: {s.title}",
+      "zh": "跳到第{stepNo}步：{s.title}"
     },
     "manual.005": {
       "en": "Captains gather in a shared harbor. The host picks a difficulty and sets sail. Everyone then plays the same voyage in lockstep: nobody advances a phase until every still active captain has readied up.",
@@ -5648,15 +5548,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "不等第二位船长也可以：自己开一段单人练习航程，先把门道摸熟。"
     },
     "manual.007": {
-      "en": "Each round opens with a boon draft. Pick one of ${CARDS_PER_OFFER} boons that bend the rules for the coming round: cheaper purchases, faster production, a tax shelter, or an emergency loan of ${EMERGENCY_LOAN_GOLD} Gold.",
+      "en": "Each round opens with a boon draft. Pick one of {CARDS_PER_OFFER} boons that bend the rules for the coming round: cheaper purchases, faster production, a tax shelter, or an emergency loan of {EMERGENCY_LOAN_GOLD} Gold.",
       "zh": "每轮开局先抽机缘。从{CARDS_PER_OFFER}张里挑一张，这一轮的规矩就偏向你：采购更便宜、生产更快、避一笔税，或是一笔{EMERGENCY_LOAN_GOLD}金币的紧急钱庄。"
     },
     "manual.008": {
-      "en": "You can swap your boon choices once per round for ${BOON_SWAP_COST} Gold if none of the three fit your strategy.",
+      "en": "You can swap your boon choices once per round for {BOON_SWAP_COST} Gold if none of the three fit your strategy.",
       "zh": "三张都不合你的打法，每轮还能花{BOON_SWAP_COST}金币把机缘换一次。"
     },
     "manual.009": {
-      "en": "Market is the port. Buy raw materials like Hemp, Silk, and Tea from the port merchant. Prices vary per captain and per round. You can also pay ${INTEL_COST} Gold for a Broker's Rumor that guarantees a matching order appears when Orders opens.",
+      "en": "Market is the port. Buy raw materials like Hemp, Silk, and Tea from the port merchant. Prices vary per captain and per round. You can also pay {INTEL_COST} Gold for a Broker's Rumor that guarantees a matching order appears when Orders opens.",
       "zh": "开市就在港口。向港口商人采购麻布、丝绸、茶叶这些原材料。价格每位船长各不同，每轮也在变。还可以花{INTEL_COST}金币买一条掮客密语，保证订单一开就有对得上的单子出现。"
     },
     "manual.010": {
@@ -5668,7 +5568,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "在洽谈，你可以和其他船长直接易货、换金币，不论航程把洽谈排在订单前还是后。挂出你有的、写明你想要的，或者接下别人挂的。货一挂出就寄存，直到成交或取消。"
     },
     "manual.012": {
-      "en": "You can target a specific captain with a Direct Barter Offer if you want to trade with only them. The Markets station of the Parley holds ${held}.",
+      "en": "You can target a specific captain with a Direct Barter Offer if you want to trade with only them. The Markets station of the Parley holds {held}.",
       "zh": "只想和某一位船长做买卖，可以发一份定向易货给他。洽谈的集市站里，开着{held}。"
     },
     "manual.059": { "en": "the escort market", "zh": "护航市场" },
@@ -5700,7 +5600,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "manual.019": { "en": "Build Your Legacy", "zh": "打造你的船长传承" },
     "manual.020": {
-      "en": "Every voyage's final Reputation becomes Renown XP, multiplied by the difficulty tier. Renown levels grant titles, a small starting Gold bonus, and at level ${BROKERS_FAVOR_UNLOCK_LEVEL} unlock the Broker's Favor. The captain with the highest Reputation in a voyage is crowned Sea Master.",
+      "en": "Every voyage's final Reputation becomes Renown XP, multiplied by the difficulty tier. Renown levels grant titles, a small starting Gold bonus, and at level {BROKERS_FAVOR_UNLOCK_LEVEL} unlock the Broker's Favor. The captain with the highest Reputation in a voyage is crowned Sea Master.",
       "zh": "每航程结束时的声誉都会变成声望经验，再按难度加成。声望等级给你称号和一小笔初始金币；到{BROKERS_FAVOR_UNLOCK_LEVEL}级，解锁掮客的人情。一段航程里声誉最高的船长，加冕沧海之主。"
     },
     "manual.021": {
@@ -5708,7 +5608,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "每天来看看，七天一轮的声望经验奖励。不用连签，漏一天也不会重置进度。"
     },
     "manual.022": {
-      "en": "${play.badge}: The Voyage You Are Sailing",
+      "en": "{play.badge}: The Voyage You Are Sailing",
       "zh": "{play.badge}：你正在走的航程"
     },
     "manual.023": {
@@ -5731,10 +5631,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Weigh the numbers under each name rather than the crest. The five paths trade different holds, Renown ceilings and locked order pools, and the one you keep sails with you to the end.",
       "zh": "看名字下面的数字，而不是徽记。五条商道的货舱、声望上限和专属订单各不相同；留下哪条，它陪你走到航程尽头。"
     },
-    "manual.028": {
-      "en": "${((at + 1) / pages.length) * 100}%",
-      "zh": "{((at + 1) / pages.length) * 100}%"
-    },
+    "manual.028": { "en": "{progressPct}%", "zh": "{progressPct}%" },
     "manual.062": {
       "en": "You can target a specific captain with a Direct Barter Offer if you want to trade with only them.",
       "zh": "只想和某一位船长做买卖，可以发一份定向易货给他。"
@@ -5771,10 +5668,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "manual.045": { "en": "💸 Round End Costs", "zh": "💸 轮末开销" },
     "manual.046": { "en": "🧾 Taxes Explained", "zh": "🧾 税负说明" },
     "manual.047": { "en": "🏴‍☠️ Pirates & Borrowing", "zh": "🏴‍☠️ 海盗与借款" },
-    "manual.048": {
-      "en": "${r}×${STARTING_STOCK[r]}",
-      "zh": "{r}×{STARTING_STOCK[r]}"
-    },
+    "manual.048": { "en": "{r}×{stockQty}", "zh": "{r}×{stockQty}" },
     "manual.049": {
       "en": "Start Solo Practice Voyage",
       "zh": "开始单人练习航程"
@@ -5800,7 +5694,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "工匠不会立刻产出！"
     },
     "manual.055": {
-      "en": "🔧 ${cfg.maintenance} Gold ship maintenance per round",
+      "en": "🔧 {cfg.maintenance} Gold ship maintenance per round",
       "zh": "🔧 每轮船只维护费{cfg.maintenance}金币"
     },
     "manual.056": {
@@ -5808,8 +5702,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "👥 工钱在结算时付，不是在雇用时"
     },
     "manual.057": {
-      "en": "VAT: ${Math.round(VAT_RATE * 100)}% of finished goods profit margin",
-      "zh": "增值税：成品利润的{Math.round(VAT_RATE * 100)}%"
+      "en": "VAT: {vatPct}% of finished goods profit margin",
+      "zh": "增值税：成品利润的{vatPct}%"
     },
     "manual.058": {
       "en": "Hire an escort, or ask the harbor for a loan",
@@ -5820,7 +5714,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "这个港湾本航程唯一的一次合股机会，已经用掉了。等新开一次航程或重开，才会再有。"
     },
     "descriptions.002": {
-      "en": "⚓ A Venture filled! Every contributor is paid their share, times ${CONVOY_VENTURE_PAYOUT_MULTIPLIER}x. This harbor's one Venture chance for this voyage has now been used.",
+      "en": "⚓ A Venture filled! Every contributor is paid their share, times {CONVOY_VENTURE_PAYOUT_MULTIPLIER}x. This harbor's one Venture chance for this voyage has now been used.",
       "zh": "⚓ 合股凑齐了！每位出资人都拿回自己那份，再乘 {CONVOY_VENTURE_PAYOUT_MULTIPLIER}倍。这个港湾本航程唯一的那次合股机会，到此用掉。"
     },
     "descriptions.003": {
@@ -5832,11 +5726,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "⚓ 一笔合股被取消：港湾里另一笔合股先占了本航程唯一的机会。每位出资人拿回全部本金。"
     },
     "descriptions.005": {
-      "en": "⚰️ ${gone.name} the ${label} is lost after ${CREW_LOSS_AFTER_HUNGRY_LEGS} legs on short rations, and nothing brings them back.",
+      "en": "⚰️ {gone.name} the {label} is lost after {CREW_LOSS_AFTER_HUNGRY_LEGS} legs on short rations, and nothing brings them back.",
       "zh": "⚰️ {gone.name}，这位{label}，在 {CREW_LOSS_AFTER_HUNGRY_LEGS}个航段的减半口粮之后没能撑住，再也回不来了。"
     },
     "descriptions.006": {
-      "en": "The ${gone.task} they were working is lost with them.",
+      "en": "The {gone.task} they were working is lost with them.",
       "zh": "{gone.task}的活也跟着没了。"
     },
     "descriptions.007": {
@@ -5844,27 +5738,27 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🌊 船上再没有别人了。"
     },
     "descriptions.008": {
-      "en": "🌊 ${left} still aboard.",
+      "en": "🌊 {left} still aboard.",
       "zh": "🌊 船上还有{left}。"
     },
     "descriptions.009": {
-      "en": "❌ Need ${amount} Gold to back that Venture, have ${state.money}",
+      "en": "❌ Need {amount} Gold to back that Venture, have {state.money}",
       "zh": "❌ 为这笔合股作保要 {amount}金币，你手头只有 {state.money}"
     },
     "descriptions.010": {
-      "en": "⚓ Backed a Venture with ${amount} Gold",
+      "en": "⚓ Backed a Venture with {amount} Gold",
       "zh": "⚓ 用{amount}金币给一笔合股作了保"
     },
     "descriptions.011": {
-      "en": "⚓ Venture filled! Your share: ${amount} Gold",
+      "en": "⚓ Venture filled! Your share: {amount} Gold",
       "zh": "⚓ 合股凑齐！你这份：{amount}金币"
     },
     "descriptions.012": {
-      "en": "⚓ Venture missed its deadline. Partial refund: ${amount} Gold",
+      "en": "⚓ Venture missed its deadline. Partial refund: {amount} Gold",
       "zh": "⚓ 一笔合股的期限到了，没凑齐。部分退款：{amount}金币"
     },
     "descriptions.013": {
-      "en": "⚓ Venture canceled: another venture in the harbor already claimed this voyage's one chance. Full refund: ${amount} Gold",
+      "en": "⚓ Venture canceled: another venture in the harbor already claimed this voyage's one chance. Full refund: {amount} Gold",
       "zh": "⚓ 一笔合股被取消：港湾里另一笔合股先占了本航程唯一的机会。全额退款：{amount}金币"
     },
     "descriptions.014": {
@@ -5944,7 +5838,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "航程离港时，每位船长都发到一张别人看不到的私牌：多数是诚信船长，跟着船队的公开目标走；四人以上的桌上，船队里藏着一个海盗，六人以上还可能多藏一个掮客。航程结束时，所有牌都翻开。"
     },
     "descriptions.033": {
-      "en": "From round 5, a simple majority of the fleet can open one captain's manifest at a Parley. The room is shown 2 of that captain's last 5 fills, and calling the vote spends the rest of that Parley's trading.",
+      "en": "From round 5, a simple majority of the fleet can open one captain's manifest at a Parley. The harbor is shown 2 of that captain's last 5 fills, and calling the vote spends the rest of that Parley's trading.",
       "zh": "从第5轮起，船队过半数可以在洽谈时翻开一位船长的舱单。港湾会看到那位船长最近5笔交货中的2笔；发起这次表决，那场洽谈剩下的交易时间就没了。"
     },
     "descriptions.034": {
@@ -5956,15 +5850,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "A majority is more than half of the captains still in the voyage.",
       "zh": "仍在航程中的船长里，超过一半才算多数。"
     },
-    "engine.003": { "en": "${i.qty} ${i.type}", "zh": "{i.qty} {i.type}" },
+    "engine.003": { "en": "{i.qty} {i.type}", "zh": "{i.qty} {i.type}" },
     "engine.004": {
-      "en": "Leg ${fill.round}: ${goods} to ${fill.port}, ${fill.reward} Gold",
+      "en": "Leg {fill.round}: {goods} to {fill.port}, {fill.reward} Gold",
       "zh": "第{fill.round}航段：{goods}运往{fill.port}，{fill.reward}金币"
     },
-    "engine.005": { "en": "\\n", "zh": "\\n" },
+    "engine.005": { "en": "\n", "zh": "\n" },
     "engine.006": {
-      "en": "${names.slice(0, -1).join(\", \")} or ${names[names.length - 1]}",
-      "zh": "{names.slice(0, -1).join(\"、\")}或{names[names.length - 1]}"
+      "en": "{nameList} or {lastName}",
+      "zh": "{nameList}或{lastName}"
     },
     "engine.007": { "en": "Age of the Lender", "zh": "债主之年" },
     "engine.008": {
@@ -5982,12 +5876,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "掮客的人情进账上限提到250金币，一次人情比平时给得更多。"
     },
     "engine.013": {
-      "en": "🤝 No Reputation this time: you have already earned this voyage's full ${cap} for helping other captains.",
+      "en": "🤝 No Reputation this time: you have already earned this voyage's full {cap} for helping other captains.",
       "zh": "🤝 这次没有声誉：本航程帮其他船长的{cap}点，你已经拿满。"
     },
     "engine.014": {
-      "en": "\\n📋=== Settling Outstanding Loans ===",
-      "zh": "\\n📋=== 结清未偿借款 ==="
+      "en": "\n📋=== Settling Outstanding Loans ===",
+      "zh": "\n📋=== 结清未偿借款 ==="
     },
     "engine.311": {
       "en": "🆘 {loan.fromName} lent you {loan.amount} Gold. Repay it before the voyage ends, or it's deducted automatically.",
@@ -6018,16 +5912,16 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "💰 已结清欠{debt.counterpartyName}的借款：{paid}金币"
     },
     "engine.015": {
-      "en": "❌ Need ${amount} Gold to back that loan, have ${state.money}",
+      "en": "❌ Need {amount} Gold to back that loan, have {state.money}",
       "zh": "❌ 为这笔借款作保要{amount}金币，现有{state.money}"
     },
     "engine.016": {
-      "en": "🛡️ Pledged ${amount} Gold to back a fellow captain's loan",
+      "en": "🛡️ Pledged {amount} Gold to back a fellow captain's loan",
       "zh": "🛡️ 质押{amount}金币，为同席船长的借款作保"
     },
     "engine.017": {
-      "en": "⚖️ Age of the Lender: a pledge that comes home whole pays ${Math.round((multiplier - 1) * 100)}% more while it holds the harbor.",
-      "zh": "⚖️ 债主之年：时代执掌港湾期间，质押完好收回，多付{Math.round((multiplier - 1) * 100)}%。"
+      "en": "⚖️ Age of the Lender: a pledge that comes home whole pays {pledgeBonusPct}% more while it holds the harbor.",
+      "zh": "⚖️ 债主之年：时代执掌港湾期间，质押完好收回，多付{pledgeBonusPct}%。"
     },
     "engine.318": {
       "en": "🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold. Reputation +{repGain} for the risk paying off.",
@@ -6054,15 +5948,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 请写明从驳船买多少份口粮。"
     },
     "engine.021": {
-      "en": "❌ The barge charges ${price} Gold a ration, and the purse cannot cover one.",
+      "en": "❌ The barge charges {price} Gold a ration, and the purse cannot cover one.",
       "zh": "❌ 驳船一份口粮要{price}金币，钱袋连一份也付不起。"
     },
     "engine.022": {
-      "en": "⛵ The barge takes ${cost} Gold for ${wanted} ${wanted === 1 ? \"ration\" : \"rations\"} of grain. ${left - wanted} left for you this leg.",
-      "zh": "⛵ 驳船收{cost}金币，卖你{wanted}份米粮。本航段还给你剩{left - wanted}份。"
+      "en": "⛵ The barge takes {cost} Gold for {wanted} {rationWord} of grain. {rationsLeft} left for you this leg.",
+      "zh": "⛵ 驳船收{cost}金币，卖你{wanted}份米粮。本航段还给你剩{rationsLeft}份。"
     },
     "engine.023": {
-      "en": "⚖️ Age of the Trader: +${gain} Reputation for the completed trade.",
+      "en": "⚖️ Age of the Trader: +{gain} Reputation for the completed trade.",
       "zh": "⚖️ 商贾之年：这笔易货成交，声誉 +{gain}。"
     },
     "engine.024": {
@@ -6077,7 +5971,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "swept when the voyage moved on",
       "zh": "航段推进时清出"
     },
-    "engine.027": { "en": "refused by the room", "zh": "被众人拒收" },
+    "engine.027": { "en": "refused by the harbor", "zh": "被众人拒收" },
     "engine.028": {
       "en": "returned as the voyage loaded",
       "zh": "随航程载入退回"
@@ -6113,7 +6007,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "风声要等开口后的那个航段，港口才给它定价。这是本航程最后一个航段，在这里开口，什么也拨不动。"
     },
     "engine.031": {
-      "en": "The bazaar is quiet for you to the end of this voyage. You spoke in leg ${spoke}.",
+      "en": "The bazaar is quiet for you to the end of this voyage. You spoke in leg {spoke}.",
       "zh": "本航程结束之前，香市都不会再听你开口。你开口是在第{spoke}航段。"
     },
     "engine.032": {
@@ -6125,50 +6019,38 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "香市还要对你静一个航段。"
     },
     "engine.034": {
-      "en": "The bazaar is quiet for you for ${left} more legs.",
+      "en": "The bazaar is quiet for you for {left} more legs.",
       "zh": "香市还要对你静{left}个航段。"
     },
     "engine.035": {
-      "en": "The port of leg ${leg} drew ${row.good} and priced it against your rumor.",
+      "en": "The port of leg {leg} drew {row.good} and priced it against your rumor.",
       "zh": "第{leg}航段的港口抽到了{row.good}，按你的风声给它定了价。"
     },
     "engine.036": {
-      "en": "The port of leg ${leg} drew no ${row.good}, so your rumor moved no price you could buy.",
+      "en": "The port of leg {leg} drew no {row.good}, so your rumor moved no price you could buy.",
       "zh": "第{leg}航段的港口没有抽到{row.good}，你的风声没有拨动任何你能买到的价格。"
     },
     "engine.037": {
-      "en": "${row.good}: every price ${percent} percent ${way} at the next port",
+      "en": "{row.good}: every price {percent} percent {way} at the next port",
       "zh": "{row.good}：下一港的每个价格{way} {percent}%"
-    },
-    "engine.308": {
-      "en": "{good}: every price {percent} percent higher at the next port",
-      "zh": "{good}：下一个港口所有价格上浮{percent}%"
-    },
-    "engine.309": {
-      "en": "{good}: every price {percent} percent lower at the next port",
-      "zh": "{good}：下一个港口所有价格下调{percent}%"
     },
     "engine.328": { "en": "higher", "zh": "涨" },
     "engine.329": { "en": "lower", "zh": "跌" },
     "engine.038": {
-      "en": "💰 Boon applied: Gained ${card.effect.flags.instant_gold} Gold!",
+      "en": "💰 Boon applied: Gained {card.effect.flags.instant_gold} Gold!",
       "zh": "💰 机缘生效：获得{card.effect.flags.instant_gold}金币！"
     },
     "engine.039": {
-      "en": "❌ Need ${cost} Gold to upgrade the ship",
+      "en": "❌ Need {cost} Gold to upgrade the ship",
       "zh": "❌ 升级船只要{cost}金币"
-    },
-    "engine.040": {
-      "en": "+${SHIP_DISCOUNT_PER_LEVEL} Discount",
-      "zh": "折扣 +{SHIP_DISCOUNT_PER_LEVEL}"
     },
     "engine.041": {
       "en": "❌ No empty slots! Must swap.",
       "zh": "❌ 没有空槽位了！得换掉一个。"
     },
     "engine.042": {
-      "en": "\\n🧭=== The Navigator's Compass ===",
-      "zh": "\\n🧭=== 航海家的罗盘 ==="
+      "en": "\n🧭=== The Navigator's Compass ===",
+      "zh": "\n🧭=== 航海家的罗盘 ==="
     },
     "engine.043": {
       "en": "Choose a Boon to bend the rules of the upcoming voyage...",
@@ -6179,11 +6061,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 本轮你已经换过机缘了"
     },
     "engine.045": {
-      "en": "❌ Need ${BOON_SWAP_COST} Gold to swap boon choices",
+      "en": "❌ Need {BOON_SWAP_COST} Gold to swap boon choices",
       "zh": "❌ 换机缘要{BOON_SWAP_COST}金币"
     },
     "engine.046": {
-      "en": "🔄 Swapped Boon Choices for ${BOON_SWAP_COST} Gold",
+      "en": "🔄 Swapped Boon Choices for {BOON_SWAP_COST} Gold",
       "zh": "🔄 花{BOON_SWAP_COST}金币换了一批机缘"
     },
     "engine.047": {
@@ -6220,21 +6102,21 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "engine.052": { "en": "the Monsoon Season", "zh": "季风时节" },
     "engine.053": {
-      "en": "The voyage ran ${input.rounds} rounds.",
+      "en": "The voyage ran {input.rounds} rounds.",
       "zh": "本航程走了{input.rounds}轮。"
     },
     "engine.054": { "en": "borrowed once", "zh": "借入过一次" },
-    "engine.055": { "en": "${joined}.", "zh": "{joined}。" },
+    "engine.055": { "en": "{joined}.", "zh": "{joined}。" },
     "engine.333": {
       "en": "The books ran out mid voyage, and {input.displayName} sailed the rest of it bankrupt.",
       "zh": "航程走到一半，账上见了底，{input.displayName}破产跑完了剩下的路。"
     },
     "engine.056": {
-      "en": "🛡️ Raiders meant for ${who} met your guns: your hold lost ${ate} Gold.",
+      "en": "🛡️ Raiders meant for {who} met your guns: your hold lost {ate} Gold.",
       "zh": "🛡️ 冲{who}去的海盗撞上了你的炮口：货舱损失{ate}金币。"
     },
     "engine.057": {
-      "en": "🛡️ Raiders meant for ${who} met your guns and found your hold already bare.",
+      "en": "🛡️ Raiders meant for {who} met your guns and found your hold already bare.",
       "zh": "🛡️ 冲{who}去的海盗撞上了你的炮口，只见你的货舱早已空了。"
     },
     "engine.334": {
@@ -6246,15 +6128,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🤝 护航契约：{buyerName}花{contract.fee}金币，买下一航段的保护。"
     },
     "engine.058": {
-      "en": "📜 Forfeited ${count} unfulfilled pathbound order${count === 1 ? \"\" : \"s\"}.",
+      "en": "📜 Forfeited {count} unfulfilled pathbound order{pluralS}.",
       "zh": "📜 作废{count}份未交付的商道订单。"
     },
     "engine.059": {
-      "en": "The harbor reads new papers from round ${PATH_SWITCH_FROM_ROUND}.",
+      "en": "The harbor reads new papers from round {PATH_SWITCH_FROM_ROUND}.",
       "zh": "港湾从第{PATH_SWITCH_FROM_ROUND}轮起才收新文书。"
     },
     "engine.060": {
-      "en": "The window for new papers closed after round ${PATH_SWITCH_TO_ROUND}.",
+      "en": "The window for new papers closed after round {PATH_SWITCH_TO_ROUND}.",
       "zh": "第{PATH_SWITCH_TO_ROUND}轮之后，换新文书的窗口就关了。"
     },
     "engine.061": {
@@ -6270,7 +6152,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "你已经握着那条商道了。"
     },
     "engine.064": {
-      "en": "❌ Need ${fee} Gold to change your papers.",
+      "en": "❌ Need {fee} Gold to change your papers.",
       "zh": "❌ 切换文书要{fee}金币。"
     },
     "engine.336": {
@@ -6283,32 +6165,32 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "engine.066": { "en": "⏭️ Trading skipped", "zh": "⏭️ 跳过交易" },
     "engine.067": {
-      "en": "\\n👥=== Processing Worker Production ===",
-      "zh": "\\n👥=== 结算工匠产出 ==="
+      "en": "\n👥=== Processing Worker Production ===",
+      "zh": "\n👥=== 结算工匠产出 ==="
     },
     "engine.068": {
-      "en": "\\n💰=== Paying Worker Wages ===",
-      "zh": "\\n💰=== 支付工匠工钱 ==="
+      "en": "\n💰=== Paying Worker Wages ===",
+      "zh": "\n💰=== 支付工匠工钱 ==="
     },
     "engine.069": {
       "en": "⏭️ Skipped Shipyard Actions",
       "zh": "⏭️ 跳过船坞操作"
     },
     "engine.070": {
-      "en": "🎮 ${APP_NAME} · Game Over!",
+      "en": "🎮 {APP_NAME} · Game Over!",
       "zh": "🎮 {APP_NAME} · 游戏结束！"
     },
     "engine.071": {
-      "en": "💰 Final Funds: ${state.money} Gold",
+      "en": "💰 Final Funds: {state.money} Gold",
       "zh": "💰 最终资金：{state.money}金币"
     },
     "engine.072": {
-      "en": "🏆 Final Reputation: ${state.score}",
+      "en": "🏆 Final Reputation: {state.score}",
       "zh": "🏆 最终声誉：{state.score}"
     },
-    "engine.073": { "en": "📈 Rank: ${rating}", "zh": "📈 评级：{rating}" },
+    "engine.073": { "en": "📈 Rank: {rating}", "zh": "📈 评级：{rating}" },
     "engine.074": {
-      "en": "⚓ Welcome to ${APP_NAME}!",
+      "en": "⚓ Welcome to {APP_NAME}!",
       "zh": "⚓ 欢迎来到{APP_NAME}！"
     },
     "engine.075": {
@@ -6344,28 +6226,28 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🧾 本轮增值税已缴：{state.vatPaid}金币"
     },
     "engine.343": {
-      "en": "\\n🔄=== Preparing for Round {state.currentRound} ===",
-      "zh": "\\n🔄=== 第{state.currentRound}轮 · 准备 ==="
+      "en": "\n🔄=== Preparing for Round {state.currentRound} ===",
+      "zh": "\n🔄=== 第{state.currentRound}轮 · 准备 ==="
     },
     "engine.344": {
       "en": "✅ Trading ended, completed {state.orderCount} trades",
       "zh": "✅ 交易结束，完成{state.orderCount}笔"
     },
-    "engine.077": { "en": "${m}×${a}", "zh": "{m}×{a}" },
+    "engine.077": { "en": "{m}×{a}", "zh": "{m}×{a}" },
     "engine.078": {
       "en": "🌊 Tidewatch Alert: the harbor takes notice of a bustling crew! One more cargo lot joins the Port Purchase board, every round, for the rest of this voyage.",
       "zh": "🌊 观潮预警：港湾瞧见船队忙起来了！本航程余下的每一轮，港口采购板上都会多出一件货物。"
     },
     "engine.079": {
-      "en": "❌ Insufficient funds! Need ${cost} Gold, Have ${state.money} Gold",
+      "en": "❌ Insufficient funds! Need {cost} Gold, Have {state.money} Gold",
       "zh": "❌ 资金不足！要{cost}金币，现有{state.money}金币"
     },
     "engine.080": {
-      "en": "❌ No room in the hold for that lot: it takes ${units} ${units === 1 ? \"slot\" : \"slots\"} and ${room} ${room === 1 ? \"is\" : \"are\"} free.",
+      "en": "❌ No room in the hold for that lot: it takes {units} {slotWord} and {room} {beWord} free.",
       "zh": "❌ 货舱放不下这件货：它要占{units}个仓位，空着{room}个。"
     },
     "engine.081": {
-      "en": "🛒 Bought Product at ${card.port}, Total ${cost} Gold",
+      "en": "🛒 Bought Product at {card.port}, Total {cost} Gold",
       "zh": "🛒 在{card.port}买下成品，合计{cost}金币"
     },
     "engine.082": {
@@ -6373,15 +6255,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "💡 提示：卖出成品要缴增值税"
     },
     "engine.083": {
-      "en": "${ICONS[r.type]}${r.type}×${r.quantity}(${r.price} Gold/item)",
-      "zh": "{ICONS[r.type]}{r.type}×{r.quantity}（{r.price}金币/件）"
+      "en": "{goodIcon}{r.type}×{r.quantity}({r.price} Gold/item)",
+      "zh": "{goodIcon}{r.type}×{r.quantity}（{r.price}金币/件）"
     },
     "engine.084": {
-      "en": "🛒 Bought at ${card.port}: ${txt}, Total ${cost} Gold",
+      "en": "🛒 Bought at {card.port}: {txt}, Total {cost} Gold",
       "zh": "🛒 在{card.port}买下：{txt}，合计{cost}金币"
     },
     "engine.085": {
-      "en": "💰 Current Funds: ${state.money} Gold",
+      "en": "💰 Current Funds: {state.money} Gold",
       "zh": "💰 当前资金：{state.money}金币"
     },
     "engine.086": { "en": "⏭️ Purchasing skipped", "zh": "⏭️ 跳过采购" },
@@ -6406,19 +6288,19 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "✅ 采购结束，共买下{state.purchaseCount}批"
     },
     "engine.087": {
-      "en": "\\n${moment.icon}=== ${moment.title} ===",
-      "zh": "\\n{moment.icon}=== {moment.title} ==="
+      "en": "\n{moment.icon}=== {moment.title} ===",
+      "zh": "\n{moment.icon}=== {moment.title} ==="
     },
     "engine.350": {
       "en": "{icon} Milestone boon: {lead}",
       "zh": "{icon} 里程碑机缘：{lead}"
     },
     "engine.088": {
-      "en": "🔧 ${name} is bolted to the hull.",
+      "en": "🔧 {name} is bolted to the hull.",
       "zh": "🔧 {name}已铆在船体上。"
     },
     "engine.089": {
-      "en": "❌ The yard has no ${name} to bolt on.",
+      "en": "❌ The yard has no {name} to bolt on.",
       "zh": "❌ 船坞没有可装的{name}。"
     },
     "engine.351": {
@@ -6434,12 +6316,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "📜 货舱里没有公议要的东西。"
     },
     "engine.092": {
-      "en": "${ICONS[r.type]}${r.type}×${r.take}",
-      "zh": "{ICONS[r.type]}{r.type}×{r.take}"
+      "en": "{goodIcon}{r.type}×{r.take}",
+      "zh": "{goodIcon}{r.type}×{r.take}"
     },
     "engine.093": {
-      "en": "📜 Fleet Commission: delivered ${parts.join(\" + \")} for ${paid} Gold. The Emperor's commission is exempt from VAT.",
-      "zh": "📜 船队公议：交付{parts.join(\"、\")}，得{paid}金币。皇命采办免缴增值税。"
+      "en": "📜 Fleet Commission: delivered {partList} for {paid} Gold. The Emperor's commission is exempt from VAT.",
+      "zh": "📜 船队公议：交付{partList}，得{paid}金币。皇命采办免缴增值税。"
     },
     "engine.094": { "en": "🎭 Free Captain", "zh": "🎭 自由船长" },
     "engine.095": { "en": "🎭 Borrow", "zh": "🎭 借用" },
@@ -6456,23 +6338,23 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🎭 本航程还能借用{left}/{allowance}次。"
     },
     "engine.097": {
-      "en": "❌ Inventory short! Need ${short.type}×${short.required}",
+      "en": "❌ Inventory short! Need {short.type}×{short.required}",
       "zh": "❌ 库存不足！要{short.type}×{short.required}"
     },
     "engine.098": {
-      "en": "🤝 Broker's Commission (${pct}%): ${commission} Gold",
+      "en": "🤝 Broker's Commission ({pct}%): {commission} Gold",
       "zh": "🤝 掮客抽成（{pct}%）：{commission}金币"
     },
     "engine.099": {
-      "en": "💰 Reward: ${reward} Gold · ⚓ Freight: ${transport} Gold = 📊 Net Profit: ${reward - transport} Gold",
-      "zh": "💰 报酬：{reward}金币 · ⚓ 运费：{transport}金币 = 📊 净利：{reward - transport}金币"
+      "en": "💰 Reward: {reward} Gold · ⚓ Freight: {transport} Gold = 📊 Net Profit: {netProfit} Gold",
+      "zh": "💰 报酬：{reward}金币 · ⚓ 运费：{transport}金币 = 📊 净利：{netProfit}金币"
     },
     "engine.100": {
-      "en": "📣 Word on the Docks: you were first to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage! +${WORD_ON_THE_DOCKS_REWARD} Gold",
+      "en": "📣 Word on the Docks: you were first to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage! +{WORD_ON_THE_DOCKS_REWARD} Gold",
       "zh": "📣 码头风闻：本航程头一个交足{WORD_ON_THE_DOCKS_THRESHOLD}笔贸易订单的是你！+{WORD_ON_THE_DOCKS_REWARD}金币"
     },
     "engine.101": {
-      "en": "❌ Broker's Favor unlocks at Renown Level ${BROKERS_FAVOR_UNLOCK_LEVEL}",
+      "en": "❌ Broker's Favor unlocks at Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL}",
       "zh": "❌ 掮客的人情要到声望等级{BROKERS_FAVOR_UNLOCK_LEVEL}才解锁"
     },
     "engine.102": {
@@ -6480,20 +6362,20 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 本航程你已经用过一次掮客的人情"
     },
     "engine.103": {
-      "en": "❌ The Broker can't find a buyer for ${item}",
+      "en": "❌ The Broker can't find a buyer for {item}",
       "zh": "❌ 掮客找不到愿意买{item}的买家"
     },
     "engine.104": {
-      "en": "❌ You have no ${item} in the hold for the Broker to sell",
+      "en": "❌ You have no {item} in the hold for the Broker to sell",
       "zh": "❌ 货舱里没有{item}可以让掮客出手"
     },
     "engine.105": {
-      "en": "❌ Choose between 1 and ${held} ${item} for the Broker to sell",
+      "en": "❌ Choose between 1 and {held} {item} for the Broker to sell",
       "zh": "❌ 掮客出手的{item}，1到{held}件之间选。"
     },
     "engine.106": {
-      "en": "${ICONS[r.type]}${r.type}×${r.required}",
-      "zh": "{ICONS[r.type]}{r.type}×{r.required}"
+      "en": "{goodIcon}{r.type}×{r.required}",
+      "zh": "{goodIcon}{r.type}×{r.required}"
     },
     "engine.107": {
       "en": "🔮 The Broker only deals during Market.",
@@ -6504,15 +6386,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🔮 掮客没有更多密语了..."
     },
     "engine.109": {
-      "en": "❌ Need ${cost} Gold for a rumor",
+      "en": "❌ Need {cost} Gold for a rumor",
       "zh": "❌ 买一条密语要{cost}金币"
     },
     "engine.110": {
-      "en": "🗣️ Broker's Whisper: 'Word from ${port}: High demand for ${item}!'",
+      "en": "🗣️ Broker's Whisper: 'Word from {port}: High demand for {item}!'",
       "zh": "🗣️ 掮客密语：'{port}有消息：急需{item}！'"
     },
     "engine.111": {
-      "en": "📜 Imperial Mandate at ${mandate.port}: ${need} for ${mandate.reward} Gold. The Emperor's commission is exempt from VAT.",
+      "en": "📜 Imperial Mandate at {mandate.port}: {need} for {mandate.reward} Gold. The Emperor's commission is exempt from VAT.",
       "zh": "📜 {mandate.port}的皇命采办：要{need}，得{mandate.reward}金币。皇命采办免缴增值税。"
     },
     "engine.352": {
@@ -6538,7 +6420,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.112": { "en": "a few", "zh": "少量" },
     "engine.113": { "en": "a haul", "zh": "大量" },
     "engine.114": {
-      "en": "🏴‍☠️ Pirates raided your hold! Lost all ${lost} Gold.",
+      "en": "🏴‍☠️ Pirates raided your hold! Lost all {lost} Gold.",
       "zh": "🏴‍☠️ 海盗劫掠了你的货舱！{lost}金币全部损失。"
     },
     "engine.115": {
@@ -6550,7 +6432,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 太迟了，本轮的海面已经结算"
     },
     "engine.117": {
-      "en": "🛡️ Hired an escort for ${cost} Gold. Safe passage guaranteed this round.",
+      "en": "🛡️ Hired an escort for {cost} Gold. Safe passage guaranteed this round.",
       "zh": "🛡️ 花{cost}金币雇了护航。本轮航路安全无虞。"
     },
     "engine.357": {
@@ -6560,13 +6442,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "engine.118": { "en": "Active boon", "zh": "生效的机缘" },
     "engine.119": { "en": "Minimum freight", "zh": "最低运费" },
     "engine.120": { "en": "Average material cost", "zh": "平均原料成本" },
-    "engine.121": {
-      "en": "${recipe.worker_type === \"weaver\" ? \"Weaver\" : recipe.worker_type === \"master\" ? \"Master Weaver\" : \"Sachet Maker\"} wage",
-      "zh": "{recipe.worker_type === \"weaver\" ? \"织女\" : recipe.worker_type === \"master\" ? \"纺织大师\" : \"香囊师\"}工钱"
-    },
+    "engine.121": { "en": "{workerLabel} wage", "zh": "{workerLabel}工钱" },
     "engine.122": {
-      "en": "${Math.round(VAT_RATE * 100)}% VAT on the margin",
-      "zh": "按差价计增值税{Math.round(VAT_RATE * 100)}%"
+      "en": "{vatPct}% VAT on the margin",
+      "zh": "按差价计增值税{vatPct}%"
     },
     "engine.123": { "en": "Floor at 0 Gold", "zh": "下限0金币" },
     "engine.358": {
@@ -6607,7 +6486,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 本航段港湾没有碎布留给你了。"
     },
     "engine.126": {
-      "en": "❌ ${RAG_SCRAP_VALUE} Gold buys a rag, and the purse is short.",
+      "en": "❌ {RAG_SCRAP_VALUE} Gold buys a rag, and the purse is short.",
       "zh": "❌ 一块碎布要{RAG_SCRAP_VALUE}金币，钱袋不够。"
     },
     "engine.127": {
@@ -6615,19 +6494,19 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 货舱里放不下再多一块碎布了。"
     },
     "engine.128": {
-      "en": "${ICONS.Rags} Bought a rag off the harbor pile for ${RAG_SCRAP_VALUE} Gold. ${left - 1} left for you this leg.",
-      "zh": "{ICONS.Rags} 花{RAG_SCRAP_VALUE}金币从港湾的碎布堆买了一块碎布。本航段还给你剩{left - 1}块。"
+      "en": "{ICONS.Rags} Bought a rag off the harbor pile for {RAG_SCRAP_VALUE} Gold. {scrapsLeft} left for you this leg.",
+      "zh": "{ICONS.Rags} 花{RAG_SCRAP_VALUE}金币从港湾的碎布堆买了一块碎布。本航段还给你剩{scrapsLeft}块。"
     },
     "engine.129": {
       "en": "❌ Only a Loom captain knows how to work rags back into cloth.",
       "zh": "❌ 只有织造船长懂得把碎布重新织回布。"
     },
     "engine.130": {
-      "en": "❌ A reweave takes ${REWEAVE_RAGS} rags and the hold has fewer.",
+      "en": "❌ A reweave takes {REWEAVE_RAGS} rags and the hold has fewer.",
       "zh": "❌ 重织一次要{REWEAVE_RAGS}块碎布，货舱里不够。"
     },
     "engine.131": {
-      "en": "🧵 ${REWEAVE_RAGS} rags go back on the loom and come off as one ${REWEAVE_GOOD}.",
+      "en": "🧵 {REWEAVE_RAGS} rags go back on the loom and come off as one {REWEAVE_GOOD}.",
       "zh": "🧵 {REWEAVE_RAGS}块碎布回到织机上，下来就是一件{REWEAVE_GOOD}。"
     },
     "engine.132": {
@@ -6639,19 +6518,19 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 本航段港湾的裁缝已经给船员缝补过了。"
     },
     "engine.134": {
-      "en": "❌ The crew is wearing no worn ${good} for the harbor to mend.",
+      "en": "❌ The crew is wearing no worn {good} for the harbor to mend.",
       "zh": "❌ 船员身上没有需要港湾缝补的破旧{good}。"
     },
     "engine.135": {
-      "en": "❌ A mend costs ${MEND_GOLD_PER_POINT} Gold and the purse is short.",
+      "en": "❌ A mend costs {MEND_GOLD_PER_POINT} Gold and the purse is short.",
       "zh": "❌ 缝补一次要{MEND_GOLD_PER_POINT}金币，钱袋不够。"
     },
     "engine.136": {
-      "en": "${ICONS.Rags} The harbor tailor takes ${MEND_GOLD_PER_POINT} Gold for ${back} point of the ${good}.",
+      "en": "{ICONS.Rags} The harbor tailor takes {MEND_GOLD_PER_POINT} Gold for {back} point of the {good}.",
       "zh": "{ICONS.Rags} 港湾的裁缝收{MEND_GOLD_PER_POINT}金币，补回{good}的{back}点。"
     },
     "engine.137": {
-      "en": "❌ There is no worn ${contract.good} left to work on.",
+      "en": "❌ There is no worn {contract.good} left to work on.",
       "zh": "❌ 没有还需要缝补的破旧{contract.good}了。"
     },
     "engine.366": {
@@ -6671,7 +6550,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🏝️ 港湾已经投票把这位船长放逐上岸。"
     },
     "engine.140": {
-      "en": "⚖️ The ship and its hold are forfeit. The harbor takes ${taken} Gold and leaves ${kept} Gold aboard.",
+      "en": "⚖️ The ship and its hold are forfeit. The harbor takes {taken} Gold and leaves {kept} Gold aboard.",
       "zh": "⚖️ 船和货舱一并没收。港湾取走{taken}金币，船上留下{kept}金币。"
     },
     "engine.141": {
@@ -6679,11 +6558,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🧭 港务长之手：每航段一次，让某个港口的价格听命于这位船长。"
     },
     "engine.142": {
-      "en": "🪧 Standing orders at the port board: bought ${bought.length} cargo ${ bought.length === 1 ? \"lot\" : \"lots\" } you had priced.",
+      "en": "🪧 Standing orders at the port board: bought {bought.length} cargo {lotWord} you had priced.",
       "zh": "🪧 港口采购板上的常备订单：买下了{bought.length}件你定过价的货物。"
     },
     "engine.143": {
-      "en": "🪧 Standing orders at the trade board: filled ${filled} ${ filled === 1 ? \"order\" : \"orders\" } the hold could cover.",
+      "en": "🪧 Standing orders at the trade board: filled {filled} {orderWord} the hold could cover.",
       "zh": "🪧 订单板上的常备订单：交付了{filled}份货舱供得上的订单。"
     },
     "engine.144": {
@@ -6691,31 +6570,31 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 资金不足，雇不起工匠！"
     },
     "engine.145": {
-      "en": "${def?.icon ?? \"🧑\"} Hired ${identity.name} the ${label}! Wage: ${wage} Gold / Round (paid at round end)",
-      "zh": "{def?.icon ?? \"🧑\"} 雇下了{label}{identity.name}！工钱：每轮{wage}金币（轮末支付）"
+      "en": "{workerIcon} Hired {identity.name} the {label}! Wage: {wage} Gold / Round (paid at round end)",
+      "zh": "{workerIcon} 雇下了{label}{identity.name}！工钱：每轮{wage}金币（轮末支付）"
     },
     "engine.146": {
       "en": "🪷 Jade Pavilion pledge honored: this artisan joins at no cost, so the first wage is on the House.",
       "zh": "🪷 玉阁的承诺兑现：这位工匠入伙不收钱，头一笔工钱也由玉阁代付。"
     },
     "engine.147": {
-      "en": "❌ Insufficient funds for ${label}'s severance: ${wage} Gold",
+      "en": "❌ Insufficient funds for {label}'s severance: {wage} Gold",
       "zh": "❌ 付不起{label}的遣散费：{wage}金币"
     },
     "engine.148": {
-      "en": "💔 Dismissed ${worker.name} the ${label}. Severance: ${wage} Gold",
+      "en": "💔 Dismissed {worker.name} the {label}. Severance: {wage} Gold",
       "zh": "💔 遣散了{label}{worker.name}。遣散费：{wage}金币"
     },
     "engine.149": {
-      "en": "This worker was making: ${worker.task}",
+      "en": "This worker was making: {worker.task}",
       "zh": "这位工匠本来在做：{worker.task}"
     },
     "engine.150": {
-      "en": "${ICONS[m]}${m} ${have}/${a}${have < a ? \" ⚠️\" : \"\"}",
-      "zh": "{ICONS[m]}{m} {have}/{a}{have < a ? \" ⚠️\" : \"\"}"
+      "en": "{moduleIcon}{m} {have}/{a}{shortMark}",
+      "zh": "{moduleIcon}{m} {have}/{a}{shortMark}"
     },
     "engine.151": {
-      "en": "❌ Material shortage to produce ${task}! (Have: ${short})",
+      "en": "❌ Material shortage to produce {task}! (Have: {short})",
       "zh": "❌ 材料不足，做不了{task}！（现有：{short}）"
     },
     "engine.152": {
@@ -6723,31 +6602,31 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 所有工匠都已经安排了活计！"
     },
     "engine.153": {
-      "en": "✅ Skilled ${name} finished ${amt}× ${ICONS[w.task]}${w.task}! (Bonus)",
-      "zh": "✅ 熟练的{name}完成了{amt}× {ICONS[w.task]}{w.task}！（加成）"
+      "en": "✅ Skilled {name} finished {amt}× {taskIcon}{w.task}! (Bonus)",
+      "zh": "✅ 熟练的{name}完成了{amt}× {taskIcon}{w.task}！（加成）"
     },
     "engine.154": {
-      "en": "✅ Skilled ${name} finished ${amt}× ${ICONS[w.task]}${w.task}!",
-      "zh": "✅ 熟练的{name}完成了{amt}× {ICONS[w.task]}{w.task}！"
+      "en": "✅ Skilled {name} finished {amt}× {taskIcon}{w.task}!",
+      "zh": "✅ 熟练的{name}完成了{amt}× {taskIcon}{w.task}！"
     },
     "engine.155": {
-      "en": "✅ ${name} finished ${ICONS[w.task]}${w.task}!",
-      "zh": "✅ {name}完成了{ICONS[w.task]}{w.task}！"
+      "en": "✅ {name} finished {taskIcon}{w.task}!",
+      "zh": "✅ {name}完成了{taskIcon}{w.task}！"
     },
     "engine.156": {
-      "en": "⭐ ${name} Promotion! Can now produce 2 items per round!",
+      "en": "⭐ {name} Promotion! Can now produce 2 items per round!",
       "zh": "⭐ {name}晋升！现在每轮可产出2件！"
     },
     "engine.157": {
-      "en": "🪷 Jade Pavilion covers the wage for ${b.sponsored} ${b.sponsored === 1 ? b.label : b.plural} this round.",
-      "zh": "🪷 本轮{b.sponsored}名{b.sponsored === 1 ? b.label : b.plural}的工钱由玉阁代付。"
+      "en": "🪷 Jade Pavilion covers the wage for {b.sponsored} {bLabel} this round.",
+      "zh": "🪷 本轮{b.sponsored}名{bLabel}的工钱由玉阁代付。"
     },
     "engine.158": {
-      "en": "💰 Paid wages for ${b.count} ${b.count === 1 ? b.label : b.plural}: ${b.due} Gold",
-      "zh": "💰 支付了{b.count}名{b.count === 1 ? b.label : b.plural}的工钱：{b.due}金币"
+      "en": "💰 Paid wages for {b.count} {bLabel}: {b.due} Gold",
+      "zh": "💰 支付了{b.count}名{bLabel}的工钱：{b.due}金币"
     },
     "engine.159": {
-      "en": "⚠️ Insufficient funds! Needed: ${total} Gold, Have: ${state.money} Gold",
+      "en": "⚠️ Insufficient funds! Needed: {total} Gold, Have: {state.money} Gold",
       "zh": "⚠️ 资金不足！要{total}金币，现有{state.money}金币"
     },
     "engine.160": {
@@ -6759,11 +6638,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "💥 声誉崩塌：记下一次破产。"
     },
     "engine.162": {
-      "en": "💸 Paid Ship Maintenance Fee: ${cost} Gold",
+      "en": "💸 Paid Ship Maintenance Fee: {cost} Gold",
       "zh": "💸 已付船只维护费：{cost}金币"
     },
     "engine.163": {
-      "en": "⚠️ Forced payment of ${paid} Gold (Needed ${cost} Gold)",
+      "en": "⚠️ Forced payment of {paid} Gold (Needed {cost} Gold)",
       "zh": "⚠️ 被迫支付{paid}金币（要{cost}金币）"
     },
     "engine.164": {
@@ -6775,35 +6654,35 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "📋 已派活：产出{icon}{task}（需 {materials}）"
     },
     "engine.165": {
-      "en": "${FOODS[food].icon} ${meals} ${meals === 1 ? \"ration\" : \"rations\"} of ${food} turned at sea. ${Math.max(0, state.larder - spoiled)} left in the larder.",
-      "zh": "{FOODS[food].icon} {meals}份{food}在海上变质了。粮舱还剩{Math.max(0, state.larder - spoiled)}份。"
+      "en": "{foodIcon} {meals} {rationWord} of {food} turned at sea. {larderAfter} left in the larder.",
+      "zh": "{foodIcon} {meals}份{food}在海上变质了。粮舱还剩{larderAfter}份。"
     },
     "engine.166": {
-      "en": "❌ Not enough Produce aboard to preserve: a batch is ${PRESERVE_MEALS_IN} meals.",
+      "en": "❌ Not enough Produce aboard to preserve: a batch is {PRESERVE_MEALS_IN} meals.",
       "zh": "❌ 船上的时鲜不够腌制：一批要{PRESERVE_MEALS_IN}份。"
     },
     "engine.167": {
-      "en": "🐟 Preserved ${taken} ${taken === 1 ? \"ration\" : \"rations\"} of Produce into ${made} of Salt Fish (${state.larder} in the larder).",
+      "en": "🐟 Preserved {taken} {rationWord} of Produce into {made} of Salt Fish ({state.larder} in the larder).",
       "zh": "🐟 把{taken}份时鲜腌成了{made}份咸鱼（粮舱里有{state.larder}份）。"
     },
     "engine.168": {
-      "en": "Finish the voyage holding at least ${flourish.amount} Gold of your own.",
+      "en": "Finish the voyage holding at least {flourish.amount} Gold of your own.",
       "zh": "走完航程时，自己手上还留着至少{flourish.amount}金币。"
     },
     "engine.169": {
-      "en": "Finish the voyage at ${flourish.amount} Reputation or better.",
+      "en": "Finish the voyage at {flourish.amount} Reputation or better.",
       "zh": "走完航程时声誉达到{flourish.amount}或更高。"
     },
     "engine.170": {
-      "en": "Finish the voyage still holding ${flourish.amount} ${flourish.good} of your own.",
+      "en": "Finish the voyage still holding {flourish.amount} {flourish.good} of your own.",
       "zh": "走完航程时，自己手上还留着{flourish.amount} {flourish.good}。"
     },
     "engine.171": {
-      "en": "Hand over at least ${flourish.amount} items of the commission yourself.",
+      "en": "Hand over at least {flourish.amount} items of the commission yourself.",
       "zh": "公议的货，你本人至少交出{flourish.amount}件。"
     },
     "engine.172": {
-      "en": "${name} sails the same flag you do, and the two of you know it.",
+      "en": "{name} sails the same flag you do, and the two of you know it.",
       "zh": "{name}和你挂同一面旗，你们两人都清楚。"
     },
     "engine.173": { "en": "Honest Captain", "zh": "诚信船长" },
@@ -6821,36 +6700,36 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "你为自己航行，只为自己。跟其他船长交易赚钱，船队成功也不亏你。"
     },
     "engine.178": {
-      "en": "⚠️ Short rations! ${crew} aboard and the larder is empty: the crew works this leg at ${pace}% pace, and every line still brings home at least one item. The fleet can see it.",
+      "en": "⚠️ Short rations! {crew} aboard and the larder is empty: the crew works this leg at {pace}% pace, and every line still brings home at least one item. The fleet can see it.",
       "zh": "⚠️ 减半口粮！船上{crew}人，粮舱已空：本航段船员按{pace}%的速度干活，每人仍至少带回一件。船队看得见。"
     },
     "engine.179": {
-      "en": "🍲 The crew eats ${need} ${need === 1 ? \"ration\" : \"rations\"}. ${state.larder} left in the larder.",
+      "en": "🍲 The crew eats {need} {rationWord}. {state.larder} left in the larder.",
       "zh": "🍲 船员吃掉{need}份口粮。粮舱还剩{state.larder}份。"
     },
     "engine.180": { "en": "🧺 The larder is full.", "zh": "🧺 粮舱已满。" },
     "engine.181": {
-      "en": "❌ Not enough Gold to provision the crew: a leg of rations is ${cost} Gold.",
+      "en": "❌ Not enough Gold to provision the crew: a leg of rations is {cost} Gold.",
       "zh": "❌ 金币不够给船员备粮：一个航段的口粮要{cost}金币。"
     },
     "engine.182": {
-      "en": "🧺 Provisioned ${rations} ${rations === 1 ? \"ration\" : \"rations\"} of ${food} for ${crew} aboard (${cost} Gold). ${state.larder} in the larder.",
+      "en": "🧺 Provisioned {rations} {rationWord} of {food} for {crew} aboard ({cost} Gold). {state.larder} in the larder.",
       "zh": "🧺 给船上{crew}人备齐了口粮：{rations}份{food}，花了{cost}金币。粮舱里{state.larder}份。"
     },
     "engine.183": { "en": "Two thirds", "zh": "三分之二" },
     "engine.184": {
-      "en": "${shift.port}: every price ${percent} percent ${way}",
+      "en": "{shift.port}: every price {percent} percent {way}",
       "zh": "{shift.port}：每个价格{way} {percent}%"
     },
     "engine.185": { "en": "Open Water Captain", "zh": "开阔水域船长" },
     "engine.186": { "en": "Storm Sovereign", "zh": "风暴之主" },
     "engine.187": {
-      "en": "Get crowned Sea Master on a ${monsoon.name} voyage.",
+      "en": "Get crowned Sea Master on a {monsoon.name} voyage.",
       "zh": "在{monsoon.name}的航程中加冕沧海之主。"
     },
     "engine.188": { "en": "Eye of the Storm", "zh": "风暴之眼" },
     "engine.189": {
-      "en": "Finish a ${monsoon.name} voyage with ${EYE_OF_THE_STORM_REPUTATION}+ Reputation.",
+      "en": "Finish a {monsoon.name} voyage with {EYE_OF_THE_STORM_REPUTATION}+ Reputation.",
       "zh": "走完一次{monsoon.name}的航程，声誉达到{EYE_OF_THE_STORM_REPUTATION}+。"
     },
     "engine.310": {
@@ -6887,7 +6766,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "这是最后一位管理员，身份不能撤销。"
     },
     "engine.198": {
-      "en": "Type ${target.username} to confirm the deletion.",
+      "en": "Type {target.username} to confirm the deletion.",
       "zh": "输入{target.username}确认删除。"
     },
     "engine.199": {
@@ -6911,11 +6790,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "输入1确认删除这一个账号。"
     },
     "engine.204": {
-      "en": "Type ${ids.length} to confirm deleting ${ids.length} accounts.",
+      "en": "Type {ids.length} to confirm deleting {ids.length} accounts.",
       "zh": "输入{ids.length}确认删除{ids.length}个账号。"
     },
     "engine.205": {
-      "en": "The harbor spent this leg's Parley on the Manifest Audit. ${reopens} again next leg.",
+      "en": "The harbor spent this leg's Parley on the Manifest Audit. {reopens} again next leg.",
       "zh": "港湾把本航段的洽谈用在了舱单稽查上。{reopens}要等到下个航段。"
     },
     "engine.206": {
@@ -6949,7 +6828,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "那位船长现在不在。等他回来再试。"
     },
     "engine.215": {
-      "en": "Flexible bartering unlocks at Renown Level ${FLEXIBLE_BARTER_UNLOCK_LEVEL}.",
+      "en": "Flexible bartering unlocks at Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}.",
       "zh": "灵活易货在声望等级{FLEXIBLE_BARTER_UNLOCK_LEVEL}解锁。"
     },
     "engine.216": {
@@ -7254,7 +7133,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "engine.300": { "en": "Invalid venture.", "zh": "无效的合股。" },
     "engine.301": {
-      "en": "Target must be between ${CONVOY_VENTURE_MIN_TARGET} and ${CONVOY_VENTURE_MAX_TARGET} Gold.",
+      "en": "Target must be between {CONVOY_VENTURE_MIN_TARGET} and {CONVOY_VENTURE_MAX_TARGET} Gold.",
       "zh": "目标金额得在{CONVOY_VENTURE_MIN_TARGET}金币到{CONVOY_VENTURE_MAX_TARGET}金币之间。"
     },
     "engine.302": {
@@ -7280,18 +7159,13 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-a.001": { "en": "gold", "zh": "金币" },
     "room-a.002": { "en": "Cancel", "zh": "取消" },
-    "room-a.003": { "en": "· ${clock.label}", "zh": "· {clock.label}" },
-    "room-a.004": {
-      "en": "of ${spec.durability}",
-      "zh": "/{spec.durability}"
-    },
+    "room-a.003": { "en": "· {clock.label}", "zh": "· {clock.label}" },
     "room-a.005": { "en": "offer", "zh": "给出" },
     "room-a.006": { "en": "Weighing anchor…", "zh": "正在起锚..." },
-    "room-a.007": { "en": "Harbor", "zh": "港湾" },
     "room-a.008": { "en": "Direct", "zh": "私聊" },
     "room-a.009": { "en": "Open the captain panel", "zh": "打开船长面板" },
     "room-a.010": {
-      "en": "Round ${state.game.currentRound}",
+      "en": "Round {state.game.currentRound}",
       "zh": "第{state.game.currentRound}轮"
     },
     "room-a.011": { "en": "Open the Harbor Roster", "zh": "打开港湾名册" },
@@ -7314,12 +7188,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "这趟航程对你已经结束，没有席位可退。"
     },
     "room-a.018": {
-      "en": "Your own screen has work open on it. Finish or close it and the room moves on.",
+      "en": "Your own screen has work open on it. Finish or close it and the harbor moves on.",
       "zh": "你自己屏幕上还有活没干完。做完或关掉，港湾才能往下走。"
     },
     "room-a.019": { "en": "Crowned Sea Master!", "zh": "加冕沧海之主！" },
     "room-a.020": {
-      "en": "Highest Reputation in the harbor this voyage: ${mine.reputation}.",
+      "en": "Highest Reputation in the harbor this voyage: {mine.reputation}.",
       "zh": "本航程港湾里声誉最高：{mine.reputation}。"
     },
     "room-a.021": {
@@ -7327,21 +7201,21 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🤝 掮客的人情已解锁！"
     },
     "room-a.022": {
-      "en": "Renown Level ${BROKERS_FAVOR_UNLOCK_LEVEL} reached. The Broker owes you one, starting next voyage.",
+      "en": "Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL} reached. The Broker owes you one, starting next voyage.",
       "zh": "声望等级到{BROKERS_FAVOR_UNLOCK_LEVEL}了。下一趟航程起，掮客欠你一份人情。"
     },
     "room-a.023": {
-      "en": "Captain's Merit earned: ${merit.name}",
+      "en": "Captain's Merit earned: {merit.name}",
       "zh": "船长功勋入手：{merit.name}"
     },
     "room-a.024": { "en": "📣 Word on the Docks!", "zh": "📣 码头风闻！" },
     "room-a.025": {
-      "en": "First to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage. +${data.reward} Gold.",
+      "en": "First to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage. +{data.reward} Gold.",
       "zh": "本航程头一个交足{WORD_ON_THE_DOCKS_THRESHOLD}笔贸易订单。+{data.reward}金币。"
     },
     "room-a.026": { "en": "Word on the Docks!", "zh": "码头风闻！" },
     "room-a.027": {
-      "en": "You won the race to ${WORD_ON_THE_DOCKS_THRESHOLD} orders. +${data.reward} Gold.",
+      "en": "You won the race to {WORD_ON_THE_DOCKS_THRESHOLD} orders. +{data.reward} Gold.",
       "zh": "你抢先交足{WORD_ON_THE_DOCKS_THRESHOLD}笔订单。+{data.reward}金币。"
     },
     "room-a.028": { "en": "📣 Word on the Docks", "zh": "📣 码头风闻" },
@@ -7352,7 +7226,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-a.031": { "en": "Tidewatch Alert", "zh": "观潮预警" },
     "room-a.032": {
-      "en": "The harbor crossed ${TIDEWATCH_SURGE_THRESHOLD} combined Reputation.",
+      "en": "The harbor crossed {TIDEWATCH_SURGE_THRESHOLD} combined Reputation.",
       "zh": "港湾的声誉合计越过了{TIDEWATCH_SURGE_THRESHOLD}。"
     },
     "room-a.033": {
@@ -7379,7 +7253,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.042": { "en": "🌊 Anyone in the harbor", "zh": "🌊 港湾里所有人" },
     "room-a.336": { "en": "🔒 {name} only", "zh": "🔒 仅{name}" },
     "room-a.043": {
-      "en": "A majority of the captains still sailing can open one manifest. What comes back is a sample of what they filed. A carried vote ends this leg&apos;s trading, and the voyage carries on at the next leg. The count below names who is still to vote, and what the vote does when the names it needs land on one captain.",
+      "en": "A majority of the captains still sailing can open one manifest. What comes back is a sample of what they filed. A carried vote ends this leg's trading, and the voyage carries on at the next leg. The count below names who is still to vote, and what the vote does when the names it needs land on one captain.",
       "zh": "仍在航的船长过半数，就能开一份舱单。开出来的是他们申报内容的抽样。表决过了，本航段的交易就到此为止，航程接着走下一航段。下面的计数写着还有谁没投，也写着所需的名字全落到同一位船长头上时，表决会起什么作用。"
     },
     "room-a.044": {
@@ -7389,7 +7263,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.045": { "en": "Hide the audit", "zh": "隐藏稽查" },
     "room-a.046": { "en": "Captain to audit", "zh": "待稽查船长" },
     "room-a.047": { "en": "Call the audit", "zh": "发起稽查" },
-    "room-a.048": { "en": "Open ${name}'s manifest", "zh": "打开{name}的舱单" },
+    "room-a.048": { "en": "Open {name}'s manifest", "zh": "打开{name}的舱单" },
     "room-a.049": {
       "en": "A captain the harbor has written off cannot be audited.",
       "zh": "港湾已经划掉的船长，稽查不了。"
@@ -7407,11 +7281,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "船上有口粮，每航段每人吃一份。"
     },
     "room-a.053": {
-      "en": "${ reveal.flagged ? \"The harbor's own checks could not reconcile this manifest, so its lines are withheld.\" : \"A random sample of this captain's most recent order fulfillments, opened by a vote of the harbor. Their card, their Gold and the rest of their hold were not opened.\" } Opened by a majority in leg ${reveal.round}, which closed that leg's trading; the finding stays on the table for the rest of the voyage.",
-      "zh": "{ reveal.flagged ? \"港湾自己的核验对不上这份舱单，内容就不公开。\" : \"港湾投票开出的抽样，取自这位船长最近交付的订单。他的手牌、金币和货舱里其余的东西都没有打开。\" }第{reveal.round}航段过半数票开启，那一段的交易就此结束；这条结论在本航程余下期间留在桌上。"
+      "en": "{manifestLine} Opened by a majority in leg {reveal.round}, which closed that leg's trading; the finding stays on the table for the rest of the voyage.",
+      "zh": "{manifestLine}第{reveal.round}航段过半数票开启，那一段的交易就此结束；这条结论在本航程余下期间留在桌上。"
     },
     "room-a.317": { "en": "{name}'s manifest", "zh": "{name}的舱单" },
-    "room-a.318": { "en": "Larder {value}", "zh": "粮舱 {value}" },
     "room-a.054": { "en": "for", "zh": "换取" },
     "room-a.055": { "en": "🤝 Trade", "zh": "🤝 交易" },
     "room-a.056": { "en": "🔒 Flexible bartering", "zh": "🔒 灵活易货" },
@@ -7444,7 +7317,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.070": { "en": "📉 Lower", "zh": "📉 看跌" },
     "room-a.071": { "en": "Spoken.", "zh": "已发声。" },
     "room-a.072": {
-      "en": "${SELLER_PATH.crest} ${SELLER_PATH.name} Bazaar",
+      "en": "{SELLER_PATH.crest} {SELLER_PATH.name} Bazaar",
       "zh": "{SELLER_PATH.crest} {SELLER_PATH.name}香市"
     },
     "room-a.073": { "en": "Good the rumor is about", "zh": "风声说的是哪件货" },
@@ -7457,7 +7330,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "本航程还没有人在香市开口。"
     },
     "room-a.076": {
-      "en": "Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through.",
+      "en": "Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the harbor has already priced and traded through.",
       "zh": "本航段和上一段都没人开口。板上只留这两段，再早的不留。更早的行拨动过的集市，全桌早就定价、交易过了。"
     },
     "room-a.077": {
@@ -7469,8 +7342,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "本航段已发声。下一港定价之前，方向只有开口的人自己知道，所以全桌此刻分不清这句是真话还是谎话。"
     },
     "room-a.079": {
-      "en": "The market of this leg was priced against it, so the direction is public now.${ outcome ?",
-      "zh": "本航段的集市就是对着它定的价，方向如今人人都看得见。{ outcome ?"
+      "en": "The market of this leg was priced against it, so the direction is public now.",
+      "zh": "本航段的集市就是对着它定的价，方向如今人人都看得见。"
     },
     "room-a.328": { "en": "Publish", "zh": "发布" },
     "room-a.329": {
@@ -7501,11 +7374,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "No protection is on offer this Parley. Only a Convoy captain at this table can sell one leg of cover, so their offer is what you are waiting for. An offer aimed at one captain waits on that captain, and an offer aimed at the table is any captain's to take.",
       "zh": "本次洽谈没有护卫可买。一航段护卫只有本桌的镖行船长卖得出，你要等的就是他的报价。点名给某位船长的，就等那位船长；挂给全桌的，谁先接就是谁的。"
     },
-    "room-a.087": { "en": "${crest} Take Cover", "zh": "{crest} 接下护卫" },
+    "room-a.087": { "en": "{crest} Take Cover", "zh": "{crest} 接下护卫" },
     "room-a.088": { "en": "Turn It Down", "zh": "拒绝" },
     "room-a.089": { "en": "a captain", "zh": "某位船长" },
     "room-a.090": { "en": "Expired with the leg", "zh": "随航段结束失效" },
-    "room-a.091": { "en": "Waiting on ${who}", "zh": "等{who}" },
+    "room-a.091": { "en": "Waiting on {who}", "zh": "等{who}" },
     "room-a.092": { "en": "Waiting on the table", "zh": "等全桌" },
     "room-a.093": { "en": "Waiting on you", "zh": "等你" },
     "room-a.094": { "en": "Open to the table", "zh": "面向全桌" },
@@ -7521,30 +7394,30 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-a.099": { "en": "Cover spent", "zh": "护卫已用" },
     "room-a.100": { "en": "You turned it down", "zh": "你拒绝了" },
-    "room-a.101": { "en": "Turned down by ${who}", "zh": "被{who}拒绝" },
+    "room-a.101": { "en": "Turned down by {who}", "zh": "被{who}拒绝" },
     "room-a.102": {
-      "en": "🛡️ Your offer stands: ${one.fee} Gold for one leg of cover, open to every captain here. The first to take it gets it.",
+      "en": "🛡️ Your offer stands: {one.fee} Gold for one leg of cover, open to every captain here. The first to take it gets it.",
       "zh": "🛡️ 你的报价还挂着：一航段护卫，{one.fee}金币，本桌每位船长都能接。谁先接，护卫归谁。"
     },
     "room-a.103": {
-      "en": "🛡️ ${standing.length} offers of yours stand this Parley, the newest at ${standing[standing.length - 1].fee} Gold. Each waits on the captain it names, or on the first captain to take an open one.",
-      "zh": "🛡️ 本次洽谈你有{standing.length}份报价挂着，最新的一份{standing[standing.length - 1].fee}金币。点名给谁的，就等谁；挂给全桌的，谁先接算谁的。"
+      "en": "🛡️ {standing.length} offers of yours stand this Parley, the newest at {standingFee} Gold. Each waits on the captain it names, or on the first captain to take an open one.",
+      "zh": "🛡️ 本次洽谈你有{standing.length}份报价挂着，最新的一份{standingFee}金币。点名给谁的，就等谁；挂给全桌的，谁先接算谁的。"
     },
-    "room-a.104": { "en": "${contract.fee} Gold", "zh": "{contract.fee}金币" },
+    "room-a.104": { "en": "{contract.fee} Gold", "zh": "{contract.fee}金币" },
     "room-a.105": {
-      "en": "You are selling one leg of cover for ${fee}",
+      "en": "You are selling one leg of cover for {fee}",
       "zh": "你在卖一航段护卫，价格{fee}"
     },
     "room-a.106": {
-      "en": "You are covering ${other} for ${fee} this leg",
+      "en": "You are covering {other} for {fee} this leg",
       "zh": "本航段你替{other}护卫，价格{fee}"
     },
     "room-a.107": {
-      "en": "Your guns answered a raid meant for ${other}",
+      "en": "Your guns answered a raid meant for {other}",
       "zh": "本该落在{other}头上的劫掠，由你的炮口接下"
     },
     "room-a.108": {
-      "en": "${other} turned down your offer of ${fee}",
+      "en": "{other} turned down your offer of {fee}",
       "zh": "{other}拒绝了你{fee}的报价"
     },
     "room-a.303": { "en": "Offer Protection", "zh": "挂出护航" },
@@ -7634,7 +7507,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.146": { "en": "Skip tutorial", "zh": "跳过教程" },
     "room-a.147": { "en": "Navigation Guide", "zh": "航行指南" },
     "room-a.148": {
-      "en": "${APP_NAME} rules and shortcuts",
+      "en": "{APP_NAME} rules and shortcuts",
       "zh": "{APP_NAME} 规则与快捷键"
     },
     "room-a.149": { "en": "Trade Strategy Advice", "zh": "交易策略建议" },
@@ -7689,7 +7562,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "通知，{unreadCount} 条未读"
     },
     "room-a.164": {
-      "en": "🧭 The Harbormaster&apos;s Hand",
+      "en": "🧭 The Harbormaster's Hand",
       "zh": "🧭 港务长之手"
     },
     "room-a.165": { "en": "Choose a port", "zh": "选一个港" },
@@ -7703,23 +7576,23 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.170": { "en": "Hide the vote", "zh": "隐藏表决" },
     "room-a.171": { "en": "Port to lean", "zh": "要押的港" },
     "room-a.172": {
-      "en": "${MAROON_VOTE_SHARE} of the captains still sailing, rounded up, can put one captain ashore. The vote is public. Once a vote carries it is spent for the whole voyage, a vote that falls short can be called again on a later leg, and the captain who loses it keeps their seat at the table.",
+      "en": "{MAROON_VOTE_SHARE} of the captains still sailing, rounded up, can put one captain ashore. The vote is public. Once a vote carries it is spent for the whole voyage, a vote that falls short can be called again on a later leg, and the captain who loses it keeps their seat at the table.",
       "zh": "仍在航的船长里，{MAROON_VOTE_SHARE}（向上取整）赞成，就能把一位船长放逐上岸。表决是公开的。表决一过，本航程就把它用掉了；票数不够的，之后的航段还能再发起；输掉的那位照样保有席位。"
     },
     "room-a.173": { "en": "Captain to maroon", "zh": "待放逐船长" },
     "room-a.174": { "en": "Call the vote", "zh": "发起表决" },
-    "room-a.175": { "en": "Put ${name} ashore", "zh": "把{name}放逐上岸" },
+    "room-a.175": { "en": "Put {name} ashore", "zh": "把{name}放逐上岸" },
     "room-a.176": {
-      "en": "${MAROON_VOTE_SHARE} of the captains still in the voyage carry it, rounded up, and the vote is public: every name behind a target is on this board.",
+      "en": "{MAROON_VOTE_SHARE} of the captains still in the voyage carry it, rounded up, and the vote is public: every name behind a target is on this board.",
       "zh": "仍在航程中的船长，{MAROON_VOTE_SHARE}（向上取整）赞成即通过；表决是公开的：谁把名字给了谁，这块板上都写着。"
     },
     "room-a.177": { "en": "in force", "zh": "已生效" },
     "room-a.178": {
-      "en": "Called in leg ${shift.round}. Every price at that port this leg was drawn against it.",
+      "en": "Called in leg {shift.round}. Every price at that port this leg was drawn against it.",
       "zh": "第{shift.round}航段发起。本航段那个港的每个价格，都是对着它定的。"
     },
     "room-a.179": {
-      "en": "Called in leg ${shift.round}. The market that opens next leg is the one that answers it, and a later call in this leg replaces it.",
+      "en": "Called in leg {shift.round}. The market that opens next leg is the one that answers it, and a later call in this leg replaces it.",
       "zh": "第{shift.round}航段发起。下一航段开市的集市就是它的回音；本航段里后押的一次会取代它。"
     },
     "room-a.314": { "en": "{name} put ashore", "zh": "{name}被放逐上岸" },
@@ -7734,7 +7607,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-a.181": { "en": "Sell", "zh": "出售" },
     "room-a.182": {
-      "en": "${UNKNOWN_MODULE_ICON} Module Market",
+      "en": "{UNKNOWN_MODULE_ICON} Module Market",
       "zh": "{UNKNOWN_MODULE_ICON} 模块市场"
     },
     "room-a.183": {
@@ -7757,14 +7630,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Every slot on your hull is full. Make room at the yard first.",
       "zh": "船体上的槽位已经满了，先去船坞腾个地方。"
     },
-    "room-a.188": { "en": "${icon} Take It", "zh": "{icon} 接下" },
-    "room-a.189": { "en": "${trade.fee} Gold", "zh": "{trade.fee}金币" },
+    "room-a.188": { "en": "{icon} Take It", "zh": "{icon} 接下" },
+    "room-a.189": { "en": "{trade.fee} Gold", "zh": "{trade.fee}金币" },
     "room-a.190": {
-      "en": "You are selling ${name} for ${fee}",
+      "en": "You are selling {name} for {fee}",
       "zh": "你在卖{name}，价格{fee}"
     },
     "room-a.191": {
-      "en": "You sold ${name} to ${other} for ${fee}",
+      "en": "You sold {name} to {other} for {fee}",
       "zh": "你把{name}卖给了{other}，价格{fee}"
     },
     "room-a.332": { "en": "Offer the Module", "zh": "挂出模块" },
@@ -7860,8 +7733,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "计时一停，本航段就结束，不管是不是每位船长都点了就绪。"
     },
     "room-a.229": {
-      "en": "${m?.displayName ?? \"Captain\"} ${isReady ? \"ready\" : \"still deciding\"}",
-      "zh": "{m?.displayName ?? \"船长\"} {isReady ? \"已就绪\" : \"仍在考虑\"}"
+      "en": "{captainName} {readyWord}",
+      "zh": "{captainName} {readyWord}"
     },
     "room-a.230": {
       "en": "You have already taken on a refit this leg, and one pair of hands works one garment. The bench opens again next leg.",
@@ -7879,7 +7752,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "这份整补所修的衣物"
     },
     "room-a.236": { "en": "one point", "zh": "一点" },
-    "room-a.237": { "en": "${MEND_POINTS} points", "zh": "{MEND_POINTS}点" },
+    "room-a.237": { "en": "{MEND_POINTS} points", "zh": "{MEND_POINTS}点" },
     "room-a.238": {
       "en": "Offer this refit to a specific captain",
       "zh": "把这份整补发给指定船长"
@@ -7901,7 +7774,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "本航段没有碎布上岸。布堆是走过一段寒程才添的。"
     },
     "room-a.243": {
-      "en": "The pile is what the fleet's scrap comes to after a cold leg, and it is drawn from the voyage's own weather. ${REWEAVE_RAGS} rags go back on the loom as one ${REWEAVE_GOOD}.",
+      "en": "The pile is what the fleet's scrap comes to after a cold leg, and it is drawn from the voyage's own weather. {REWEAVE_RAGS} rags go back on the loom as one {REWEAVE_GOOD}.",
       "zh": "布堆是船队走完一段寒程后攒下的碎布，取的是本航程自己的天气。{REWEAVE_RAGS}块碎布回到织机，织成一件{REWEAVE_GOOD}。"
     },
     "room-a.244": {
@@ -7921,37 +7794,29 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "本航段没有在售的整补活计。"
     },
     "room-a.248": {
-      "en": "Nothing left to put right on your ${row.good}.",
+      "en": "Nothing left to put right on your {row.good}.",
       "zh": "你的{row.good}没什么可修补的了。"
     },
-    "room-a.249": { "en": "${crest} Take It", "zh": "{crest} 接下" },
-    "room-a.250": { "en": "${row.fee} Gold", "zh": "{row.fee}金币" },
+    "room-a.249": { "en": "{crest} Take It", "zh": "{crest} 接下" },
+    "room-a.250": { "en": "{row.fee} Gold", "zh": "{row.fee}金币" },
     "room-a.251": {
-      "en": "You are offering to put a ${row.good} right for ${fee}",
+      "en": "You are offering to put a {row.good} right for {fee}",
       "zh": "你开价修补{row.good}，价格{fee}"
     },
     "room-a.252": {
-      "en": "You put ${who === \"you\" ? \"your\" :",
-      "zh": "你把{who === \"you\" ? \"自己\" :"
-    },
-    "room-a.253": {
-      "en": "} ${row.good} right for ${fee}",
-      "zh": "}的{row.good}修补好了，费用{fee}"
+      "en": "You put {possessive} {row.good} right for {fee}",
+      "zh": "你把{possessive}的{row.good}修补好了，费用{fee}"
     },
     "room-a.300": {
-      "en": "${row.sellerName} offers to put a ${row.good} right for ${fee}",
+      "en": "{row.sellerName} offers to put a {row.good} right for {fee}",
       "zh": "{row.sellerName}开价修补{row.good}，价格{fee}"
     },
     "room-a.301": {
-      "en": "${row.sellerName} put {possessive} ${row.good} right for ${fee}",
+      "en": "{row.sellerName} put {possessive} {row.good} right for {fee}",
       "zh": "{row.sellerName}把{possessive}的{row.good}修补好了，费用{fee}"
     },
     "room-a.306": { "en": "Offer a Refit", "zh": "挂出缝补" },
     "room-a.307": { "en": "· in the hold: {held}", "zh": "· 舱里还有：{held}" },
-    "room-a.308": {
-      "en": "Buy a Rag ({value}💰)",
-      "zh": "买一块碎布（{value}💰）"
-    },
     "room-a.309": {
       "en": "Reweave {rags} Rags into {good}",
       "zh": "把{rags}块碎布重织成{good}"
@@ -8004,7 +7869,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.268": { "en": "❌ Did not win", "zh": "❌ 未能取胜" },
     "room-a.269": { "en": "Filled", "zh": "已交足" },
     "room-a.270": {
-      "en": "${step.delivered} of ${step.required}",
+      "en": "{step.delivered} of {step.required}",
       "zh": "{step.delivered} / {step.required}"
     },
     "room-a.271": {
@@ -8016,11 +7881,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "船队申报了，交出来的却是零。"
     },
     "room-a.273": {
-      "en": "Instructions your seat follows when the harbor&apos;s clock plays it while you are not standing at it.",
+      "en": "Instructions your seat follows when the harbor's clock plays it while you are not standing at it.",
       "zh": "你不在席位边上时，港湾的计时替你出牌，你的席位就照着这里写的走。"
     },
     "room-a.274": {
-      "en": "Three seats are deliberately not here. Parley is a conversation with a captain, which is not something a form can answer. The module draft is rolled fresh every round, so there is no honest way to name one ahead of it. And the Broker&apos;s Favor is a decision rather than a default, so it is left for you to spend.",
+      "en": "Three seats are deliberately not here. Parley is a conversation with a captain, which is not something a form can answer. The module draft is rolled fresh every round, so there is no honest way to name one ahead of it. And the Broker's Favor is a decision rather than a default, so it is left for you to spend.",
       "zh": "这里故意空着三件事。洽谈是你和船长的一番对话，一张表格答不了。模块抽取每轮重新掷，事前写下名字并不诚实。掮客的人情是一次决定，不是默认，留给你自己花。"
     },
     "room-a.275": {
@@ -8028,7 +7893,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "只随本航程保存，全桌看不到。"
     },
     "room-a.276": {
-      "en": "Dearest you will pay for ${good}",
+      "en": "Dearest you will pay for {good}",
       "zh": "你为{good}肯出的最高价"
     },
     "room-a.277": { "en": "Follow these orders", "zh": "照这些指示走" },
@@ -8072,14 +7937,13 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-a.287": { "en": "Choose a captain", "zh": "选一位船长" },
     "room-a.288": { "en": "Your name is in", "zh": "你的名字已投出" },
     "room-a.289": {
-      "en": "The room&apos;s count has not arrived yet. It comes with this leg&apos;s vote.",
+      "en": "The harbor's count has not arrived yet. It comes with this leg's vote.",
       "zh": "港湾的票数还没到，它随本航段的表决一起来。"
     },
     "room-a.290": {
-      "en": "${leader.name} needs ${ leader.short === 1 ? \"1 more name\" :",
-      "zh": "{leader.name}还需要{ leader.short === 1 ? \"1个名字\" :"
+      "en": "{leader.name} needs {namesShort} to carry it.",
+      "zh": "{leader.name}还需要{namesShort}才能通过。"
     },
-    "room-a.291": { "en": "} to carry it.", "zh": "}才能通过。" },
     "room-a.292": {
       "en": "Your name is not in yet. Pick a captain and press the button.",
       "zh": "你的名字还没投。选一位船长，按下按钮。"
@@ -8093,7 +7957,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{namesNeeded}才能通过。"
     },
     "room-a.294": { "en": "The voyage log", "zh": "航程日志" },
-    "room-a.295": { "en": "The harbor&apos;s log", "zh": "港湾日志" },
+    "room-a.295": { "en": "The harbor's log", "zh": "港湾日志" },
     "room-a.296": {
       "en": "The harbor has recorded nothing on this voyage yet.",
       "zh": "本航程港湾还没有记下任何东西。"
@@ -8151,8 +8015,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "⏱️ Production Cycle: What Happens When",
       "zh": "⏱️ 生产周期：何时发生什么"
     },
-    "room-b.019": { "en": "💡 Materials consumed", "zh": "💡 原材料消耗" },
-    "room-b.020": { "en": "now", "zh": "现在" },
     "room-b.021": { "en": ", not instantly.", "zh": "，并非当场。" },
     "room-b.022": { "en": "Draft a boon", "zh": "抽取机缘" },
     "room-b.023": {
@@ -8167,7 +8029,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.026": { "en": "Shipyard and modules", "zh": "船坞与模块" },
     "room-b.027": { "en": "📋 Now", "zh": "📋 当前" },
     "room-b.028": {
-      "en": "${face.icon} ${face.label}",
+      "en": "{face.icon} {face.label}",
       "zh": "{face.icon} {face.label}"
     },
     "room-b.310": { "en": "Trade orders", "zh": "交付订单" },
@@ -8200,7 +8062,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "✅ 本轮已换过机缘"
     },
     "room-b.040": {
-      "en": "🔄 Swap Boons (${BOON_SWAP_COST}💰, 1 use/round)",
+      "en": "🔄 Swap Boons ({BOON_SWAP_COST}💰, 1 use/round)",
       "zh": "🔄 切换机缘（{BOON_SWAP_COST}💰，每轮1次）"
     },
     "room-b.041": { "en": "🔒 Lock In Boon", "zh": "🔒 锁定机缘" },
@@ -8214,7 +8076,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "💥 Bankrupt: Defaulted on a Loan",
       "zh": "💥 破产：借款违约"
     },
-    "room-b.046": { "en": "${r.icon} ${r.label}", "zh": "{r.icon} {r.label}" },
+    "room-b.046": { "en": "{r.icon} {r.label}", "zh": "{r.icon} {r.label}" },
     "room-b.311": { "en": "📈 Merchant Rank: ", "zh": "📈 商人评级： " },
     "room-b.047": { "en": "Crew Summary", "zh": "船员汇总" },
     "room-b.048": { "en": "Total Wages Paid", "zh": "已付工钱合计" },
@@ -8226,7 +8088,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.051": { "en": "Skilled", "zh": "熟练" },
     "room-b.052": { "en": "Items Made", "zh": "制成件数" },
     "room-b.053": {
-      "en": "${loss.name} (leg ${loss.round})",
+      "en": "{loss.name} (leg {loss.round})",
       "zh": "{loss.name}（第{loss.round}航段）"
     },
     "room-b.054": { "en": "🏁 Final Standings", "zh": "🏁 最终排名" },
@@ -8235,14 +8097,13 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "⏳ 港湾其余船长的航程还没走完，等他们结束后才加冕沧海之主..."
     },
     "room-b.056": {
-      "en": "Highest Reputation in this harbor&apos;s voyage.",
+      "en": "Highest Reputation in this harbor's voyage.",
       "zh": "本港湾航程中声誉最高的人。"
     },
     "room-b.057": {
-      "en": "🤝 Broker&apos;s Favor Unlocked!",
+      "en": "🤝 Broker's Favor Unlocked!",
       "zh": "🤝 掮客的人情已解锁！"
     },
-    "room-b.058": { "en": "· Renown level up!", "zh": "· 声望升级！" },
     "room-b.312": { "en": "Captain's Merit: ", "zh": "船长功勋： " },
     "room-b.374": { "en": "{reputation} Rep.", "zh": "{reputation}声誉" },
     "room-b.059": { "en": "Financial Summary", "zh": "财务汇总" },
@@ -8318,7 +8179,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{closeCount}单就快备齐"
     },
     "room-b.317": { "en": "Order #{id} needs:", "zh": "订单 #{id} 需要：" },
-    "room-b.318": { "en": "{net}g", "zh": "{net}金币" },
     "room-b.093": { "en": "Trade Manifest", "zh": "贸易舱单" },
     "room-b.094": {
       "en": "(look for the 🔮 badge below).",
@@ -8329,10 +8189,10 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "✅ 完成贸易，继续"
     },
     "room-b.096": { "en": "📜 Imperial Mandate", "zh": "📜 皇命采办" },
-    "room-b.097": { "en": "🤝 Broker&apos;s Favor", "zh": "🤝 掮客的人情" },
+    "room-b.097": { "en": "🤝 Broker's Favor", "zh": "🤝 掮客的人情" },
     "room-b.098": { "en": "🔮 Guaranteed", "zh": "🔮 保底" },
     "room-b.099": {
-      "en": "Profit margin: ${margin}% of reward is net profit after transport, VAT, and commission",
+      "en": "Profit margin: {margin}% of reward is net profit after transport, VAT, and commission",
       "zh": "利润率：报酬的{margin}%是扣掉运费、增值税和掮客抽成后的净利"
     },
     "room-b.100": { "en": "· Imperial Commission", "zh": "· 皇命采办" },
@@ -8358,9 +8218,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "🤝 Broker's cut ({pct}%): {gold} Gold",
       "zh": "🤝 掮客抽成（{pct}%）：{gold}金币"
     },
-    "room-b.105": { "en": "Broker&apos;s Favor", "zh": "掮客的人情" },
     "room-b.106": {
-      "en": "(once per voyage): summon a guaranteed buyer for as much of a good as you choose from your hold. The bigger the ask, the bigger the Broker&apos;s cut.",
+      "en": "(once per voyage): summon a guaranteed buyer for as much of a good as you choose from your hold. The bigger the ask, the bigger the Broker's cut.",
       "zh": "（每航程一次）：从你的货舱里挑一件货，要多少都行，替你把买主叫来。要得越多，掮客抽得越多。"
     },
     "room-b.107": { "en": "Call in a Favor", "zh": "动用一次人情" },
@@ -8378,12 +8237,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-b.111": { "en": "Pick another good", "zh": "换一件货" },
     "room-b.112": {
-      "en": "A bigger ask pays out more, but the Broker&apos;s cut grows with it too, so a single favor can never swing the whole voyage.",
+      "en": "A bigger ask pays out more, but the Broker's cut grows with it too, so a single favor can never swing the whole voyage.",
       "zh": "要得越多进账越多，但掮客的抽成也跟着涨，所以一次人情翻不了整条航程的盘。"
     },
     "room-b.113": { "en": "Call in the Favor", "zh": "动用这条人情" },
     "room-b.114": {
-      "en": "How much ${favorItem} to sell",
+      "en": "How much {favorItem} to sell",
       "zh": "要卖多少 {favorItem}"
     },
     "room-b.325": { "en": "{name} ({count})", "zh": "{name}（{count}）" },
@@ -8397,7 +8256,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.119": { "en": "Harbor Business", "zh": "港湾公事" },
     "room-b.120": { "en": "Exchange", "zh": "行市" },
     "room-b.121": { "en": "Markets", "zh": "集市" },
-    "room-b.122": { "en": "${label} is open.", "zh": "{label}已开。" },
+    "room-b.122": { "en": "{label} is open.", "zh": "{label}已开。" },
     "room-b.123": { "en": "The audit vote", "zh": "舱单稽查投票" },
     "room-b.124": { "en": "The maroon vote", "zh": "放逐投票" },
     "room-b.125": {
@@ -8442,21 +8301,21 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "全桌都交齐了。这一步到此收尾。"
     },
     "room-b.137": {
-      "en": "Waiting on ${view.open} more.",
+      "en": "Waiting on {view.open} more.",
       "zh": "还差{view.open}位。"
     },
     "room-b.138": {
-      "en": "Cards still out: ${view.open}",
+      "en": "Cards still out: {view.open}",
       "zh": "还在外头的牌：{view.open}"
     },
     "room-b.139": {
-      "en": "🗣️ Broker&apos;s Whispers active this round:",
+      "en": "🗣️ Broker's Whispers active this round:",
       "zh": "🗣️ 本轮生效的掮客密语："
     },
     "room-b.140": { "en": "Just for you", "zh": "只给你看" },
     "room-b.141": {
-      "en": "Just for ${name ?? \"a captain\"}",
-      "zh": "只给{name ?? \"某位船长\"}看"
+      "en": "Just for {recipientName}",
+      "zh": "只给{recipientName}看"
     },
     "room-b.142": { "en": "Dismiss error", "zh": "关闭错误提示" },
     "room-b.143": {
@@ -8483,7 +8342,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Hire Escort ({fee} Gold)",
       "zh": "雇护航（{fee}金币）"
     },
-    "room-b.154": { "en": "Port Board", "zh": "港口采购板" },
     "room-b.155": { "en": "🔮 Broker's Rumor Board", "zh": "🔮 掮客密语板" },
     "room-b.156": {
       "en": "✅ Board Done, to the Artisan Bench",
@@ -8537,15 +8395,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "与一条掮客密语对得上，订单阶段必有对应的订单"
     },
     "room-b.175": {
-      "en": "${good} is about ${Math.round(v * 100)} percent above its usual price this round",
-      "zh": "{good}本轮比平日价格高出约{Math.round(v * 100)}%"
+      "en": "{good} is about {abovePct} percent above its usual price this round",
+      "zh": "{good}本轮比平日价格高出约{abovePct}%"
     },
     "room-b.176": {
-      "en": "${good} is about ${Math.round(Math.abs(v) * 100)} percent below its usual price this round",
-      "zh": "{good}本轮比平日价格低了约{Math.round(Math.abs(v) * 100)}%"
+      "en": "{good} is about {belowPct} percent below its usual price this round",
+      "zh": "{good}本轮比平日价格低了约{belowPct}%"
     },
     "room-b.177": {
-      "en": "${count} card${count === 1 ? \"\" : \"s\"} offering ${good} this round",
+      "en": "{count} card{pluralS} offering {good} this round",
       "zh": "本轮有{count}张牌在出{good}"
     },
     "room-b.178": {
@@ -8559,8 +8417,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.180": { "en": "Price History Heatmap", "zh": "历史价格热力图" },
     "room-b.181": { "en": "Good", "zh": "货物" },
     "room-b.182": {
-      "en": "R${i + 1}: ${price} Gold (range ${min} to ${max})",
-      "zh": "第{i + 1}轮：{price}金币（区间{min}到{max}）"
+      "en": "R{roundNo}: {price} Gold (range {min} to {max})",
+      "zh": "第{roundNo}轮：{price}金币（区间{min}到{max}）"
     },
     "room-b.183": { "en": "Provisions", "zh": "口粮" },
     "room-b.184": {
@@ -8581,15 +8439,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-b.188": { "en": "Crew", "zh": "船员" },
     "room-b.189": {
-      "en": "${density}, keeps forever",
+      "en": "{density}, keeps forever",
       "zh": "{density}，永久保存"
     },
     "room-b.190": {
-      "en": "${density}, keeps ${spec.keeps} legs",
+      "en": "{density}, keeps {spec.keeps} legs",
       "zh": "{density}，可放{spec.keeps}个航段"
     },
     "room-b.191": {
-      "en": "${density}, turns at this Dusk",
+      "en": "{density}, turns at this Dusk",
       "zh": "{density}，到本暮色就变质"
     },
     "room-b.192": {
@@ -8680,7 +8538,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "，只有借款真的违约才会动用，最多到你作保的数目。要是一次都没动用？全数退回，还多一份小小的声誉加成。"
     },
     "room-b.207": {
-      "en": "Gold to pledge backing ${l.lenderName}'s loan to ${l.borrowerName}",
+      "en": "Gold to pledge backing {l.lenderName}'s loan to {l.borrowerName}",
       "zh": "为{l.lenderName}借给{l.borrowerName}的这笔借款作保的金币数"
     },
     "room-b.349": {
@@ -8707,8 +8565,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "🌊 本轮没有雇护航就出海了。"
     },
     "room-b.218": {
-      "en": "${b.sponsored} ${b.sponsored === 1 ? b.label : b.plural}",
-      "zh": "{b.sponsored} {b.label}"
+      "en": "{b.sponsored} {bLabel}",
+      "zh": "{b.sponsored} {bLabel}"
     },
     "room-b.350": {
       "en": "💸 Settle Bills: {totalDue} Gold",
@@ -8801,7 +8659,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "👥 Worker Status & Tasks",
       "zh": "👥 工匠状态与任务"
     },
-    "room-b.237": { "en": "${ICONS[m]}${m}×${a}", "zh": "{ICONS[m]}{m}×{a}" },
+    "room-b.237": { "en": "{moduleIcon}{m}×{a}", "zh": "{moduleIcon}{m}×{a}" },
     "room-b.360": { "en": "Working on: {task}", "zh": "正在做：{task}" },
     "room-b.361": {
       "en": "Working on: {task} (Skilled)",
@@ -8815,15 +8673,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-b.238": { "en": "👥 Artisan Bench", "zh": "👥 匠作台" },
     "room-b.239": { "en": "🔨 Hire Workers", "zh": "🔨 雇佣工匠" },
-    "room-b.240": { "en": "${a} ${m}", "zh": "{a} {m}" },
-    "room-b.241": { "en": "${t}(${mats})", "zh": "{t}（{mats}）" },
+    "room-b.240": { "en": "{a} {m}", "zh": "{a} {m}" },
+    "room-b.241": { "en": "{t}({mats})", "zh": "{t}（{mats}）" },
     "room-b.242": {
       "en": "✅ Complete Market, Continue",
       "zh": "✅ 集市结束，继续"
-    },
-    "room-b.302": {
-      "en": "Hire {label} ({cost}💰/round)",
-      "zh": "雇佣{label}（{cost}💰/轮）"
     },
     "room-b.303": { "en": "{cost} Gold/round", "zh": "{cost}金币/轮" },
     "room-b.365": {
@@ -8840,18 +8694,17 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.247": { "en": "━━ Artisans ━━", "zh": "━━ 工匠 ━━" },
     "room-b.248": { "en": "Cargo Composition", "zh": "货物构成" },
     "room-b.249": {
-      "en": "Raw Materials: ${rawCount} (${rawPct}%)",
+      "en": "Raw Materials: {rawCount} ({rawPct}%)",
       "zh": "原材料：{rawCount}（{rawPct}%）"
     },
     "room-b.250": {
-      "en": "Finished Goods: ${productCount} (${productPct}%)",
+      "en": "Finished Goods: {productCount} ({productPct}%)",
       "zh": "成品：{productCount}（{productPct}%）"
     },
     "room-b.251": {
-      "en": "${skilled} of ${count} trained: each produces 2 per round, working at ${Math.round(SHORT_RATIONS_YIELD * 100)}% pace while the crew goes hungry",
-      "zh": "{count}人中有{skilled}人熟练：每人每轮产出2件，船员挨饿时干活的速度只有{Math.round(SHORT_RATIONS_YIELD * 100)}%"
+      "en": "{skilled} of {count} trained: each produces 2 per round, working at {pacePct}% pace while the crew goes hungry",
+      "zh": "{count}人中有{skilled}人熟练：每人每轮产出2件，船员挨饿时干活的速度只有{pacePct}%"
     },
-    "room-b.366": { "en": "{count} item", "zh": "{count}件" },
     "room-b.367": { "en": "{count} items", "zh": "{count}件" },
     "room-b.368": { "en": "Raw {count}", "zh": "原料 {count}" },
     "room-b.369": { "en": "Products {count}", "zh": "成品 {count}" },
@@ -8873,7 +8726,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-b.259": { "en": "Back it", "zh": "跟投" },
     "room-b.260": {
-      "en": "${CONVOY_VENTURE_MIN_TARGET}+",
+      "en": "{CONVOY_VENTURE_MIN_TARGET}+",
       "zh": "{CONVOY_VENTURE_MIN_TARGET}+"
     },
     "room-b.261": {
@@ -8912,14 +8765,14 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "room-b.270": { "en": "Repay", "zh": "还款" },
     "room-b.271": { "en": "Owed by", "zh": "欠你的" },
     "room-b.272": {
-      "en": "↳ ${r.list.length}× ${r.label}",
+      "en": "↳ {r.list.length}× {r.label}",
       "zh": "↳ {r.list.length}× {r.label}"
     },
-    "room-b.273": { "en": "${r.due} Gold", "zh": "{r.due}金币" },
+    "room-b.273": { "en": "{r.due} Gold", "zh": "{r.due}金币" },
     "room-b.373": { "en": " ({count} workers)", "zh": "（{count}人）" },
     "room-b.274": { "en": "Your papers", "zh": "你的文书" },
     "room-b.275": {
-      "en": "Your path is ${card.name}. Change your papers.",
+      "en": "Your path is {card.name}. Change your papers.",
       "zh": "你的商道是{card.name}。切换你的文书。"
     },
     "room-b.276": {
@@ -8948,9 +8801,9 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "room-b.284": { "en": "Funds", "zh": "资金" },
     "room-b.285": { "en": "Due", "zh": "应付" },
-    "room-b.286": { "en": "${money}", "zh": "{money}" },
-    "room-b.287": { "en": "${score}", "zh": "{score}" },
-    "room-b.288": { "en": "${larder}", "zh": "{larder}" },
+    "room-b.286": { "en": "{money}", "zh": "{money}" },
+    "room-b.287": { "en": "{score}", "zh": "{score}" },
+    "room-b.288": { "en": "{larder}", "zh": "{larder}" },
     "lobby.001": { "en": "Suggest", "zh": "建议" },
     "lobby.002": { "en": "Got it", "zh": "知道了" },
     "lobby.003": {
@@ -8959,51 +8812,47 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "lobby.004": { "en": "Show action suggestion", "zh": "查看行动建议" },
     "lobby.005": { "en": "Close suggestion", "zh": "关闭建议" },
-    "lobby.006": { "en": "Consider ${first.name}", "zh": "可考虑{first.name}" },
+    "lobby.006": { "en": "Consider {first.name}", "zh": "可考虑{first.name}" },
     "lobby.007": { "en": "👩‍🔧", "zh": "👩‍🔧" },
     "lobby.008": {
       "en": "Only one round remains. Hiring now wastes Gold on wages with no production return. Focus on filling orders with what you already have.",
       "zh": "只剩最后一轮。这会儿雇工，工钱照付，产出却回不了本。手上的货，先拿去交付订单吧。"
     },
     "lobby.009": {
-      "en": "Assign task: ${product}",
+      "en": "Assign task: {product}",
       "zh": "安排上工：{product}"
     },
     "lobby.010": {
-      "en": "Your ${type} is idle and you have the materials to make ${product}. Assign the task now so production lands at this round's Resolve. Materials: ${Object.entries( recipe.materials, ) .map(([m, q]) =>",
-      "zh": "你的{type}闲着，原材料也够，能做{product}。现在就安排上工，本轮结算时产出就到手。原材料：{Object.entries( recipe.materials, ) .map(([m, q]) =>"
+      "en": "Your {type} is idle and you have the materials to make {product}. Assign the task now so production lands at this round's Resolve. Materials: {materialsList}.",
+      "zh": "你的{type}闲着，原材料也够，能做{product}。现在就安排上工，本轮结算时产出就到手。原材料：{materialsList}."
     },
     "lobby.011": {
-      "en": "Buy materials for ${product}",
+      "en": "Buy materials for {product}",
       "zh": "为{product}采购原材料"
     },
     "lobby.012": {
-      "en": "Your ${type} is idle but you lack materials for ${product}. You need: ${Object.entries( recipe.materials, ) .map(([m, q]) =>",
-      "zh": "你的{type}闲着，做{product}的原材料却不够。还缺：{Object.entries( recipe.materials, ) .map(([m, q]) =>"
-    },
-    "lobby.013": {
-      "en": ") .join(\", \")}. Buy these next round.",
-      "zh": ") .join(\"、\")}。下一轮再买这些。"
+      "en": "Your {type} is idle but you lack materials for {product}. You need: {materialsList}. Buy these next round.",
+      "zh": "你的{type}闲着，做{product}的原材料却不够。还缺：{materialsList}。下一轮再买这些。"
     },
     "lobby.014": {
       "en": "Your hold carries no goods to trade this Parley. Post a Gold offer for the good you still need, or ready up so the fleet can move on.",
       "zh": "这轮洽谈，你货舱里没有能出手的货。可以为你还缺的货挂一份金币报价，或者直接点就绪，让船队接着走。"
     },
     "lobby.015": {
-      "en": "You are holding ${count} ${top}. Post what your voyage can spare and name the good you are still short of, then ready up once the table is done with you.",
+      "en": "You are holding {count} {top}. Post what your voyage can spare and name the good you are still short of, then ready up once the table is done with you.",
       "zh": "你手上有{count}件{top}。这程能匀出多少就挂多少，写明你还缺哪件货，等桌上的人跟你谈完，再点就绪。"
     },
     "lobby.016": {
-      "en": "Almost ready for order #${close.id}",
+      "en": "Almost ready for order #{close.id}",
       "zh": "订单#{close.id}就快备齐了"
     },
     "lobby.017": {
-      "en": "You are only missing ${missing?.type} (have ${game.inventory[missing?.type ?? \"\"] || 0}, need ${missing?.required}). Try bartering for it now; a fresh order board is dealt each round.",
-      "zh": "你只缺{missing?.type}（现有{game.inventory[missing?.type ?? \"\"] || 0}，需要{missing?.required}）。现在就找船长易货；订单板每轮都会重新发一份。"
+      "en": "You are only missing {missingGood} (have {missingHave}, need {missingNeed}). Try bartering for it now; a fresh order board is dealt each round.",
+      "zh": "你只缺{missingGood}（现有{missingHave}，需要{missingNeed}）。现在就找船长易货；订单板每轮都会重新发一份。"
     },
     "lobby.018": { "en": "Upgrade to Ship Level 1", "zh": "升级船只到1级" },
     "lobby.019": {
-      "en": "Ship upgrade costs ${cost} Gold but you only have ${game.money}. Save the Gold for the Resolve bills and continue the voyage.",
+      "en": "Ship upgrade costs {cost} Gold but you only have {game.money}. Save the Gold for the Resolve bills and continue the voyage.",
       "zh": "船只升级要{cost}金币，你手上只有{game.money}。金币留着结算付账，航程先接着走。"
     },
     "lobby.256": { "en": "Take the {name}", "zh": "取走{name}" },
@@ -9034,26 +8883,24 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "每个港湾、每位船长，同一时刻，同一个时代。时代每两周换一轮：放贷人、商人、掮客，换完从头再来。时代只调一调某个本就允许的动作的分量，规则一个字不改；一段时代里开的航程，不会因为下一段时代接手就失了平衡。"
     },
     "lobby.024": {
-      "en": "${age.name}. ${age.description}",
+      "en": "{age.name}. {age.description}",
       "zh": "{age.name}。{age.description}"
     },
     "lobby.025": {
-      "en": "Current age: ${age.name}. Click for details.",
+      "en": "Current age: {age.name}. Click for details.",
       "zh": "当前时代：{age.name}。点击查看详情。"
     },
     "lobby.026": { "en": "Close age details", "zh": "关闭时代详情" },
     "lobby.027": { "en": "handing over now", "zh": "正在交接" },
     "lobby.028": { "en": "under an hour remaining", "zh": "还剩不到一小时" },
     "lobby.029": {
-      "en": "${hours} ${hours === 1 ? \"hour\" : \"hours\"} remaining",
+      "en": "{hours} {hourWord} remaining",
       "zh": "还剩{hours}小时"
     },
     "lobby.030": {
-      "en": "${Math.round(ms / 86_400_000)} days remaining",
-      "zh": "还剩{Math.round(ms / 86_400_000)}天"
+      "en": "{daysLeft} days remaining",
+      "zh": "还剩{daysLeft}天"
     },
-    "lobby.264": { "en": "Lender", "zh": "债主" },
-    "lobby.265": { "en": "Trader", "zh": "商贾" },
     "lobby.266": { "en": "Age details: {name}", "zh": "时代详情：{name}" },
     "lobby.031": {
       "en": "Maritime trade on the ancient Silk Road",
@@ -9069,7 +8916,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.036": { "en": "Hoist the Colors", "zh": "扬旗" },
     "lobby.037": { "en": "Not yet earned", "zh": "尚未获得" },
     "lobby.038": { "en": "Best Rep.", "zh": "最佳声誉" },
-    "lobby.039": { "en": "Head to head with", "zh": "与" },
     "lobby.040": {
       "en": "🤝 Broker's Favor unlocked",
       "zh": "🤝 掮客的人情已解锁"
@@ -9092,11 +8938,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.050": { "en": "x", "zh": "x" },
     "lobby.051": { "en": "Dismiss advice", "zh": "忽略建议" },
     "lobby.052": {
-      "en": "${rounds.slice(0, -1).join(\", \")}, and ${rounds[rounds.length - 1]}",
-      "zh": "{rounds.slice(0, -1).join(\"、\")}和{rounds[rounds.length - 1]}"
+      "en": "{roundList}, and {lastRound}",
+      "zh": "{roundList}和{lastRound}"
     },
     "lobby.053": {
-      "en": "Monsoon Season is very tough for a new captain. Consider Open Waters or Fair Winds until you reach Renown Level ${OPEN_WATERS_RENOWN}.",
+      "en": "Monsoon Season is very tough for a new captain. Consider Open Waters or Fair Winds until you reach Renown Level {OPEN_WATERS_RENOWN}.",
       "zh": "季风时节，新船长很难熬。声望等级到{OPEN_WATERS_RENOWN}之前，先跑开阔水域或顺风。"
     },
     "lobby.054": {
@@ -9104,10 +8950,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "开阔水域才有皇命采办和特许货物。先跑几程顺风，把基本玩法摸熟。"
     },
     "lobby.055": { "en": "Heads up", "zh": "注意" },
-    "lobby.056": {
-      "en": "Consider ${advice.recommended.replace(/_/g, \" \")}",
-      "zh": "可考虑{advice.recommended.replace(/_/g, \" \")}"
-    },
+    "lobby.056": { "en": "Consider {adviceName}", "zh": "可考虑{adviceName}" },
     "lobby.270": {
       "en": "You have the experience and the streak for the {name}. {rounds} rounds, {multiplier}x Renown, and two difficulty scoped Merits await: Storm Sovereign and Eye of the Storm.",
       "zh": "你有阅历，也有连续不破产的记录，{name}撑得起。{rounds}轮，{multiplier}倍声望，还有两项难度专属功勋等着你：风暴之主和风暴之眼。"
@@ -9125,7 +8968,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.061": { "en": "Yours", "zh": "你的" },
     "lobby.062": { "en": "Total Crowns", "zh": "沧海之冠总数" },
     "lobby.063": { "en": "Total Voyages", "zh": "航程总数" },
-    "lobby.064": { "en": "Top Score", "zh": "最高积分" },
+    "lobby.274": { "en": "Top Reputation", "zh": "最高声誉" },
     "lobby.271": { "en": "{crowns} crowns", "zh": "{crowns}顶沧海之冠" },
     "lobby.065": {
       "en": "Top captains across all voyages",
@@ -9171,7 +9014,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.086": { "en": "Create", "zh": "创建" },
     "lobby.087": { "en": "Unlock phrase", "zh": "解锁暗语" },
     "lobby.088": {
-      "en": "A captain&apos;s tenth completed voyage hands them this phrase, and the guide keeps a copy for whoever goes looking. Anyone who has it can open the table, and every seat at that table sails the voyage it opens.",
+      "en": "A captain's tenth completed voyage hands them this phrase, and the guide keeps a copy for whoever goes looking. Anyone who has it can open the table, and every seat at that table sails the voyage it opens.",
       "zh": "船长完成第十次航程，就能拿到这句暗语；指南也为上门来查的人留了一份。暗语在手，谁都能开这张桌子；坐上桌的每个席位，都驶进它开的那次航程。"
     },
     "lobby.089": { "en": "Voyage Chronicles", "zh": "航程实录" },
@@ -9237,13 +9080,13 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Quick Start is unavailable right now.",
       "zh": "快速开局暂时用不了。"
     },
-    "lobby.119": { "en": "Failed to create room", "zh": "创建港湾失败" },
+    "lobby.119": { "en": "Failed to create harbor", "zh": "创建港湾失败" },
     "lobby.120": {
       "en": "Harbor codes are 6 characters.",
       "zh": "港湾口令是6个字符。"
     },
-    "lobby.121": { "en": "Failed to join room", "zh": "加入港湾失败" },
-    "lobby.122": { "en": "Failed to enter room", "zh": "进入港湾失败" },
+    "lobby.121": { "en": "Failed to join harbor", "zh": "加入港湾失败" },
+    "lobby.122": { "en": "Failed to enter harbor", "zh": "进入港湾失败" },
     "lobby.123": {
       "en": "Could not load chronicles",
       "zh": "航程实录加载不了"
@@ -9252,10 +9095,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Could not load House standings",
       "zh": "世家排名加载不了"
     },
-    "lobby.125": {
-      "en": "Pledged to ${house?.name ?? \"House\"}",
-      "zh": "已加入{house?.name ?? \"世家\"}"
-    },
+    "lobby.125": { "en": "Pledged to {houseName}", "zh": "已加入{houseName}" },
     "lobby.126": {
       "en": "Your House perk applies on your next fresh voyage.",
       "zh": "你的世家优待，从下个全新航程开始生效。"
@@ -9277,8 +9117,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "lobby.133": { "en": "Dismiss notification", "zh": "关闭通知" },
     "lobby.134": {
-      "en": "${collapsed ? \"Expand\" : \"Collapse\"} the ${title} panel",
-      "zh": "{collapsed ? \"展开\" : \"收起\"}{title}面板"
+      "en": "{toggleWord} the {title} panel",
+      "zh": "{toggleWord}{title}面板"
     },
     "lobby.135": { "en": "Volume", "zh": "音量" },
     "lobby.136": { "en": "Close settings", "zh": "关闭设置" },
@@ -9307,12 +9147,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "港湾里其他船长发来的消息"
     },
     "lobby.149": {
-      "en": "The race to ${WORD_ON_THE_DOCKS_THRESHOLD} completed orders",
+      "en": "The race to {WORD_ON_THE_DOCKS_THRESHOLD} completed orders",
       "zh": "抢先交满{WORD_ON_THE_DOCKS_THRESHOLD}笔订单的竞赛"
     },
-    "lobby.150": { "en": "Tidewatch Alerts", "zh": "观潮预警" },
     "lobby.151": {
-      "en": "The harbor crossing ${TIDEWATCH_SURGE_THRESHOLD} combined Reputation",
+      "en": "The harbor crossing {TIDEWATCH_SURGE_THRESHOLD} combined Reputation",
       "zh": "港湾声誉合计突破{TIDEWATCH_SURGE_THRESHOLD}"
     },
     "lobby.152": { "en": "Shortcuts", "zh": "快捷键" },
@@ -9326,8 +9165,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.157": { "en": "Message the harbor", "zh": "给港湾发消息" },
     "lobby.158": { "en": "Message the lobby", "zh": "给大厅发消息" },
     "lobby.236": {
-      "en": "Message ${otherName ?? \"this captain\"}",
-      "zh": "给{otherName ?? \"这位船长\"}发消息"
+      "en": "Message {recipientName}",
+      "zh": "给{recipientName}发消息"
     },
     "lobby.241": { "en": "Send message", "zh": "发送消息" },
     "lobby.159": { "en": "Switch", "zh": "切换" },
@@ -9345,7 +9184,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.165": { "en": "Scanning the horizon", "zh": "正在眺望海面" },
     "lobby.166": { "en": "No harbors open yet", "zh": "还没有港湾开放" },
     "lobby.167": {
-      "en": "Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a room of your own.",
+      "en": "Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a harbor of your own.",
       "zh": "点上面的快速开局，和下一位找港湾的船长配对；或者切到开一个新港湾，自己开一间。"
     },
     "lobby.168": { "en": "Private", "zh": "私密" },
@@ -9368,7 +9207,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.175": { "en": "Connecting to the harbor…", "zh": "正在连接港湾..." },
     "lobby.176": { "en": "In a harbor", "zh": "在港湾" },
     "lobby.177": { "en": "In the lobby", "zh": "在大厅" },
-    "lobby.178": { "en": "Captain&apos;s Legacy", "zh": "船长传承" },
     "lobby.179": {
       "en": "Renown carries across every voyage this account ever sails, in any harbor.",
       "zh": "这个账号驶过的每一次航程，不管在哪个港湾，声望都攒在一起。"
@@ -9378,7 +9216,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "每天能领一份声望奖励。七天一轮，漏了一天也接着上次往下走，领过第七天就从头再来。"
     },
     "lobby.181": {
-      "en": "The Harbormaster&apos;s ledger of your finished voyages, newest first.",
+      "en": "The Harbormaster's ledger of your finished voyages, newest first.",
       "zh": "港务长替你记着跑完的航程，最新的排最前。"
     },
     "lobby.182": { "en": "Loading chronicles…", "zh": "正在加载航程实录..." },
@@ -9418,8 +9256,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.200": { "en": "loans given", "zh": "笔借出" },
     "lobby.201": { "en": "loans taken", "zh": "笔借入" },
     "lobby.202": { "en": "Crowned", "zh": "加冕" },
-    "lobby.249": { "en": "fair winds", "zh": "顺风" },
-    "lobby.250": { "en": "open waters", "zh": "开阔水域" },
     "lobby.251": { "en": "monsoon", "zh": "季风时节" },
     "lobby.203": {
       "en": "No chronicles saved yet. A chronicle is written when your voyage concludes.",
@@ -9461,11 +9297,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.218": { "en": "partial sight", "zh": "局部视野" },
     "lobby.219": { "en": "Hold is empty.", "zh": "货舱是空的。" },
     "lobby.220": {
-      "en": "Peek at ${targetName}'s cargo",
+      "en": "Peek at {targetName}'s cargo",
       "zh": "查看{targetName}的货物"
     },
     "lobby.221": {
-      "en": "Partial sight peek at ${targetName}",
+      "en": "Partial sight peek at {targetName}",
       "zh": "局部视野查看{targetName}"
     },
     "lobby.222": { "en": "Asking the harbor…", "zh": "正在询问港湾..." },
@@ -9480,7 +9316,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "lobby.246": { "en": "{count} captain{pluralS}", "zh": "{count}位船长" },
     "lobby.225": { "en": "Ashore", "zh": "已上岸" },
     "lobby.226": {
-      "en": "Report ${member.displayName}",
+      "en": "Report {member.displayName}",
       "zh": "举报{member.displayName}"
     },
     "lobby.227": { "en": "Unmute this captain", "zh": "解除这位船长的禁言" },
@@ -9517,13 +9353,13 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "本航程的存档太大，存不下。"
     },
     "misc.005": { "en": "Captain not found", "zh": "查无此船长" },
-    "misc.006": { "en": "Room not found", "zh": "查无此港湾" },
+    "misc.006": { "en": "Harbor not found", "zh": "查无此港湾" },
     "misc.007": {
-      "en": "A 6 character room code is required",
+      "en": "A 6 character harbor code is required",
       "zh": "港湾口令得是6个字符"
     },
     "misc.008": {
-      "en": "No room exists with that code",
+      "en": "No harbor exists with that code",
       "zh": "这个口令对不上任何港湾"
     },
     "misc.009": {
@@ -9541,10 +9377,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "misc.012": { "en": "Search messages…", "zh": "搜索消息..." },
     "misc.013": { "en": "Close search", "zh": "关闭搜索" },
     "misc.014": { "en": "You're muted", "zh": "你被禁言了" },
-    "misc.015": {
-      "en": "The host has muted you in the harbor chat for the rest of this voyage.",
-      "zh": "本航程余下的时间，港主已经把你禁言，港湾聊天里说不了话。"
-    },
     "misc.016": {
       "en": "Nothing on the harbor square yet. Say hello to the fleet.",
       "zh": "港湾广场上还什么都没有。跟船队打个招呼吧。"
@@ -9560,13 +9392,13 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "misc.075": { "en": "{count} found", "zh": "找到{count}条" },
     "misc.019": { "en": "N/A", "zh": "暂无" },
     "misc.020": {
-      "en": "Gain ${EMERGENCY_LOAN_GOLD} Gold immediately. No strings attached.",
+      "en": "Gain {EMERGENCY_LOAN_GOLD} Gold immediately. No strings attached.",
       "zh": "立即获得{EMERGENCY_LOAN_GOLD}金币，无需偿还。"
     },
-    "misc.021": { "en": "${pcts[0]}%", "zh": "{pcts[0]}%" },
+    "misc.021": { "en": "{lowPct}%", "zh": "{lowPct}%" },
     "misc.022": {
-      "en": "${pcts[0]}% to ${pcts[1]}%",
-      "zh": "{pcts[0]}%至{pcts[1]}%"
+      "en": "{lowPct}% to {highPct}%",
+      "zh": "{lowPct}%至{highPct}%"
     },
     "misc.023": { "en": "The Cordage Warrant", "zh": "绳索采办" },
     "misc.024": {
@@ -9610,7 +9442,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "船队凑齐公议，这局就归你。"
     },
     "misc.038": {
-      "en": "You win if you take at least ${BROKER_PAYOUT_TARGET} Gold from other captains in trade. The commission is their business rather than yours, so a voyage they finish well is no loss to you.",
+      "en": "You win if you take at least {BROKER_PAYOUT_TARGET} Gold from other captains in trade. The commission is their business rather than yours, so a voyage they finish well is no loss to you.",
       "zh": "只要在交易里从别的船长手上赚到至少{BROKER_PAYOUT_TARGET}金币，这局就归你。公议是他们的事，不是你的。他们航程走得再漂亮，你也不吃亏。"
     },
     "misc.039": {
@@ -9619,39 +9451,39 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "misc.040": { "en": "The voyage leaves the dock.", "zh": "航程驶离码头。" },
     "misc.041": {
-      "en": "The harbor audits ${facts.target}.",
+      "en": "The harbor audits {facts.target}.",
       "zh": "港湾稽查{facts.target}。"
     },
     "misc.042": {
-      "en": "The harbor maroons ${facts.target}.",
+      "en": "The harbor maroons {facts.target}.",
       "zh": "港湾放逐{facts.target}。"
     },
     "misc.043": {
-      "en": "${facts.captain} leaves the harbor.",
+      "en": "{facts.captain} leaves the harbor.",
       "zh": "{facts.captain}离开港湾。"
     },
     "misc.044": {
-      "en": "${facts.captain} offers one leg of protection for ${facts.fee} Gold.",
+      "en": "{facts.captain} offers one leg of protection for {facts.fee} Gold.",
       "zh": "{facts.captain}挂出一段护卫，要价{facts.fee}金币。"
     },
     "misc.045": {
-      "en": "${facts.taker} buys a leg of protection from ${facts.captain} for ${facts.fee} Gold.",
+      "en": "{facts.taker} buys a leg of protection from {facts.captain} for {facts.fee} Gold.",
       "zh": "{facts.taker}以{facts.fee}金币买下{facts.captain}的一段护卫。"
     },
     "misc.046": {
-      "en": "Raiders bound for ${facts.taker} met ${facts.captain}'s guns.",
+      "en": "Raiders bound for {facts.taker} met {facts.captain}'s guns.",
       "zh": "冲着{facts.taker}去的海盗，撞上了{facts.captain}的炮口。"
     },
     "misc.047": {
-      "en": "${facts.captain} offers to put a ${facts.good} right for ${facts.fee} Gold.",
+      "en": "{facts.captain} offers to put a {facts.good} right for {facts.fee} Gold.",
       "zh": "{facts.captain}开价{facts.fee}金币，接下一单{facts.good}的整补。"
     },
     "misc.048": {
-      "en": "${facts.taker} pays ${facts.captain} ${facts.fee} Gold to put the ${facts.good} right.",
+      "en": "{facts.taker} pays {facts.captain} {facts.fee} Gold to put the {facts.good} right.",
       "zh": "{facts.taker}付给{facts.captain}{facts.fee}金币，把{facts.good}整补妥当。"
     },
     "misc.049": {
-      "en": "${facts.captain} publishes a rumor about ${facts.good} at the bazaar.",
+      "en": "{facts.captain} publishes a rumor about {facts.good} at the bazaar.",
       "zh": "{facts.captain}在香市放出{facts.good}的风声。"
     },
     "misc.050": { "en": "the tide is turning", "zh": "潮水转向了" },
@@ -9660,25 +9492,25 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "还剩 {minutes}:{seconds}"
     },
     "misc.051": {
-      "en": "This voyage has already set sail. Ask the host to open a new room.",
+      "en": "This voyage has already set sail. Ask the host to open a new harbor.",
       "zh": "本航程已经起航。请港主另开一个港湾。"
     },
     "misc.052": { "en": "The Second Ledger", "zh": "第二本账簿" },
     "misc.053": { "en": "the second ledger", "zh": "第二本账簿" },
     "misc.054": {
-      "en": "One harbor is sealed as well as hard. It opens with a phrase, and the phrase is the second ledger, entered when the room is charted.",
+      "en": "One harbor is sealed as well as hard. It opens with a phrase, and the phrase is the second ledger, entered when the harbor is charted.",
       "zh": "有一座港湾，路难走，门也锁着。开它得用一句暗语，暗语就是第二本账簿，开辟港湾时填上。"
     },
     "misc.055": {
-      "en": "The harbor keeps one door shut, and ${UNLOCK_EARNED_AT} completed voyages is what opens it: the phrase is ${unlock.phrase}, and the guide has the line for whoever asks.",
+      "en": "The harbor keeps one door shut, and {UNLOCK_EARNED_AT} completed voyages is what opens it: the phrase is {unlock.phrase}, and the guide has the line for whoever asks.",
       "zh": "港湾留着一扇门不开，完成{UNLOCK_EARNED_AT}次航程才打得开：暗语是{unlock.phrase}，谁问起，指南里就写着这一句。"
     },
     "misc.056": {
-      "en": "One action ${why}, so nothing here can vouch for whether it landed. The register has been read again.",
+      "en": "One action {why}, so nothing here can vouch for whether it landed. The register has been read again.",
       "zh": "有一项操作{why}，到底落没落下，这里作不了证。名册已重新读过。"
     },
     "misc.057": {
-      "en": "${count} actions ${why}, so nothing here can vouch for whether they landed. The register has been read again.",
+      "en": "{count} actions {why}, so nothing here can vouch for whether they landed. The register has been read again.",
       "zh": "有{count}项操作{why}，到底落没落下，这里作不了证。名册已重新读过。"
     },
     "misc.058": {
@@ -9691,7 +9523,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "misc.060": { "en": "⚓ Venture filled!", "zh": "⚓ 合股达成！" },
     "misc.061": {
-      "en": "Your share: +${mine.amount} Gold.",
+      "en": "Your share: +{mine.amount} Gold.",
       "zh": "你这份：+{mine.amount}金币。"
     },
     "misc.062": {
@@ -9699,22 +9531,22 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "⚓ 合股已逾期"
     },
     "misc.063": {
-      "en": "Partial refund: +${mine.amount} Gold.",
+      "en": "Partial refund: +{mine.amount} Gold.",
       "zh": "部分退款：+{mine.amount}金币。"
     },
     "misc.064": { "en": "⚓ Venture canceled", "zh": "⚓ 合股已取消" },
     "misc.065": {
-      "en": "Another venture in the harbor already claimed this voyage's one chance. Full refund: +${mine.amount} Gold.",
+      "en": "Another venture in the harbor already claimed this voyage's one chance. Full refund: +{mine.amount} Gold.",
       "zh": "港湾里另一笔合股抢先占了本航程唯一的一次机会。全额退款：+{mine.amount}金币。"
     },
     "misc.066": {
-      "en": "${names.slice(0, -1).join(\", \")} and ${names[names.length - 1]}",
-      "zh": "{names.slice(0, -1).join(\"、\")}和{names[names.length - 1]}"
+      "en": "{nameList} and {lastName}",
+      "zh": "{nameList}和{lastName}"
     },
-    "misc.067": { "en": "${count} names", "zh": "{count}个名字" },
-    "misc.068": { "en": "${count} captains", "zh": "{count}位船长" },
+    "misc.067": { "en": "{count} names", "zh": "{count}个名字" },
+    "misc.068": { "en": "{count} captains", "zh": "{count}位船长" },
     "misc.069": {
-      "en": "${named} of ${roster} captains ${named === 1 ? \"has\" : \"have\"} named someone.",
+      "en": "{named} of {roster} captains {haveWord} named someone.",
       "zh": "{roster}位船长里，已有{named}位指认了他人。"
     },
     "misc.073": { "en": "1 name", "zh": "1个名字" },
@@ -9737,44 +9569,44 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "这个设置口令不对。"
     },
     "residual.006": {
-      "en": "You have no artisans yet. ${cardText(apprentice).name} cuts hiring costs by ${Math.round(hireDiscount * 100)}% this round, letting you get a Weaver for ${weaverThen} Gold instead of ${weaverNow}. Good for establishing production early.",
-      "zh": "你还没有工匠。{cardText(apprentice).name}本轮把雇工费用降低{Math.round(hireDiscount * 100)}%：织女只要{weaverThen}金币，原本要{weaverNow}金币。适合早点把生产立起来。"
+      "en": "You have no artisans yet. {apprenticeName} cuts hiring costs by {hireDiscountPct}% this round, letting you get a Weaver for {weaverThen} Gold instead of {weaverNow}. Good for establishing production early.",
+      "zh": "你还没有工匠。{apprenticeName}本轮把雇工费用降低{hireDiscountPct}%：织女只要{weaverThen}金币，原本要{weaverNow}金币。适合早点把生产立起来。"
     },
     "residual.007": {
-      "en": "The best deal costs ${finalCost} Gold but you only have ${game.money}. Save your Gold for the Resolve bills. You can still barter for goods you need.",
+      "en": "The best deal costs {finalCost} Gold but you only have {game.money}. Save your Gold for the Resolve bills. You can still barter for goods you need.",
       "zh": "最划算的一单要{finalCost}金币，而你只有{game.money}。把金币留给结算的账单吧，缺的货还能靠易货换。"
     },
     "residual.008": {
-      "en": "A Weaver costs ${weaverWage} Gold per round and can make Linen Clothes from Hemp. You have ${game.money} Gold, enough for ${Math.floor(game.money / weaverWage)} rounds of wages. Production runs the same round you assign it, so hire now to get goods by Resolve.",
-      "zh": "一名织女每轮要{weaverWage}金币，能把麻布织成麻衣。你有{game.money}金币，够付{Math.floor(game.money / weaverWage)}轮工钱。指派当轮就开工，现在雇，结算时就有货。"
+      "en": "A Weaver costs {weaverWage} Gold per round and can make Linen Clothes from Hemp. You have {game.money} Gold, enough for {wageRounds} rounds of wages. Production runs the same round you assign it, so hire now to get goods by Resolve.",
+      "zh": "一名织女每轮要{weaverWage}金币，能把麻布织成麻衣。你有{game.money}金币，够付{wageRounds}轮工钱。指派当轮就开工，现在雇，结算时就有货。"
     },
     "residual.009": {
-      "en": "This order pays ${bestOrder.reward} Gold with an estimated net profit of ${bestProfit} Gold after transport and taxes. It is the most profitable order you can complete right now.",
+      "en": "This order pays {bestOrder.reward} Gold with an estimated net profit of {bestProfit} Gold after transport and taxes. It is the most profitable order you can complete right now.",
       "zh": "这份订单报酬{bestOrder.reward}金币，扣掉运费和税后估计净赚{bestProfit}金币。这是你现在能完成的最赚的一单。"
     },
     "residual.010": {
-      "en": "You owe about ${totalDue} Gold in wages and maintenance but only have ${game.money} Gold. Ask the harbor for a loan before settling, or you will go bankrupt.",
+      "en": "You owe about {totalDue} Gold in wages and maintenance but only have {game.money} Gold. Ask the harbor for a loan before settling, or you will go bankrupt.",
       "zh": "工钱和维护费大约欠{totalDue}金币，而你只有{game.money}金币。结算前先向港湾借一笔，不然就要破产了。"
     },
     "residual.011": {
-      "en": "You have ${game.money} Gold, enough to cover the estimated ${totalDue} Gold in wages and maintenance. Settle your bills and move on to Dusk.",
+      "en": "You have {game.money} Gold, enough to cover the estimated {totalDue} Gold in wages and maintenance. Settle your bills and move on to Dusk.",
       "zh": "你有{game.money}金币，够付大约{totalDue}金币的工钱和维护费。结清账单，进入暮色。"
     },
     "residual.012": {
-      "en": "Upgrading costs ${cost} Gold and gives +1 module slot and +${SHIP_DISCOUNT_PER_LEVEL} Gold transport discount. With ${roundsLeft} rounds left, the transport savings alone will pay for the upgrade.",
+      "en": "Upgrading costs {cost} Gold and gives +1 module slot and +{SHIP_DISCOUNT_PER_LEVEL} Gold transport discount. With {roundsLeft} rounds left, the transport savings alone will pay for the upgrade.",
       "zh": "升级要{cost}金币，换来 +1个模块槽位和 +{SHIP_DISCOUNT_PER_LEVEL}金币运费折扣。还剩{roundsLeft}轮，单是省下的运费就够回本。"
     },
     "residual.013": {
-      "en": "You have ${game.equippedModules.length} of ${game.shipLevel} module slots filled. An empty slot is wasted potential. Draft a module now to gain a permanent bonus.",
+      "en": "You have {game.equippedModules.length} of {game.shipLevel} module slots filled. An empty slot is wasted potential. Draft a module now to gain a permanent bonus.",
       "zh": "你的{game.shipLevel}个模块槽位装了{game.equippedModules.length}个。空着的槽位就是白扔的潜力。现在就去抽一个模块，换一份永久加成。"
     },
     "residual.014": {
-      "en": "You have ${game.money} Gold. Spending ${intelCost} Gold on a rumor guarantees a matching order in Orders, then buying the ${bestGoodName} at ${bestCard.resources[0]?.price} Gold per unit sets up a profitable trade.",
-      "zh": "你手上有{game.money}金币。花{intelCost}金币买一条掮客密语，订单阶段就保有一条对得上的订单；再按每件{bestCard.resources[0]?.price}金币买进{bestGoodName}，一笔好买卖就成了。"
+      "en": "You have {game.money} Gold. Spending {intelCost} Gold on a rumor guarantees a matching order in Orders, then buying the {bestGoodName} at {bestPrice} Gold per unit sets up a profitable trade.",
+      "zh": "你手上有{game.money}金币。花{intelCost}金币买一条掮客密语，订单阶段就保有一条对得上的订单；再按每件{bestPrice}金币买进{bestGoodName}，一笔好买卖就成了。"
     },
     "residual.015": {
-      "en": "Best deal this round: ${bestGoodName} at ${bestCard.resources[0]?.price} Gold per unit from ${bestCard.port}. This is ${Math.round(bestScore * 100)}% of the typical price range, making it a good value.",
-      "zh": "本轮最划算：来自{bestCard.port}的{bestGoodName}，每件{bestCard.resources[0]?.price}金币，约为常见价格的{Math.round(bestScore * 100)}%，值得入手。"
+      "en": "Best deal this round: {bestGoodName} at {bestPrice} Gold per unit from {bestCard.port}. This is {pricePct}% of the typical price range, making it a good value.",
+      "zh": "本轮最划算：来自{bestCard.port}的{bestGoodName}，每件{bestPrice}金币，约为常见价格的{pricePct}%，值得入手。"
     },
     "residual.016": { "en": "Operator Console", "zh": "操作员控制台" },
     "residual.017": {
@@ -9791,7 +9623,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.025": { "en": "Admins", "zh": "管理员" },
     "residual.026": { "en": "Banned", "zh": "已封停" },
     "residual.027": {
-      "en": "{selected.length} {selected.length === 1 ? \"account\" : \"accounts\"} selected",
+      "en": "{selected.length} {accountWord} selected",
       "zh": "已选{selected.length}个账户"
     },
     "residual.028": { "en": "Ban", "zh": "封停" },
@@ -9820,16 +9652,16 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "封停会当场结束该账户的所有会话，席位一并清空。删除则连账户带它主持的每一个港湾一起移走，撤不回来。"
     },
     "residual.044": {
-      "en": "Delete {purgeTarget?.displayName}?",
-      "zh": "删除{purgeTarget?.displayName}？"
+      "en": "Delete {purgeTarget}?",
+      "zh": "删除{purgeTarget}？"
     },
     "residual.045": {
       "en": "The account is removed, along with every harbor it hosts, every seat it holds, and every voyage, chronicle and merit it has earned. Any captain sitting in one of those harbors is sent back to the Lobby. This cannot be undone.",
       "zh": "账户就此移走，连同它主持的每一个港湾、占着的每一个席位，以及一路赢下的航程、实录与功勋。还坐在这些港湾里的船长，全部送回大厅。撤不回来。"
     },
     "residual.046": {
-      "en": "Type {purgeTarget?.username} to confirm",
-      "zh": "输入{purgeTarget?.username}确认"
+      "en": "Type {purgeTargetHandle} to confirm",
+      "zh": "输入{purgeTargetHandle}确认"
     },
     "residual.047": { "en": "Delete Account", "zh": "删除账户" },
     "residual.048": {
@@ -9838,7 +9670,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     },
     "residual.049": { "en": "Delete Accounts", "zh": "删除账户" },
     "residual.050": {
-      "en": "{verb} {report.applied} {plural(report.applied)}.",
+      "en": "{verb} {report.applied} {accountWord}.",
       "zh": "{verb} {report.applied}个账户。"
     },
     "residual.051": {
@@ -9855,7 +9687,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.056": { "en": "Unknown", "zh": "未知" },
     "residual.057": { "en": "Refresh", "zh": "刷新" },
     "residual.058": {
-      "en": "Delete {bulkCount} {bulkCount === 1 ? \"account\" : \"accounts\"}?",
+      "en": "Delete {bulkCount} {accountWord}?",
       "zh": "删除{bulkCount}个账户？"
     },
     "residual.059": {
@@ -9929,7 +9761,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "窗口里还没有暗潮航程：下面的面板列出各道门槛，以及每道门槛在等什么。"
     },
     "residual.094": {
-      "en": "{window.voyages} {window.voyages === 1 ? \"voyage\" : \"voyages\"}, {window.captains} captains.",
+      "en": "{window.voyages} {voyageWord}, {window.captains} captains.",
       "zh": "{window.voyages}次航程，{window.captains}位船长。"
     },
     "residual.095": {
@@ -9945,24 +9777,24 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{window.unreadable}项读不出来。"
     },
     "residual.098": {
-      "en": "{sharePercent(without, voyages)} of {voyages} {voyages === 1 ? \"lobby\" : \"lobbies\"}",
-      "zh": "占{voyages}个大厅的{sharePercent(without, voyages)}"
+      "en": "{share} of {voyages} {lobbyWord}",
+      "zh": "占{voyages}个大厅的{share}"
     },
     "residual.099": {
-      "en": "{roleCard(role).title} {sharePercent(cover, takes)} of {takes}",
-      "zh": "{roleCard(role).title}：{sharePercent(cover, takes)}，共{takes}次"
+      "en": "{roleTitle} {share} of {takes}",
+      "zh": "{roleTitle}：{share}，共{takes}次"
     },
     "residual.100": {
-      "en": "{ratePercent(cell.rate)} of {cell.played}",
-      "zh": "{ratePercent(cell.rate)}，共{cell.played}程"
+      "en": "{rate} of {cell.played}",
+      "zh": "{rate}，共{cell.played}程"
     },
     "residual.101": {
-      "en": "{sharePercent(stayed, marooned.length)} of {marooned.length}",
-      "zh": "{sharePercent(stayed, marooned.length)}，共{marooned.length}人"
+      "en": "{share} of {marooned.length}",
+      "zh": "{share}，共{marooned.length}人"
     },
     "residual.102": {
-      "en": "{sharePercent(bankrupt, outcomes.length)} of {outcomes.length}",
-      "zh": "{sharePercent(bankrupt, outcomes.length)}，共{outcomes.length}人"
+      "en": "{share} of {outcomes.length}",
+      "zh": "{share}，共{outcomes.length}人"
     },
     "residual.479": { "en": "Launch gates", "zh": "放行门槛" },
     "residual.480": {
@@ -9974,81 +9806,81 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "按{samplePercent}%的采样率记录。"
     },
     "residual.103": {
-      "en": "🔒 Broker's Favor unlocks at Renown ${BROKERS_FAVOR_UNLOCK_LEVEL}, ${renownTitleForLevel(BROKERS_FAVOR_UNLOCK_LEVEL)} (${favorLevelsToGo} level${favorLevelsToGo === 1 ? \"\" : \"s\"} to go)",
-      "zh": "🔒 掮客的人情在声望{BROKERS_FAVOR_UNLOCK_LEVEL}解锁，即{renownTitleForLevel(BROKERS_FAVOR_UNLOCK_LEVEL)}（还差{favorLevelsToGo}级）"
+      "en": "🔒 Broker's Favor unlocks at Renown {BROKERS_FAVOR_UNLOCK_LEVEL}, {unlockTitle} ({favorLevelsToGo} level{pluralS} to go)",
+      "zh": "🔒 掮客的人情在声望{BROKERS_FAVOR_UNLOCK_LEVEL}解锁，即{unlockTitle}（还差{favorLevelsToGo}级）"
     },
     "residual.104": {
-      "en": "${legacy.renownXP} XP earned in total",
+      "en": "{legacy.renownXP} XP earned in total",
       "zh": "累计获得{legacy.renownXP}点声望经验"
     },
     "residual.105": {
-      "en": "${xpIntoLevel} / ${xpForNextLevel} XP to Renown ${level + 1}",
-      "zh": "{xpIntoLevel} / {xpForNextLevel}点声望经验，升往声望{level + 1}"
+      "en": "{xpIntoLevel} / {xpForNextLevel} XP to Renown {nextLevel}",
+      "zh": "{xpIntoLevel} / {xpForNextLevel}点声望经验，升往声望{nextLevel}"
     },
     "residual.106": {
-      "en": "${stats.crowns} Sea Master crown${stats.crowns === 1 ? \"\" : \"s\"} · best Reputation ${stats.bestScore}",
-      "zh": "{stats.crowns}顶沧海之冠 · 最佳声誉{stats.bestScore}"
+      "en": "{stats.crowns} Sea Master crown{pluralS} · best Reputation {stats.bestReputation}",
+      "zh": "{stats.crowns}顶沧海之冠 · 最佳声誉{stats.bestReputation}"
     },
     "residual.107": {
-      "en": "Head to head with ${rival.displayName}: ${rival.myWins} wins, ${rival.theirWins} losses, ${rival.ties} ties",
+      "en": "Head to head with {rival.displayName}: {rival.myWins} wins, {rival.theirWins} losses, {rival.ties} ties",
       "zh": "与{rival.displayName}的交手：{rival.myWins}胜、{rival.theirWins}负、{rival.ties}平"
     },
     "residual.108": {
-      "en": "Your Renown and voyage count suggest you are ready for ${openWaters.name}. ${roundsFor(\"open_waters\")} rounds, ${openWaters.renownXpMultiplier}x Renown, and Imperial Mandates on rounds ${mandatesFor(\"open_waters\")}.",
-      "zh": "你的声望和航程数说明你可以试试{openWaters.name}了。{roundsFor(\"open_waters\")}轮，{openWaters.renownXpMultiplier}倍声望，第{mandatesFor(\"open_waters\")}轮起有皇命。"
+      "en": "Your Renown and voyage count suggest you are ready for {openWaters.name}. {voyageRounds} rounds, {openWaters.renownXpMultiplier}x Renown, and Imperial Mandates on rounds {mandateRounds}.",
+      "zh": "你的声望和航程数说明你可以试试{openWaters.name}了。{voyageRounds}轮，{openWaters.renownXpMultiplier}倍声望，第{mandateRounds}轮起有皇命。"
     },
     "residual.109": {
-      "en": "${fairWinds.name} is the right starting point. ${roundsFor(\"fair_winds\")} rounds, gentle pirate odds, and no mandates. Learn the loop before taking on heavier waters.",
-      "zh": "{fairWinds.name}是最合适的起点。{roundsFor(\"fair_winds\")}轮，海盗概率温和，也没有皇命。先把循环摸熟，再去挑更重的水域。"
+      "en": "{fairWinds.name} is the right starting point. {voyageRounds} rounds, gentle pirate odds, and no mandates. Learn the loop before taking on heavier waters.",
+      "zh": "{fairWinds.name}是最合适的起点。{voyageRounds}轮，海盗概率温和，也没有皇命。先把循环摸熟，再去挑更重的水域。"
     },
     "residual.110": {
-      "en": "${monsoon.name} has a ${pirateOddsLabel(monsoon)} pirate raid chance. Make sure you can survive a bankruptcy before risking it.",
-      "zh": "{monsoon.name}的劫掠概率是{pirateOddsLabel(monsoon)}。冒这个险之前，先确保自己扛得住一次破产。"
+      "en": "{monsoon.name} has a {raidOdds} pirate raid chance. Make sure you can survive a bankruptcy before risking it.",
+      "zh": "{monsoon.name}的劫掠概率是{raidOdds}。冒这个险之前，先确保自己扛得住一次破产。"
     },
     "residual.111": {
-      "en": "${data.winnerName} was first to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage.",
+      "en": "{data.winnerName} was first to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage.",
       "zh": "{data.winnerName}在本航程率先完成了{WORD_ON_THE_DOCKS_THRESHOLD}笔订单。"
     },
     "residual.112": {
-      "en": "${data.winnerName} was first to ${WORD_ON_THE_DOCKS_THRESHOLD} orders.",
+      "en": "{data.winnerName} was first to {WORD_ON_THE_DOCKS_THRESHOLD} orders.",
       "zh": "{data.winnerName}率先做满{WORD_ON_THE_DOCKS_THRESHOLD}笔订单。"
     },
     "residual.436": { "en": "R{round}", "zh": "第{round}轮" },
     "residual.113": {
-      "en": "Hire artisans only when you can sustain at least two rounds of wages. ${play.failureRule}",
+      "en": "Hire artisans only when you can sustain at least two rounds of wages. {play.failureRule}",
       "zh": "至少付得起两轮工钱，才雇工匠。{play.failureRule}"
     },
     "residual.114": {
-      "en": "Day ${res.day} claimed: +${res.xpGained} Renown XP",
+      "en": "Day {res.day} claimed: +{res.xpGained} Renown XP",
       "zh": "第{res.day}天已领取：+{res.xpGained}声望经验"
     },
     "residual.449": { "en": "Lv {n}", "zh": "等级{n}" },
     "residual.115": {
-      "en": "Press ? or F2 in a game room to see all keyboard shortcuts.",
+      "en": "Press ? or F2 in a harbor to see all keyboard shortcuts.",
       "zh": "在港湾里按 ? 或 F2，查看全部快捷键。"
     },
     "residual.116": {
-      "en": "No messages match &ldquo;{searchQuery}&rdquo;.",
+      "en": "No messages match “{searchQuery}”.",
       "zh": "没有消息与“{searchQuery}”匹配。"
     },
     "residual.117": {
-      "en": "${nameCount(needed)} on one captain opens that captain's manifest to the whole harbor and closes this leg's trading.",
-      "zh": "一位船长身上凑够{nameCount(needed)}个名字，就能把那位船长的舱单向全港湾公开，并结束本航段的交易。"
+      "en": "{namesNeeded} on one captain opens that captain's manifest to the whole harbor and closes this leg's trading.",
+      "zh": "一位船长身上凑够{namesNeeded}个名字，就能把那位船长的舱单向全港湾公开，并结束本航段的交易。"
     },
     "residual.118": {
-      "en": "This vote opens at leg ${opensAt}, and this is leg ${game.currentRound}. A simple majority of the captains still sailing then opens one captain's manifest: ${AUDIT_REVEAL_WORDS} of their most recent order fulfillments, and nothing else. A carried vote ends that leg's trading, the voyage carries on at the next leg, and the harbor opens one manifest a voyage.",
+      "en": "This vote opens at leg {opensAt}, and this is leg {game.currentRound}. A simple majority of the captains still sailing then opens one captain's manifest: {AUDIT_REVEAL_WORDS} of their most recent order fulfillments, and nothing else. A carried vote ends that leg's trading, the voyage carries on at the next leg, and the harbor opens one manifest a voyage.",
       "zh": "这次稽查从第{opensAt}航段起开放，现在是第{game.currentRound}航段。还在航程里的船长，简单多数联署，就能公开一位船长的舱单：只公开他最近{AUDIT_REVEAL_WORDS}项订单交付记录，别的都不公开。联署通过的稽查会结束那一航段的交易，航程照常进入下一航段；每航程，港湾只公开一份舱单。"
     },
     "residual.119": {
-      "en": "Others can still take ${draft.offersLeft} more offer${draft.offersLeft === 1 ? \"\" : \"s\"} from you this voyage.",
+      "en": "Others can still take {draft.offersLeft} more offer{pluralS} from you this voyage.",
       "zh": "本航程别人还能从你这里接下{draft.offersLeft}份报价。"
     },
     "residual.120": {
-      "en": "Unlocks at Renown Level ${FLEXIBLE_BARTER_UNLOCK_LEVEL}, ${toGo} level${toGo === 1 ? \"\" : \"s\"} to go.",
+      "en": "Unlocks at Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}, {toGo} level{pluralS} to go.",
       "zh": "声望等级{FLEXIBLE_BARTER_UNLOCK_LEVEL}解锁，还差{toGo}级。"
     },
     "residual.121": {
-      "en": "spoken in leg ${row.round} · priced at leg ${landsOn}",
+      "en": "spoken in leg {row.round} · priced at leg {landsOn}",
       "zh": "第{row.round}航段开的口 · 第{landsOn}航段生效"
     },
     "residual.122": {
@@ -10056,87 +9888,87 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "在香市开口，是{SELLER_PATH.name}之道的事，你本航程不持此道。持有它的人会写进航程日志；只要一开口，下面那块板子就写出名字。"
     },
     "residual.123": {
-      "en": "Once every ${RUMOR_COOLDOWN_ROUNDS} legs, each ${SELLER_PATH.name} captain may spread a word about one commodity, here at the Parley. The next port prices that good against it, by up to ${Math.round(RUMOR_SHIFT_FRACTION * 100)} percent, which is the same hand the Harbormaster leans a port with. The whole harbor is told who spoke and which good they named, and only the speaker knows which way they leaned until the port they named has priced it.",
-      "zh": "每{RUMOR_COOLDOWN_ROUNDS}个航段一次，每位{SELLER_PATH.name}船长可以在洽谈时放出一件货的风声。下一港为那件货定价时会带上这个方向，最高{Math.round(RUMOR_SHIFT_FRACTION * 100)}%，与港务长压港用的是同一只手。谁开的口、点的是哪件货，全港湾都会知道；只有开口的人自己知道押的是哪一边，直到他点名的那个港口为此定价。"
+      "en": "Once every {RUMOR_COOLDOWN_ROUNDS} legs, each {SELLER_PATH.name} captain may spread a word about one commodity, here at the Parley. The next port prices that good against it, by up to {rumorPct} percent, which is the same hand the Harbormaster leans a port with. The whole harbor is told who spoke and which good they named, and only the speaker knows which way they leaned until the port they named has priced it.",
+      "zh": "每{RUMOR_COOLDOWN_ROUNDS}个航段一次，每位{SELLER_PATH.name}船长可以在洽谈时放出一件货的风声。下一港为那件货定价时会带上这个方向，最高{rumorPct}%，与港务长压港用的是同一只手。谁开的口、点的是哪件货，全港湾都会知道；只有开口的人自己知道押的是哪一边，直到他点名的那个港口为此定价。"
     },
     "residual.124": {
-      "en": "✅ Your cover was spent this leg: ${spent.sellerName}'s guns answered the raid and your Gold stayed where it was.",
+      "en": "✅ Your cover was spent this leg: {spent.sellerName}'s guns answered the raid and your Gold stayed where it was.",
       "zh": "✅ 本航段你的护卫派上了用场：{spent.sellerName}的炮口挡下了劫掠，你的金币分文未动。"
     },
     "residual.125": {
-      "en": "✅ You are covered this leg by ${covered.sellerName} for ${covered.fee} Gold, paid at the handshake. A raid on your hold meets their cannons, and what their guns do not beat off comes out of their Gold.",
+      "en": "✅ You are covered this leg by {covered.sellerName} for {covered.fee} Gold, paid at the handshake. A raid on your hold meets their cannons, and what their guns do not beat off comes out of their Gold.",
       "zh": "✅ 本航段{covered.sellerName}为你护卫，费用{covered.fee}金币，握手成交时付清。货舱若遇劫掠，由他们的炮口迎击，炮口挡不下的部分从他们的金币里出。"
     },
     "residual.126": {
-      "en": "${contract.sellerName} is covering ${who} for ${fee} this leg",
+      "en": "{contract.sellerName} is covering {who} for {fee} this leg",
       "zh": "{contract.sellerName}本航段以{fee}金币护卫{who}"
     },
     "residual.127": {
-      "en": "${contract.sellerName}'s guns answered a raid meant for ${who}",
+      "en": "{contract.sellerName}'s guns answered a raid meant for {who}",
       "zh": "{contract.sellerName}的炮口替{who}挡下了一场劫掠"
     },
     "residual.128": {
-      "en": "You turned down ${contract.sellerName}'s offer of ${fee}",
+      "en": "You turned down {contract.sellerName}'s offer of {fee}",
       "zh": "你回绝了{contract.sellerName}的{fee}金币报价"
     },
     "residual.129": {
-      "en": "🛡️ You are covering ${carrying.buyerName ?? \"a captain\"} this leg for ${carrying.fee} Gold, already paid to you. Your Gold answers the raid their hold does not.",
-      "zh": "🛡️ 本航段你替{carrying.buyerName ?? \"某位船长\"}护卫，{carrying.fee}金币已先行付到你手上。轮到海盗找上门，应答的是这笔金币，不是他们的货舱。"
+      "en": "🛡️ You are covering {buyerName} this leg for {carrying.fee} Gold, already paid to you. Your Gold answers the raid their hold does not.",
+      "zh": "🛡️ 本航段你替{buyerName}护卫，{carrying.fee}金币已先行付到你手上。轮到海盗找上门，应答的是这笔金币，不是他们的货舱。"
     },
     "residual.130": {
-      "en": "🛡️ Your offer stands: ${one.fee} Gold for one leg of cover for ${one.buyerName ?? \"a captain\"}. It waits on them.",
-      "zh": "🛡️ 你的报价还挂着：{one.fee}金币，为{one.buyerName ?? \"某位船长\"}护一航段。就等他点头。"
+      "en": "🛡️ Your offer stands: {one.fee} Gold for one leg of cover for {buyerName}. It waits on them.",
+      "zh": "🛡️ 你的报价还挂着：{one.fee}金币，为{buyerName}护一航段。就等他点头。"
     },
     "residual.131": {
-      "en": "🚫 ${refused.buyerName ?? \"A captain\"} turned down your offer of ${refused.fee} Gold. Nothing is owed either way, and the row stays until the leg turns.",
-      "zh": "🚫 {refused.buyerName ?? \"有一位船长\"}回绝了你{refused.fee}金币的报价。两不相欠，这一行会留到本航段结束。"
+      "en": "🚫 {buyerName} turned down your offer of {refused.fee} Gold. Nothing is owed either way, and the row stays until the leg turns.",
+      "zh": "🚫 {buyerName}回绝了你{refused.fee}金币的报价。两不相欠，这一行会留到本航段结束。"
     },
     "residual.132": {
-      "en": "One leg of protection, sold by a Convoy captain at a price the two of them agree. The buyer pays the fee at the handshake, and it is the seller's cannons that answer the raid: ${beatenOff} of it is beaten off, and the remaining ${eaten} is deducted from the seller's Gold. The cover lasts the leg it was sold for and no other, and a raid that never comes costs the seller nothing. ${ESCORT_OFFER_DEATH}",
+      "en": "One leg of protection, sold by a Convoy captain at a price the two of them agree. The buyer pays the fee at the handshake, and it is the seller's cannons that answer the raid: {beatenOff} of it is beaten off, and the remaining {eaten} is deducted from the seller's Gold. The cover lasts the leg it was sold for and no other, and a raid that never comes costs the seller nothing. {ESCORT_OFFER_DEATH}",
       "zh": "一段护卫，由镖行船长出售，价格两人自己谈。买家在握手时付清费用；海盗来时，应答的是卖家的炮火：挡下{beatenOff}，余下的{eaten}从卖家的金币里扣。护卫只管它卖出的那个航段，多一段都不管；海盗没来，卖家分文不损。{ESCORT_OFFER_DEATH}"
     },
     "residual.133": {
-      "en": "You are the seller here, so the price is yours to name: the buyer pays it at the handshake, and your own Gold answers whatever your guns do not beat off, which is ${eaten} of a raid, down to the bottom of your hold. ${consentFeeRule()} An open offer is any captain's to take, while a named one waits on the captain you named, and one open offer plus one per captain named is the most this market holds from you.",
-      "zh": "在这里你是卖家，价格由你开：买家在握手时付清；你的炮火没挡下的部分由你的金币顶上，也就是一次劫掠里的{eaten}，一直扣到货舱见底。{consentFeeRule()}公开报价人人可接，点名报价只等你点的那位船长；一份公开报价，加上每位被点名船长各一份，就是这个市场替你挂着的最多数量。"
+      "en": "You are the seller here, so the price is yours to name: the buyer pays it at the handshake, and your own Gold answers whatever your guns do not beat off, which is {eaten} of a raid, down to the bottom of your hold. {sellerRule} An open offer is any captain's to take, while a named one waits on the captain you named, and one open offer plus one per captain named is the most this market holds from you.",
+      "zh": "在这里你是卖家，价格由你开：买家在握手时付清；你的炮火没挡下的部分由你的金币顶上，也就是一次劫掠里的{eaten}，一直扣到货舱见底。{sellerRule}公开报价人人可接，点名报价只等你点的那位船长；一份公开报价，加上每位被点名船长各一份，就是这个市场替你挂着的最多数量。"
     },
     "residual.134": {
-      "en": "⏳ ${readyLine(readyCount, requiredCount)} The phase turns when the rest do.",
-      "zh": "⏳ {readyLine(readyCount, requiredCount)}其余人就绪后，阶段自会翻页。"
+      "en": "⏳ {readyLine} The phase turns when the rest do.",
+      "zh": "⏳ {readyLine}其余人就绪后，阶段自会翻页。"
     },
     "residual.438": {
       "en": "R{round} · {label}",
       "zh": "第{round}轮 · {label}"
     },
     "residual.135": {
-      "en": "${nameCount(needed)} on one captain puts that captain ashore and spends the vote for the voyage.",
-      "zh": "一位船长身上凑够{nameCount(needed)}个名字，就能把那位船长放逐上岸，并用掉本航程的这一次投票。"
+      "en": "{namesNeeded} on one captain puts that captain ashore and spends the vote for the voyage.",
+      "zh": "一位船长身上凑够{namesNeeded}个名字，就能把那位船长放逐上岸，并用掉本航程的这一次投票。"
     },
     "residual.136": {
-      "en": "This vote opens at leg ${rung}, and this is leg ${game.currentRound}. ${MAROON_VOTE_SHARE} of the captains still sailing, rounded up, then put one captain ashore: the ship and its hold go to the harbor, half their Gold stays aboard, and the Harbormaster's hand is theirs for the rest of the voyage. One vote can carry a voyage, and a vote that falls short can be called again on a later leg.",
+      "en": "This vote opens at leg {rung}, and this is leg {game.currentRound}. {MAROON_VOTE_SHARE} of the captains still sailing, rounded up, then put one captain ashore: the ship and its hold go to the harbor, half their Gold stays aboard, and the Harbormaster's hand is theirs for the rest of the voyage. One vote can carry a voyage, and a vote that falls short can be called again on a later leg.",
       "zh": "这次投票从第{rung}航段起开放，现在是第{game.currentRound}航段。还在航程里的船长，凑够{MAROON_VOTE_SHARE}（向上取整）联署，就能把一位船长放逐上岸：船和船上的货舱归港湾，一半的金币留在船上，港务长之手归联署的一方，直到航程结束。一票能左右整程；票数不够，之后的航段还能再发起。"
     },
     "residual.137": {
-      "en": "Voted ashore by ${MAROON_VOTE_SHARE.toLowerCase()} of the harbor. The ship and everything on it went to the harbor, half their Gold stayed aboard, and the Harbormaster's hand is theirs for the rest of the voyage.",
-      "zh": "被港湾{MAROON_VOTE_SHARE.toLowerCase()}的票数放逐上岸。船和船上的一切归了港湾，一半的金币留在船上，港务长之手归联署的一方，直到航程结束。"
+      "en": "Voted ashore by {voteShare} of the harbor. The ship and everything on it went to the harbor, half their Gold stayed aboard, and the Harbormaster's hand is theirs for the rest of the voyage.",
+      "zh": "被港湾{voteShare}的票数放逐上岸。船和船上的一切归了港湾，一半的金币留在船上，港务长之手归联署的一方，直到航程结束。"
     },
     "residual.138": {
       "en": "The harbor has already named {maroon.carried.name} this voyage. The vote is spent: nothing more is asked of this table until a new voyage.",
       "zh": "本航程港湾已经把{maroon.carried.name}放逐了。这次投票已经用掉：新航程开始之前，不会再向这张牌桌要什么。"
     },
     "residual.139": {
-      "en": "The harbor put you ashore and left you its own lever: once a leg, name a port and lean every price at it by ${Math.round(PORT_SHIFT_FRACTION * 100)} percent, up or down. The call is public, and the market that opens next leg is the one that answers it.",
-      "zh": "港湾把你放上了岸，也留给你一根自己的杠杆：每航段一次，点名一个港口，把这个港的价格整体抬高或压低{Math.round(PORT_SHIFT_FRACTION * 100)}%。这次出手是公开的，下一航段开市的集市，就是回应它的那一个。"
+      "en": "The harbor put you ashore and left you its own lever: once a leg, name a port and lean every price at it by {shiftPct} percent, up or down. The call is public, and the market that opens next leg is the one that answers it.",
+      "zh": "港湾把你放上了岸，也留给你一根自己的杠杆：每航段一次，点名一个港口，把这个港的价格整体抬高或压低{shiftPct}%。这次出手是公开的，下一航段开市的集市，就是回应它的那一个。"
     },
     "residual.140": {
-      "en": "Taking it would put your hull at ${powerAfterTaking(game, card)} power, and a hull carries at most ${HELD_POWER_CAP}.",
-      "zh": "收下它会让船体达到{powerAfterTaking(game, card)}点力量，而船体最多承载{HELD_POWER_CAP}点。"
+      "en": "Taking it would put your hull at {newPower} power, and a hull carries at most {HELD_POWER_CAP}.",
+      "zh": "收下它会让船体达到{newPower}点力量，而船体最多承载{HELD_POWER_CAP}点。"
     },
     "residual.141": {
-      "en": "A module bolted to a hull, sold at a price the two of you agree. It comes off the seller's hull and onto the buyer's the moment the two of you shake hands, so the buyer needs an open slot, and a hull's ladder tops out at ${MAX_SHIP_LEVEL} slots at ship level ${MAX_SHIP_LEVEL}. The fee is paid when you shake hands. One listing per module a leg, one open offer per captain you name, and an offer nobody takes before the Parley closes is gone.",
+      "en": "A module bolted to a hull, sold at a price the two of you agree. It comes off the seller's hull and onto the buyer's the moment the two of you shake hands, so the buyer needs an open slot, and a hull's ladder tops out at {MAX_SHIP_LEVEL} slots at ship level {MAX_SHIP_LEVEL}. The fee is paid when you shake hands. One listing per module a leg, one open offer per captain you name, and an offer nobody takes before the Parley closes is gone.",
       "zh": "装在船体上的模块，价格两人自己谈。一握手，它就从卖家的船体转到买家手上，所以买家得留一个空槽位；而船体的槽位上限，就是船只等级{MAX_SHIP_LEVEL}的{MAX_SHIP_LEVEL}个槽位。费用在握手时付清。每航段每件模块挂一次，每位被你点名的船长各接一份点名报价，洽谈关门前没人接的报价就此作废。"
     },
     "residual.142": {
-      "en": "${progress.delivered} of ${progress.required} handed over",
+      "en": "{progress.delivered} of {progress.required} handed over",
       "zh": "已交{progress.delivered} / {progress.required}"
     },
     "residual.143": {
@@ -10144,15 +9976,15 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "已达{peerTradeProfit}/{BROKER_PAYOUT_TARGET}金币。只计入与其他船长的交易，而且只算其中真正易手的金币。"
     },
     "residual.144": {
-      "en": "Clothes lose a point of wear every leg and two on a cold one. A ${SELLER_PATH.name} captain can put ${REFIT_POINTS} points back in a single leg for whatever fee the two of you agree, and anyone can take ${TAILOR_WORK} from the harbor tailors for ${MEND_GOLD_PER_POINT} Gold. One open offer per captain you name, one refit taken on a leg, and an offer nobody takes before the Market closes is gone.",
+      "en": "Clothes lose a point of wear every leg and two on a cold one. A {SELLER_PATH.name} captain can put {REFIT_POINTS} points back in a single leg for whatever fee the two of you agree, and anyone can take {TAILOR_WORK} from the harbor tailors for {MEND_GOLD_PER_POINT} Gold. One open offer per captain you name, one refit taken on a leg, and an offer nobody takes before the Market closes is gone.",
       "zh": "衣物每个航段掉一点耐久，寒程掉两点。{SELLER_PATH.name}船长可以在一个航段里补回{REFIT_POINTS}点，价格两人自己谈；任何人都可以找港湾的裁缝做{TAILOR_WORK}，每点{MEND_GOLD_PER_POINT}金币。每位被你点名的船长各接一份点名报价，一个航段只能整补一次；开市关门前没人接的报价就此作废。"
     },
     "residual.145": {
-      "en": "${total - visible} still to turn over",
-      "zh": "还有{total - visible}张没翻开"
+      "en": "{unturned} still to turn over",
+      "zh": "还有{unturned}张没翻开"
     },
     "residual.146": {
-      "en": "${captain.peerTradeProfit} Gold in peer trade",
+      "en": "{captain.peerTradeProfit} Gold in peer trade",
       "zh": "船长间贸易进账{captain.peerTradeProfit}金币"
     },
     "residual.464": { "en": "{rep} Rep", "zh": "{rep}声誉" },
@@ -10163,28 +9995,24 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.466": { "en": ", leg by leg", "zh": "，逐航段走来" },
     "residual.467": { "en": "Leg {leg}", "zh": "第{leg}航段" },
     "residual.147": {
-      "en": "No name is in yet. ${nameCount(census.needed)} on one captain ${census.needed === 1 ? \"carries\" : \"carry\"} it.",
+      "en": "No name is in yet. {namesNeeded} on one captain {carryWord} it.",
       "zh": "还没有人署名：一位船长身上凑够{namesNeeded}才能通过。"
     },
-    "residual.148": {
-      "en": "${leader.name} needs ${leader.short === 1 ? \"1 more name\" : `${leader.short} more names`} to carry it.",
-      "zh": "{leader.name}还差{namesShort}才能通过。"
-    },
     "residual.149": {
-      "en": "Your name is in for ${captainName(members, myVote)}. Nothing else is asked of you this leg.",
-      "zh": "你已把你的名字署给了{captainName(members, myVote)}。本航段不再要求你做什么。"
+      "en": "Your name is in for {votedName}. Nothing else is asked of you this leg.",
+      "zh": "你已把你的名字署给了{votedName}。本航段不再要求你做什么。"
     },
     "residual.150": {
       "en": "{leader.name} has every name the vote needs.",
       "zh": "{leader.name}已经凑齐了票上要的所有署名。"
     },
     "residual.151": {
-      "en": "has ${nameCount(row.voters.length)}, from ${nameList(row.voters)}.",
-      "zh": "已有{nameCount(row.voters.length)}，来自{nameList(row.voters)}。"
+      "en": "has {namesNeeded}, from {nameList}.",
+      "zh": "已有{namesNeeded}，来自{nameList}。"
     },
     "residual.152": {
-      "en": "${captainCount(waiting.length)} ${waiting.length === 1 ? \"has\" : \"have\"} not named anyone: ${nameList(waiting)}. ${nextStep(census.needed)}",
-      "zh": "{captainCount(waiting.length)}还没有指认他人：{nameList(waiting)}。{nextStep(census.needed)}"
+      "en": "{captainTally} {haveWord} not named anyone: {nameList}. {nextStep}",
+      "zh": "{captainTally}还没有指认他人：{nameList}。{nextStep}"
     },
     "residual.461": {
       "en": "{namesNeeded} carries it.",
@@ -10195,7 +10023,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{namesNeeded}，就能通过。"
     },
     "residual.153": {
-      "en": "${entries.length} ${entries.length === 1 ? \"line\" : \"lines\"} in the harbor, ${privateLog.length} ${privateLog.length === 1 ? \"line\" : \"lines\"} to you alone",
+      "en": "{entries.length} {harborLines} in the harbor, {privateLog.length} {privateLines} to you alone",
       "zh": "港湾{entries.length}条，只发给你{privateLog.length}条"
     },
     "residual.154": {
@@ -10211,136 +10039,132 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "声望等级{BROKERS_FAVOR_UNLOCK_LEVEL}达成。从下趟航程起，可以在贸易舱单上动用一次人情，召来一位必定接手的买家。"
     },
     "residual.157": {
-      "en": "+${mine.xpGained} Renown XP this voyage${mine.leveledUp ? \" · Renown level up!\" : \"\"}",
-      "zh": "本航程 +{mine.xpGained}声望经验{mine.leveledUp ? \" · 声望升级！\" : \"\"}"
+      "en": "+{mine.xpGained} Renown XP this voyage{levelUpMark}",
+      "zh": "本航程 +{mine.xpGained}声望经验{levelUpMark}"
     },
     "residual.158": {
-      "en": "${outstandingLent} loan${outstandingLent === 1 ? \"\" : \"s\"} still out",
+      "en": "{outstandingLent} loan{pluralS} still out",
       "zh": "还有{outstandingLent}笔借款未收回"
     },
     "residual.159": {
-      "en": "${outstandingBorrowed} loan${outstandingBorrowed === 1 ? \"\" : \"s\"} still owed",
+      "en": "{outstandingBorrowed} loan{pluralS} still owed",
       "zh": "还有{outstandingBorrowed}笔借款未还清"
     },
     "residual.160": {
-      "en": "Replacing it would put your hull at ${powerAfterTaking(game, newMod, card)} power, and a hull carries at most ${HELD_POWER_CAP}.",
-      "zh": "换上去会让船体达到{powerAfterTaking(game, newMod, card)}点力量，而船体最多承载{HELD_POWER_CAP}。"
+      "en": "Replacing it would put your hull at {newPower} power, and a hull carries at most {HELD_POWER_CAP}.",
+      "zh": "换上去会让船体达到{newPower}点力量，而船体最多承载{HELD_POWER_CAP}。"
     },
     "residual.161": {
-      "en": "Double Tax Strategy: ${cardName(\"smugglers_hold\")} reduces purchase costs and ${cardName(\"tax_evasion\")} halves both VAT and income tax. A powerful financial combo.",
-      "zh": "双税战术：{cardName(\"smugglers_hold\")}压低采购成本，{cardName(\"tax_evasion\")}把增值税和所得税一起减半。一套强力的财务组合。"
+      "en": "Double Tax Strategy: {smugglersHoldName} reduces purchase costs and {taxEvasionName} halves both VAT and income tax. A powerful financial combo.",
+      "zh": "双税战术：{smugglersHoldName}压低采购成本，{taxEvasionName}把增值税和所得税一起减半。一套强力的财务组合。"
     },
     "residual.162": {
-      "en": "Production Engine: ${cardName(\"artisans_workshop\")} boosts worker output and ${cardName(\"salvage_crane\")} refunds the freight on some orders. More goods, more Gold back.",
-      "zh": "生产引擎：{cardName(\"artisans_workshop\")}提升工匠产出，{cardName(\"salvage_crane\")}退还部分订单的运费。货更多，金币回得更多。"
+      "en": "Production Engine: {artisansWorkshopName} boosts worker output and {salvageCraneName} refunds the freight on some orders. More goods, more Gold back.",
+      "zh": "生产引擎：{artisansWorkshopName}提升工匠产出，{salvageCraneName}退还部分订单的运费。货更多，金币回得更多。"
     },
     "residual.163": {
-      "en": "Intel Network: ${cardName(\"brokers_network\")} discounts every whisper, and ${cardName(\"ocean_relay\")} adds one more at no cost. Maximum market intelligence.",
-      "zh": "密语网：{cardName(\"brokers_network\")}让每条掮客密语都打折，{cardName(\"ocean_relay\")}再免费加一条。集市密语拉满。"
+      "en": "Intel Network: {brokersNetworkName} discounts every whisper, and {oceanRelayName} adds one more at no cost. Maximum market intelligence.",
+      "zh": "密语网：{brokersNetworkName}让每条掮客密语都打折，{oceanRelayName}再免费加一条。集市密语拉满。"
     },
     "residual.164": {
-      "en": "Penalty Stack: ${cardName(\"overdrive_engine\")} adds maintenance and ${cardName(\"bulk_hauler\")} raises upgrade cost. Consider swapping one if funds are tight.",
-      "zh": "负担叠加：{cardName(\"overdrive_engine\")}增加维护费，{cardName(\"bulk_hauler\")}抬高升级成本。手头紧就考虑换掉一个。"
+      "en": "Penalty Stack: {overdriveEngineName} adds maintenance and {bulkHaulerName} raises upgrade cost. Consider swapping one if funds are tight.",
+      "zh": "负担叠加：{overdriveEngineName}增加维护费，{bulkHaulerName}抬高升级成本。手头紧就考虑换掉一个。"
     },
     "residual.165": {
-      "en": "Charter Combo: ${cardName(\"kiln_cellar\")} discounts every bulk good, and ${cardName(\"bureau_token\")} pays more on orders for the charter's own goods. Buy cheap, sell high.",
-      "zh": "特许组合：{cardName(\"kiln_cellar\")}让所有散货都降价，{cardName(\"bureau_token\")}为特许自家货物的订单多付钱。低价买进，高价卖出。"
+      "en": "Charter Combo: {kilnCellarName} discounts every bulk good, and {bureauTokenName} pays more on orders for the charter's own goods. Buy cheap, sell high.",
+      "zh": "特许组合：{kilnCellarName}让所有散货都降价，{bureauTokenName}为特许自家货物的订单多付钱。低价买进，高价卖出。"
     },
     "residual.166": {
-      "en": "Exotic Trade: ${cardName(\"foreign_quarter_pass\")} discounts every luxury good, and ${cardName(\"fleet_of_treasures\")} takes Gold off freight on the same trade. Tier 2 goods at tier 0 prices.",
-      "zh": "异域贸易：{cardName(\"foreign_quarter_pass\")}让所有奢华货物都降价，{cardName(\"fleet_of_treasures\")}在这类买卖上再削运费。二级货，零级价。"
+      "en": "Exotic Trade: {foreignQuarterName} discounts every luxury good, and {fleetOfTreasuresName} takes Gold off freight on the same trade. Tier 2 goods at tier 0 prices.",
+      "zh": "异域贸易：{foreignQuarterName}让所有奢华货物都降价，{fleetOfTreasuresName}在这类买卖上再削运费。二级货，零级价。"
     },
     "residual.167": {
-      "en": "🧾 Est. VAT: ${totalVat} Gold (per unit shown on hover)",
+      "en": "🧾 Est. VAT: {totalVat} Gold (per unit shown on hover)",
       "zh": "🧾 预估增值税：{totalVat}金币（单件明细悬停可见）"
     },
     "residual.168": {
-      "en": "🔒 Broker's Favor unlocks at Renown Level ${BROKERS_FAVOR_UNLOCK_LEVEL}: call one in once per voyage to summon a guaranteed buyer for a good already in your hold. You are Renown Level ${game.renownLevel} now, ${BROKERS_FAVOR_UNLOCK_LEVEL - game.renownLevel} to go.",
-      "zh": "🔒 掮客的人情在声望等级{BROKERS_FAVOR_UNLOCK_LEVEL}解锁：每航程可唤一次，为货舱里已有的一件货，招来一位必定接手的买家。你现在的声望等级是{game.renownLevel}，还差{BROKERS_FAVOR_UNLOCK_LEVEL - game.renownLevel}级。"
+      "en": "🔒 Broker's Favor unlocks at Renown Level {BROKERS_FAVOR_UNLOCK_LEVEL}: call one in once per voyage to summon a guaranteed buyer for a good already in your hold. You are Renown Level {game.renownLevel} now, {levelsToGo} to go.",
+      "zh": "🔒 掮客的人情在声望等级{BROKERS_FAVOR_UNLOCK_LEVEL}解锁：每航程可唤一次，为货舱里已有的一件货，招来一位必定接手的买家。你现在的声望等级是{game.renownLevel}，还差{levelsToGo}级。"
     },
     "residual.169": {
-      "en": "No ${favorItem} left in your hold",
+      "en": "No {favorItem} left in your hold",
       "zh": "货舱里没有{favorItem}了"
     },
     "residual.170": {
-      "en": "How much ${favorItem} should the Broker sell?",
+      "en": "How much {favorItem} should the Broker sell?",
       "zh": "要让掮客卖出多少{favorItem}？"
     },
     "residual.171": {
-      "en": "of ${favorHeld} in your hold",
+      "en": "of {favorHeld} in your hold",
       "zh": "，货舱里共有{favorHeld}"
     },
     "residual.172": {
-      "en": "Your card is down. ${caption}",
+      "en": "Your card is down. {caption}",
       "zh": "你的牌已扣下。{caption}"
     },
     "residual.173": {
-      "en": "Before this round's bills come due, your ship has to clear open water. There is a ${raidPct}% chance pirates find you and take every coin in your hold. Hire an escort to sail through safely, or risk it and save the Gold.",
+      "en": "Before this round's bills come due, your ship has to clear open water. There is a {raidPct}% chance pirates find you and take every coin in your hold. Hire an escort to sail through safely, or risk it and save the Gold.",
       "zh": "本轮账单到期之前，你的船得先闯过一片开阔水域。海盗有{raidPct}%的概率找上你，把你舱里的每一枚金币都拿走。雇一艘护航安然驶过，要么就冒这个险，把金币省下。"
     },
     "residual.174": {
-      "en": "🛡️ {cover.sellerName} sold you this leg's cover. Their cannons beat off {Math.round(escortCoverage() * 100)}% of a boarding party, and their own hold answers for the rest.",
-      "zh": "🛡️ {cover.sellerName}把本航段的护卫卖给了你。他们的炮口能挡下登船队{Math.round(escortCoverage() * 100)}%的攻势，挡不下的部分由他们自己的货舱担着。"
+      "en": "🛡️ {cover.sellerName} sold you this leg's cover. Their cannons beat off {coverPct}% of a boarding party, and their own hold answers for the rest.",
+      "zh": "🛡️ {cover.sellerName}把本航段的护卫卖给了你。他们的炮口能挡下登船队{coverPct}%的攻势，挡不下的部分由他们自己的货舱担着。"
     },
     "residual.175": {
-      "en": "Escort costs ${escortFee} Gold but expected loss is ${Math.round(expectedLoss)} Gold. Hiring the escort saves Gold on average.",
-      "zh": "雇护航要{escortFee}金币，预期损失却有{Math.round(expectedLoss)}金币。平均算下来，雇护航反而更省。"
+      "en": "Escort costs {escortFee} Gold but expected loss is {expectedLoss} Gold. Hiring the escort saves Gold on average.",
+      "zh": "雇护航要{escortFee}金币，预期损失却有{expectedLoss}金币。平均算下来，雇护航反而更省。"
     },
     "residual.176": {
-      "en": "An unnamed trader on the quay: ${bargePrice} Gold a ration against the port's ${RATION_PRICE}.",
+      "en": "An unnamed trader on the quay: {bargePrice} Gold a ration against the port's {RATION_PRICE}.",
       "zh": "码头上的无名商贩：一份口粮{bargePrice}金币，港口的价是{RATION_PRICE}。"
     },
     "residual.177": {
-      "en": "a leg of rations costs ${legCost} Gold",
+      "en": "a leg of rations costs {legCost} Gold",
       "zh": "一航段的口粮要{legCost}金币"
     },
     "residual.178": {
-      "en": "🐟 Preserve ${batches * PRESERVE_MEALS_IN} Produce into ${batches * PRESERVE_MEALS_OUT} Salt Fish",
-      "zh": "🐟 把{batches * PRESERVE_MEALS_IN}份时鲜腌成{batches * PRESERVE_MEALS_OUT}份咸鱼"
+      "en": "🐟 Preserve {produceIn} Produce into {saltOut} Salt Fish",
+      "zh": "🐟 把{produceIn}份时鲜腌成{saltOut}份咸鱼"
     },
     "residual.179": {
-      "en": "Unpaid loans settle automatically at the end of Round ${maxRounds}, and the Gold goes to the lender.",
+      "en": "Unpaid loans settle automatically at the end of Round {maxRounds}, and the Gold goes to the lender.",
       "zh": "未还清的借款会在第{maxRounds}轮结束时自动结清，金币归债主。"
     },
     "residual.180": {
-      "en": "A loan transfers instantly if someone helps. Repay it any time before the voyage ends. {loanSettleLine(game.maxRounds)}",
-      "zh": "一有人出手，借款立刻到账。航程结束前随时可以还。{loanSettleLine(game.maxRounds)}"
+      "en": "A loan transfers instantly if someone helps. Repay it any time before the voyage ends. {loanDue}",
+      "zh": "一有人出手，借款立刻到账。航程结束前随时可以还。{loanDue}"
     },
     "residual.181": {
-      "en": "🆘 Waiting for a captain to lend you ${myRequest.amount} Gold…",
+      "en": "🆘 Waiting for a captain to lend you {myRequest.amount} Gold…",
       "zh": "🆘 等待船长借给你{myRequest.amount}金币..."
     },
     "residual.182": {
-      "en": "Every module the yard could deal would pass this hull's ${HELD_POWER_CAP} power. Selling one at the Parley table makes room.",
+      "en": "Every module the yard could deal would pass this hull's {HELD_POWER_CAP} power. Selling one at the Parley table makes room.",
       "zh": "船坞能给到的模块，每一件都超过这条船体{HELD_POWER_CAP}点的承载上限。到洽谈桌卖掉一件，就腾出了位置。"
     },
     "residual.183": {
-      "en": "🚢 Ship Level: ${game.shipLevel} | ⚓ Discount: ${game.shipLevel * SHIP_DISCOUNT_PER_LEVEL} Gold",
-      "zh": "🚢 船只等级：{game.shipLevel}｜⚓ 折扣：{game.shipLevel * SHIP_DISCOUNT_PER_LEVEL}金币"
+      "en": "🚢 Ship Level: {game.shipLevel} | ⚓ Discount: {shipDiscount} Gold",
+      "zh": "🚢 船只等级：{game.shipLevel}｜⚓ 折扣：{shipDiscount}金币"
     },
     "residual.184": {
-      "en": "⚓ Upgrade Ship (Lvl ${game.shipLevel + 1}), Cost ${upgCost} Gold | +1 Slot, +${SHIP_DISCOUNT_PER_LEVEL} Discount",
-      "zh": "⚓ 升级船只（{game.shipLevel + 1}级），花费{upgCost}金币｜+1槽位，+{SHIP_DISCOUNT_PER_LEVEL}折扣"
+      "en": "⚓ Upgrade Ship (Lvl {nextShipLevel}), Cost {upgCost} Gold | +1 Slot, +{SHIP_DISCOUNT_PER_LEVEL} Discount",
+      "zh": "⚓ 升级船只（{nextShipLevel}级），花费{upgCost}金币｜+1槽位，+{SHIP_DISCOUNT_PER_LEVEL}折扣"
     },
     "residual.185": {
-      "en": "🧥 Wear ${good} (${game.inventory[good]} in the hold, ${GARMENTS[good].warmth} warmth)",
-      "zh": "🧥 穿上{good}（货舱有{game.inventory[good]}，暖意{GARMENTS[good].warmth}）"
+      "en": "🧥 Wear {good} ({heldQty} in the hold, {warmth} warmth)",
+      "zh": "🧥 穿上{good}（货舱有{heldQty}，暖意{warmth}）"
     },
     "residual.186": {
-      "en": "A garment the sea has worn out becomes rags and is scrapped for ${RAG_SCRAP_VALUE} Gold. Frostbite costs the newest hand one leg of work rather than their place aboard.",
+      "en": "A garment the sea has worn out becomes rags and is scrapped for {RAG_SCRAP_VALUE} Gold. Frostbite costs the newest hand one leg of work rather than their place aboard.",
       "zh": "衣物被海磨破就成了碎布，拆掉换回{RAG_SCRAP_VALUE}金币。冻伤只让新来的人手歇一个航段的工，不会让他离开船。"
     },
     "residual.187": {
-      "en": "${raidPct}% chance of losing all Gold on hand",
+      "en": "{raidPct}% chance of losing all Gold on hand",
       "zh": "有{raidPct}%的概率丢掉手头所有的金币"
     },
     "residual.188": {
-      "en": "⏳ Waiting for the host to start the voyage… (${harborIds.length} in harbor)",
+      "en": "⏳ Waiting for the host to start the voyage… ({harborIds.length} in harbor)",
       "zh": "⏳ 等待港主启航...（港湾里{harborIds.length}人）"
-    },
-    "residual.439": {
-      "en": "{count} captain in the harbor",
-      "zh": "{count}位船长在港湾里"
     },
     "residual.440": {
       "en": "{count} captain{pluralS} in the harbor",
@@ -10372,7 +10196,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "你已跟投{mine.amount}金币"
     },
     "residual.191": {
-      "en": "Once a voyage, at a port in legs ${PATH_SWITCH_FROM_ROUND} through ${PATH_SWITCH_TO_ROUND}, for ${fee} Gold at your Renown. Unfulfilled pathbound orders are forfeited, and the whole fleet sees the change written into the voyage log.",
+      "en": "Once a voyage, at a port in legs {PATH_SWITCH_FROM_ROUND} through {PATH_SWITCH_TO_ROUND}, for {fee} Gold at your Renown. Unfulfilled pathbound orders are forfeited, and the whole fleet sees the change written into the voyage log.",
       "zh": "每航程一次，可在第{PATH_SWITCH_FROM_ROUND}至{PATH_SWITCH_TO_ROUND}航段的港口改走商道，费用{fee}金币，按你的声望计算。未交付的商道订单一并作废，全船队都会在航程日志里看到你改道。"
     },
     "residual.192": {
@@ -10416,7 +10240,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "本航段你已经有护卫了。"
     },
     "residual.202": {
-      "en": "Not a member of that room",
+      "en": "Not a member of that harbor",
       "zh": "不是这个港湾的成员"
     },
     "residual.203": {
@@ -10432,11 +10256,11 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "那位船长不在这个港湾。"
     },
     "residual.206": {
-      "en": "A fee is a whole number of Gold, at least ${CONSENT_FEE_MIN} and at most ${CONSENT_FEE_MAX}.",
+      "en": "A fee is a whole number of Gold, at least {CONSENT_FEE_MIN} and at most {CONSENT_FEE_MAX}.",
       "zh": "费用是整数金币，至少{CONSENT_FEE_MIN}，至多{CONSENT_FEE_MAX}。"
     },
     "residual.207": {
-      "en": "A fee is paid at the handshake and you hold ${hold} Gold: this offer costs ${fee}.",
+      "en": "A fee is paid at the handshake and you hold {hold} Gold: this offer costs {fee}.",
       "zh": "费用在握手成交时付清，你手上有{hold}金币：这份报价要{fee}。"
     },
     "residual.208": {
@@ -10464,18 +10288,18 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "这个账户已不再是管理员。"
     },
     "residual.214": {
-      "en": "There is a ${pct(first)} chance, rising to ${pct(second)} past the midpoint.",
-      "zh": "有{pct(first)}的概率，过了中点升到{pct(second)}。"
+      "en": "There is a {chanceBefore} chance, rising to {chanceAfter} past the midpoint.",
+      "zh": "有{chanceBefore}的概率，过了中点升到{chanceAfter}。"
     },
     "residual.432": {
-      "en": "There is a ${pct(first)} chance.",
-      "zh": "有{pct(first)}的概率。"
+      "en": "There is a {chanceBefore} chance.",
+      "zh": "有{chanceBefore}的概率。"
     },
     "residual.215": { "en": "🏪 Market: Buying", "zh": "🏪 开市：采购" },
     "residual.216": { "en": "🤝 Parley: Bartering", "zh": "🤝 洽谈：易货" },
     "residual.217": {
-      "en": "📜 On round${mandates.length === 1 ? \"\" : \"s\"} ${mandates.join(\", \")} the Emperor commissions a <strong>mandate</strong>: one large order at a fixed reward, and the only order exempt from VAT. It often asks for more than a single hold carries, so plan to barter or borrow to fill it.",
-      "zh": "📜 在第{mandates.join(\"、\")}轮，皇帝会颁下一道<strong>皇命</strong>：一笔大额订单，报酬固定，而且是唯一免增值税的订单。它要的货常常一个货舱装不下，所以提前打算好，靠易货或借货把它填满。"
+      "en": "📜 On round{pluralS} {mandateList} the Emperor commissions a <strong>mandate</strong>: one large order at a fixed reward, and the only order exempt from VAT. It often asks for more than a single hold carries, so plan to barter or borrow to fill it.",
+      "zh": "📜 在第{mandateList}轮，皇帝会颁下一道<strong>皇命</strong>：一笔大额订单，报酬固定，而且是唯一免增值税的订单。它要的货常常一个货舱装不下，所以提前打算好，靠易货或借货把它填满。"
     },
     "residual.218": {
       "en": "In these waters a broker can be corrupt. The rumor you buy is still true and still arrives, always, but a corrupt one also leaks your position to the pirates. The log says so plainly when it happens, and the odds you see already include it.",
@@ -10487,10 +10311,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Open the full navigation guide",
       "zh": "打开完整导航指南"
     },
-    "residual.222": {
-      "en": "Open this shortcut help",
-      "zh": "打开快捷键帮助"
-    },
+    "residual.222": { "en": "Open this shortcut help", "zh": "打开快捷键帮助" },
     "residual.223": {
       "en": "Close this shortcut help",
       "zh": "关闭快捷键帮助"
@@ -10514,8 +10335,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.231": { "en": "Resolve: Settlement", "zh": "结算：清账" },
     "residual.232": { "en": "🚢 You are ready", "zh": "🚢 可以出发了" },
     "residual.233": {
-      "en": "• ${w?.label ?? id} (${w?.wage ?? 0} Gold/Round): Makes ${makes}",
-      "zh": "• {w?.label ?? id}（每轮{w?.wage ?? 0}金币）：产出{makes}"
+      "en": "• {workerLabel} ({workerWage} Gold/Round): Makes {makes}",
+      "zh": "• {workerLabel}（每轮{workerWage}金币）：产出{makes}"
     },
     "residual.437": {
       "en": "Only the host can restart the voyage.",
@@ -10529,7 +10350,6 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "en": "Restart voyage (host only)",
       "zh": "重开航程（仅限房主）"
     },
-    "residual.469": { "en": "{gold} Gold", "zh": "{gold}金币" },
     "residual.234": {
       "en": "The goods that answer a cold leg, and the cards that speak of one: read against the wardrobe's own table, which is where a garment's warmth already lives.",
       "zh": "应付寒程的货物，以及说到寒程的卡牌：对照衣箱自己的那张表来读，每件衣服的暖意本来就写在那里。"
@@ -10583,16 +10403,16 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "⚓ 避免破产的策略："
     },
     "residual.244": {
-      "en": "⚓ Staying Afloat in ${play.badge}:",
+      "en": "⚓ Staying Afloat in {play.badge}:",
       "zh": "⚓ 在{play.badge}里稳住船身："
     },
     "residual.245": {
-      "en": "\\n🛟 If the Bills Beat You:\\n${play.failureRule}\\n",
-      "zh": "\\n🛟 账单要是先压垮了你：\\n{play.failureRule}\\n"
+      "en": "\n🛟 If the Bills Beat You:\n{play.failureRule}\n",
+      "zh": "\n🛟 账单要是先压垮了你：\n{play.failureRule}\n"
     },
     "residual.473": {
-      "en": "💰 Financial Management:\\n1. Always maintain reserve funds for expenses\\n2. Maintenance + Wages are fixed round costs\\n3. Calculate total expenditure before buying\\n\\n👥 Worker Management:\\n1. Weaver Wage: {weaverWage} Gold / Round\\n2. Master Wage: {masterWage} Gold / Round\\n3. Maker Wage: {sachetWage} Gold / Round\\n4. Hire only as needed\\n\\n🔮 Broker's Whisper Strategy:\\n1. Buy rumors early if you have spare gold\\n2. Hoard revealed items to guarantee Orders profits\\n3. Balance intel purchases with other investments\\n\\n🛒 Buying Strategy:\\n1. Reserve funds for maintenance+wages first\\n2. Select high value for money goods\\n3. Prioritize port specialties + revealed intel\\n\\n🔄 Bartering Strategy:\\n1. Trade away surplus raw materials for the one you're actually short on\\n2. A modest Gold offer can secure a needed item faster than waiting on the next round's market\\n3. Cancel an offer that's sitting unclaimed if you'd rather keep the material yourself\\n\\n🤝 Trading Strategy:\\n1. Prioritize highest profit orders\\n2. Consider freight impact on margins\\n3. Finished orders yield high profit but incur VAT\\n\\n⚠️ Risk Control:\\n1. Calculate fixed round costs: Maintenance + Wages\\n2. Keep funds consistently > fixed costs\\n3. Avoid overexpansion cash flow issues\\n\\n🏴‍☠️ Pirates and Escorts:\\n1. The escort fee scales with your own Gold, so it's relatively cheap exactly when you're poor and the stakes are also low\\n2. Hire one when you're carrying enough Gold that losing it would actually hurt\\n3. Sailing without one is a fair bet when you have little to lose anyway\\n\\n🆘 Borrowing and Lending:\\n1. Repay a loan as soon as you can afford it, instead of waiting for it to be deducted automatically at Round {rounds}\\n2. Lending Gold raises your own reputation, so helping a captain who can clearly repay you is rarely a bad trade\\n3. Watch how much you've lent out across the voyage; it's still your Gold until it's actually repaid\\n\\n🛡️ Backing Strategy:\\n1. Back a loan you'd have happily lent Gold on yourself; you're taking on the same risk without earning the lender's own full reputation rate\\n2. Only pledge what you can afford to lose outright, the same rule as lending directly\\n3. A loan to a captain who's clearly about to turn a profit is a safer backing bet than one taken late in the voyage with little runway left to repay it\\n\\n💾 Save game progress frequently with Ctrl+S!",
-      "zh": "💰 财务管理：\\n1. 手头永远留一笔应急资金\\n2. 维护费和工钱是每轮的固定开销\\n3. 出手采购前，先算清这一轮总共要花多少\\n\\n👥 用工管理：\\n1. 织女工钱：每轮 {weaverWage} 金币\\n2. 纺织大师工钱：每轮 {masterWage} 金币\\n3. 香囊师工钱：每轮 {sachetWage} 金币\\n4. 用工按需，别多雇\\n\\n🔮 掮客密语策略：\\n1. 手头有余钱，就早点买密语\\n2. 把点破的货捂紧，用来稳稳吃下订单利润\\n3. 情报开销和其他投资要平衡\\n\\n🛒 采购策略：\\n1. 先把维护费和工钱留出来\\n2. 挑性价比高的货\\n3. 优先港口特产，再配上点破的情报\\n\\n🔄 易货策略：\\n1. 多余的原材料拿去换真正短缺的那一样\\n2. 一笔不高的金币报价，往往比等下一轮市场更快拿到货\\n3. 挂着没人接的报价，与其干等，不如撤回，自己留着材料\\n\\n🤝 交易策略：\\n1. 优先做利润最高的订单\\n2. 把运费对利润的影响算进去\\n3. 成品订单利润高，但要缴增值税\\n\\n⚠️ 风险控制：\\n1. 算清每轮固定开销：维护费加工钱\\n2. 让手里的金币始终高过固定开销\\n3. 别贪扩张，小心周转不开\\n\\n🏴‍☠️ 海盗与护航：\\n1. 护航费随你手上的金币浮动，越是穷的时候越便宜，那时的损失本来也小\\n2. 金币多到丢了会肉疼的时候，就该雇一趟护航\\n3. 反正没什么可输的，不雇护航也赌得起\\n\\n🆘 借与贷：\\n1. 能还就尽早还，别拖到第{rounds}轮被自动扣还\\n2. 放贷长自己的声誉，借给明显还得上的船长，很少是笔亏本买卖\\n3. 留意整个航程放出去多少：没还回来之前，那还是你的金币\\n\\n🛡️ 作保策略：\\n1. 只给你自己乐意放贷的那类借款作保：担的是同样的风险，却拿不到债主那份完整的声誉\\n2. 只押你可以干脆认赔的数目，和直接放贷一个道理\\n3. 作保给一位眼看就要盈利的船长，比押给航程末尾、还款空间所剩无几的那类借款稳妥\\n\\n💾 用 Ctrl+S 勤存档！"
+      "en": "💰 Financial Management:\n1. Always maintain reserve funds for expenses\n2. Maintenance + Wages are fixed round costs\n3. Calculate total expenditure before buying\n\n👥 Worker Management:\n1. Weaver Wage: {weaverWage} Gold / Round\n2. Master Wage: {masterWage} Gold / Round\n3. Maker Wage: {sachetWage} Gold / Round\n4. Hire only as needed\n\n🔮 Broker's Whisper Strategy:\n1. Buy rumors early if you have spare gold\n2. Hoard revealed items to guarantee Orders profits\n3. Balance intel purchases with other investments\n\n🛒 Buying Strategy:\n1. Reserve funds for maintenance+wages first\n2. Select high value for money goods\n3. Prioritize port specialties + revealed intel\n\n🔄 Bartering Strategy:\n1. Trade away surplus raw materials for the one you're actually short on\n2. A modest Gold offer can secure a needed item faster than waiting on the next round's market\n3. Cancel an offer that's sitting unclaimed if you'd rather keep the material yourself\n\n🤝 Trading Strategy:\n1. Prioritize highest profit orders\n2. Consider freight impact on margins\n3. Finished orders yield high profit but incur VAT\n\n⚠️ Risk Control:\n1. Calculate fixed round costs: Maintenance + Wages\n2. Keep funds consistently > fixed costs\n3. Avoid overexpansion cash flow issues\n\n🏴‍☠️ Pirates and Escorts:\n1. The escort fee scales with your own Gold, so it's relatively cheap exactly when you're poor and the stakes are also low\n2. Hire one when you're carrying enough Gold that losing it would actually hurt\n3. Sailing without one is a fair bet when you have little to lose anyway\n\n🆘 Borrowing and Lending:\n1. Repay a loan as soon as you can afford it, instead of waiting for it to be deducted automatically at Round {rounds}\n2. Lending Gold raises your own reputation, so helping a captain who can clearly repay you is rarely a bad trade\n3. Watch how much you've lent out across the voyage; it's still your Gold until it's actually repaid\n\n🛡️ Backing Strategy:\n1. Back a loan you'd have happily lent Gold on yourself; you're taking on the same risk without earning the lender's own full reputation rate\n2. Only pledge what you can afford to lose outright, the same rule as lending directly\n3. A loan to a captain who's clearly about to turn a profit is a safer backing bet than one taken late in the voyage with little runway left to repay it\n\n💾 Save game progress frequently with Ctrl+S!",
+      "zh": "💰 财务管理：\n1. 手头永远留一笔应急资金\n2. 维护费和工钱是每轮的固定开销\n3. 出手采购前，先算清这一轮总共要花多少\n\n👥 用工管理：\n1. 织女工钱：每轮 {weaverWage} 金币\n2. 纺织大师工钱：每轮 {masterWage} 金币\n3. 香囊师工钱：每轮 {sachetWage} 金币\n4. 用工按需，别多雇\n\n🔮 掮客密语策略：\n1. 手头有余钱，就早点买密语\n2. 把点破的货捂紧，用来稳稳吃下订单利润\n3. 情报开销和其他投资要平衡\n\n🛒 采购策略：\n1. 先把维护费和工钱留出来\n2. 挑性价比高的货\n3. 优先港口特产，再配上点破的情报\n\n🔄 易货策略：\n1. 多余的原材料拿去换真正短缺的那一样\n2. 一笔不高的金币报价，往往比等下一轮市场更快拿到货\n3. 挂着没人接的报价，与其干等，不如撤回，自己留着材料\n\n🤝 交易策略：\n1. 优先做利润最高的订单\n2. 把运费对利润的影响算进去\n3. 成品订单利润高，但要缴增值税\n\n⚠️ 风险控制：\n1. 算清每轮固定开销：维护费加工钱\n2. 让手里的金币始终高过固定开销\n3. 别贪扩张，小心周转不开\n\n🏴‍☠️ 海盗与护航：\n1. 护航费随你手上的金币浮动，越是穷的时候越便宜，那时的损失本来也小\n2. 金币多到丢了会肉疼的时候，就该雇一趟护航\n3. 反正没什么可输的，不雇护航也赌得起\n\n🆘 借与贷：\n1. 能还就尽早还，别拖到第{rounds}轮被自动扣还\n2. 放贷长自己的声誉，借给明显还得上的船长，很少是笔亏本买卖\n3. 留意整个航程放出去多少：没还回来之前，那还是你的金币\n\n🛡️ 作保策略：\n1. 只给你自己乐意放贷的那类借款作保：担的是同样的风险，却拿不到债主那份完整的声誉\n2. 只押你可以干脆认赔的数目，和直接放贷一个道理\n3. 作保给一位眼看就要盈利的船长，比押给航程末尾、还款空间所剩无几的那类借款稳妥\n\n💾 用 Ctrl+S 勤存档！"
     },
     "residual.246": {
       "en": "Barge revenue share of all food spending",
@@ -10607,8 +10427,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "窗口内没有购买食物"
     },
     "residual.249": {
-      "en": "{ratePercent(barge / food)} of {food} Gold over {voyages} {voyages === 1 ? \"voyage\" : \"voyages\"}",
-      "zh": "{ratePercent(barge / food)}：{food}金币开支，覆盖{voyages}次航程"
+      "en": "{rate} of {food} Gold over {voyages} {voyageWord}",
+      "zh": "{rate}：{food}金币开支，覆盖{voyages}次航程"
     },
     "residual.250": { "en": "no threshold in the plan", "zh": "计划未设门槛" },
     "residual.251": {
@@ -10654,12 +10474,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "窗口内没人选过特许"
     },
     "residual.266": {
-      "en": "{splitTakes} {splitTakes === 1 ? \"take\" : \"takes\"}, none past the {CARD_CONVERSION_FLOOR} a path is read over",
+      "en": "{splitTakes} {takeWord}, none past the {CARD_CONVERSION_FLOOR} a path is read over",
       "zh": "{splitTakes}次选取，都没到判定一条商道所需的{CARD_CONVERSION_FLOOR}次"
     },
     "residual.267": {
-      "en": "{PATHS[widest.path].name}, {widest.points} points off even over {widest.takes} takes",
-      "zh": "{PATHS[widest.path].name}，取了{widest.takes}次也偏出{widest.points}点"
+      "en": "{pathName}, {widest.points} points off even over {widest.takes} takes",
+      "zh": "{pathName}，取了{widest.takes}次也偏出{widest.points}点"
     },
     "residual.268": { "en": "no deviation above 20%", "zh": "偏差没有超过20%" },
     "residual.269": {
@@ -10714,13 +10534,13 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "两行特许数据都是本窗口自己的选取，在第四航段回答的那一刻，按人、按航程各登记一次。分化在每条商道内部读，因为计划要问的是：一条商道上的两种特许，船长们会伸手去拿哪一种。一条商道要取够卡牌读数所依据的下限，才谈得上判定；显示的值取已判定商道中最宽的那条，所以印出的偏差和它上面的判定说的是同一条商道。护卫一行是计划的观察项，不是门槛：只有叛徒才拿的特许，已经不再是护卫，所以这一行数的是各阵营取打捞特许的频率。计划没有为它设阈值，也就不作判定。"
     },
     "residual.284": {
-      "en": "{roleCard(cell.alignment).title}, {cell.band} seats",
-      "zh": "{roleCard(cell.alignment).title}，{cell.band}席"
+      "en": "{roleTitle}, {cell.band} seats",
+      "zh": "{roleTitle}，{cell.band}席"
     },
     "residual.285": { "en": "no voyage played", "zh": "没有跑过的航程" },
     "residual.286": {
-      "en": "Swing across played bands, {roleCard(swing.alignment).title}",
-      "zh": "已跑分段之间的波动，{roleCard(swing.alignment).title}"
+      "en": "Swing across played bands, {roleTitle}",
+      "zh": "已跑分段之间的波动，{roleTitle}"
     },
     "residual.287": { "en": "no band played", "zh": "没有跑过的分段" },
     "residual.288": {
@@ -10757,8 +10577,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "没有来自分舱的航段报告"
     },
     "residual.297": {
-      "en": "{ratePercent(centre)}, median of {fills.length}",
-      "zh": "{ratePercent(centre)}，{fills.length}次记录的中位数"
+      "en": "{rate}, median of {fills.length}",
+      "zh": "{rate}，{fills.length}次记录的中位数"
     },
     "residual.298": {
       "en": "Marooned captains still standing at the close",
@@ -10813,8 +10633,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{band.label}席：窗口内没有"
     },
     "residual.314": {
-      "en": "{band.label} seats {Math.round(band.centre)} min of {band.count}",
-      "zh": "{band.label}席：{Math.round(band.centre)}分钟，{band.count}次"
+      "en": "{band.label} seats {medianMinutes} min of {band.count}",
+      "zh": "{band.label}席：{medianMinutes}分钟，{band.count}次"
     },
     "residual.315": {
       "en": "Voyages that stopped before the reveal",
@@ -10825,12 +10645,12 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "窗口里可读的每一道门槛都在区间内，{readable.length}/{gated.length}。"
     },
     "residual.317": {
-      "en": "{sharePercent(thinLegs, legReports.length)} over {legReports.length} captain legs",
-      "zh": "{sharePercent(thinLegs, legReports.length)}，覆盖{legReports.length}个船长航段"
+      "en": "{share} over {legReports.length} captain legs",
+      "zh": "{share}，覆盖{legReports.length}个船长航段"
     },
     "residual.318": {
-      "en": "${stopped.length} of ${records.length}, stopping at leg ${Math.round(centre)} on the median",
-      "zh": "{stopped.length}/{records.length}，按中位数停在第{Math.round(centre)}航段"
+      "en": "{stopped.length} of {records.length}, stopping at leg {medianLeg} on the median",
+      "zh": "{stopped.length}/{records.length}，按中位数停在第{medianLeg}航段"
     },
     "residual.484": {
       "en": "{floor} to {ceiling}%",
@@ -10851,183 +10671,183 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
     "residual.494": { "en": "62 to 74 min", "zh": "62到74分钟" },
     "residual.495": { "en": "not measurable", "zh": "测不出来" },
     "residual.319": {
-      "en": "❌ Need ${debt.amount} Gold to repay ${debt.counterpartyName}, have ${state.money}",
+      "en": "❌ Need {debt.amount} Gold to repay {debt.counterpartyName}, have {state.money}",
       "zh": "❌ 还{debt.counterpartyName}{debt.amount}金币，手上只有{state.money}"
     },
     "residual.320": {
-      "en": "🤝 Your bequest was paid out to ${redirectedToName}",
+      "en": "🤝 Your bequest was paid out to {redirectedToName}",
       "zh": "🤝 你留下的遗赠已付给{redirectedToName}"
     },
     "residual.321": {
-      "en": "🛡️ Your backing fully covered a captain's shortfall: all ${calledAmount} Gold pledged was spent helping the lender.",
+      "en": "🛡️ Your backing fully covered a captain's shortfall: all {calledAmount} Gold pledged was spent helping the lender.",
       "zh": "🛡️ 你的作保全额补上了一位船长的缺口：质押的{calledAmount}金币全部花在了替债主兜底上。"
     },
     "residual.322": {
-      "en": "🛡️ ${backerName} covered ${amount} Gold of ${borrowerName}'s shortfall as a backer.",
+      "en": "🛡️ {backerName} covered {amount} Gold of {borrowerName}'s shortfall as a backer.",
       "zh": "🛡️ {backerName}作保，替{borrowerName}补上了缺口里的{amount}金币。"
     },
     "residual.323": {
-      "en": "${rumorCooldownLine(left)} You spoke in leg ${spoke}, so the bazaar hears you again at leg ${next}.",
-      "zh": "{rumorCooldownLine(left)}你是在第{spoke}航段开的口，所以香市要到第{next}航段才重新听你。"
+      "en": "{rumorWait} You spoke in leg {spoke}, so the bazaar hears you again at leg {next}.",
+      "zh": "{rumorWait}你是在第{spoke}航段开的口，所以香市要到第{next}航段才重新听你。"
     },
     "residual.324": {
-      "en": "🧭 Boon Locked In: ${cardLead(card.id)}",
-      "zh": "🧭 机缘已锁定：{cardLead(card.id)}"
+      "en": "🧭 Boon Locked In: {boonLead}",
+      "zh": "🧭 机缘已锁定：{boonLead}"
     },
     "residual.325": {
-      "en": "❌ ${cardName(card.id)} would put your hull at ${total} power, and a hull carries at most ${HELD_POWER_CAP}.",
-      "zh": "❌ {cardName(card.id)}会让你的船体达到{total}点力量，而船体最多承载{HELD_POWER_CAP}点。"
+      "en": "❌ {moduleName} would put your hull at {total} power, and a hull carries at most {HELD_POWER_CAP}.",
+      "zh": "❌ {moduleName}会让你的船体达到{total}点力量，而船体最多承载{HELD_POWER_CAP}点。"
     },
     "residual.326": {
-      "en": "${CHARTER_MOMENT.icon} Your charter: ${cardLead(card.id)}",
-      "zh": "{CHARTER_MOMENT.icon} 你的特许：{cardLead(card.id)}"
+      "en": "{CHARTER_MOMENT.icon} Your charter: {charterLead}",
+      "zh": "{CHARTER_MOMENT.icon} 你的特许：{charterLead}"
     },
     "residual.327": {
-      "en": "${input.displayName} took the crown sailing ${waters} and came home with ${input.finalReputation} Reputation.",
+      "en": "{input.displayName} took the crown sailing {waters} and came home with {input.finalReputation} Reputation.",
       "zh": "{input.displayName}在{waters}中夺下沧海之冠，带着{input.finalReputation}点声誉归来。"
     },
     "residual.328": {
-      "en": "${input.displayName} was put ashore by a vote of the harbor and sailed ${waters} without a ship.",
+      "en": "{input.displayName} was put ashore by a vote of the harbor and sailed {waters} without a ship.",
       "zh": "港湾投票把{input.displayName}放逐上岸，此后无船在身，依然在{waters}中走完了航程。"
     },
     "residual.329": {
-      "en": "${input.displayName} sailed ${waters}, went bankrupt, and finished the voyage.",
+      "en": "{input.displayName} sailed {waters}, went bankrupt, and finished the voyage.",
       "zh": "{input.displayName}在{waters}中跑了一程，中途破产，仍走完了航程。"
     },
     "residual.330": {
-      "en": "${input.displayName} sailed ${waters} and came home with ${input.finalReputation} Reputation.",
+      "en": "{input.displayName} sailed {waters} and came home with {input.finalReputation} Reputation.",
       "zh": "{input.displayName}在{waters}中跑了一程，带着{input.finalReputation}点声誉归来。"
     },
     "residual.331": {
-      "en": "Peak Reputation hit ${input.peakReputation}.",
+      "en": "Peak Reputation hit {input.peakReputation}.",
       "zh": "巅峰声誉达到{input.peakReputation}。"
     },
     "residual.332": {
-      "en": "The largest single trade paid ${input.largestTrade} Gold.",
+      "en": "The largest single trade paid {input.largestTrade} Gold.",
       "zh": "最大的一笔单次交易进账{input.largestTrade}金币。"
     },
     "residual.333": {
-      "en": "${input.displayName} lent once",
+      "en": "{input.displayName} lent once",
       "zh": "{input.displayName}借出过一次"
     },
     "residual.334": {
-      "en": "${input.displayName} lent ${input.lendCount} times",
+      "en": "{input.displayName} lent {input.lendCount} times",
       "zh": "{input.displayName}借出过{input.lendCount}次"
     },
     "residual.335": {
-      "en": "borrowed ${input.borrowCount} times",
+      "en": "borrowed {input.borrowCount} times",
       "zh": "借入过{input.borrowCount}次"
     },
     "residual.336": {
-      "en": "The crown went home with ${input.displayName}.",
+      "en": "The crown went home with {input.displayName}.",
       "zh": "沧海之冠跟着{input.displayName}回了家。"
     },
     "residual.337": {
-      "en": "The harbor voted to put ${input.displayName} ashore, and the voyage went on without a ship under them.",
+      "en": "The harbor voted to put {input.displayName} ashore, and the voyage went on without a ship under them.",
       "zh": "港湾投票把{input.displayName}放逐上岸，此后的航程，他们身下再没有船。"
     },
     "residual.338": {
-      "en": "The voyage ended in bankruptcy before ${input.displayName} could finish.",
+      "en": "The voyage ended in bankruptcy before {input.displayName} could finish.",
       "zh": "航程没等{input.displayName}走完，就先破产收场了。"
     },
     "residual.339": {
-      "en": "The harbor closed the books at ${input.merchantRating}.",
+      "en": "The harbor closed the books at {input.merchantRating}.",
       "zh": "港湾合上账本时，商人评级停在{input.merchantRating}。"
     },
     "residual.340": {
-      "en": "🧭 You set aside the ${pathConfig(from)!.name} path and took up the ${pathConfig(to)!.name}. The harbor charges ${fee} Gold.",
-      "zh": "🧭 你放下{pathConfig(from)!.name}之道，改走{pathConfig(to)!.name}。港湾收取{fee}金币。"
+      "en": "🧭 You set aside the {fromPathName} path and took up the {toPathName}. The harbor charges {fee} Gold.",
+      "zh": "🧭 你放下{fromPathName}之道，改走{toPathName}。港湾收取{fee}金币。"
     },
     "residual.341": {
-      "en": "Papers are changed at the port, in ${pathSwitchPortsList()}.",
-      "zh": "换文书要回港办理，在{pathSwitchPortsList()}。"
+      "en": "Papers are changed at the port, in {switchPorts}.",
+      "zh": "换文书要回港办理，在{switchPorts}。"
     },
     "residual.342": {
-      "en": "\\n📊=== Round ${state.currentRound} Settlement ===",
-      "zh": "\\n📊=== 第{state.currentRound}轮 · 结算 ==="
+      "en": "\n📊=== Round {state.currentRound} Settlement ===",
+      "zh": "\n📊=== 第{state.currentRound}轮 · 结算 ==="
     },
     "residual.343": {
-      "en": "🔧 Maintenance: ${state.maintenanceCosts} Gold",
+      "en": "🔧 Maintenance: {state.maintenanceCosts} Gold",
       "zh": "🔧 维护费：{state.maintenanceCosts}金币"
     },
     "residual.344": {
-      "en": "\\n🔧=== Round ${state.currentRound} · Resolve: Ship Maintenance ===",
-      "zh": "\\n🔧=== 第{state.currentRound}轮 · 结算：船只维护 ==="
+      "en": "\n🔧=== Round {state.currentRound} · Resolve: Ship Maintenance ===",
+      "zh": "\n🔧=== 第{state.currentRound}轮 · 结算：船只维护 ==="
     },
     "residual.345": {
-      "en": "\\n🚢=== Round ${state.currentRound} · Dusk: Shipyard & Modules ===",
-      "zh": "\\n🚢=== 第{state.currentRound}轮 · 暮色：船坞与模块 ==="
+      "en": "\n🚢=== Round {state.currentRound} · Dusk: Shipyard & Modules ===",
+      "zh": "\n🚢=== 第{state.currentRound}轮 · 暮色：船坞与模块 ==="
     },
     "residual.346": {
-      "en": "🧾 Total Taxes Paid: ${state.vatPaid + state.incomeTaxPaid} Gold",
-      "zh": "🧾 税费总计：{state.vatPaid + state.incomeTaxPaid}金币"
+      "en": "🧾 Total Taxes Paid: {taxesPaid} Gold",
+      "zh": "🧾 税费总计：{taxesPaid}金币"
     },
     "residual.347": {
-      "en": "${cardLead(\"farsight\")}: 'Word from ${port}: High demand for ${item}!' (free)",
-      "zh": "{cardLead(\"farsight\")}：『{port}的消息：{item}正抢手！』（免费）"
+      "en": "{farsightLead}: 'Word from {port}: High demand for {item}!' (free)",
+      "zh": "{farsightLead}：『{port}的消息：{item}正抢手！』（免费）"
     },
     "residual.348": {
-      "en": "\\n⚓=== Round ${state.currentRound} · Market: Port Purchase ===",
-      "zh": "\\n⚓=== 第{state.currentRound}轮 · 开市：港口采购 ==="
+      "en": "\n⚓=== Round {state.currentRound} · Market: Port Purchase ===",
+      "zh": "\n⚓=== 第{state.currentRound}轮 · 开市：港口采购 ==="
     },
     "residual.349": {
-      "en": "🔧 ${name} leaves your hull for ${trade.buyerName ?? \"a captain\"}.",
-      "zh": "🔧 {name}从你的船体上卸下，转给了{trade.buyerName ?? \"某位船长\"}。"
+      "en": "🔧 {name} leaves your hull for {buyerName}.",
+      "zh": "🔧 {name}从你的船体上卸下，转给了{buyerName}。"
     },
     "residual.350": {
-      "en": "🤝 Module trade: ${trade.buyerName ?? \"A captain\"} paid ${trade.fee} Gold for ${name}.",
-      "zh": "🤝 模块交易：{trade.buyerName ?? \"有一位船长\"}花{trade.fee}金币买下了{name}。"
+      "en": "🤝 Module trade: {buyerName} paid {trade.fee} Gold for {name}.",
+      "zh": "🤝 模块交易：{buyerName}花{trade.fee}金币买下了{name}。"
     },
     "residual.351": {
-      "en": "${cardLead(\"fleet_of_treasures\")}: ${luxuryItems * 3}g off freight",
-      "zh": "{cardLead(\"fleet_of_treasures\")}：运费减{luxuryItems * 3}金币"
+      "en": "{fleetLead}: {freightOff}g off freight",
+      "zh": "{fleetLead}：运费减{freightOff}金币"
     },
     "residual.352": {
-      "en": "🚨 AUDIT! ${cardLead(\"tax_evasion\")} triggered. Lost 20 Gold!",
-      "zh": "🚨 稽查！{cardLead(\"tax_evasion\")}触发。损失20金币！"
+      "en": "🚨 AUDIT! {taxEvasionLead} triggered. Lost 20 Gold!",
+      "zh": "🚨 稽查！{taxEvasionLead}触发。损失20金币！"
     },
     "residual.353": {
-      "en": "📊 Completed ${state.orderCount} transactions",
+      "en": "📊 Completed {state.orderCount} transactions",
       "zh": "📊 已完成{state.orderCount}笔交易"
     },
     "residual.354": {
-      "en": "🤝 Broker's Favor called in: a buyer at ${order.demandPort} now wants ${txt}. The bigger the ask, the bigger the Broker's cut.",
+      "en": "🤝 Broker's Favor called in: a buyer at {order.demandPort} now wants {txt}. The bigger the ask, the bigger the Broker's cut.",
       "zh": "🤝 掮客的人情已兑现：{order.demandPort}的一位买家现在要{txt}。要得越多，掮客的抽成越大。"
     },
     "residual.355": {
-      "en": "🕵️ That broker was corrupt. The word is good, but your position leaked: raid risk is up ${Math.round(cfg.brokerCorruptionRisk * 100)} points this round.",
-      "zh": "🕵️ 那个掮客通匪。消息是真的，但你的位置泄露了：本轮的劫掠风险上升{Math.round(cfg.brokerCorruptionRisk * 100)}点。"
+      "en": "🕵️ That broker was corrupt. The word is good, but your position leaked: raid risk is up {riskPoints} points this round.",
+      "zh": "🕵️ 那个掮客通匪。消息是真的，但你的位置泄露了：本轮的劫掠风险上升{riskPoints}点。"
     },
     "residual.356": {
-      "en": "\\n🤝=== Round ${state.currentRound} · Orders: Trade Transaction ===",
-      "zh": "\\n🤝=== 第{state.currentRound}轮 · 订单：贸易交易 ==="
+      "en": "\n🤝=== Round {state.currentRound} · Orders: Trade Transaction ===",
+      "zh": "\n🤝=== 第{state.currentRound}轮 · 订单：贸易交易 ==="
     },
     "residual.357": {
-      "en": "🛡️ Pirates closed on your hold and met ${cover.sellerName}'s guns. All ${raidGold} Gold saved, and the boarding party is theirs to answer for.",
+      "en": "🛡️ Pirates closed on your hold and met {cover.sellerName}'s guns. All {raidGold} Gold saved, and the boarding party is theirs to answer for.",
       "zh": "🛡️ 海盗逼近货舱，撞上了{cover.sellerName}的炮口。{raidGold}金币分文未失，登船队由他们自己去应付。"
     },
     "residual.358": {
-      "en": "🛡️ Pirates boarded and found the hold already bare. ${cover.sellerName}'s escort turned them away for nothing.",
+      "en": "🛡️ Pirates boarded and found the hold already bare. {cover.sellerName}'s escort turned them away for nothing.",
       "zh": "🛡️ 海盗登船，发现货舱早已空空。{cover.sellerName}的护卫挡回了他们，却什么也没护着。"
     },
     "residual.359": {
-      "en": "Ship Level ${state.shipLevel} discount",
+      "en": "Ship Level {state.shipLevel} discount",
       "zh": "船只等级{state.shipLevel}的折扣"
     },
     "residual.360": {
-      "en": "${boonNameForModifierKey(\"hemp_price_reduction\")} (down ${hempReduction}g per unit)",
-      "zh": "{boonNameForModifierKey(\"hemp_price_reduction\")}（每单位降{hempReduction}金币）"
+      "en": "{hempBoon} (down {hempReduction}g per unit)",
+      "zh": "{hempBoon}（每单位降{hempReduction}金币）"
     },
     "residual.361": {
-      "en": "${cardName(\"kiln_cellar\")} module (down ${KILN_CELLAR_PER_UNIT}g per unit)",
-      "zh": "{cardName(\"kiln_cellar\")}模块（每单位降{KILN_CELLAR_PER_UNIT}金币）"
+      "en": "{kilnCellarName} module (down {KILN_CELLAR_PER_UNIT}g per unit)",
+      "zh": "{kilnCellarName}模块（每单位降{KILN_CELLAR_PER_UNIT}金币）"
     },
     "residual.362": {
-      "en": "${cardName(\"smugglers_hold\")} module (down 15%)",
-      "zh": "{cardName(\"smugglers_hold\")}模块（降价15%）"
+      "en": "{smugglersHoldName} module (down 15%)",
+      "zh": "{smugglersHoldName}模块（降价15%）"
     },
     "residual.363": {
-      "en": "🪧 Standing orders at the shipyard: upgraded the hull to level ${state.shipLevel}.",
+      "en": "🪧 Standing orders at the shipyard: upgraded the hull to level {state.shipLevel}.",
       "zh": "🪧 船坞的常备订单：把船体升到了{state.shipLevel}级。"
     },
     "residual.364": {
@@ -11043,7 +10863,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 船员身上能穿的，就这些了。"
     },
     "residual.367": {
-      "en": "❌ No ${good} in the hold to wear.",
+      "en": "❌ No {good} in the hold to wear.",
       "zh": "❌ 货舱里没有{good}可穿。"
     },
     "residual.368": {
@@ -11055,27 +10875,27 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❌ 本航段海上温和，用不上暖意。现在穿上就要从今天开始磨损，所以货舱把它们留给寒程。"
     },
     "residual.370": {
-      "en": "🧥 The crew puts on the ${good}. Warmth ${spec.warmth} while it lasts.",
+      "en": "🧥 The crew puts on the {good}. Warmth {spec.warmth} while it lasts.",
       "zh": "🧥 船员穿上了{good}。暖意{spec.warmth}，穿多久算多久。"
     },
     "residual.371": {
-      "en": "🧵 The ${good} comes back to ${after} of ${spec.durability}, worth ${warmthText(garmentWarmth({ good, durability: after }))} of warmth.",
-      "zh": "🧵 {good}的耐久回到{after}/{spec.durability}，折合{warmthText(garmentWarmth({ good, durability: after }))}暖意。"
+      "en": "🧵 The {good} comes back to {after} of {spec.durability}, worth {warmthGrade} of warmth.",
+      "zh": "🧵 {good}的耐久回到{after}/{spec.durability}，折合{warmthGrade}暖意。"
     },
     "residual.372": {
-      "en": "\\n🧥=== Round ${state.currentRound} · The Cold and the Cloth ===",
-      "zh": "\\n🧥=== 第{state.currentRound}轮 · 寒冷与衣着 ==="
+      "en": "\n🧥=== Round {state.currentRound} · The Cold and the Cloth ===",
+      "zh": "\n🧥=== 第{state.currentRound}轮 · 寒冷与衣着 ==="
     },
     "residual.373": {
-      "en": "❄️ A cold leg, and the crew's ${warmthText(score)} of warmth falls short of the ${COLD_LEG_WARMTH} it asks.",
-      "zh": "❄️ 寒程，船员的{warmthText(score)}暖意不够它要的{COLD_LEG_WARMTH}。"
+      "en": "❄️ A cold leg, and the crew's {warmthGrade} of warmth falls short of the {COLD_LEG_WARMTH} it asks.",
+      "zh": "❄️ 寒程，船员的{warmthGrade}暖意不够它要的{COLD_LEG_WARMTH}。"
     },
     "residual.374": {
-      "en": "🌊 The ${garment.good} wears through to rags and is scrapped for ${RAG_SCRAP_VALUE} Gold.",
+      "en": "🌊 The {garment.good} wears through to rags and is scrapped for {RAG_SCRAP_VALUE} Gold.",
       "zh": "🌊 {garment.good}磨成了碎布，拆掉换回{RAG_SCRAP_VALUE}金币。"
     },
     "residual.375": {
-      "en": "🧵 Worn clothes lose ${step} point of wear to the sea.",
+      "en": "🧵 Worn clothes lose {step} point of wear to the sea.",
       "zh": "🧵 海风从穿着的衣服上耗去{step}点耐久。"
     },
     "residual.376": {
@@ -11087,8 +10907,8 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "❄️ 寒程，船员的{warmthGrade}暖意够它要的{COLD_LEG_WARMTH}。"
     },
     "residual.377": {
-      "en": "{gates.length - notInBand.length} of {gates.length} gates inside {gates.length - notInBand.length === 1 ? \"its band\" : \"their bands\"}",
-      "zh": "{gates.length - notInBand.length}/{gates.length}道门槛在区间内"
+      "en": "{inBand} of {gates.length} gates inside {bandWord}",
+      "zh": "{inBand}/{gates.length}道门槛在区间内"
     },
     "residual.378": {
       "en": "{failing.length} out of band",
@@ -11123,35 +10943,35 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "这个窗口按{samplePercent}%的采样率记录，所以这些读数来自样本，不是全量。"
     },
     "residual.386": {
-      "en": "{unmeasured.length} of the {gates.length} gates {unmeasured.length === 1 ? \"has\" : \"have\"} no source yet",
+      "en": "{unmeasured.length} of the {gates.length} gates {haveWord} no source yet",
       "zh": "{gates.length}道门槛中有{unmeasured.length}道还没有来源"
     },
     "residual.387": {
-      "en": "{unmeasured.length} of the {gates.length} gates {unmeasured.length === 1 ? \"has\" : \"have\"} no source: {names(unmeasured)}. {unmeasured.length === 1 ? \"It waits\" : \"They wait\"} on the systems that would produce them, and the plan does not ship a mode on the gates that happen to be measurable.",
-      "zh": "{gates.length}道门槛中有{unmeasured.length}道还没有来源：{names(unmeasured)}。它们要等能产出数据的系统上线；计划不会靠碰巧可测量的那几道门槛来给一个模式放行。"
+      "en": "{unmeasured.length} of the {gates.length} gates {haveWord} no source: {gateNames}. {waitWord} on the systems that would produce them, and the plan does not ship a mode on the gates that happen to be measurable.",
+      "zh": "{gates.length}道门槛中有{unmeasured.length}道还没有来源：{gateNames}。它们要等能产出数据的系统上线；计划不会靠碰巧可测量的那几道门槛来给一个模式放行。"
     },
     "residual.388": {
-      "en": "{unplayed.length} of the {gates.length} gates {unplayed.length === 1 ? \"has\" : \"have\"} no voyage to read",
+      "en": "{unplayed.length} of the {gates.length} gates {haveWord} no voyage to read",
       "zh": "{gates.length}道门槛中有{unplayed.length}道没有航程可读"
     },
     "residual.389": {
-      "en": "{unplayed.length} of the {gates.length} gates {unplayed.length === 1 ? \"has\" : \"have\"} no voyage to read: {names(unplayed)}.",
-      "zh": "{gates.length}道门槛中有{unplayed.length}道没有航程可读：{names(unplayed)}。"
+      "en": "{unplayed.length} of the {gates.length} gates {haveWord} no voyage to read: {gateNames}.",
+      "zh": "{gates.length}道门槛中有{unplayed.length}道没有航程可读：{gateNames}。"
     },
     "residual.390": {
-      "en": "the window holds {unreadable} {unreadable === 1 ? \"record\" : \"records\"} that could not be read",
+      "en": "the window holds {unreadable} {recordWord} that could not be read",
       "zh": "窗口里有{unreadable}条记录读不出来"
     },
     "residual.391": {
-      "en": "The window holds {unreadable} {unreadable === 1 ? \"record\" : \"records\"} that could not be read, so it is that much smaller than the run it was taken from.",
+      "en": "The window holds {unreadable} {recordWord} that could not be read, so it is that much smaller than the run it was taken from.",
       "zh": "窗口里有{unreadable}条记录读不出来，比它抽自的那批数据就小了这么多。"
     },
     "residual.392": {
-      "en": "the window holds {truncated} {truncated === 1 ? \"record\" : \"records\"} that hit the event cap",
+      "en": "the window holds {truncated} {recordWord} that hit the event cap",
       "zh": "窗口里有{truncated}条记录触及事件上限"
     },
     "residual.393": {
-      "en": "The window holds {truncated} {truncated === 1 ? \"record\" : \"records\"} that hit the event cap, so some of what happened in those voyages was never kept and the gates read over them are floors rather than readings.",
+      "en": "The window holds {truncated} {recordWord} that hit the event cap, so some of what happened in those voyages was never kept and the gates read over them are floors rather than readings.",
       "zh": "窗口里有{truncated}条记录触及事件上限，这些航程里发生的事，有一部分没能留下；靠它们读出的门槛只是下限，不算读数。"
     },
     "residual.394": {
@@ -11159,20 +10979,20 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{gates.length}道门槛中有{ungated.length}道对应的读数计划没有设阈值"
     },
     "residual.395": {
-      "en": "{ungated.length} of the {gates.length} gates answer readings the plan set no threshold on: {names(ungated)}. That is a contradiction in the page rather than a reading, and it is named here rather than passed over.",
-      "zh": "{gates.length}道门槛中有{ungated.length}道对应的读数计划没有设阈值：{names(ungated)}。这是页面自身的矛盾，不是读数；就在这里点出来，不放过去。"
+      "en": "{ungated.length} of the {gates.length} gates answer readings the plan set no threshold on: {gateNames}. That is a contradiction in the page rather than a reading, and it is named here rather than passed over.",
+      "zh": "{gates.length}道门槛中有{ungated.length}道对应的读数计划没有设阈值：{gateNames}。这是页面自身的矛盾，不是读数；就在这里点出来，不放过去。"
     },
     "residual.396": {
-      "en": "{failing.length} {failing.length === 1 ? \"gate sits\" : \"gates sit\"} outside {failing.length === 1 ? \"its\" : \"their\"} band: {lines(failing)}.",
-      "zh": "{failing.length}道门槛在区间之外：{lines(failing)}。"
+      "en": "{failing.length} {sitsWord} outside {theirWord} band: {gateLines}.",
+      "zh": "{failing.length}道门槛在区间之外：{gateLines}。"
     },
     "residual.397": {
       "en": "Clear to ship: all {total} gates sit inside their bands over {voyages} recorded voyages.",
       "zh": "可放行：全部{total}道门槛都在各自区间内，覆盖{voyages}程已记录航程。"
     },
     "residual.398": {
-      "en": "Held by {failing.length} of {total} gates: {lines(failing)}.",
-      "zh": "暂缓：{total}道门槛中有{failing.length}道未过：{lines(failing)}。"
+      "en": "Held by {failing.length} of {total} gates: {gateLines}.",
+      "zh": "暂缓：{total}道门槛中有{failing.length}道未过：{gateLines}。"
     },
     "residual.399": {
       "en": "{head} {untradeable.line.label} is the plan's own priority and cannot be traded against the others.",
@@ -11191,44 +11011,44 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{gate.line.label}：{gate.line.value}，对照{gate.line.target}"
     },
     "residual.403": {
-      "en": "Reach Renown Level ${topTitle.minLevel}.",
+      "en": "Reach Renown Level {topTitle.minLevel}.",
       "zh": "达到声望等级{topTitle.minLevel}。"
     },
     "residual.404": {
-      "en": "Finish an ${openWaters.name} voyage without going bankrupt.",
+      "en": "Finish an {openWaters.name} voyage without going bankrupt.",
       "zh": "完成一程{openWaters.name}航程，且没有破产。"
     },
     "residual.405": {
-      "en": "\"${kept.id}\" is preserved and keeps ${keptLegs} legs while \"${turning.id}\" is perishable and keeps ${turningLegs}, so the tag and the keeping disagree.",
+      "en": "\"{kept.id}\" is preserved and keeps {keptLegs} legs while \"{turning.id}\" is perishable and keeps {turningLegs}, so the tag and the keeping disagree.",
       "zh": "“{kept.id}”是耐储货，能存{keptLegs}个航段；而“{turning.id}”是易腐货，只存{turningLegs}个，标签和保鲜期对不上。"
     },
     "residual.406": {
-      "en": "The harbor weighs anchor for the ${phaseFace(facts.phase).label}.",
-      "zh": "港湾起锚，进入{phaseFace(facts.phase).label}。"
+      "en": "The harbor weighs anchor for the {phaseName}.",
+      "zh": "港湾起锚，进入{phaseName}。"
     },
     "residual.407": {
-      "en": "${facts.captain}'s offer of ${facts.offerAmount} ${facts.offerItem} lapses with the leg.",
+      "en": "{facts.captain}'s offer of {facts.offerAmount} {facts.offerItem} lapses with the leg.",
       "zh": "本航段一结束，{facts.captain}挂出的{facts.offerAmount}份{facts.offerItem}报价就作废了。"
     },
     "residual.408": {
-      "en": "The tide runs out on the ${phaseFace(facts.phase).label}.",
-      "zh": "潮水在{phaseFace(facts.phase).label}退去。"
+      "en": "The tide runs out on the {phaseName}.",
+      "zh": "潮水在{phaseName}退去。"
     },
     "residual.409": {
-      "en": "${facts.captain} takes up the ${pathConfig(facts.path)!.name} path.",
-      "zh": "{facts.captain}走上了{pathConfig(facts.path)!.name}之道。"
+      "en": "{facts.captain} takes up the {pathName} path.",
+      "zh": "{facts.captain}走上了{pathName}之道。"
     },
     "residual.410": {
-      "en": "${facts.captain} sets aside their old papers and takes up the ${pathConfig(facts.path)!.name} path.",
-      "zh": "{facts.captain}收起旧文书，改走{pathConfig(facts.path)!.name}之道。"
+      "en": "{facts.captain} sets aside their old papers and takes up the {pathName} path.",
+      "zh": "{facts.captain}收起旧文书，改走{pathName}之道。"
     },
     "residual.411": {
-      "en": "${facts.captain} offers ${cardName(facts.module)} for ${facts.fee} Gold.",
-      "zh": "{facts.captain}挂出{cardName(facts.module)}，要价{facts.fee}金币。"
+      "en": "{facts.captain} offers {moduleName} for {facts.fee} Gold.",
+      "zh": "{facts.captain}挂出{moduleName}，要价{facts.fee}金币。"
     },
     "residual.412": {
-      "en": "${facts.taker} buys ${cardName(facts.module)} from ${facts.captain} for ${facts.fee} Gold.",
-      "zh": "{facts.taker}以{facts.fee}金币从{facts.captain}手上买下{cardName(facts.module)}。"
+      "en": "{facts.taker} buys {moduleName} from {facts.captain} for {facts.fee} Gold.",
+      "zh": "{facts.taker}以{facts.fee}金币从{facts.captain}手上买下{moduleName}。"
     },
     "residual.475": {
       "en": "{facts.captain} posts {facts.offerAmount} {facts.offerItem} for {facts.requestAmount} {facts.requestItem}.",
@@ -11239,7 +11059,7 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{facts.taker}接下{facts.captain}的报价：{facts.offerAmount}份{facts.offerItem}换{facts.requestAmount}份{facts.requestItem}。"
     },
     "residual.413": {
-      "en": "${readyCount} of ${requiredCount} captains ${readyCount === 1 ? \"has\" : \"have\"} readied.",
+      "en": "{readyCount} of {requiredCount} captains {haveWord} readied.",
       "zh": "{requiredCount}位船长里已有{readyCount}位就绪。"
     },
     "residual.414": {
@@ -11263,64 +11083,101 @@ One JSON file at `src/lib/game/i18n/zh.json`. The tables above carry the reasoni
       "zh": "{account}不是管理员。"
     },
     "residual.419": {
-      "en": "The audit opens from leg ${gate.opensAt}.",
+      "en": "The audit opens from leg {gate.opensAt}.",
       "zh": "稽查从第{gate.opensAt}航段起开放。"
     },
     "residual.420": {
-      "en": "${f.user.displayName} reached Renown Level ${rows.outcome.newLevel}: ${renownTitleForLevel(rows.outcome.newLevel)}!",
-      "zh": "{f.user.displayName}达到了声望等级{rows.outcome.newLevel}：{renownTitleForLevel(rows.outcome.newLevel)}！"
+      "en": "{f.user.displayName} reached Renown Level {rows.outcome.newLevel}: {renownTitle}!",
+      "zh": "{f.user.displayName}达到了声望等级{rows.outcome.newLevel}：{renownTitle}！"
     },
     "residual.421": {
-      "en": "${f.user.displayName} earned the Captain's Merit: ${merit.name}!",
+      "en": "{f.user.displayName} earned the Captain's Merit: {merit.name}!",
       "zh": "{f.user.displayName}赢得了船长功勋：{merit.name}！"
     },
     "residual.422": {
-      "en": "The maroon vote opens from leg ${facts.maroonFrom}.",
+      "en": "The maroon vote opens from leg {facts.maroonFrom}.",
       "zh": "放逐投票从第{facts.maroonFrom}航段起开放。"
     },
     "residual.423": {
-      "en": "The Harbormaster's hand is not dealt before leg ${facts.maroonFrom}.",
+      "en": "The Harbormaster's hand is not dealt before leg {facts.maroonFrom}.",
       "zh": "第{facts.maroonFrom}航段之前，港务长之手还不发放。"
     },
     "residual.424": {
-      "en": "${displayName}'s voyage has ended",
+      "en": "{displayName}'s voyage has ended",
       "zh": "{displayName}的航程已经结束"
     },
     "residual.425": {
-      "en": "You already have an offer standing for ${buyerName}.",
+      "en": "You already have an offer standing for {buyerName}.",
       "zh": "你已经为{buyerName}挂着一份报价了。"
     },
     "residual.426": {
-      "en": "${s.user.displayName} has gone ashore",
+      "en": "{s.user.displayName} has gone ashore",
       "zh": "{s.user.displayName}上岸了"
     },
     "residual.427": {
-      "en": "Word on the Docks: ${s.user.displayName} was first to complete ${WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage, and pockets ${WORD_ON_THE_DOCKS_REWARD} Gold for it.",
+      "en": "Word on the Docks: {s.user.displayName} was first to complete {WORD_ON_THE_DOCKS_THRESHOLD} trade orders this voyage, and pockets {WORD_ON_THE_DOCKS_REWARD} Gold for it.",
       "zh": "码头风闻：{s.user.displayName}在本航程率先完成了{WORD_ON_THE_DOCKS_THRESHOLD}笔订单，把这{WORD_ON_THE_DOCKS_REWARD}金币装进了口袋。"
     },
     "residual.428": {
-      "en": "${s.user.displayName} set sail for another port",
+      "en": "{s.user.displayName} set sail for another port",
       "zh": "{s.user.displayName}起航去了另一个港口"
     },
     "residual.429": {
-      "en": "${s.user.displayName} entered the harbor",
+      "en": "{s.user.displayName} entered the harbor",
       "zh": "{s.user.displayName}进了港湾"
     },
     "residual.482": {
-      "en": "${s.user.displayName} left the harbor",
+      "en": "{s.user.displayName} left the harbor",
       "zh": "{s.user.displayName}离开了港湾"
     },
     "residual.430": {
-      "en": "Deadline must be between round ${minRound} and round ${maxRound}.",
+      "en": "Deadline must be between round {minRound} and round {maxRound}.",
       "zh": "截止轮次得在第{minRound}轮到第{maxRound}轮之间。"
     },
     "residual.431": {
-      "en": "${input.displayName} sailed ${waters} and ran out of Gold before the voyage was done.",
+      "en": "{input.displayName} sailed {waters} and ran out of Gold before the voyage was done.",
       "zh": "{input.displayName}在{waters}中跑了一程，中途金币耗尽，没能走完航程。"
     },
     "residual.483": {
-      "en": "${s.user.displayName} posted a Venture: ${targetGold} Gold needed by Round ${deadlineRound}.",
+      "en": "{s.user.displayName} posted a Venture: {targetGold} Gold needed by Round {deadlineRound}.",
       "zh": "{s.user.displayName}挂出了一笔合股：{targetGold}金币，第{deadlineRound}轮前凑齐。"
+    }
+  },
+
+  "fragments": {
+    "fragment.skilled_mark": { "en": " ⭐ Skilled", "zh": " ⭐ 熟练" },
+    "fragment.captain_ready": { "en": "ready", "zh": "已就绪" },
+    "fragment.captain_deciding": { "en": "still deciding", "zh": "仍在考虑" },
+    "fragment.a_captain_cap": { "en": "A captain", "zh": "有一位船长" },
+    "fragment.house": { "en": "House", "zh": "世家" },
+    "fragment.expand": { "en": "Expand", "zh": "展开" },
+    "fragment.collapse": { "en": "Collapse", "zh": "收起" },
+    "fragment.renown_level_up": {
+      "en": " · Renown level up!",
+      "zh": " · 声望升级！"
+    },
+    "fragment.manifest_flagged": {
+      "en": "The harbor's own checks could not reconcile this manifest, so its lines are withheld.",
+      "zh": "港湾自己的核验对不上这份舱单，内容就不公开。"
+    },
+    "fragment.manifest_sample": {
+      "en": "A random sample of this captain's most recent order fulfillments, opened by a vote of the harbor. Their card, their Gold and the rest of their hold were not opened.",
+      "zh": "港湾投票开出的抽样，取自这位船长最近交付的订单。他的手牌、金币和货舱里其余的东西都没有打开。"
+    },
+    "fragment.your": { "en": "your", "zh": "自己" },
+    "fragment.who_possessive": { "en": "{who}'s", "zh": "{who}的" },
+    "fragment.one_more_name": { "en": "1 more name", "zh": "1个名字" },
+    "fragment.n_more_names": {
+      "en": "{count} more names",
+      "zh": "{count}个署名"
+    },
+    "fragment.this_captain": { "en": "this captain", "zh": "这位船长" },
+    "fragment.or": { "en": " or ", "zh": "或" },
+    "fragment.and": { "en": " and ", "zh": "和" },
+    "fragment.on": { "en": " on ", "zh": "，按" },
+    "fragment.past_midpoint_on": {
+      "en": " past the midpoint on ",
+      "zh": "，过半程后按"
     }
   }
 }
@@ -11390,9 +11247,9 @@ The rest of the tables can stand or fall row by row. What follows is the standin
 
 **The wiring wave's rows.** Twenty-seven rows gathered at the last sites the wiring pass could neither adopt nor leave in English: the two endgame figures, the buyer's and the seller's refit receipts, the worker assignment line, the balance dashboard's three launch gate captions, the chat search count, the admin bar's two stragglers, the Free Captain's two borrow lines, the two the realtime sweep reached last: the leave-the-harbor notice and the Venture posting line, and the balance dashboard's twelve last strings: the win rate spread, the gates outside their bands, the ten targets its gate column lists, and the one not-measurable mark. Two rows already in the pack take the `{pluralS}` form their sites need (the roster pill and the harbor headcount), which is a change of spelling rather than of meaning. Nothing here needs your eye.
 
-**The wiring rows, round three.** One hundred and sixty-four rows gathered while the room, the shell, the lobby and the engine were wired: the in-room strings the two room sweeps left unrowed, the engine's ledger lines and receipts, the two boundary screens that surfaced blocks of their own (`error.tsx` and `not-found.tsx`, the way `WatersScale.tsx` did last round), the manual's two frames, the lobby chrome, and the finishing sweep's tail: the tag meanings, the garments tick's good-news twin, the tips body, and the census line the vote tally composes. Six staged drafts retired as duplicates of rows the pack already carries (the three offer buttons, the two formula captions, and the Broker pill), two ternaries recast as `{pluralS}` rows, nine rows whose sources split their text across JSX, and one zh cell (`guides.071`) that shed a trailing stop its call sites supply. The tables, the fence, the counts and the totals moved together in one pass, and the battery holds the pairing; nothing here needs your eye.
+**The wiring rows, round three.** One hundred and sixty-four rows gathered while the harbor, the shell, the lobby and the engine were wired: the in-harbor strings the two harbor sweeps left unrowed, the engine's ledger lines and receipts, the two boundary screens that surfaced blocks of their own (`error.tsx` and `not-found.tsx`, the way `WatersScale.tsx` did last round), the manual's two frames, the lobby chrome, and the finishing sweep's tail: the tag meanings, the garments tick's good-news twin, the tips body, and the census line the vote tally composes. Six staged drafts retired as duplicates of rows the pack already carries (the three offer buttons, the two formula captions, and the Broker pill), two ternaries recast as `{pluralS}` rows, nine rows whose sources split their text across JSX, and one zh cell (`guides.071`) that shed a trailing stop its call sites supply. The tables, the fence, the counts and the totals moved together in one pass, and the battery holds the pairing; nothing here needs your eye.
 
-**The wiring rows, round two.** One hundred and seventy-five rows, one for every string the wiring pass surfaced as it went: the whole guide body off `copy.ts` (`guides.088` through `guides.167`), the lines the room, the lobby and the consoles filed as gaps while they wired, the two baked mode differences whose cells still carried tokens no call site fills (`descriptions.031` and `descriptions.033` now read their numerals plainly), and one file that surfaced a block of its own, `lobby/WatersScale.tsx`. Three staged drafts retired as duplicates of rows the pack already carried (`room-a.324`, `residual.463`, and the paths lock sentence that `paths.path.lock_line` already holds), five tokens renamed to the names their call sites fill, and one zh cell (`residual.147`) that read its own classifier now hands that job to the rowed fragment. The tables, the fence, the counts, the totals and the mapping file moved together in one pass, and the battery holds the pairing. The five split tails the earlier sweeps left in the fence (`guides.025`, `guides.027`, `room-a.253`, `room-a.291`, `lobby.013`) stay exactly as they stand: each is the second half of a source template the mapping file fuses back into one entry (`escortLadder`, `pirateLadder`, `possessive`, `namesShort`, `materialsList`), so no call site can read one alone and none of them belongs in the pack by itself. Nothing here needs your eye.
+**The wiring rows, round two.** One hundred and seventy-five rows, one for every string the wiring pass surfaced as it went: the whole guide body off `copy.ts` (`guides.088` through `guides.167`), the lines the harbor, the lobby and the consoles filed as gaps while they wired, the two baked mode differences whose cells still carried tokens no call site fills (`descriptions.031` and `descriptions.033` now read their numerals plainly), and one file that surfaced a block of its own, `lobby/WatersScale.tsx`. Three staged drafts retired as duplicates of rows the pack already carried (`room-a.324`, `residual.463`, and the paths lock sentence that `paths.path.lock_line` already holds), five tokens renamed to the names their call sites fill, and one zh cell (`residual.147`) that read its own classifier now hands that job to the rowed fragment. The tables, the fence, the counts, the totals and the mapping file moved together in one pass, and the battery holds the pairing. The five split tails the earlier sweeps left in the fence (`guides.025`, `guides.027`, `room-a.253`, `room-a.291`, `lobby.013`) stay exactly as they stand: each is the second half of a source template the mapping file fuses back into one entry (`escortLadder`, `pirateLadder`, `possessive`, `namesShort`, `materialsList`), so no call site can read one alone and none of them belongs in the pack by itself. Nothing here needs your eye.
 
 **Landed by the earlier panels, still the record.**
 

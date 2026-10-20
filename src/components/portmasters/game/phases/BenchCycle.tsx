@@ -5,6 +5,7 @@ import { t } from "@/lib/game/i18n";
 import { isLegPhase, phaseFace } from "@/lib/game/phases";
 import type { GameState, LegPhase } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
+import { RichText } from "../../RichText";
 
 // What the round does with what this bench sets going, in the words this
 // panel uses for it. One note per phase of the leg rather than one per tile,
@@ -27,7 +28,7 @@ const CYCLE_NOTE: Record<LegPhase, string> = {
 /**
  * The production cycle strip: one tile per phase the round still has in
  * front of it, and the sentence that says when the work lands. It reads the
- * room's own lap rather than a list of its own, because the two modes run
+ * harbor's own lap rather than a list of its own, because the two modes run
  * the round in different orders.
  */
 export function BenchCycle({
@@ -38,7 +39,7 @@ export function BenchCycle({
   duePhase: string;
 }) {
   // The rest of this voyage's round, from this phase to the one that closes
-  // it, off the room's own lap (see src/lib/game/checkpoint.ts and
+  // it, off the harbor's own lap (see src/lib/game/checkpoint.ts and
   // src/lib/game/mode.ts). The two modes run Market, Orders and Parley in
   // different orders, so a strip written out here would walk one mode
   // through the other mode's round.
@@ -81,14 +82,12 @@ export function BenchCycle({
           the sentence whole, its <strong> runs and all, so the wiring hands
           it over in one piece and the token takes the phase the composer
           already named in this language. */}
-      <div
+      <RichText
         className="mt-2 text-gain"
-        dangerouslySetInnerHTML={{
-          __html: t(
-            "💡 Materials consumed <strong>now</strong>. Finished goods and wage deductions happen at <strong>{duePhase}</strong>, not instantly.",
-            { duePhase },
-          ),
-        }}
+        html={t(
+          "💡 Materials consumed <strong>now</strong>. Finished goods and wage deductions happen at <strong>{duePhase}</strong>, not instantly.",
+          { duePhase },
+        )}
       />
     </div>
   );

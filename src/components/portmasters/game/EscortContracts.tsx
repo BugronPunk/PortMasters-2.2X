@@ -42,14 +42,14 @@ const SELLER_PATH = pathConfig(ESCORT_SELLER_PATH)!;
  * [D3: Convoy: the Escort Contract] The protection market, drawn at the
  * Parley table beside the Captain's Exchange because that is where the plan
  * puts it: one leg of cover, sold by a Convoy captain to one other captain
- * at a price the two of them agree, and read by the room for the rest of
+ * at a price the two of them agree, and read by the harbor for the rest of
  * the leg.
  *
  * Everything a captain can do here is a socket frame and nothing else. The
  * Gold moves on the two clients that agreed to it, through applyEscortSide,
  * and the board this panel draws is the server's own view of who has
  * offered what: a panel that decided any of this by itself would be a
- * second market the room could not see.
+ * second market the harbor could not see.
  *
  * The three things this panel owes a captain are the three the market kept
  * failing to say, and each is read rather than written twice. What the deal

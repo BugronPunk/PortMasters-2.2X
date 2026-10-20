@@ -21,7 +21,7 @@ import {
   recordVoyageInStats,
   renownTitleForLevel,
 } from "@/lib/game/legacy";
-import { merchantRatingForScore } from "@/lib/game/constants/reputation";
+import { merchantRatingForScore } from "@/lib/game/engine";
 import { BROKERS_FAVOR_UNLOCK_LEVEL } from "@/lib/game/constants/world";
 import { meritById, qualifyingMerits } from "@/lib/game/merits";
 import { normalizeOrderFills } from "@/lib/game/audit";
@@ -78,7 +78,7 @@ type LegacyCounters = {
 // reads, and the three figures only the row itself is written with.
 type LegacyFigures = LegacyCounters & {
   newXP: number;
-  newBestScore: number;
+  newBestReputation: number;
   newStatsByDifficulty: ReturnType<typeof parseStatsByDifficulty>;
 };
 
@@ -86,7 +86,7 @@ type LegacyFigures = LegacyCounters & {
 type FinisherOutcome = FinisherFacts & LegacyCounters;
 
 // Everything the steps below read about the voyage rather than about the
-// captain: the room, the run it sailed, the harbor's saves, the crown and
+// captain: the harbor, the run it sailed, the harbor's saves, the crown and
 // the captains the harbor wrote off.
 export type FinisherContext = {
   roomId: string;
@@ -343,7 +343,7 @@ function legacyFigures(
   run: VoyageRun,
   facts: FinisherFacts,
 ): LegacyFigures {
-  const priorBest = prior?.bestScore ?? 0;
+  const priorBest = prior?.bestReputation ?? 0;
   const priorVoyages = prior?.voyagesCompleted ?? 0;
   const priorSolvent = prior?.consecutiveSolventVoyages ?? 0;
   const priorStats = parseStatsByDifficulty(prior?.statsByDifficulty);
@@ -352,7 +352,7 @@ function legacyFigures(
   // no Renown. Every field holds at its prior value; the captain
   // keeps the voyage they played, the account simply does not
   // remember it.
-  const newBestScore = facts.forged
+  const newBestReputation = facts.forged
     ? priorBest
     : Math.max(priorBest, f.reputation);
   const newVoyagesCompleted = priorVoyages + (facts.forged ? 0 : 1);
@@ -370,7 +370,7 @@ function legacyFigures(
 
   return {
     ...renownStep(prior, facts),
-    newBestScore,
+    newBestReputation,
     newVoyagesCompleted,
     newConsecutiveSolventVoyages,
     newStatsByDifficulty,
@@ -392,7 +392,7 @@ async function writeLegacyRow(
       renownLevel: figures.newLevel,
       voyagesCompleted: figures.newVoyagesCompleted,
       seaMasterCrowns: facts.crowned ? 1 : 0,
-      bestScore: figures.newBestScore,
+      bestReputation: figures.newBestReputation,
       consecutiveSolventVoyages: figures.newConsecutiveSolventVoyages,
       statsByDifficulty: JSON.stringify(figures.newStatsByDifficulty),
     },
@@ -401,7 +401,7 @@ async function writeLegacyRow(
       renownLevel: figures.newLevel,
       ...(facts.forged ? {} : { voyagesCompleted: { increment: 1 } }),
       ...(facts.crowned ? { seaMasterCrowns: { increment: 1 } } : {}),
-      bestScore: figures.newBestScore,
+      bestReputation: figures.newBestReputation,
       consecutiveSolventVoyages: figures.newConsecutiveSolventVoyages,
       statsByDifficulty: JSON.stringify(figures.newStatsByDifficulty),
     },
@@ -522,6 +522,11 @@ function chronicleInput(
     // Read from the same room row the rest of this handler reads, so the
     // prose and the rule behind it cannot come from two different modes.
     bankruptcyIsFinal: modeConfig(ctx.run.mode).bankruptcyIsFinal,
+    // The bare English label, which is the string the column holds and
+    // the string every row written so far holds. The prose reads it into
+    // the language of the sentence around it (see merchantRatingLabel in
+    // src/lib/game/constants/reputation.ts), so the value handed over
+    // stays the one the table is written in.
     merchantRating: merchantRatingForScore(f.reputation).label,
     // [H9: the unlock code] The harbor's own line, on the one voyage it
     // belongs to. Read from the count this loop just wrote rather than
@@ -579,6 +584,12 @@ async function writeChronicleRow(
         crowned: outcome.crowned,
         bankrupt: outcome.bankrupt,
         marooned,
+        // The bare English label, on purpose. Every row already in the
+        // table holds it, and a stored value that cannot be changed
+        // without a migration is better read than rewritten: the reads
+        // translate it (see merchantRatingLabel in
+        // src/lib/game/constants/reputation.ts), so a row written last
+        // season reads the same way as one written tonight.
         merchantRating: merchantRatingForScore(f.reputation).label,
         headline: chronicle.headline,
         body: chronicle.body,
@@ -630,7 +641,7 @@ function revealRow(
     delivered: outcome.forged ? {} : ending.delivered,
     // The manifest is read with the voyage's own length as its ceiling:
     // a line dated past the last leg is a line no round of this voyage
-    // could have run, so it is dropped rather than printed on the room's
+    // could have run, so it is dropped rather than printed on the harbor's
     // ledger (see normalizeOrderFills).
     fills: outcome.forged
       ? []
@@ -638,7 +649,7 @@ function revealRow(
   };
 }
 
-// The captain's row in the standings the room reads.
+// The captain's row in the standings the harbor reads.
 function standingRow(
   f: FinishedCaptain,
   outcome: FinisherOutcome,
@@ -763,7 +774,7 @@ export async function concludeFinishers(
   return { standings, rivalStandings, revealed, traces };
 }
 
-// What the room is told about one captain's finish, right after their rows
+// What the harbor is told about one captain's finish, right after their rows
 // were built.
 function announceFinisher(
   io: Server,
@@ -772,7 +783,7 @@ function announceFinisher(
   rows: FinisherRows,
 ): void {
   if (rows.outcome.leveledUp) {
-    // The room reads this notice, so it goes to every socket in the
+    // The harbor reads this notice, so it goes to every socket in the
     // harbor in that captain's own language rather than as one broadcast.
     // The title is read per socket for the same reason: it is a name the
     // client reads through the pack, so it has to land in the reader's

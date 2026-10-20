@@ -2,7 +2,7 @@
 // Market: one phase, two stations.
 //
 // [B1: the six phase leg, as data] Buying at the port merchant and setting
-// the artisan bench to work were two room checkpoints before this, which
+// the artisan bench to work were two harbor checkpoints before this, which
 // meant the harbor stood and waited twice for work the design treats as one
 // phase. They are now the two stations of Market, in this order: the board
 // first, then the bench. The order is the design's, and it is the one a
@@ -12,9 +12,9 @@
 // The station is local state rather than a phase value or a persisted field,
 // and the two rejections are deliberate:
 //
-//   A phase value of its own would be a value the room synchronizes on. The
+//   A phase value of its own would be a value the harbor synchronizes on. The
 //   ready check gates exactly the values on the lap (see the ready handler
-//   in src/server/realtime/wiring/phase-ready.ts), so a station the room
+//   in src/server/realtime/wiring/phase-ready.ts), so a station the harbor
 //   could stand in would put the second wait back and make one phase two
 //   again.
 //
@@ -24,7 +24,7 @@
 //   would break. Reloading mid market lands a captain back at the board,
 //   where the goods they already bought are still listed.
 //
-// The room still waits exactly once, at the bench: the ready vote is emitted
+// The harbor still waits exactly once, at the bench: the ready vote is emitted
 // from the second station's footer and from nowhere else, so no captain can
 // tell the harbor they are done before they have assigned their artisans.
 // =====================================================================
@@ -103,8 +103,8 @@ export function Market({
             onRumorBoardOpen={onRumorBoardOpen}
             onContinue={() => setStation("bench")}
           />
-          {/* [B2: hard timers, the server as timekeeper] The room's clock on
-              the station where a captain cannot vote yet. The board is the
+          {/* [B2: hard timers, the server as timekeeper] The harbor's clock
+              on the station where a captain cannot vote yet. The board is the
               first of the phase's two stations and carries no ready vote by
               design, which is why the harbor is not waited on from it, but
               the leg is running all the same and a captain still reading the

@@ -19,10 +19,10 @@
 // card is marked by weight and fill rather than by hue alone, so the row
 // still reads to a captain running the colorblind safe palette.
 //
-// The names come from the room's own roster rather than from the frame:
+// The names come from the harbor's own roster rather than from the frame:
 // the ledger carries ids and cards and nothing else (see
 // @/types/realtime/boons), so this board cannot disagree with the
-// captain list drawn beside it, and a seat the room no longer counts
+// captain list drawn beside it, and a seat the harbor no longer counts
 // simply stops having a row.
 // =====================================================================
 

@@ -3,7 +3,7 @@
 import { Users } from "lucide-react";
 import { listJoiner, t } from "@/lib/game/i18n";
 import { flatWorkerRoster, type GameState } from "@/lib/game/types";
-import { PanelTotal, StatTile, SummaryHeading } from "./PhaseShared";
+import { FigureTile, PanelTotal, SummaryHeading } from "./PhaseShared";
 
 /**
  * Crew Management Summary. Shows worker productivity stats at voyage
@@ -54,17 +54,20 @@ export function CrewSummary({ game }: { game: GameState }) {
         {t("Crew Summary")}
       </SummaryHeading>
       <div className="grid grid-cols-3 gap-2">
-        <StatTile
+        <FigureTile
+          size="figure"
           value={crewAboard}
           valueClassName="text-due"
           label={t("Crew Aboard")}
         />
-        <StatTile
+        <FigureTile
+          size="figure"
           value={skilledCount}
           valueClassName="text-gain"
           label={t("Skilled")}
         />
-        <StatTile
+        <FigureTile
+          size="figure"
           value={totalProduced}
           valueClassName="text-sea"
           label={t("Items Made")}
@@ -72,11 +75,14 @@ export function CrewSummary({ game }: { game: GameState }) {
       </div>
       <PanelTotal
         tone="border-due/10"
+        className="mt-2"
         label={
-          <span className="text-muted-foreground">{t("Total Wages Paid")}</span>
+          <span className="text-[11px] text-muted-foreground">
+            {t("Total Wages Paid")}
+          </span>
         }
       >
-        <span className="font-bold text-due">
+        <span className="text-[11px] font-bold text-due">
           {t("{contract.fee} Gold", { "contract.fee": totalWages })}
         </span>
       </PanelTotal>

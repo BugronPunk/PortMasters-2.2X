@@ -51,8 +51,10 @@
 //   barter          core
 //   pirates         core
 //   aid             owns the shared helper Reputation ceiling
-//   backingState    aid
-//   convoyState     no engine dependencies
+//   settlement      core, consent (the one trade skeleton and the one
+//                   gold debit)
+//   backingState    aid, settlement
+//   convoyState     settlement
 //   boons           market
 //   lifecycle       imports from nearly all of the above, and nothing
 //                   imports from it
@@ -114,7 +116,7 @@ export {
 // ========== The bazaar: the rumor ==========
 // [D5: Aroma: the Bazaar Rumor] The whole of the rule, and the split is
 // the one the other path modules take: what a rumor is (the cooldown, the
-// visibility rule, the lean and the healing) is here, and the room's board
+// visibility rule, the lean and the healing) is here, and the harbor's board
 // is beside the socket that speaks on it (see
 // src/server/realtime/bazaar.ts). The server reads rumorCooldownLeft,
 // rumorCanLand, rumorGoodAllowed, rumorId, rumorLean and publicRumors off
@@ -155,6 +157,11 @@ export {
 // this captain's, and why one of them is not. The answers are computed in
 // ./engine/orders and nowhere else, so a card the board greys out is a card
 // the engine refuses, by construction rather than by agreement.
+//
+// quoteOrder is here for the same reason and one more: what an order pays
+// is a rule, and the board's card, the advisor's sentence and the
+// settlement itself all have to price an order through the same chain, or
+// a captain reads one figure on a card and is paid another at the fill.
 export {
   callBrokersFavor,
   canFillOrder,
@@ -165,7 +172,8 @@ export {
   orderRewardBonusSteps,
   pathOrderOf,
   purchaseIntel,
-  type OrderRewardStep,
+  quoteOrder,
+  type OrderQuote,
 } from "./engine/orders";
 
 // ========== The Free Captain's borrow ==========
@@ -212,14 +220,14 @@ export {
 //
 // pathSwitchBlocked is exported because two callers ask it the same
 // question and they have to agree: the panel that offers the switch, and
-// the frame handler that applies it when the room publishes one, so a
+// the frame handler that applies it when the harbor publishes one, so a
 // switch that arrives twice costs nothing rather than a second fee.
 // pathSwitchOpenLine is the "when" half of that same guard, exported on
-// its own because the third caller is across the wire: the room refuses a
+// its own because the third caller is across the wire: the harbor refuses a
 // switch outside the window before it publishes one (see the path:switch
 // handler), and it has to refuse it in the same words the engine would.
 // pathSwitchSpentLine is the other half of that one sentence's trip, the
-// once a voyage refusal, and it is out here for the same reason: the room
+// once a voyage refusal, and it is out here for the same reason: the harbor
 // reads a book of its own to answer whether the allowance was spent, and
 // the answer it gives a captain has to be the engine's own words.
 // forfeitPathOrders and the three ledger lines are deliberately absent:
@@ -271,7 +279,6 @@ export {
   maintenanceDue,
   payMaintenance,
   payWages,
-  payrollIndex,
   unlockedWorkerRoster,
   wageBill,
   wagesDue,
@@ -326,7 +333,7 @@ export {
 // ========== The consent primitive ==========
 // [D4: Loom: the Refit] The agreement shape two kinds of trade are made of,
 // exported here because three callers read it and none of them is the kind
-// that happens to share it. The room's two board modules read the policy
+// that happens to share it. The harbor's two board modules read the policy
 // helpers, visibleConsent, expireConsent, consentOfferStanding, agreeConsent
 // and consentPartyBusy, which are the rules about what a price is, who sees
 // a row, when an offer expires and what an accept consumes; they live in the
@@ -361,7 +368,7 @@ export {
 // the board that shows them is a component. Three callers read this block,
 // and each reads a different part of it. The client layer that owns a
 // captain's side of a contract reads applyEscortSide and coverFromBoard,
-// both of them from the room, which is where a relay becomes a state change.
+// both of them from the harbor, which is where a relay becomes a state change.
 // The two screens that draw the market read the questions a captain asks of
 // it: canSellEscort, escortCoverage, canPayFee and ESCORT_SELLER_PATH
 // at the Parley table, and escortCoverOf on the Resolve screen, where it
@@ -381,8 +388,9 @@ export {
 // asked, since the side is the whole of what the two markets differ on
 // there.
 //
-// escortClaimFrom is deliberately absent. Its one caller is the raid roll
-// two blocks up, which is inside ./engine/ and reaches it directly.
+// escortClaimFrom is deliberately absent. Its callers are the raid roll two
+// blocks up, which is inside ./engine/ and reaches it directly, and the
+// server's claim handler, which reaches it through the module's own door.
 // escortSellerLabels was here and is not, which is worth the line: it
 // gathered the crest and the name a board draws, and the order board already
 // answers that question by calling pathConfig on the id it was handed (see
@@ -573,7 +581,7 @@ export {
 //
 // autoCommit is here beside nextPhase rather than among the private steps,
 // because it is not a step either: it is the whole of a departure, the one a
-// client runs when the room's clock ran out on a captain who was holding
+// client runs when the harbor's clock ran out on a captain who was holding
 // nothing (see [B2] in ./engine/lifecycle.ts). Its one caller is the phase
 // sync hook.
 //
@@ -615,13 +623,19 @@ export {
 // widest cap any Age offers. The three effect accessors are deliberately
 // not forwarded, since their only callers sit inside ./engine/.
 export {
+  AGE_IDS,
   WIDEST_BROKERS_FAVOR_PAYOUT_CAP,
   currentAge,
   nextAgeChange,
   type Age,
   type AgeId,
 } from "./engine/ages";
-export { HOUSES, noHousePerks, type House } from "./engine/houses";
+export {
+  HOUSES,
+  HOUSE_TOKENS,
+  noHousePerks,
+  type House,
+} from "./engine/houses";
 // The two sight thresholds stay inside ./engine/: both are read by
 // canSeeDetail and bandFor, which are what every caller actually asks for.
 export { bandFor, canSeeDetail } from "./engine/partialSight";

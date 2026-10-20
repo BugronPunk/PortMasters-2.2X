@@ -28,6 +28,10 @@
 //     weighting is what makes an offer feel like it belongs to you without
 //     locking you out of the rest of the pool".
 //
+//   - modePoolShape is the pool read one mode at a time: how many cards a
+//     mode runs and how much power the widest of them carries, which is the
+//     reading the card check prints and the suite holds against a ceiling.
+//
 //   - validateCards is the content check, run by scripts/cards.ts ahead of
 //     every build, the way scripts/tags.ts already gates the tag rule. It
 //     is deliberately a reduction over a subject rather than a read of the
@@ -58,7 +62,7 @@ import {
 import { CHARTERS, CHARTER_PATH } from "./constants/charters";
 import { WORKER_TYPE_IDS } from "./constants/crew";
 import { BOONS, MODULES } from "./constants/drafts";
-import { getLocale, type Locale } from "./i18n";
+import { getLocale, tIdFor, type Locale } from "./i18n";
 import { type GameMode } from "./mode";
 import { PATH_IDS, type PathId, pathConfig } from "./paths";
 import { unlockedBoons, unlockedModules } from "./pools";
@@ -100,12 +104,23 @@ export function cardsOfKind(kind: CardKind): CardRecord[] {
  * card. The default reads the tree's live pick (see ./i18n), so a call
  * site with no opinion follows the captain, and one that has an opinion
  * (a ledger line quoting another language) passes it in.
+ *
+ * The English comes off the record, where it was written. The Mandarin
+ * comes out of the pack by the card's id, because the pack is where the
+ * Chinese for a card is written and the record does not keep a second
+ * copy of it. The record still carries the Chinese beside the English
+ * because the record's shape asks for both languages, and the content
+ * check holds the record and the pack's row in step.
  */
 export function cardText(
   card: CardRecord,
   locale: Locale = getLocale(),
 ): CardText {
-  return card.strings[locale];
+  if (locale === "en") return card.strings.en;
+  return {
+    name: tIdFor(locale, `card.${card.id}.name`),
+    desc: tIdFor(locale, `card.${card.id}.desc`),
+  };
 }
 
 /**
@@ -116,7 +131,8 @@ export function cardText(
  * better than a line naming nothing, and it is never a crash inside a log.
  */
 export function cardName(id: string, locale: Locale = getLocale()): string {
-  return cardById(id)?.strings[locale].name ?? id;
+  const card = cardById(id);
+  return card === null ? id : cardText(card, locale).name;
 }
 
 /**
@@ -127,7 +143,7 @@ export function cardName(id: string, locale: Locale = getLocale()): string {
  */
 export function cardLead(id: string, locale: Locale = getLocale()): string {
   const card = cardById(id);
-  return card === null ? id : `${card.icon} ${card.strings[locale].name}`;
+  return card === null ? id : `${card.icon} ${cardText(card, locale).name}`;
 }
 
 /**
@@ -313,6 +329,31 @@ export function drawOffer(
     picks.push(left.splice(idx, 1)[0][0]);
   }
   return picks;
+}
+
+// ========== The pool a mode runs ==========
+
+/**
+ * How each mode's pool sits: how many cards it runs, and how much power the
+ * widest of them carries.
+ *
+ * One reduction over the pool rather than one per reader, because the card
+ * check prints this shape for every mode and the smoke suite holds the
+ * widest card a mode runs against the ceiling that mode runs, and two walks
+ * of the pool are two answers to a question that has one.
+ */
+export function modePoolShape(
+  cards: readonly CardRecord[] = CARDS,
+): Record<GameMode, { count: number; widest: number }> {
+  const shape = {} as Record<GameMode, { count: number; widest: number }>;
+  for (const mode of Object.keys(MODE_POWER_CEILING) as GameMode[]) {
+    const carried = cards.filter((card) => (card.modes[mode] ?? 0) > 0);
+    shape[mode] = {
+      count: carried.length,
+      widest: carried.reduce((top, card) => Math.max(top, card.power), 0),
+    };
+  }
+  return shape;
 }
 
 // ========== The evaluation ==========

@@ -3,7 +3,7 @@
 //
 // [D3: Convoy: the Escort Contract] One captain sells another a single leg
 // of protection at a price they both agree, and this module is everything
-// the agreement means on a captain's own machine. The board itself is room
+// the agreement means on a captain's own machine. The board itself is harbor
 // state (src/server/realtime/contracts), because an agreement between two
 // captains is an object no single client can be the authority over; what
 // lives here is the reading of it, in three parts.
@@ -41,10 +41,11 @@
 // ledger by the plan's own account of the Broker, and an escort premium is
 // a different institution; the contract's own tally is where its coin is
 // counted. And nothing here is persisted: the plan asks for contracts to
-// be transient room state, so the only thing a save carries is the tally
+// be transient harbor state, so the only thing a save carries is the tally
 // of what already happened and the ledger of movements already applied,
 // both of which are records rather than agreements.
 // =====================================================================
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import { t } from "@/lib/game/i18n";
 import { CONVOY_RAID_COVERAGE } from "../constants/paths";
 import { escortContractsOn } from "../flags";
@@ -58,7 +59,8 @@ import {
   visibleConsent,
   type ConsentTerms,
 } from "./consent";
-import { addOwnedAmount, getOwnedAmount, paidFee } from "./core";
+import { addOwnedAmount, getOwnedAmount } from "./core";
+import { settleConsentTrade } from "./settlement";
 
 /**
  * The path whose ability is the escort market, as a reading of the record
@@ -109,7 +111,7 @@ export function escortCoverage(): number {
  * caller is the seller's side of a claim in applyEscortSide below, and the
  * panels that quote the arithmetic quote escortCoverage above instead, so
  * nothing outside this file reads the name. It is written out rather than
- * folded into that caller because the room's board module names it in prose
+ * folded into that caller because the harbor's board module names it in prose
  * when it explains where a claim is priced (see src/server/realtime/
  * contracts.ts), and a reader following that sentence should land on a
  * described rule.
@@ -124,7 +126,7 @@ function escortEats(raidGold: number): number {
  * The cover this captain's raid roll consults, read through the switch.
  *
  * Deliberately a plain read of the mirror rather than a lookup: the mirror
- * is set by the client layer from the room's board (see use-escort-contracts)
+ * is set by the client layer from the harbor's board (see use-escort-contracts)
  * and cleared with the round, so the engine asks one field and never the
  * network. With the switch off the answer is null whatever the field says,
  * which is what makes the rollback clean at the moment a raid is rolled
@@ -251,18 +253,17 @@ export function resetEscortLeg(state: GameState): void {
 /**
  * Applies this captain's side of a contract, once.
  *
- * One function for both sides and both moments, because the four cases
- * (buyer's fee, seller's fee, seller's absorbed raid, and the immaterial
- * fourth) differ in three numbers and agree on everything else: who they
- * are, whether the movement has already been applied, and the rule that
- * only the holder of a purse writes to it. The fourth case is any row that
- * moved no Gold, which is a row somebody is reading about somebody else and
- * a row that was turned down, and it falls through to false without a
- * branch of its own because there is nothing to apply and nothing to say.
- * The ledger is the idempotence: a reload between the agreement and the
- * claim, or between the claim and the broadcast that carries it, must not
- * move the same Gold twice, so every applied movement is recorded as
- * "id:fee" or "id:claim" and a second call with the same key does nothing.
+ * Two moments live here. The fee is the shared settlement (see
+ * settleConsentTrade in ./settlement), the same one the refit and the
+ * module trade settle through, and the claim is the escort's own: the
+ * seller answering for the raid their guns stood over, which is not an
+ * agreement and so does not settle through the shared skeleton.
+ *
+ * The ledger is the idempotence for both of them: a reload between the
+ * agreement and the claim, or between the claim and the broadcast that
+ * carries it, must not move the same Gold twice, so every applied
+ * movement is recorded as "id:fee" or "id:claim" and a second call with
+ * the same key does nothing.
  *
  * Returns whether the state changed, which is what the React layer uses to
  * decide whether it owes the captain a fresh render rather than to read the
@@ -272,51 +273,44 @@ export function applyEscortSide(
   state: GameState,
   contract: EscortContract,
   meId: string,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
+  // The switch is read here as well as inside the shared settlement, because
+  // the claim below is this function's own and the shared skeleton does not
+  // know about it: a market that is off settles nothing, in either moment.
   if (!escortContractsOn(state.mode)) return false;
   const isSeller = contract.sellerUserId === meId;
   const isBuyer = contract.buyerUserId === meId;
   if (!isSeller && !isBuyer) return false;
 
   if (contract.status === "agreed") {
-    const key = `${contract.id}:fee`;
-    if (movementApplied(state, key)) return false;
-    if (isBuyer) {
-      // The hire that was agreed in the market, paid at once, and paid by a
-      // purse that is allowed to be empty: the buyer's accept is guarded by
-      // their own balance before they press (see canPayFee in ./core, which
-      // the panel asks), so a shortfall here is a purse that moved between the
-      // press and this line, and the honest answer is the Gold that is
-      // actually there rather than a negative hold. The seller credits the
-      // price that was agreed, because the price, not the payment, is what
-      // the two captains shook hands on.
-      const paid = paidFee(state, contract.fee);
-      addOwnedAmount(state, "Gold", -paid);
-      state.escortBought += 1;
-      state.escortFeesPaid += paid;
-      logs.push(
-        t(
-          "🤝 Escort contract: paid {paid} Gold to {contract.sellerName} for one leg of protection.",
-          { paid, "contract.sellerName": contract.sellerName },
-        ),
-      );
-    } else {
-      addOwnedAmount(state, "Gold", contract.fee);
-      state.escortSold += 1;
-      state.escortFeesEarned += contract.fee;
-      logs.push(
-        t(
-          "🤝 Escort contract: {buyerName} paid {contract.fee} Gold for one leg of protection.",
-          {
-            buyerName: contract.buyerName ?? t("A captain"),
-            "contract.fee": contract.fee,
-          },
-        ),
-      );
-    }
-    markMovement(state, key);
-    return true;
+    return settleConsentTrade(state, logs, {
+      on: escortContractsOn,
+      status: "agreed",
+      row: contract,
+      meId,
+      counters: {
+        bought: "escortBought",
+        feesPaid: "escortFeesPaid",
+        sold: "escortSold",
+        feesEarned: "escortFeesEarned",
+      },
+      copy: {
+        buyer: (paid) =>
+          line(
+            "🤝 Escort contract: paid {paid} Gold to {contract.sellerName} for one leg of protection.",
+            { paid, "contract.sellerName": contract.sellerName },
+          ),
+        seller: (fee) =>
+          line(
+            "🤝 Escort contract: {buyerName} paid {contract.fee} Gold for one leg of protection.",
+            {
+              buyerName: contract.buyerName ?? line("A captain"),
+              "contract.fee": fee,
+            },
+          ),
+      },
+    });
   }
 
   if (contract.status === "claimed" && isSeller) {
@@ -338,14 +332,14 @@ export function applyEscortSide(
     const who = contract.buyerName ?? t("a captain");
     logs.push(
       ate > 0
-        ? t(
+        ? line(
             "🛡️ Raiders meant for {who} met your guns: your hold lost {ate} Gold.",
             {
               who,
               ate,
             },
           )
-        : t(
+        : line(
             "🛡️ Raiders meant for {who} met your guns and found your hold already bare.",
             { who },
           ),
@@ -428,6 +422,14 @@ export type EscortContract = ConsentTerms & {
  * taken nothing (an empty hold, a captain who spent out) raises no claim,
  * because a claim of zero Gold is not a loss and would only put a line on
  * the table's board that says an escort saved nothing.
+ *
+ * Two callers reach it, and they ask it the same question: the raid roll
+ * in ./pirates, which leaves the claim on the covered captain's own state
+ * for the React layer to relay, and the server's claim handler, which
+ * reads the claim for the Gold it carries and the contract it is against
+ * when a captain reports a raid. The rule and the floor live here, so a
+ * raid of half a Gold is one answer to both of them rather than two: a
+ * claim against the contract, carrying the raid's Gold in whole coins.
  */
 export function escortClaimFrom(
   cover: EscortCover,

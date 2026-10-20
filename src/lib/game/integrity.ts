@@ -122,7 +122,7 @@ const MAX_PLAUSIBLE_PEER_TRADE_PROFIT_PER_ROUND =
 const MAX_PLAUSIBLE_ORDER_FILLS_PER_ROUND = WIDEST_ORDER_BOARD;
 
 // Room to be wrong. A captain begins with a stake plus a Renown bonus, and
-// a room's round can advance while a save is still in flight, so the
+// a harbor's round can advance while a save is still in flight, so the
 // allowance always covers one extra round and a starting purse.
 const STARTING_ALLOWANCE = 500;
 
@@ -176,7 +176,7 @@ type SaveSnapshot = {
   // produced one that long. Its contents are not this file's business:
   // the shape of an honest line is enforced where the lines are read (see
   // normalizeOrderFills), and the reveal's sample is capped by the window
-  // it draws from, so a doctored entry cannot widen what a room is shown.
+  // it draws from, so a doctored entry cannot widen what a harbor is shown.
   orderFills?: number;
 };
 
@@ -194,7 +194,7 @@ type SaveSnapshot = {
 // recorded a bankruptcy, is not falsifiable from here at all: the server
 // never runs the books, so the only witness to a captain's insolvency is
 // the same client that would be lying. It is bounded socially instead, by
-// the roster badge every captain in the room can read and by the
+// the roster badge every captain in the harbor can read and by the
 // standings the conclusion prints, which is the same bound the mode puts
 // on everything else the table is trusted to police. Left out of this
 // file rather than half done in it, since a check that could only ever
@@ -311,7 +311,7 @@ type SaveSnapshot = {
 // voyage could exceed, and the count is then set to the account's own sum
 // rather than the other way around (see ./foods and the load path in
 // use-game-session). So the most a forged pantry can hand its owner is
-// food the game already sold somebody, in a hold the room checks will not
+// food the game already sold somebody, in a hold the harbor checks will not
 // let them overfill, which is the same prize C1's paragraph above already
 // judged not worth a ceiling.
 //
@@ -361,7 +361,7 @@ type IntegrityVerdict = {
   findings: IntegrityFinding[];
 };
 
-// Judged against an absolute ceiling keyed to how far the room's own voyage
+// Judged against an absolute ceiling keyed to how far the harbor's own voyage
 // has actually got, rather than against the delta since the previous save.
 // A delta check is only ever as trustworthy as the save it compares to, and
 // that save came from the same client; an absolute ceiling keyed to the
@@ -387,14 +387,14 @@ type IntegrityVerdict = {
 // what it counts is volume rather than a balance.
 //
 // The manifest is judged here because it is the one record in the mode a
-// room reads and believes (see H6: the Manifest Audit), so a save that
+// harbor reads and believes (see H6: the Manifest Audit), so a save that
 // could stuff it would be a save that could lie to a whole table at once.
 // Its entry reads the list's length rather than any number in it, for the
 // reason the constant above gives.
 //
 // The second argument is the rounds the figures below were allowed to be
 // earned over, which is the ceiling's whole unit. Mid voyage that is how
-// far the room has actually got, which is what a live save is filed
+// far the harbor has actually got, which is what a live save is filed
 // against; at the close it is the voyage's own length, since no captain
 // can have earned anything in a round the voyage never ran. Both readings
 // are upper bounds on the same thing, which is why they share one

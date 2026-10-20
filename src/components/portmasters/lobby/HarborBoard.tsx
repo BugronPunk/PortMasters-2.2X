@@ -1,19 +1,19 @@
 "use client";
 
 // =====================================================================
-// The board of harbors already open, one row a room.
+// The board of harbors already open, one row a harbor.
 //
 // The lobby's browse view is three things stacked: the two ways in, this
 // board, and nothing else. This is the middle of those, lifted out because
 // a row is where most of the lobby's small decisions live: which pills a
-// room has earned the right to wear, who is hosting it, whether it can
+// harbor has earned the right to wear, who is hosting it, whether it can
 // still be entered at all.
 //
 // The board reads its own rows and decides nothing above them. Whether a
 // captain is allowed in is roomLockedFor's answer and not this file's, and
 // the row shows what it was told: a harbor that has set sail renders
 // Locked because the question came back true, not because of anything here
-// about the room's state.
+// about the harbor's state.
 // =====================================================================
 
 import { motion } from "framer-motion";
@@ -26,7 +26,7 @@ import { normalizeRoomName } from "@/lib/utils";
 import { difficultyConfig } from "@/lib/game/difficulty";
 import { t } from "@/lib/game/i18n";
 import { DEFAULT_MODE, modeConfig } from "@/lib/game/mode";
-// The labels of the doors a harbor can be opened through, so a room card
+// The labels of the doors a harbor can be opened through, so a harbor card
 // names the code that made it rather than an id this screen would have to
 // translate. The phrase itself is not read here.
 import { UNLOCKS } from "@/lib/unlock";
@@ -86,7 +86,7 @@ export function HarborBoard({
         </p>
         <p className="mt-1 max-w-[22rem] text-[11px] leading-relaxed text-muted-foreground">
           {t(
-            "Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a room of your own.",
+            "Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a harbor of your own.",
           )}
         </p>
       </div>

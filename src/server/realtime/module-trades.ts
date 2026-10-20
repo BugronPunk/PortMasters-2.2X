@@ -14,7 +14,7 @@
 // at all and the shared filter is read directly rather than taken a pass
 // over.
 //
-// The board is room state because an agreement between two captains is an
+// The board is harbor state because an agreement between two captains is an
 // object no single client can be the authority over, and what each client
 // does with their side of it is the only place their purse and their hull
 // change (see applyModuleTradeSide in @/lib/game/engine/modules).

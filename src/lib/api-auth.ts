@@ -83,6 +83,11 @@ export async function unauthorizedResponse(): Promise<NextResponse> {
  * pick (see use-language-preference). Anything the pack cannot print, and
  * a request with no cookie at all, lands on the shipped language, the same
  * honest fallback the socket's handshake reader gives it.
+ *
+ * The shell reads it too, for the document's own language attribute
+ * (see src/app/layout.tsx). It is the one reader outside a route, and it
+ * is here rather than beside itself because a cookie read twice is a
+ * cookie whose fallback can drift.
  */
 export async function requestLocale(): Promise<Locale> {
   const store = await cookies();

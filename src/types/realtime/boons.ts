@@ -7,7 +7,7 @@
 //
 // A report is one captain's own claim, sent by the claim hook when their
 // boon record changes (see src/lib/use-boon-ledger.ts). A ledger is the
-// whole table's answer, broadcast to the room after every accepted report
+// whole table's answer, broadcast to the harbor after every accepted report
 // and handed to a joiner (see src/server/realtime/boon-ledger.ts). The two
 // carry the same record shape, so neither side needs a translator.
 //
@@ -15,8 +15,8 @@
 // it is safe for the same reason the tally is: there is nowhere in the
 // record to put a hold, a purse or an alignment. It carries card ids out
 // of the public boon catalogue, the leg the choice was made in, and which
-// milestone the pick answered, and nothing else. The names the room reads
-// are looked up client side off the roster the room already has, so no
+// milestone the pick answered, and nothing else. The names the harbor reads
+// are looked up client side off the roster the harbor already has, so no
 // frame here names anybody.
 // =====================================================================
 
@@ -34,7 +34,7 @@ export type BoonReport = BoonRecord & {
 };
 
 /**
- * The fleet's ledger as the room reads it: every captain's last recorded
+ * The fleet's ledger as the harbor reads it: every captain's last recorded
  * decision, keyed by user id.
  *
  * Replaced rather than merged, like the audit's tally: the server sends

@@ -13,7 +13,7 @@
 // this board is the same row for everyone who may see it at all, so it
 // reads the shared filter directly instead of taking a pass over the result.
 //
-// The board is room state because an agreement between two captains is an
+// The board is harbor state because an agreement between two captains is an
 // object no single client can be the authority over, and what a customer's
 // client does with their side of it is the only place their clothes change
 // (see applyRefitSide in @/lib/game/engine/refits).

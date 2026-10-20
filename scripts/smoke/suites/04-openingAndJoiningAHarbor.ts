@@ -29,8 +29,8 @@ export async function openingAndJoiningAHarborSuite(inputs: {
       }),
     },
   );
-  check(created.status === 200, "the host can create a room");
-  if (created.status !== 200) throw new Error("No room, stopping here.");
+  check(created.status === 200, "the host can create a harbor");
+  if (created.status !== 200) throw new Error("No harbor, stopping here.");
   roomId = created.body.room.id;
   const code = created.body.room.code;
 
@@ -39,7 +39,7 @@ export async function openingAndJoiningAHarborSuite(inputs: {
     cookie: guest.cookie,
     body: JSON.stringify({ code }),
   });
-  check(joined.status === 200, "the guest can join with the room code");
+  check(joined.status === 200, "the guest can join with the harbor code");
 
   const detail = await call<{
     room: {

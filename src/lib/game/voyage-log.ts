@@ -1,14 +1,14 @@
 // =====================================================================
 // PortMasters 2.2 Parallel Release: the voyage log
 //
-// [B4: the log surfaces] The room's own record of what happened on a
+// [B4: the log surfaces] The harbor's own record of what happened on a
 // voyage, as lines the server writes and every captain sitting in the
-// room reads. It is the public half of the pair B4 asks for: the private
+// harbor reads. It is the public half of the pair B4 asks for: the private
 // half is the channel in src/lib/use-private-log.ts, which carries what
 // the table is hiding and reaches one captain's sockets.
 //
 // The two halves are one idea told twice, and the difference is the
-// audience rather than the shape. A public line goes to the room channel
+// audience rather than the shape. A public line goes to the harbor channel
 // and names what the table already saw; a private entry goes to the
 // captain it belongs to and is the only place a hidden thing travels.
 //
@@ -138,7 +138,7 @@ export type VoyageLogFacts =
   // to say here. Both lines carry the garment, which is this trade's term
   // the way "one leg of protection" is the market's, and both carry the fee
   // for the reason the two lines above do: what was agreed in the open is
-  // the room's business.
+  // the harbor's business.
   | { kind: "refit_posted"; captain: string; good: string; fee: number }
   | {
       kind: "refit_agreed";
@@ -155,7 +155,7 @@ export type VoyageLogFacts =
   // it is the same fact for an open listing and a direct one; neither
   // carries the buyer on the posted line, for the reason the escort's own
   // note gives, and both carry the fee, because a price agreed in the open
-  // is the room's business.
+  // is the harbor's business.
   //
   // The module is carried as its card id rather than its name, and the
   // writer below resolves it through the card pool, which is the same
@@ -176,13 +176,13 @@ export type VoyageLogFacts =
   // good they named and no direction, because the direction is the whole
   // of what the rumor keeps: a public line naming it would hand the table
   // the one fact the feature exists to hold, and it would do it in the
-  // room's own record, which is the surface the fleet trusts most.
+  // harbor's own record, which is the surface the fleet trusts most.
   //
   // Where the direction does become readable is the bazaar board, one leg
   // later, when the market the rumor moved has been drawn (see
   // publicRumors). That is a row with a leg on it rather than a line in
   // the log, and the two are different shapes on purpose: the log is what
-  // the room saw happen, and the board is what the room can work out.
+  // the harbor saw happen, and the board is what the harbor can work out.
   | { kind: "rumor_published"; captain: string; good: string }
   // [D7: the draft, and switching] The identity lines, and the plan asks
   // for the second one by name: "the switch is published to the fleet log
@@ -193,14 +193,14 @@ export type VoyageLogFacts =
   // name out of pathConfig, which is the table the panels read, so the line
   // and the chip say the same words about the same path.
   //
-  // Neither carries the path the captain left. The room's logs are written
-  // from what the room saw, and the room sees the identity a captain takes
-  // up rather than the one they were holding: a "from" field would be the
-  // server repeating a claim it cannot check, since the path a captain
-  // holds lives in their own save and this server has never read one (the
-  // same line the bazaar's desk draws about who may speak). The news the
-  // plan wants published is that a captain is not who they were, and the
-  // new name is the whole of that fact.
+  // Neither carries the path the captain left. The harbor's logs are
+  // written from what the harbor saw, and the harbor sees the identity a
+  // captain takes up rather than the one they were holding: a "from" field
+  // would be the server repeating a claim it cannot check, since the path a
+  // captain holds lives in their own save and this server has never read
+  // one (the same line the bazaar's desk draws about who may speak). The
+  // news the plan wants published is that a captain is not who they were,
+  // and the new name is the whole of that fact.
   //
   // The name is read through pathConfig off the union's own id, so the
   // assertion cannot fire: a PathId is a key of the record the lookup
@@ -210,7 +210,7 @@ export type VoyageLogFacts =
   | { kind: "path_switched"; captain: string; path: PathId };
 
 // One line as it travels and as it is kept: the leg it happened on, what
-// kind of thing it was, and the sentence itself. The round is the room's
+// kind of thing it was, and the sentence itself. The round is the harbor's
 // leg rather than the captain's, stamped by the accumulator that holds
 // the log, which is what lets a screen group a voyage into its legs
 // without a client working out which leg a line belongs to.

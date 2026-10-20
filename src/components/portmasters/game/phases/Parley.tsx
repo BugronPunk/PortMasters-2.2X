@@ -46,18 +46,18 @@ import {
   HuePanel,
   PanelHeading,
   PanelTitle,
-  PhaseError,
   ReadyFooter,
   StationStrip,
   type PhasePanelProps,
 } from "./PhaseShared";
+import { Notice } from "../../shared";
 
 // The Parley panel: the Captain's Exchange, and with it the two votes the
 // table carries and the three markets that sell on the same terms the
 // exchange does. Named for the phase it is (see @/lib/game/phases), the
 // same way Market.tsx and Orders.tsx are, rather than for bartering, which
 // is the activity half this screen shares with a chat composer and not the
-// seat the room waits on.
+// seat the harbor waits on.
 //
 // The screen wears two stations rather than one stack ten sections deep:
 // the exchange, the two votes, the fleet's ledger and the three markets
@@ -65,7 +65,7 @@ import {
 // window and make the phase read as a wall. It is the same shape
 // Market.tsx uses and for the reasons written there: the station is local
 // state rather than a phase value or a saved field, so a captain who
-// switches stations has told the room nothing, and the wait a ready vote
+// switches stations has told the harbor nothing, and the wait a ready vote
 // opened does not split again.
 //
 // What is traded splits; what belongs to the whole table does not. The
@@ -167,7 +167,7 @@ export function Parley({
     auditCardShown(game, audit) || maroonCardShown(game, maroon) || ledgerShown;
   const businessOpen = bizOpen ?? anyLive;
   //
-  // A live vote's gist carries the room's own count when the server has
+  // A live vote's gist carries the harbor's own count when the server has
   // said one, which is the sentence that answers the question the fold is
   // closed over: not just that a vote is open but how far along it is. The
   // count comes off the tally frame (see VoteCensus), so the fold's
@@ -209,10 +209,10 @@ export function Parley({
   //
   // It closes the way every phase closes: by marking ready. That is the
   // whole reason this belongs in the component rather than in the realtime
-  // layer. A server that emptied the checkpoint's ready set on the room's
+  // layer. A server that emptied the checkpoint's ready set on the harbor's
   // behalf would move the checkpoint while every client sat waiting to be
-  // told to move, which is a room stuck forever; here each client runs the
-  // one transition it already knows, and the room advances through the
+  // told to move, which is a harbor stuck forever; here each client runs the
+  // one transition it already knows, and the harbor advances through the
   // protocol it was already using.
   //
   // The guards are the ones that keep a stale finding from spending a
@@ -223,7 +223,7 @@ export function Parley({
   // record it came from. That record changes whenever anything in it does,
   // waiting flipping true on the back of this very press included, and
   // running the effect again there sent the vote a second time. The press
-  // changes only when the room, the round or the phase does, which is
+  // changes only when the harbor, the round or the phase does, which is
   // exactly when this effect should look again.
   const revealedRound = audit.reveal?.round;
   const { markReady } = phaseSync;
@@ -423,10 +423,11 @@ export function Parley({
           </HuePanel>
 
           {barter.error && (
-            <PhaseError
+            <Notice
               message={barter.error}
               onDismiss={barter.clearError}
               className="mb-4"
+              size="sm"
             />
           )}
         </>

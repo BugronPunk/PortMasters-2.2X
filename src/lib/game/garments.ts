@@ -37,7 +37,7 @@
 // into are not read here: they belong to the bench's own arithmetic.
 //
 // The weather is drawn rather than stored. Every input the tag needs is
-// already room wide on the state, so one function answers for the whole
+// already harbor wide on the state, so one function answers for the whole
 // harbor, replays on reload, and needs no field, no stamp and no context to
 // thread: see legIsCold below.
 //
@@ -59,15 +59,15 @@ import {
   type GarmentSpec,
 } from "./constants/garments";
 import { newestAboard } from "./crew";
-import { crewSize } from "./larder";
 import { flagOnFor, survivalLayerOn } from "./flags";
 // The sentences this module pushes are read at the moment they are built
 // rather than stored at module scope, so the line a language flip changes is
 // the one the settlement hands the log rather than a copy made earlier.
-import { t } from "./i18n";
-import { frozenFrostbiteLog } from "./status-copy";
+import { line, type LedgerLine } from "./ledger";
+import { frozenFrostbiteLogLine } from "./status-copy";
 import { createRng } from "./rng";
 import {
+  crewSize,
   flatWorkerRoster,
   wholeStamp,
   type GameState,
@@ -362,33 +362,33 @@ export function isFrostbitten(
 export function wearGarment(
   state: GameState,
   good: unknown,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
   if (!garmentsLayerOn(state.mode)) return false;
   const spec = garmentSpec(good);
   if (!spec || typeof good !== "string") {
-    logs.push(t("❌ That is not something the crew can wear."));
+    logs.push(line("❌ That is not something the crew can wear."));
     return false;
   }
   if (crewSize(state) === 0) {
-    logs.push(t("❌ There is nobody aboard to wear it."));
+    logs.push(line("❌ There is nobody aboard to wear it."));
     return false;
   }
   if ((state.garments?.length ?? 0) >= GARMENTS_WORN_MAX) {
-    logs.push(t("❌ The crew can wear no more than they already have on."));
+    logs.push(line("❌ The crew can wear no more than they already have on."));
     return false;
   }
   if ((state.inventory[good] || 0) < 1) {
-    logs.push(t("❌ No {good} in the hold to wear.", { good: t(good) }));
+    logs.push(line("❌ No {good} in the hold to wear.", { good: line(good) }));
     return false;
   }
   if (!shortOfWarmth(state)) {
     logs.push(
       legIsCold(state)
-        ? t(
+        ? line(
             "❌ The crew already meets this cold leg. Clothes put on for nothing still wear, so the rest stay in the hold until a leg asks for them.",
           )
-        : t(
+        : line(
             "❌ The sea is mild this leg and asks for no warmth. Clothes put on now would wear from today, so the hold keeps them for a cold leg.",
           ),
     );
@@ -400,10 +400,13 @@ export function wearGarment(
   // thing that makes the decision: what went onto the crew's backs is worth
   // its rating today and a fraction of it later.
   logs.push(
-    t("🧥 The crew puts on the {good}. Warmth {spec.warmth} while it lasts.", {
-      good: t(good),
-      "spec.warmth": spec.warmth,
-    }),
+    line(
+      "🧥 The crew puts on the {good}. Warmth {spec.warmth} while it lasts.",
+      {
+        good: line(good),
+        "spec.warmth": spec.warmth,
+      },
+    ),
   );
   return true;
 }
@@ -459,7 +462,7 @@ export function restoreGarment(
   state: GameState,
   good: unknown,
   points: number,
-  logs: string[],
+  logs: LedgerLine[],
 ): number {
   if (!garmentsLayerOn(state.mode)) return 0;
   const spec = garmentSpec(good);
@@ -485,10 +488,10 @@ export function restoreGarment(
     i === target ? { ...garment, durability: after } : garment,
   );
   logs.push(
-    t(
+    line(
       "🧵 The {good} comes back to {after} of {spec.durability}, worth {warmthGrade} of warmth.",
       {
-        good: t(good),
+        good: line(good),
         after,
         "spec.durability": spec.durability,
         warmthGrade: warmthText(garmentWarmth({ good, durability: after })),
@@ -515,7 +518,7 @@ export function restoreGarment(
  * The marks a leg ends with are cleared here as the walk goes, so a hand
  * frostbitten two legs ago is not carrying a sentence whose leg is over.
  */
-export function tickGarments(state: GameState, logs: string[]): void {
+export function tickGarments(state: GameState, logs: LedgerLine[]): void {
   if (!garmentsLayerOn(state.mode)) return;
   if (state.garmentsTickRound === state.currentRound) return;
   state.garmentsTickRound = state.currentRound;
@@ -535,18 +538,18 @@ export function tickGarments(state: GameState, logs: string[]): void {
 
   const score = warmthScore(state);
   logs.push(
-    t("\n🧥=== Round {state.currentRound} · The Cold and the Cloth ===", {
+    line("\n🧥=== Round {state.currentRound} · The Cold and the Cloth ===", {
       "state.currentRound": state.currentRound,
     }),
   );
   if (cold) {
     logs.push(
       score >= COLD_LEG_WARMTH
-        ? t(
+        ? line(
             "❄️ A cold leg, and the crew's {warmthGrade} of warmth is enough for the {COLD_LEG_WARMTH} it asks.",
             { warmthGrade: warmthText(score), COLD_LEG_WARMTH },
           )
-        : t(
+        : line(
             "❄️ A cold leg, and the crew's {warmthGrade} of warmth falls short of the {COLD_LEG_WARMTH} it asks.",
             { warmthGrade: warmthText(score), COLD_LEG_WARMTH },
           ),
@@ -565,9 +568,9 @@ export function tickGarments(state: GameState, logs: string[]): void {
       rags++;
       state.money += RAG_SCRAP_VALUE;
       logs.push(
-        t(
+        line(
           "🌊 The {garment.good} wears through to rags and is scrapped for {RAG_SCRAP_VALUE} Gold.",
-          { "garment.good": t(garment.good), RAG_SCRAP_VALUE },
+          { "garment.good": line(garment.good), RAG_SCRAP_VALUE },
         ),
       );
       continue;
@@ -583,7 +586,7 @@ export function tickGarments(state: GameState, logs: string[]): void {
     // warmth, and a captain watching the wardrobe could never reconcile
     // the sentence with the numbers.
     logs.push(
-      t("🧵 Worn clothes lose {step} point of wear to the sea.", { step }),
+      line("🧵 Worn clothes lose {step} point of wear to the sea.", { step }),
     );
   }
 }
@@ -601,17 +604,17 @@ export function tickGarments(state: GameState, logs: string[]): void {
  * composed in ./status-copy, so the bite, the work log and the bench all
  * phrase the cold from one set of clauses.
  */
-function frostbiteNewest(state: GameState, logs: string[]): void {
+function frostbiteNewest(state: GameState, logs: LedgerLine[]): void {
   const newest = newestAboard(state);
   if (newest === null) {
-    logs.push(t("🥶 There is nobody aboard to take the cold."));
+    logs.push(line("🥶 There is nobody aboard to take the cold."));
     return;
   }
   const hand = state.workers[newest.type]?.[newest.index];
   if (!hand) return;
   hand.frostbittenRound = state.currentRound + 1;
   const label = workerType(newest.type)?.label ?? newest.type;
-  logs.push(frozenFrostbiteLog(hand.name, label));
+  logs.push(frozenFrostbiteLogLine(hand.name, label));
 }
 
 /**

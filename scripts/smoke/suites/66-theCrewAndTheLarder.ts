@@ -33,7 +33,14 @@ import {
 } from "@/lib/game/engine/workers";
 import { feedCrew, onShortRations, provisionFood } from "@/lib/game/larder";
 import { hungryProductionNote } from "@/lib/game/status-copy";
-import { CARRIES_A_DASH, check, voyageState, withEnv } from "../harness";
+import {
+  CARRIES_A_DASH,
+  check,
+  ledgerSentences,
+  voyageState,
+  withEnv,
+} from "../harness";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 const TASK = "Linen Clothes";
 
@@ -63,12 +70,12 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
   const weaver = workerType("weaver")!;
   // Every line the walk collects, for one closing sweep under the house
   // rule below rather than a dash test at each of the thirty checks.
-  const readLines: string[] = [];
+  const readLines: LedgerLine[] = [];
 
-  // ---- A. Every hire writes a person, and the line introduces them ----
+  // ========== A. Every hire writes a person, and the line introduces them ==========
   const g = voyageState();
   g.money = 200;
-  const hireLogs: string[] = [];
+  const hireLogs: LedgerLine[] = [];
   hireWorker(g, "weaver", hireLogs);
   hireWorker(g, "weaver", hireLogs);
   hireWorker(g, "weaver", hireLogs);
@@ -82,7 +89,7 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
       new Set(names).size === 3 &&
       roster.map((hand) => hand.seq).join(",") === "1,2,3" &&
       names.every((name) =>
-        hireLogs.includes(
+        ledgerSentences(hireLogs).includes(
           `${weaver.icon} Hired ${name} the ${weaver.label}! Wage: ${wage} Gold / Round (paid at round end)`,
         ),
       ),
@@ -91,57 +98,61 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
 
   const broke = voyageState();
   broke.money = 0;
-  const brokeLogs: string[] = [];
+  const brokeLogs: LedgerLine[] = [];
   hireWorker(broke, "weaver", brokeLogs);
   readLines.push(...brokeLogs);
   check(
     broke.workers.weaver.length === 0 &&
       brokeLogs.length === 1 &&
-      brokeLogs[0] === "❌ Insufficient funds to hire workers!",
+      ledgerSentences(brokeLogs)[0] ===
+        "❌ Insufficient funds to hire workers!",
     "and a hire the purse cannot cover is refused in one line with the bench left as it was, rather than taken and billed later by a payroll the captain never agreed to",
   );
 
-  // ---- B. The assignment spends the recipe and names the shortfall ----
+  // ========== B. The assignment spends the recipe and names the shortfall ==========
   g.inventory["Hemp"] = 5;
-  const assignLogs: string[] = [];
+  const assignLogs: LedgerLine[] = [];
   assignTask(g, "weaver", TASK, assignLogs);
   assignTask(g, "weaver", TASK, assignLogs);
   readLines.push(...assignLogs);
   check(
-    assignLogs.filter((line) => line === assignedLine()).length === 2 &&
+    ledgerSentences(assignLogs).filter((line) => line === assignedLine())
+      .length === 2 &&
       roster[0].task === TASK &&
       roster[1].task === TASK &&
       g.inventory["Hemp"] === 1,
     "the first two assignments land on the first two hands in the order they came aboard, each spending the recipe out of the hold as it is handed out, which is the whole of what an assignment is: the materials are gone the moment the task exists",
   );
-  const shortLogs: string[] = [];
+  const shortLogs: LedgerLine[] = [];
   assignTask(g, "weaver", TASK, shortLogs);
   readLines.push(...shortLogs);
   check(
     shortLogs.length === 1 &&
-      shortLogs[0] === shortageLine({ Hemp: 1 }) &&
+      ledgerSentences(shortLogs)[0] === shortageLine({ Hemp: 1 }) &&
       roster[2].task === null &&
       g.inventory["Hemp"] === 1,
     "and a task the hold cannot cover is refused by naming every material against what is on hand, flagging the short ones, with the idle hand still idle and the last Hemp still in the hold rather than spent on a line that never started",
   );
 
-  // ---- C. Two fed legs: the work lands, and the hand learns it ----
+  // ========== C. Two fed legs: the work lands, and the hand learns it ==========
   // The survival layer is held on for the meal below the way the launch
   // gates' article holds it: the rules read the same whatever the
   // operator set at the door.
   withEnv("NEXT_PUBLIC_SURVIVAL", "1", () => {
     g.currentRound = 1;
     g.larder = LARDER_START;
-    const mealOne: string[] = [];
+    const mealOne: LedgerLine[] = [];
     feedCrew(g, mealOne);
     readLines.push(...mealOne);
-    const workOne: string[] = [];
+    const workOne: LedgerLine[] = [];
     processProduction(g, workOne);
     readLines.push(...workOne);
     check(
-      mealOne.includes("🍲 The crew eats 3 rations. 9 left in the larder.") &&
+      ledgerSentences(mealOne).includes(
+        "🍲 The crew eats 3 rations. 9 left in the larder.",
+      ) &&
         g.larder === 9 &&
-        workOne.filter(
+        ledgerSentences(workOne).filter(
           (line) =>
             line === `✅ ${weaver.label} finished ${ICONS[TASK]}${TASK}!`,
         ).length === 2 &&
@@ -154,16 +165,16 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
 
     g.currentRound = 2;
     g.inventory["Hemp"] += 4;
-    const assignTwo: string[] = [];
+    const assignTwo: LedgerLine[] = [];
     assignTask(g, "weaver", TASK, assignTwo);
     assignTask(g, "weaver", TASK, assignTwo);
-    const mealTwo: string[] = [];
+    const mealTwo: LedgerLine[] = [];
     feedCrew(g, mealTwo);
-    const workTwo: string[] = [];
+    const workTwo: LedgerLine[] = [];
     processProduction(g, workTwo);
     readLines.push(...assignTwo, ...mealTwo, ...workTwo);
     check(
-      workTwo.filter(
+      ledgerSentences(workTwo).filter(
         (line) =>
           line ===
           `⭐ ${weaver.label} Promotion! Can now produce 2 items per round!`,
@@ -175,13 +186,15 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
       "and the second leg promotes both working hands the moment their second item lands, so a captain meets a Master on the roster the same way they met the recruit: the promotion arrives after the work that earned it, not instead of it, and the hand that never worked stays unskilled",
     );
 
-    // ---- D. The payroll says what it takes, and what it cannot ----
-    const wageLogs: string[] = [];
+    // ========== D. The payroll says what it takes, and what it cannot ==========
+    const wageLogs: LedgerLine[] = [];
     const paid = payWages(g, wageLogs);
     readLines.push(...wageLogs);
     check(
       paid === true &&
-        wageLogs.includes(`💰 Paid wages for 3 Weavers: ${3 * wage} Gold`) &&
+        ledgerSentences(wageLogs).includes(
+          `💰 Paid wages for 3 Weavers: ${3 * wage} Gold`,
+        ) &&
         g.money === 200 - 3 * wage &&
         g.workerWages === 3 * wage,
       "the payroll line names the trade in its plural with the count and the Gold it took, and the purse and the voyage's wage ledger move by exactly the figure the bill quoted, so the line a captain reads and the number the settlement holds are one deduction",
@@ -191,18 +204,18 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     underpaid.money = 200;
     hireWorker(underpaid, "weaver", []);
     underpaid.money = 3;
-    const shortPayLogs: string[] = [];
+    const shortPayLogs: LedgerLine[] = [];
     const shortPaid = payWages(underpaid, shortPayLogs);
     readLines.push(...shortPayLogs);
     check(
       shortPaid === "bankruptcy" &&
-        shortPayLogs.includes(
+        ledgerSentences(shortPayLogs).includes(
           `⚠️ Insufficient funds! Needed: ${getHireCost(underpaid, "weaver")} Gold, Have: 3 Gold`,
         ) &&
-        shortPayLogs.includes(
+        ledgerSentences(shortPayLogs).includes(
           "💥 Could not pay wages, the crew is left unpaid.",
         ) &&
-        shortPayLogs.includes(
+        ledgerSentences(shortPayLogs).includes(
           "💥 Reputation collapsed: a bankruptcy is recorded.",
         ) &&
         underpaid.money === 3 &&
@@ -210,15 +223,15 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
       "and a payroll the purse cannot cover says the shortfall by number, says plainly that the crew is left unpaid and a bankruptcy is recorded, and takes nothing: the lines stopped short of ending the voyage in words because the seat that keeps sailing decides what the failure costs",
     );
 
-    // ---- E. The maintenance bill, paid, forced and absent ----
+    // ========== E. The maintenance bill, paid, forced and absent ==========
     const cost = g.fixedCost + g.maintenancePenalty;
     const beforeMaintenance = g.money;
-    const maintenanceLogs: string[] = [];
+    const maintenanceLogs: LedgerLine[] = [];
     const maintained = payMaintenance(g, maintenanceLogs);
     readLines.push(...maintenanceLogs);
     check(
       maintained === true &&
-        maintenanceLogs.includes(
+        ledgerSentences(maintenanceLogs).includes(
           `💸 Paid Ship Maintenance Fee: ${cost} Gold`,
         ) &&
         g.money === beforeMaintenance - cost &&
@@ -228,20 +241,20 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
 
     const thin = voyageState();
     thin.money = 5;
-    const thinLogs: string[] = [];
+    const thinLogs: LedgerLine[] = [];
     const thinPaid = payMaintenance(thin, thinLogs);
     readLines.push(...thinLogs);
     const empty = voyageState();
     empty.money = 0;
-    const emptyLogs: string[] = [];
+    const emptyLogs: LedgerLine[] = [];
     const emptyPaid = payMaintenance(empty, emptyLogs);
     readLines.push(...emptyLogs);
     check(
       thinPaid === "bankruptcy" &&
-        thinLogs.includes(
+        ledgerSentences(thinLogs).includes(
           `⚠️ Forced payment of 5 Gold (Needed ${thin.fixedCost + thin.maintenancePenalty} Gold)`,
         ) &&
-        thinLogs.includes(
+        ledgerSentences(thinLogs).includes(
           "⚠️ Funds depleted: the maintenance fee goes unpaid.",
         ) &&
         thin.money === 0 &&
@@ -251,18 +264,20 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
       "a hull with something left in the purse pays what it can and the line names both figures, a hull with nothing left is a bankruptcy with no line at all rather than a forced payment of nothing, and both leave the voyage's ending to the seat that decides it",
     );
 
-    // ---- F. A dismissal names the person and the price ----
+    // ========== F. A dismissal names the person and the price ==========
     g.inventory["Hemp"] += 2;
     assignTask(g, "weaver", TASK, []);
     const beforeFire = g.money;
-    const fireLogs: string[] = [];
+    const fireLogs: LedgerLine[] = [];
     fireWorker(g, "weaver", 0, fireLogs);
     readLines.push(...fireLogs);
     check(
-      fireLogs.includes(
+      ledgerSentences(fireLogs).includes(
         `💔 Dismissed ${names[0]} the ${weaver.label}. Severance: ${wage} Gold`,
       ) &&
-        fireLogs.includes(`  This worker was making: ${TASK}`) &&
+        ledgerSentences(fireLogs).includes(
+          `  This worker was making: ${TASK}`,
+        ) &&
         g.money === beforeFire - wage &&
         g.workers.weaver.length === 2 &&
         g.workers.weaver.every((hand) => hand.name !== names[0]),
@@ -273,23 +288,23 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     poor.money = 200;
     hireWorker(poor, "weaver", []);
     poor.money = 0;
-    const poorLogs: string[] = [];
+    const poorLogs: LedgerLine[] = [];
     fireWorker(poor, "weaver", 0, poorLogs);
     readLines.push(...poorLogs);
     check(
       poorLogs.length === 1 &&
-        poorLogs[0] ===
+        ledgerSentences(poorLogs)[0] ===
           `❌ Insufficient funds for ${weaver.label}'s severance: ${getHireCost(poor, "weaver")} Gold` &&
         poor.workers.weaver.length === 1,
       "and a severance the purse cannot pay leaves the hand aboard rather than dismissing them into a debt, with the refusal naming the trade and the figure the dismissal would have taken",
     );
   });
 
-  // ---- G. The hungry leg, end to end ----
+  // ========== G. The hungry leg, end to end ==========
   withEnv("NEXT_PUBLIC_SURVIVAL", "1", () => {
     const h = voyageState();
     h.money = 1000;
-    const lonelyLogs: string[] = [];
+    const lonelyLogs: LedgerLine[] = [];
     hireWorker(h, "weaver", lonelyLogs);
     readLines.push(...lonelyLogs);
     const hand = h.workers.weaver[0];
@@ -319,11 +334,11 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     // is done under the rule the announcement just stated.
     h.currentRound = 3;
     h.larder = 1;
-    const hungryMeal: string[] = [];
+    const hungryMeal: LedgerLine[] = [];
     const mealWasEaten = feedCrew(h, hungryMeal);
     h.inventory["Hemp"] = (h.inventory["Hemp"] ?? 0) + 2;
     assignTask(h, "weaver", TASK, []);
-    const hungryWork: string[] = [];
+    const hungryWork: LedgerLine[] = [];
     processProduction(h, hungryWork);
     readLines.push(...hungryMeal, ...hungryWork);
     check(
@@ -331,28 +346,30 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
         h.larder === 0 &&
         onShortRations(h) &&
         hungryMeal.length === 1 &&
-        hungryMeal[0].includes("Short rations") &&
-        hungryMeal[0].includes(`${Math.round(SHORT_RATIONS_YIELD * 100)}%`),
+        ledgerSentences(hungryMeal)[0].includes("Short rations") &&
+        ledgerSentences(hungryMeal)[0].includes(
+          `${Math.round(SHORT_RATIONS_YIELD * 100)}%`,
+        ),
       "the leg the last ration goes is the leg the shortage is announced on: the meal is still eaten, the count reads empty rather than in debt, and the line states the pace the engine is about to apply rather than a warning that arrives after it",
     );
     check(
-      hungryWork.includes(hungryProductionNote()) &&
-        hungryWork.includes(
+      ledgerSentences(hungryWork).includes(hungryProductionNote()) &&
+        ledgerSentences(hungryWork).includes(
           `✅ Skilled ${weaver.label} finished 1× ${ICONS[TASK]}${TASK}!`,
         ) &&
-        !hungryWork.some((line) => line.includes("(Bonus)")) &&
+        !ledgerSentences(hungryWork).some((line) => line.includes("(Bonus)")) &&
         h.inventory[TASK] === 3,
       "and the hungry leg costs exactly what the rule says: the skilled hand that finished two the leg before brings home one, the line counts the one it brought home rather than promising the two its skill would have made, and the note above it names the state and the way back before the smaller number is read",
     );
 
     // The way back: provisions bought at a market, through the same
     // function the panel's buttons call, and the next leg is fed.
-    const provisionLogs: string[] = [];
+    const provisionLogs: LedgerLine[] = [];
     const bought = provisionFood(h, "Grain", 2, provisionLogs);
     readLines.push(...provisionLogs);
     check(
       bought === 2 &&
-        provisionLogs.includes(
+        ledgerSentences(provisionLogs).includes(
           `🧺 Provisioned 2 rations of Grain for 1 aboard (${2 * RATION_PRICE} Gold). 2 in the larder.`,
         ) &&
         h.larder === 2 &&
@@ -363,17 +380,19 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     );
 
     h.currentRound = 4;
-    const fedMeal: string[] = [];
+    const fedMeal: LedgerLine[] = [];
     feedCrew(h, fedMeal);
     h.inventory["Hemp"] = (h.inventory["Hemp"] ?? 0) + 2;
     assignTask(h, "weaver", TASK, []);
-    const fedWork: string[] = [];
+    const fedWork: LedgerLine[] = [];
     processProduction(h, fedWork);
     readLines.push(...fedMeal, ...fedWork);
     check(
-      fedMeal.includes("🍲 The crew eats 1 ration. 1 left in the larder.") &&
-        !fedWork.includes(hungryProductionNote()) &&
-        fedWork.includes(
+      ledgerSentences(fedMeal).includes(
+        "🍲 The crew eats 1 ration. 1 left in the larder.",
+      ) &&
+        !ledgerSentences(fedWork).includes(hungryProductionNote()) &&
+        ledgerSentences(fedWork).includes(
           `✅ Skilled ${weaver.label} finished 2× ${ICONS[TASK]}${TASK}!`,
         ) &&
         h.inventory[TASK] === 5,
@@ -381,10 +400,10 @@ export async function theCrewAndTheLarderSuite(): Promise<void> {
     );
   });
 
-  // ---- The house rule, over every line the walk read ----
+  // ========== The house rule, over every line the walk read ==========
   check(
     readLines.length >= 25 &&
-      readLines.every(
+      ledgerSentences(readLines).every(
         (line) => line.trim().length > 0 && !CARRIES_A_DASH.test(line),
       ),
     "every line this walk put in front of a captain, from the first hire to the last provision, says something and holds the house rule: no dashes and no doubled hyphens anywhere in the recount of the voyage",

@@ -2,8 +2,8 @@
 // PortMasters 2.2 Parallel Release: standing orders, as a captain writes
 // them.
 //
-// [B3: standing orders] The room's clock already protects a table from the
-// captain who walked away: the server holds the timer, and a seat the room
+// [B3: standing orders] The harbor's clock already protects a table from the
+// captain who walked away: the server holds the timer, and a seat the harbor
 // has run out is left by its own defaults rather than held open forever. What that leaves is the other half of the problem. The
 // defaults are the engine's opinion, not the captain's, so the leg a
 // slow player never got to play is played for them by a stranger.
@@ -42,7 +42,7 @@ import { MARKET_GOODS } from "./constants/goods";
 type StandingBuy = { good: string; maxPrice: number };
 
 /**
- * What a captain writes once and the engine reads when the room's clock
+ * What a captain writes once and the engine reads when the harbor's clock
  * plays a seat they were not standing at.
  *
  * `enabled` is the captain's own switch and the whole of the rollback the
@@ -192,7 +192,7 @@ export function standingBoon(orders: StandingOrders): CardRecord | null {
 }
 
 /**
- * Whether a set would do anything at all if the room's clock played a
+ * Whether a set would do anything at all if the harbor's clock played a
  * seat right now.
  *
  * The switch alone does not answer that: a captain who turned it on and

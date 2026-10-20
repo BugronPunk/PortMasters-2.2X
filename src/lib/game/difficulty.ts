@@ -6,12 +6,12 @@
 // build's own design (a single DIFFICULTIES record plus difficultyRules
 // helpers), rebuilt around this release's own systems.
 //
-// Difficulty is a ROOM property (see Room.difficulty in prisma/schema.prisma):
+// Difficulty is a HARBOR property (see Room.difficulty in prisma/schema.prisma):
 // the host picks it once, and every captain in the harbor resolves the same
 // tier. Because the tier and the round number are the only inputs to every
-// selector here, and both are identical for everyone in a room, each
+// selector here, and both are identical for everyone in a harbor, each
 // captain's seeded market and orders keep their own personal draw while the
-// structure (how many cards, how likely a raid) stays consistent room wide.
+// structure (how many cards, how likely a raid) stays consistent harbor wide.
 //
 // The "fair_winds" tier is the founding game: 8 rounds, a flat 0.2 raid
 // chance, a 0.1 escort fee, 6 cards on each board, no mandates and no
@@ -31,7 +31,7 @@ export type Difficulty = "fair_winds" | "open_waters" | "monsoon";
 export const DEFAULT_DIFFICULTY: Difficulty = "fair_winds";
 
 export interface DifficultyConfig {
-  // Display metadata, read by the lobby switch, the room card chip, and the
+  // Display metadata, read by the lobby switch, the harbor card chip, and the
   // in game status chip, so copy and numbers never drift from one source.
   name: string;
   // [F1: the tag vocabulary, and the two tag rule] What water this charter
@@ -190,7 +190,7 @@ interface MandateTemplate {
 }
 
 // A mandate is deliberately fixed data with no randomness, so every captain in
-// a room is dealt the identical commission without disturbing their own seeded
+// a harbor is dealt the identical commission without disturbing their own seeded
 // market. Mandates are also exempt from VAT (they are an imperial commission,
 // not a taxed sale), which is why the engine flags them isProductOrder: false.
 export const MANDATE_TEMPLATES: readonly MandateTemplate[] = [

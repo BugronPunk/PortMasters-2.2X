@@ -1,7 +1,7 @@
 // =====================================================================
 // Healing a voyage that came back off the server.
 //
-// Whatever the room answered is a blob a client wrote, possibly under an
+// Whatever the harbor answered is a blob a client wrote, possibly under an
 // older build, so every field this build reads is given a shape before the
 // first render: a missing array becomes an empty one, a missing tally
 // becomes zero, and a value this tree cannot account for is read as the
@@ -66,11 +66,11 @@ import { normalizePath } from "@/lib/game/paths";
 import { normalizePathSwitchLeg } from "@/lib/game/draft";
 import { normalizePhase } from "@/lib/game/phases";
 
-// What the room and the account answered at the moment this save was
+// What the harbor and the account answered at the moment this save was
 // loaded, which is everything the heal cannot read out of the blob itself.
 type LoadedSaveFacts = {
-  // The room's live answer and the hint the lobby carried in, which are
-  // allowed to disagree: the response is the room answering a moment ago,
+  // The harbor's live answer and the hint the lobby carried in, which are
+  // allowed to disagree: the response is the harbor answering a moment ago,
   // the hint is what the lobby said before the request.
   apiMode?: GameMode;
   roomMode?: GameMode;
@@ -113,7 +113,7 @@ export function healLoadedVoyage(
   //
   // The ceiling this one trims to is the mode's, so the mode is
   // settled first: the save's own stamp where it carries one, and
-  // the room's live answer where it does not. A save written before
+  // the harbor's live answer where it does not. A save written before
   // the field existed would otherwise be healed in the founding
   // mode, and the founding mode is the one whose hold has no
   // ceiling, which would quietly trim a voyage that was sailing
@@ -142,7 +142,7 @@ export function healLoadedVoyage(
   refreshVoyageFacts(game, facts);
   // Last, and after the facts above rather than with the collections: the
   // fixed cost falls back to the tier's own maintenance, and the tier is
-  // only settled once the room has answered (see refreshVoyageFacts), and
+  // only settled once the harbor has answered (see refreshVoyageFacts), and
   // the two penalties are read back off the hull the load has healed.
   healShipLedger(game);
 }
@@ -257,7 +257,7 @@ function healCommissionAndHold(game: GameState): void {
   // filled after loading an old save would throw. The normalizer
   // also bounds the list and throws away anything that could not be
   // a fulfillment, since the record is read back out to a whole
-  // room rather than only by the captain who wrote it.
+  // harbor rather than only by the captain who wrote it.
   game.orderFills = normalizeOrderFills(game.orderFills);
   // Guarantees a key for every catalogued good and scrubs any value a
   // pre catalogue save poisoned with NaN (stored as null by JSON), so
@@ -318,7 +318,7 @@ function healVoyageTallies(game: GameState): void {
   // direction is deliberate: each records that a beat already ran (a swap
   // taken, an escort sailed, the raid answered), so a damaged value that
   // still reads truthy keeps the gate closed. Reopening one would let a
-  // reload replay a beat the room already settled, while a spurious closed
+  // reload replay a beat the harbor already settled, while a spurious closed
   // gate only costs an option the next leg returns anyway. The verdicts
   // read the opposite way on purpose (see healMarksAndLeans).
   game.boonSwapUsed = game.boonSwapUsed ?? false;
@@ -380,7 +380,7 @@ function healMarksAndLeans(game: GameState): void {
   game.bazaarLean = normalizeRumorLean(game.bazaarLean);
   // [B3: standing orders] A voyage saved before the record existed
   // carries no set at all, and the engine reads it unconditionally
-  // the moment the room's clock plays a seat, so an unhealed save
+  // the moment the harbor's clock plays a seat, so an unhealed save
   // would hand the evaluation undefined the first time its captain
   // walked away from the table. The normalizer answers with the
   // default set, which is the shape an old save was already sailing:
@@ -532,7 +532,7 @@ function healShipLedger(game: GameState): void {
 }
 
 // The answers that come from outside the save, applied last so that they
-// win: the captain's Renown, their per voyage tallies, and the room's own
+// win: the captain's Renown, their per voyage tallies, and the harbor's own
 // tier and lap.
 function refreshVoyageFacts(game: GameState, facts: LoadedSaveFacts): void {
   // Refresh Renown from the freshly loaded legacy so a captain who
@@ -571,18 +571,18 @@ function refreshVoyageFacts(game: GameState, facts: LoadedSaveFacts): void {
   // Their already generated cards restore from the blob untouched, so
   // only a future round would reseed, which is fine.
   game.voyageEpoch = game.voyageEpoch ?? 0;
-  // Refresh difficulty from the room (the authoritative source), the
+  // Refresh difficulty from the harbor (the authoritative source), the
   // same reason renownLevel is refreshed above; default an old save
-  // that predates difficulty to whatever tier the room is on.
+  // that predates difficulty to whatever tier the harbor is on.
   game.difficulty = normalizeDifficulty(
     facts.roomDifficulty ?? game.difficulty,
   );
-  // Refresh mode from the room for the same reason, and with more at
+  // Refresh mode from the harbor for the same reason, and with more at
   // stake: mode decides which order this captain's phases run in. A
   // save that predates modes carries no mode at all, and one restored
-  // under a lap the room is not keeping would run the right phases in
+  // under a lap the harbor is not keeping would run the right phases in
   // the wrong order and quietly desynchronize from everyone else. The
-  // room is authoritative, so it wins; the caller's hint covers a
+  // harbor is authoritative, so it wins; the caller's hint covers a
   // response that does not carry the field.
   game.mode = normalizeMode(facts.apiMode ?? facts.roomMode ?? game.mode);
 }

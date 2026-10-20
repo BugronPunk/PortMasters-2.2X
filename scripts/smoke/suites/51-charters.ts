@@ -67,15 +67,17 @@ import { heldPathOf } from "@/server/realtime/draft";
 import { db } from "@/lib/db";
 import {
   CARRIES_A_DASH,
-  CLASSIC,
-  GAMBIT,
   carriesADash,
   check,
+  CLASSIC,
+  GAMBIT,
+  ledgerSentences,
   suffix,
   switchFor,
   voyageState,
   withEnv,
 } from "../harness";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 /**
  * [F6: charters at leg four] The plan's second feature of the cycle: a
@@ -97,7 +99,7 @@ import {
  */
 export async function chartersSuite(): Promise<void> {
   // A captain standing at the charter's leg. The path is dealt by the
-  // draft in a real room; here it is seated directly, because the path's
+  // draft in a real harbor; here it is seated directly, because the path's
   // own deal has its own article and this one is about what a path does
   // when the offer reads it.
   const pathlessAt = (round: number) => {
@@ -358,7 +360,7 @@ export async function chartersSuite(): Promise<void> {
       loomTrio[1] === "quality_mark" &&
       loomTrio.join() === loomAgain.join() &&
       loomTrio.join() === loomLater.join(),
-    "and the seed leaves the round out: the same captain is dealt the same three on a re read and again at a later leg, so a room advance, a checkpoint or a reload cannot reshuffle the cards under their eyes",
+    "and the seed leaves the round out: the same captain is dealt the same three on a re read and again at a later leg, so a harbor advance, a checkpoint or a reload cannot reshuffle the cards under their eyes",
   );
 
   check(
@@ -419,7 +421,7 @@ export async function chartersSuite(): Promise<void> {
   withEnv("NEXT_PUBLIC_CHARTERS", "1", () => {
     const answering = loomAt(4);
     answering.modifierFlags = { vat_discount: 0.5 };
-    const logs: string[] = [];
+    const logs: LedgerLine[] = [];
     const trio = charterChoices(answering);
     const took = answerCharter(answering, trio[0].id, logs);
     check(
@@ -434,7 +436,7 @@ export async function chartersSuite(): Promise<void> {
             answering.cardTally[card.id]?.picked ===
             (card.id === "weavers_charter" ? 1 : 0),
         ) &&
-        logs.some(
+        ledgerSentences(logs).some(
           (line) =>
             line.includes(CHARTER_MOMENT.icon) &&
             line.includes(cardLead("weavers_charter")),
@@ -449,7 +451,7 @@ export async function chartersSuite(): Promise<void> {
     );
 
     const refusing = loomAt(4);
-    const refuseLogs: string[] = [];
+    const refuseLogs: LedgerLine[] = [];
     const refusedWrong = answerCharter(refusing, "gun_charter", refuseLogs);
     const quiet =
       refusing.charter === null && Object.keys(refusing.cardTally).length === 0;
@@ -484,7 +486,7 @@ export async function chartersSuite(): Promise<void> {
     rolling.phase = "resolve";
     rolling.pirateAttackResolved = true;
     rolling.modifierFlags = { loom_extra_produce: 1, vat_discount: 0.5 };
-    const rollLogs: string[] = [];
+    const rollLogs: LedgerLine[] = [];
     const ctx = {
       seedBase: `smoke:charters:${suffix}`,
       harborId: "harbor-a",
@@ -752,25 +754,29 @@ export async function chartersSuite(): Promise<void> {
       raided.currentRound = 6;
       raided.money = 400;
       raided.modifierFlags = { marque_salvage: 0.25 };
-      const raidLogs: string[] = [];
+      const raidLogs: LedgerLine[] = [];
       resolvePirateAttack(raided, raidLogs);
       const bare = voyageState();
       bare.currentRound = 6;
       bare.money = 400;
-      const bareLogs: string[] = [];
+      const bareLogs: LedgerLine[] = [];
       resolvePirateAttack(bare, bareLogs);
       const empty = voyageState();
       empty.currentRound = 6;
       empty.money = 0;
       empty.modifierFlags = { marque_salvage: 0.25 };
-      const emptyLogs: string[] = [];
+      const emptyLogs: LedgerLine[] = [];
       resolvePirateAttack(empty, emptyLogs);
       check(
         raided.money === 100 &&
-          raidLogs.some((line) => line.includes("recovered 100")) &&
+          ledgerSentences(raidLogs).some((line) =>
+            line.includes("recovered 100"),
+          ) &&
           bare.money === 0 &&
           empty.money === 0 &&
-          !emptyLogs.some((line) => line.includes("recovered")),
+          !ledgerSentences(emptyLogs).some((line) =>
+            line.includes("recovered"),
+          ),
         "The Letter of Marque is read at the one site a raid takes gold: a quarter of the raid comes back and the ledger line says how much, a bare hold loses everything, and a hold with nothing in it salvages nothing rather than putting a recovery line over a zero",
       );
     } finally {
@@ -879,7 +885,7 @@ export async function chartersSuite(): Promise<void> {
     });
     check(
       rowsC === 0,
-      "a take noted against a room the accumulator never opened is dropped by the writer rather than opening a record for it, so a stray claim cannot mint a voyage in the operator's table",
+      "a take noted against a harbor the accumulator never opened is dropped by the writer rather than opening a record for it, so a stray claim cannot mint a voyage in the operator's table",
     );
 
     const roomD = `${roomPrefix}d`;
@@ -911,7 +917,7 @@ export async function chartersSuite(): Promise<void> {
   });
   check(
     leftovers === 0,
-    "and the synthetic rooms this suite sailed are deleted rather than left in the operator's table, with the count read back rather than assumed",
+    "and the synthetic harbors this suite sailed are deleted rather than left in the operator's table, with the count read back rather than assumed",
   );
 
   const repoRoot = join(import.meta.dirname, "..", "..", "..");
@@ -931,12 +937,12 @@ export async function chartersSuite(): Promise<void> {
       wiring.includes("noteCharterTaken(roomId") &&
       hook.includes("chartersOn(game.mode)") &&
       hook.includes("game.charter ?? undefined"),
-    "the two ends of the wire the take sits between: the client claims the charter only while the switch is on, and the server vouches it through the pool before attributing the path off the room's own book and the alignment off the table, dropping a take it cannot place on either rather than filling in a guess",
+    "the two ends of the wire the take sits between: the client claims the charter only while the switch is on, and the server vouches it through the pool before attributing the path off the harbor's own book and the alignment off the table, dropping a take it cannot place on either rather than filling in a guess",
   );
 
   check(
     heldPathOf("smoke51-never-drafted", "u-a") === null,
-    "and the book the server attributes paths from answers null for a room it has never seen, which is the one reader of that book and the shape every unattributable take takes on its way to the drop",
+    "and the book the server attributes paths from answers null for a harbor it has never seen, which is the one reader of that book and the shape every unattributable take takes on its way to the drop",
   );
 
   // ========== H. The barrel ==========

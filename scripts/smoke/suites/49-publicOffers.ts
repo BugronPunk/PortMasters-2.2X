@@ -29,6 +29,7 @@ import {
 import type { Captain, WireHistory } from "../wire";
 import type { Socket } from "socket.io-client";
 import type { SmokeRun } from "../run";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 export async function publicOffersSuite(
   run: SmokeRun,
@@ -61,7 +62,7 @@ export async function publicOffersSuite(
   // fallback reach it: selectBoon is the one pick site the round's draft
   // has, so a record written there is true however the pick arrived.
   const drafting = voyageState();
-  const draftLogs: string[] = [];
+  const draftLogs: LedgerLine[] = [];
   startBoonDrafting(drafting, draftLogs);
   const firstTrio = drafting.boonChoices.map((card) => card.id);
   const firstKept = firstTrio[1];
@@ -110,7 +111,7 @@ export async function publicOffersSuite(
   withEnv("NEXT_PUBLIC_MILESTONE_BOONS", "1", () => {
     const answering = voyageState();
     answering.crewLost = [{ name: "Old Salt", round: 1 }];
-    const momentLogs: string[] = [];
+    const momentLogs: LedgerLine[] = [];
     queueMilestoneMoment(answering, momentLogs, "crew_loss");
     const shownBefore = milestoneChoices(answering, "crew_loss").map(
       (card) => card.id,
@@ -371,7 +372,7 @@ export async function publicOffersSuite(
   );
 
   // A captain who is not seated in the harbor cannot report into it,
-  // because the seat check reads the room off the socket rather than off
+  // because the seat check reads the harbor off the socket rather than off
   // the frame.
   const bareSocket = await openAuthedSocket(gambitSecond);
   run.sockets.push(bareSocket);
@@ -385,7 +386,7 @@ export async function publicOffersSuite(
   await boonSettle();
   check(
     boonFrames.length === beforeStranger,
-    "and a captain who is not seated in the harbor cannot report into it, because the seat check reads the room off the socket rather than off the frame",
+    "and a captain who is not seated in the harbor cannot report into it, because the seat check reads the harbor off the socket rather than off the frame",
   );
 
   // A pick that answered a moment rides out with the moment named, so
@@ -466,7 +467,7 @@ export async function publicOffersSuite(
       Object.values(finalBoonFrame?.entries ?? {}).every(
         (entry) => Object.keys(entry).sort().join(",") === "kept,round,shown",
       ),
-    "the ledger's fields are the plan's allow list and nothing else: a room and a map of records, each record a leg, a trio and a kept card",
+    "the ledger's fields are the plan's allow list and nothing else: a harbor and a map of records, each record a leg, a trio and a kept card",
   );
   check(
     boonForbidden.every((word) => !finalBoonBody.includes(word)),
@@ -496,7 +497,7 @@ export async function publicOffersSuite(
 
   // The rollback read as code: a harbor on the founding mode runs no
   // ledger at all, so a well formed report is refused before anything is
-  // stored and no frame ever reaches the room.
+  // stored and no frame ever reaches the harbor.
   const classicRoom = await call<{ room: { id: string; code: string } }>(
     "/api/rooms",
     {
@@ -540,7 +541,7 @@ export async function publicOffersSuite(
   await boonSettle();
   check(
     classicSeat.status === 200 && classicLedgers.length === 0,
-    "a Classic harbor runs no ledger: a well formed report is refused before anything is stored and no frame reaches the room, which is the plan's rollback read as code",
+    "a Classic harbor runs no ledger: a well formed report is refused before anything is stored and no frame reaches the harbor, which is the plan's rollback read as code",
   );
 
   // ========== E. The restart ==========

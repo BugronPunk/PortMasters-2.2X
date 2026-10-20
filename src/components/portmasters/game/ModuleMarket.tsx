@@ -45,7 +45,7 @@ const UNKNOWN_MODULE_ICON = "🔧";
  * Gold moves and the module changes hulls on the two clients that agreed to
  * it, through applyModuleTradeSide, and the board this panel draws is the
  * server's own view of who has listed what: a panel that decided any of
- * this by itself would be a second market the room could not see.
+ * this by itself would be a second market the harbor could not see.
  *
  * The trade's own rule is the plan's, and it is the seller's side of a
  * settle: a module traded away comes off the hull automatically rather than

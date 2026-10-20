@@ -3,7 +3,7 @@
 //
 // One captain's last reported status, broadcast on game:status.
 //
-// The heartbeat the room runs on: the public account shape, the round and the
+// The heartbeat the harbor runs on: the public account shape, the round and the
 // phase the captain reports, and the few numbers the harbor panel prints
 // beside a name. Nothing here is a secret, which is why the shape is a
 // broadcast rather than a private entry.

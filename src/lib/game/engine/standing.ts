@@ -28,7 +28,7 @@
 // =====================================================================
 import type { GameState } from "../types";
 import { standingBoon, standingBuyFor, type StandingOrders } from "../standing";
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import { upgradeShip } from "./boons";
 import { purchaseCard, tallyCardPurchases } from "./market";
 import { canFillOrder, completeOrder } from "./orders";
@@ -75,7 +75,7 @@ export function standingBoonId(
 export function workStandingOrders(
   state: GameState,
   orders: StandingOrders,
-  logs: string[],
+  logs: LedgerLine[],
 ): void {
   switch (state.phase) {
     case "market": {
@@ -97,7 +97,7 @@ export function workStandingOrders(
       const bought = state.purchasedCards.filter((id) => !before.has(id));
       if (!bought.length) return;
       logs.push(
-        t(
+        line(
           "🪧 Standing orders at the port board: bought {bought.length} cargo {lotWord} you had priced.",
           {
             "bought.length": bought.length,
@@ -106,9 +106,9 @@ export function workStandingOrders(
         ),
       );
       // [MANIFEST 01: The Harbor Pulse] The lots above are purchases the
-      // room's next pulse should count, and the report that carries a
+      // harbor's next pulse should count, and the report that carries a
       // captain's tally was sent before this ran, from the state as it
-      // stood when the room's advance arrived. So the delta rides out on
+      // stood when the harbor's advance arrived. So the delta rides out on
       // the transient signal below instead, which the phase sync hook
       // relays as a second report for the same round. addPulseReport
       // accumulates rather than replaces (see src/server/realtime/pulse.ts),
@@ -129,7 +129,7 @@ export function workStandingOrders(
       const filled = state.orderCount - before;
       if (!filled) return;
       logs.push(
-        t(
+        line(
           "🪧 Standing orders at the trade board: filled {filled} {orderWord} the hold could cover.",
           {
             filled,
@@ -148,7 +148,7 @@ export function workStandingOrders(
       upgradeShip(state, logs);
       if (state.shipLevel === before) return;
       logs.push(
-        t(
+        line(
           "🪧 Standing orders at the shipyard: upgraded the hull to level {state.shipLevel}.",
           { "state.shipLevel": state.shipLevel },
         ),

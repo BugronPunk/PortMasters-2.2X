@@ -3,12 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { cargoCarriesTag } from "@/lib/game/cards";
 import {
-  brokersFavorCommission,
-  calcTransportCost,
   canFillOrder,
   completeOrder,
   explainTransportCost,
-  explainVAT,
   fleetOfTreasuresUnits,
   lockedBehind,
   opportunistBorrowsLeft,
@@ -17,10 +14,9 @@ import {
   opportunistMayBorrow,
   opportunistPayout,
   opportunistUsesLine,
-  orderRewardBonusSteps,
   pathOrderOf,
+  quoteOrder,
   OPPORTUNIST_SPENT_LINE,
-  type PriceBreakdown,
 } from "@/lib/game/engine";
 import { t } from "@/lib/game/i18n";
 import { pathConfig, pathLockLine } from "@/lib/game/paths";
@@ -79,7 +75,6 @@ function OrderCard({
   // the card exactly as everyone else at the table does.
   const mayBorrow = locked !== null && opportunistMayBorrow(game, locked);
   const borrowPayout = opportunistPayout(game, o.reward);
-  const rewardBasis = mayBorrow ? borrowPayout : o.reward;
   const canBorrow = canFillOrder(game, o, true);
   // [F6: charters at leg four] The spent line is asked of the door reader
   // rather than of a path, so a Quartermaster whose Factor is spent reads
@@ -89,61 +84,29 @@ function OrderCard({
     opportunistIsBorrower(game) && opportunistBorrowsLeft(game) < 1;
   const hasWoven = cargoCarriesTag(o.resources, "woven");
   // The Fleet of Treasures units, counted through the engine's own reader
-  // (see fleetOfTreasuresUnits), and handed to the freight read the fill
-  // also charges through, so the freight line on this card and the Gold
-  // the fill takes are one number. The module's discount used to be
-  // subtracted inside completeOrder alone, which is how this line came to
-  // quote the pre discount freight on every card that carried it.
+  // (see fleetOfTreasuresUnits), and handed to the freight read the
+  // tooltip shows, so the freight line on this card and the Gold the fill
+  // takes are one number. The module's discount used to be subtracted
+  // inside completeOrder alone, which is how this line came to quote the
+  // pre discount freight on every card that carried it.
   const fleetUnits = fleetOfTreasuresUnits(game, o.resources);
-  const transport = calcTransportCost(game, o.totalItems, hasWoven, fleetUnits);
   const transportBreakdown = explainTransportCost(
     game,
     o.totalItems,
     hasWoven,
     fleetUnits,
   );
-  let netProfit = rewardBasis - transport;
-  let totalVat = 0;
-  let vatBreakdown: PriceBreakdown | null = null;
-  if (o.isProductOrder) {
-    // Read the way completeOrder reads the taxed line (see the engine): a
-    // product card with no line, or a line with no count, is taxed on
-    // nothing rather than dividing by an absence. The non null assertion
-    // this replaces was the bug audit's finding: a save carrying a product
-    // card with an empty line threw out of a render rather than reading
-    // as an untaxed card, and the board would have disagreed with the
-    // engine about the same card.
-    const productRef = o.resources[0];
-    const productUnits = productRef?.required ?? 0;
-    if (productRef && productUnits > 0) {
-      vatBreakdown = explainVAT(
-        game,
-        productRef.type,
-        rewardBasis / productUnits,
-      );
-      totalVat = vatBreakdown.final * productUnits;
-      netProfit -= totalVat;
-    }
-  }
-  // The percentage bonuses the fill will credit, read through the
-  // settlement's own chain (see orderRewardBonusSteps) off the same post
-  // VAT reward the settlement starts from, and shown on the reward figure
-  // and the net figure together. The card used to quote the face value,
-  // so a captain holding a charter boon, the Bureau Token or either of
-  // the long charters read one number here and was paid another at the
-  // fill.
-  const bonusUplift =
-    orderRewardBonusSteps(game, o, rewardBasis - totalVat).reward -
-    (rewardBasis - totalVat);
-  const quotedReward = rewardBasis + bonusUplift;
-  netProfit += bonusUplift;
-  const brokerCommission = o.isBrokerFavor
-    ? brokersFavorCommission(o.reward)
-    : 0;
-  const brokerCommissionPct =
-    o.reward > 0 ? Math.round((brokerCommission / o.reward) * 100) : 0;
-  netProfit -= brokerCommission;
-  // Matched on the whole whisper, its good and its harbour, because that
+  // What this order pays, read through the engine's own quote (see
+  // quoteOrder), so the reward on this card is the reward the fill
+  // credits and the net is the net the fill banks. The card used to
+  // quote the face value, which puts the VAT back and leaves the
+  // Broker's cut out, so a captain read one number here and was paid
+  // another at the fill. A borrowed card is quoted off the payout the
+  // borrow would pay, which is the number the fill's own quote starts
+  // from.
+  const quote = quoteOrder(game, o, { borrowed: mayBorrow });
+  const netProfit = quote.net;
+  // Matched on the whole whisper, its good and its harbor, because that
   // pair is the promise: the guarantee lands the order on the port the
   // Broker named (see the intel guarantee in engine/orders), so a card
   // carrying the good to some other port is not the promised trade, and a
@@ -212,13 +175,9 @@ function OrderCard({
               {t("📜 Imperial Mandate")}
             </span>
           ) : o.isBrokerFavor ? (
-            // The pack carries this row with the source's &apos; entity,
-            // so it is read as HTML and the browser decodes it to the
-            // same apostrophe JSX used to print.
-            <span
-              className="text-favor shrink-0"
-              dangerouslySetInnerHTML={{ __html: t("🤝 Broker&apos;s Favor") }}
-            />
+            <span className="text-favor shrink-0">
+              {t("🤝 Broker's Favor")}
+            </span>
           ) : (
             matchesIntel && (
               <span className="text-intel shrink-0">{t("🔮 Guaranteed")}</span>
@@ -329,7 +288,7 @@ function OrderCard({
         <Term
           content={<PriceBreakdownTooltip breakdown={transportBreakdown} />}
         >
-          {t("⚓ Freight: {gold} Gold", { gold: transport })}
+          {t("⚓ Freight: {gold} Gold", { gold: quote.freight })}
         </Term>
       </div>
       <div
@@ -339,12 +298,15 @@ function OrderCard({
         )}
       >
         {t("💰 Reward: {reward} Gold 📊 Net: {net} Gold", {
-          reward: quotedReward,
+          reward: quote.reward,
           net: netProfit,
         })}
         {(() => {
+          // The margin is the share of the reward that survives the run,
+          // and the reward here is the one the harbor pays, so the two
+          // figures on this line divide into it.
           const margin =
-            quotedReward > 0 ? Math.round((netProfit / quotedReward) * 100) : 0;
+            quote.reward > 0 ? Math.round((netProfit / quote.reward) * 100) : 0;
           return (
             <span
               className={cn(
@@ -369,17 +331,19 @@ function OrderCard({
         <div className="text-[10px] text-favor">
           <Term term="Commission">
             {t("🤝 Broker's cut ({pct}%): {gold} Gold", {
-              pct: brokerCommissionPct,
-              gold: brokerCommission,
+              pct: quote.commissionPct,
+              gold: quote.commission,
             })}
           </Term>
         </div>
       )}
-      {o.isProductOrder && vatBreakdown && (
+      {quote.vatBreakdown && (
         <div className="text-[10px] text-muted-foreground">
-          <Term content={<PriceBreakdownTooltip breakdown={vatBreakdown} />}>
+          <Term
+            content={<PriceBreakdownTooltip breakdown={quote.vatBreakdown} />}
+          >
             {t("🧾 Est. VAT: {totalVat} Gold (per unit shown on hover)", {
-              totalVat,
+              totalVat: quote.vat,
             })}
           </Term>
         </div>
@@ -399,12 +363,12 @@ function OrderCard({
 }
 
 /**
- * The manifest itself: every order the harbour is posting this round, in
+ * The manifest itself: every order the harbor is posting this round, in
  * the grid the trade manifest reads them in. It owns no state; each card
  * answers the engine's own questions about itself.
  *
  * The columns are the stage's rather than the window's, for the reason the
- * port board's are: a board drawn in the room's middle column that reads a
+ * port board's are: a board drawn in the harbor's middle column that reads a
  * window breakpoint deals for a width it does not have. See the note on
  * PurchaseBoard, which deals the same ladder off the same container.
  */

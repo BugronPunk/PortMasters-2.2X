@@ -2,10 +2,10 @@
 // PortMasters 2.2 Parallel Release: the harbor's unlock table
 //
 // One data record per phrase, the same shape ./game/mode.ts and
-// ./game/difficulty.ts use, and for the same reason: an unlock is a ROOM
+// ./game/difficulty.ts use, and for the same reason: an unlock is a HARBOR
 // property. A host types the phrase while charting the harbor, the room
 // row remembers which code opened it, and every captain who reads that
-// room afterwards reads the same record.
+// harbor afterwards reads the same record.
 //
 // Never per account, and that is a design decision rather than a
 // simplification. If one player holds the phrase and another does not,
@@ -26,7 +26,7 @@ import type { GameMode } from "./game/mode";
 // The harbor's line below is read at the moment it is built rather than
 // stored, so the rumor a captain is handed follows the language the log
 // it lands in prints in. The table above keeps its English values: a
-// label is read where it is rendered (the room card wraps its own read)
+// label is read where it is rendered (the harbor card wraps its own read)
 // and the phrase is what a host types, which the normalizer below only
 // accepts in one form.
 import { t } from "./game/i18n";
@@ -35,7 +35,7 @@ export type UnlockId = "second_ledger";
 
 interface UnlockConfig {
   // What the interface calls a harbor that was opened with this phrase.
-  // Read on the room card, so a captain joining one can see that the
+  // Read on the harbor card, so a captain joining one can see that the
   // table they are walking into was opened rather than found.
   label: string;
   // The mode this phrase opens. One phrase opens one mode, which is what
@@ -63,7 +63,7 @@ export const UNLOCKS: Record<UnlockId, UnlockConfig> = {
     // key rather than a riddle: what the phrase buys is the moment of
     // being handed something, not a hunt for it.
     manual:
-      "One harbor is sealed as well as hard. It opens with a phrase, and the phrase is the second ledger, entered when the room is charted.",
+      "One harbor is sealed as well as hard. It opens with a phrase, and the phrase is the second ledger, entered when the harbor is charted.",
   },
 };
 
@@ -129,7 +129,7 @@ export function unlockForPhrase(value: unknown): UnlockId | null {
 // so the number a captain is told and the number the rule waits for are
 // the same constant: a threshold that moved would move the words with it.
 // The phrase is read through the pack like a name rather than passed
-// raw, so the line names the door the way the guide and the room card
+// raw, so the line names the door the way the guide and the harbor card
 // name it.
 export function unlockLineFor(voyagesCompleted: number): string | null {
   if (voyagesCompleted !== UNLOCK_EARNED_AT) return null;

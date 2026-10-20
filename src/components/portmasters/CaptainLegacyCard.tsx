@@ -67,7 +67,7 @@ export function CaptainLegacyCard({
       : 100;
   const favorUnlocked = level >= BROKERS_FAVOR_UNLOCK_LEVEL;
   const favorLevelsToGo = BROKERS_FAVOR_UNLOCK_LEVEL - level;
-  // Crowns and best score split by the waters they were earned on. Only tiers
+  // Crowns and best Reputation split by the waters they were earned on. Only tiers
   // this captain has actually sailed appear, so a new account sees nothing
   // extra while a veteran sees where their crowns were really won. Optional
   // chaining guards a cached response written before this field existed, and
@@ -75,7 +75,7 @@ export function CaptainLegacyCard({
   // rather than asserting one.
   const perTier = DIFFICULTY_ORDER.flatMap((key) => {
     const stats = legacy.statsByDifficulty?.[key];
-    return stats && (stats.crowns > 0 || stats.bestScore > 0)
+    return stats && (stats.crowns > 0 || stats.bestReputation > 0)
       ? [{ key, cfg: DIFFICULTIES[key], stats }]
       : [];
   });
@@ -195,7 +195,8 @@ export function CaptainLegacyCard({
             </div>
             <div className="rounded-lg bg-background/60 py-1.5">
               <div className="text-sm font-bold flex items-center justify-center gap-1">
-                <Trophy className="h-3.5 w-3.5 text-gain" /> {legacy.bestScore}
+                <Trophy className="h-3.5 w-3.5 text-gain" />{" "}
+                {legacy.bestReputation}
               </div>
               <div className="text-[9px] text-muted-foreground">
                 {t("Best Rep.")}
@@ -219,7 +220,7 @@ export function CaptainLegacyCard({
                         </span>
                       )}
                       <span className="font-semibold text-gain">
-                        {stats.bestScore}
+                        {stats.bestReputation}
                       </span>
                     </span>
                   </TooltipTrigger>
@@ -227,11 +228,11 @@ export function CaptainLegacyCard({
                     <div className="font-semibold">{t(cfg.name)}</div>
                     <div className="text-muted-foreground">
                       {t(
-                        "{stats.crowns} Sea Master crown{pluralS} · best Reputation {stats.bestScore}",
+                        "{stats.crowns} Sea Master crown{pluralS} · best Reputation {stats.bestReputation}",
                         {
                           "stats.crowns": stats.crowns,
                           pluralS: stats.crowns === 1 ? "" : "s",
-                          "stats.bestScore": stats.bestScore,
+                          "stats.bestReputation": stats.bestReputation,
                         },
                       )}
                     </div>

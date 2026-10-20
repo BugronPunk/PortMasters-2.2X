@@ -33,8 +33,8 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
     // because the reads are the whole of the race: two departure frames
     // for one harbor can arrive in the same tick, and a map consulted
     // after them is consulted after both have already passed it. Both
-    // frames then read a room that had not set sail, both wait on the
-    // database calls below, and both go on to move the room, open its
+    // frames then read a harbor that had not set sail, both wait on the
+    // database calls below, and both go on to move the harbor, open its
     // records and deal its table: a voyage announced twice, with the two
     // deals colliding on the alignment table's own key (see
     // dealAlignments, whose fresh read is the second line of defense here).
@@ -73,7 +73,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       }
       const roster = await roomMemberIds(roomId);
       // Solo Practice Mode: a host may start the voyage alone. The
-      // ready check protocol still advances the room with just the one
+      // ready check protocol still advances the harbor with just the one
       // captain (activeRosterSet returns the single member). This makes
       // the game playable for a solo captain who wants to learn the
       // ropes or test a build without waiting for a second human.
@@ -91,7 +91,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // so it is read from the lap rather than written as "5" here.
       const opening = openingPhase(room.mode);
       // [H5: the quota rung] The fleet's size, pinned to the roster that
-      // was actually dealt in at departure. Written before the room is
+      // was actually dealt in at departure. Written before the harbor is
       // told the voyage is under way, so no client can be playing a
       // commission drawn from a size this row has not recorded yet, and
       // written here rather than left to be counted later because
@@ -123,7 +123,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // the record's header is read from the row above and the roster
       // this update just pinned, and synchronous so nothing a captain
       // hears below can arrive before the voyage it belongs to is being
-      // recorded. A room the sampler passes over opens nothing, and
+      // recorded. A harbor the sampler passes over opens nothing, and
       // every note below then does nothing.
       openVoyageTelemetry(room, roster);
       const cp = await getCheckpoint(roomId);
@@ -149,7 +149,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       //
       // It opens only for a mode that keeps one, and that single gate is
       // the whole of the feature's reach: every note and every history
-      // request in ../voyage-log already does nothing against a room with no
+      // request in ../voyage-log already does nothing against a harbor with no
       // log, so a Classic harbor records nothing, sends nothing and answers
       // nothing by the same path a lobby that never set sail takes, rather
       // than by a second check on each of the twelve facts that write a
@@ -173,15 +173,15 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
         roomId,
         seats: roster.length,
       });
-      // The private half of setting sail. It runs after the room has
+      // The private half of setting sail. It runs after the harbor has
       // been told the voyage is under way, so a card can never arrive
       // for a voyage that did not open, and it has to run here rather
       // than on a client: the seed it draws from is generated in this
-      // process and is not carried anywhere. A Classic room is sent
+      // process and is not carried anywhere. A Classic harbor is sent
       // nothing, which is the mode guard inside the deal itself.
       await dealAlignments(io, roomId, room.mode);
       // [D7: the draft, and switching] And the path cards, in the same
-      // breath and after the room has been told the voyage is under way,
+      // breath and after the harbor has been told the voyage is under way,
       // for the reasons the deal above states: the seed is minted in this
       // process and carried nowhere, and a hand can never arrive for a
       // voyage that did not open. It is dealt against the roster this
@@ -196,7 +196,7 @@ export function wireStartVoyage(io: Server, socket: Socket): void {
       // has no settle in front of it. It takes an account deleted in the
       // window between the roster read above and the names read inside the
       // deal, which is why the guard is here rather than in the deal
-      // itself: the room's own row was already pinned to the seat, and the
+      // itself: the harbor's own row was already pinned to the seat, and the
       // repair that fits is the one every settled deal sends. The frame
       // names the seat being left, so every client runs the ordinary
       // departure to Dawn and the voyage sails on pathless, the reading

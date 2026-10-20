@@ -3,7 +3,7 @@
 //
 // The conclusion, the reveal and the chronicle.
 //
-// Three readings of one finished voyage, from the standings the room is shown
+// Three readings of one finished voyage, from the standings the harbor is shown
 // as it ends, through the ledger of cards and verdicts, to the row the
 // chronicle viewer reads back later. The reveal is the one frame allowed to
 // carry an alignment, and it may because the voyage is over by the time it is
@@ -49,7 +49,7 @@ export type StandingRow = {
 // [H8: the reveal and the replay ledger] One captain's card, flipped.
 //
 // This is the one frame in the mode that carries an alignment to the whole
-// room, and the reason it may is that the voyage is over by the time it is
+// harbor, and the reason it may is that the voyage is over by the time it is
 // built: there is nothing left for the secret to protect. It is emitted by
 // the conclusion and by nothing else, and handed to a captain who reloads
 // after it by the same room:join hand out the audit's reveal uses.
@@ -112,7 +112,7 @@ export type VoyageReveal = {
   // The commission this harbor was working on, resolved rather than
   // seeded, because the ledger draws the board at the size the voyage
   // sailed at and a client redrawing it would have to know the rung.
-  // Drawn by the server from the room's own epoch and pinned seats, which
+  // Drawn by the server from the harbor's own epoch and pinned seats, which
   // is what keeps it the board the fleet was actually working against.
   objective: Objective;
   // The commission's progress leg by leg, merged across every captain's

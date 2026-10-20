@@ -33,7 +33,7 @@ import { PageSplash } from "@/components/ui/page-splash";
 type Status = "loading" | "gate" | "dashboard";
 
 export default function AdminBalancePage() {
-  // This route renders outside the harbor room, so it subscribes to the
+  // This route renders outside the harbor harbor, so it subscribes to the
   // captain's language at its own root: a flip redraws the splash and the
   // dashboard under it rather than waiting for the next route change.
   useLanguage();

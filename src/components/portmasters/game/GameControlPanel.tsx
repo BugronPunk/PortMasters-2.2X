@@ -2,13 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import type { GameState } from "@/lib/game/types";
-import type { PhaseClock } from "@/lib/phase-clock";
 import { phaseLabel } from "@/lib/game/engine";
 import { isGatedPhase } from "@/lib/game/checkpoint";
 import { t } from "@/lib/game/i18n";
 import { modeConfig } from "@/lib/game/mode";
 import { standingOrdersLive } from "@/lib/game/standing";
 import { readyLine } from "@/lib/use-phase-sync";
+import { usePhaseClock } from "@/lib/use-phase-clock";
+import type { PhaseDeadline } from "@/lib/phase-clock";
 import { HOST_ONLY_RESTART, START_VOYAGE } from "@/lib/game/constants/copy";
 import { cn } from "@/lib/utils";
 import {
@@ -37,7 +38,7 @@ export function GameControlPanel({
   readyCount,
   requiredCount,
   harborCount,
-  clock,
+  clockDeadline,
   onStandingOrders,
   onCancelReady,
   onShortcuts,
@@ -60,25 +61,31 @@ export function GameControlPanel({
   waiting: boolean;
   readyCount: number;
   requiredCount: number;
-  // The captains in the harbor, which is a fact about room membership and
+  // The captains in the harbor, which is a fact about harbor membership and
   // not about the ready check. The two were the same number until the
   // waiting roster learned to exclude the pier (see waitingRosterSet in
   // src/server/realtime/checkpoint.ts, and isGatedPhase behind it): the
-  // harbor is not a seat the room readies out of, so every captain
+  // harbor is not a seat the harbor readies out of, so every captain
   // standing at it fell out of the roster, the count read zero, and the
   // host's own Set Sail button disabled itself with "Need one captain"
   // while the server would have accepted the start. The ready check's
   // denominator is the right answer to "who does this seat wait on" and
   // the wrong one to "who is in the harbor", so the harbor asks the
-  // roster the room already broadcasts rather than reusing the vote's.
+  // roster the harbor already broadcasts rather than reusing the vote's.
   harborCount: number;
   /**
-   * [B2: hard timers, the server as timekeeper] The room's clock while one is
-   * running, so the wait says how long it is worth. Optional: a bar drawn
-   * before the first ready state arrives, or in a room with the clock
-   * switched off, has no countdown to show and says so by passing nothing.
+   * [B2: hard timers, the server as timekeeper] The harbor's deadline, the
+   * seat's budget, and the moment this client saw them: the published
+   * numbers the countdown is composed from. Optional: a bar drawn before
+   * the first ready state arrives, or in a harbor with the clock switched
+   * off, has no countdown to show and says so by passing nothing.
+   *
+   * The numbers rather than the countdown, because this bar is the one
+   * thing on screen in every phase and the ticking belongs to the panel
+   * that draws it: a ticker in the harbor's shared hook would redraw every
+   * board under it once a second to move this one number.
    */
-  clock?: PhaseClock | null;
+  clockDeadline?: PhaseDeadline | null;
   onCancelReady: () => void;
   /**
    * Opens the list of every key this screen answers to. It was the row of
@@ -97,11 +104,17 @@ export function GameControlPanel({
   const ordersOffered = modeConfig(game.mode).standingOrders;
   const ordersLive = ordersOffered && standingOrdersLive(game.standingOrders);
 
+  // The harbor's clock, ticked here because this bar is where it is drawn.
+  // The deadline, the budget and the moment this client saw them are the
+  // published numbers; the countdown is composed from them in the language
+  // the captain is holding.
+  const clock = usePhaseClock(clockDeadline ?? null);
+
   // Both conditions are the same fact read twice: waiting is only ever set
   // on the recurring Next Phase transition, so the button wears the quiet
   // variant whenever it is not the one to press. The labels carry no
   // emoji: each button already wears its own glyph from the icon set the
-  // rest of the room speaks in, and the two together were one mark
+  // rest of the harbor speaks in, and the two together were one mark
   // competing with the other on the same line.
   let startText = t("Set Sail");
   let startDisabled = true;
@@ -137,7 +150,7 @@ export function GameControlPanel({
     // refuses, which is the ready set no departure could carry out that
     // leaveRefusal exists to prevent. Like the boon draft above, the seat is
     // left by the table answering rather than by any button here: each step
-    // turns over when every hand is in, and the settle walks the room on.
+    // turns over when every hand is in, and the settle walks the harbor on.
     startText = t("Drafting Paths...");
     startDisabled = true;
     nextDisabled = true;
@@ -150,8 +163,8 @@ export function GameControlPanel({
     // except the drafts: Dawn and the Path Draft are handled by the branches
     // above, so they cannot reach here, because neither is left by confirming
     // anything (see lockInBoon and the draft's settle in the engine's
-    // lifecycle). Read off the room's lap rather than listed, so the button
-    // offers exactly the moves the room will actually wait for: a phase added
+    // lifecycle). Read off the harbor's lap rather than listed, so the button
+    // offers exactly the moves the harbor will actually wait for: a phase added
     // to a lap is a Next Phase step the day it lands, and a phase a mode does
     // not run is not a step at all, which it would be if this asked whether
     // the phase is leg work instead.
@@ -177,7 +190,7 @@ export function GameControlPanel({
     // The count is the shared builder's sentence (see readyLine in
     // @/lib/use-phase-sync) with this bar's own tail, because the one
     // thing a captain pressing the button wants to know is how close the
-    // room is to turning.
+    // harbor is to turning.
     nextText = t("⏳ {readyLine} The phase turns when the rest do.", {
       readyLine: readyLine(readyCount, requiredCount),
     });

@@ -10,10 +10,10 @@ import type { LegPhase, Phase } from "@/lib/game/types";
 
 /**
  * The phase strip of the rail: the steps of the leg, with the one the
- * room is standing on lit.
+ * harbor is standing on lit.
  *
  * The phases cycle, and where they cycle TO is not written here. The
- * order is the room's mode (see src/lib/game/mode.ts), the same lap the
+ * order is the harbor's mode (see src/lib/game/mode.ts), the same lap the
  * ready check and the engine walk, because the two modes run these same
  * phases in a different order. A copy of the order kept here instead
  * would be invisible in the one place it matters: a captain mid round
@@ -32,14 +32,14 @@ import type { LegPhase, Phase } from "@/lib/game/types";
  *
  * Personal sub states (module_draft, module_swap) and terminals
  * (bankruptcy, endgame) are folded into their parent step for the
- * timeline display, since they never become room checkpoints.
+ * timeline display, since they never become harbor checkpoints.
  */
 
 // Which step of the rail a captain is standing on.
 //
 // A phase of the leg is its own step. The shipyard's two sub states are work
 // done inside Dusk, which is why they fold there rather than drawing a step
-// of their own for something the room is not waiting on. The pier is not a
+// of their own for something the harbor is not waiting on. The pier is not a
 // step of the leg at all, and the two terminals have left the leg behind:
 // both answer null, which the rail draws as "no step is lit" (and, for the
 // terminals, as the closing banner instead of the strip).

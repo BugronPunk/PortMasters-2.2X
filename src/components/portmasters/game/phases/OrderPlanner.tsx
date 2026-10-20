@@ -29,7 +29,6 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
     ready: boolean;
     missingGoods: { item: string; have: number; need: number }[];
     netProfit: number;
-    reward: number;
   };
 
   const plans: Plan[] = game.customerCards
@@ -81,7 +80,11 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
       // The percentage bonuses the fill will credit, read through the
       // settlement's own chain off the same post VAT reward it starts
       // from (see orderRewardBonusSteps), so the totals this panel sums
-      // and the Gold a fill lands are one arithmetic.
+      // and the Gold a fill lands are one arithmetic. The plan also used
+      // to carry the reward itself, and nothing read it, so the field
+      // went: a panel that showed a gross of its own would have had to
+      // price the order a second time, and the board's gross is the one
+      // the harbor pays.
       const rewardWithBonuses = orderRewardBonusSteps(
         game,
         o,
@@ -96,7 +99,6 @@ export function OrderFulfillmentPlanner({ game }: { game: GameState }) {
         ready: missing.length === 0,
         missingGoods: missing,
         netProfit: net,
-        reward: rewardWithBonuses,
       };
     });
 

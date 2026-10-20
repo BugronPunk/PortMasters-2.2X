@@ -7,10 +7,12 @@ import {
   hireWorker,
   leavePhase,
   unlockedWorkerRoster,
+  wagesDue,
 } from "@/lib/game/engine";
 import { t } from "@/lib/game/i18n";
 import { phaseFace } from "@/lib/game/phases";
 import { unlockedProducts } from "@/lib/game/pools";
+import { crewSize } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { Term } from "../../Term";
 import {
@@ -62,8 +64,8 @@ export function WorkerMgmt({
       return owner === r.id || (r.id === "master" && owner === "weaver");
     }),
   }));
-  const totalWages = roster.reduce((sum, r) => sum + r.due, 0);
-  const nW = roster.reduce((sum, r) => sum + r.list.length, 0);
+  const totalWages = wagesDue(game);
+  const nW = crewSize(game);
   // The phase the wage bill lands in, named through its face rather than
   // typed into the sentence below, so the note and the tile above it cannot
   // come apart. Read through the pack here, at the composer, because both

@@ -111,7 +111,7 @@ export function wireLegReport(socket: Socket): void {
     // a figure: the charter the captain holds. It is judged here rather
     // than kept, because the two fields that make a take readable are the
     // server's to answer and not the captain's to claim: the path comes
-    // from the room's own book (see heldPathOf) and the alignment from
+    // from the harbor's own book (see heldPathOf) and the alignment from
     // the table the voyage's end already reads (see cardsInRoom). A take
     // the server cannot attribute on both is not written at all, because
     // a guessed field on an operator measurement is worse than a missing

@@ -35,24 +35,26 @@ import {
   normalizeBargeState,
 } from "@/lib/game/engine";
 import { foodRoomMeals, mealsOf, reconcileLarder } from "@/lib/game/foods";
-import { crewSize, provisionFood } from "@/lib/game/larder";
+import { provisionFood } from "@/lib/game/larder";
 import { unlockedPorts } from "@/lib/game/pools";
 import {
   telemetryEvent,
   voyageIdFor,
   type TelemetryRecord,
 } from "@/lib/game/telemetry";
-import type { GameState } from "@/lib/game/types";
+import { crewSize, type GameState } from "@/lib/game/types";
 import {
   CARRIES_A_DASH,
-  CLASSIC,
-  GAMBIT,
   carriesADash,
   check,
+  CLASSIC,
+  GAMBIT,
+  ledgerSentences,
   voyageState,
   withEnv,
   withoutComments,
 } from "../harness";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 export async function supplyBargeSuite(inputs: {
   dashRecord: (
@@ -76,7 +78,7 @@ export async function supplyBargeSuite(inputs: {
     return state;
   };
 
-  // ---- The vendor's price ----
+  // ========== The vendor's price ==========
   // The plan's own clause is a markup on the port's price, so the two
   // numbers are read off each other rather than written down twice: a
   // retune of either moves the vendor with it, and the premium is checked
@@ -87,7 +89,7 @@ export async function supplyBargeSuite(inputs: {
     "a barge ration costs the port's own price marked up by the published multiplier, so the premium is one number read off another rather than a second price that could drift from it",
   );
 
-  // ---- Where it stands, and how much it has ----
+  // ========== Where it stands, and how much it has ==========
   const state = bargeVoyage();
   const firstPort = bargePortAtLeg(state);
   check(
@@ -135,12 +137,12 @@ export async function supplyBargeSuite(inputs: {
     "and nothing has been bought on a fresh leg, so what is left of the lot is the lot",
   );
 
-  // ---- The sale ----
+  // ========== The sale ==========
   const buyer = bargeVoyage();
   const price = bargeRationPrice();
   const purseBefore = buyer.money;
   const mealsBefore = mealsOf(buyer, "Grain");
-  const saleLines: string[] = [];
+  const saleLines: LedgerLine[] = [];
   const bought = buyFromBarge(buyer, 1, saleLines);
   check(
     bought === 1 &&
@@ -163,14 +165,14 @@ export async function supplyBargeSuite(inputs: {
   // lot, and the leg's shelf is then empty however deep the purse is.
   const eager = bargeVoyage(10_000);
   const lot = bargeLotAtPort(eager);
-  const eagerLines: string[] = [];
+  const eagerLines: LedgerLine[] = [];
   const took = buyFromBarge(eager, BARGE_RATIONS_PER_LEG * 4, eagerLines);
   const pressedAgain = buyFromBarge(eager, 1, eagerLines);
   check(
     took === lot &&
       bargeLeftAtPort(eager) === 0 &&
       pressedAgain === 0 &&
-      eagerLines[eagerLines.length - 1] ===
+      ledgerSentences(eagerLines)[eagerLines.length - 1] ===
         "⛵ The barge has nothing left for you this leg.",
     "a press for more than a leg's lot buys the lot and stops there, and a second press in the same leg is told the vendor has nothing left rather than being sold a shelf the plan does not have",
   );
@@ -192,14 +194,15 @@ export async function supplyBargeSuite(inputs: {
     "the tally is stamped with the leg it belongs to, so the next leg draws a fresh lot and starts the count again rather than leaving the quay bare for the rest of the voyage",
   );
 
-  // ---- The ceilings a purchase is held to ----
+  // ========== The ceilings a purchase is held to ==========
   const full = bargeVoyage(10_000);
   provisionFood(full, "Grain", 999, []);
-  const fullLines: string[] = [];
+  const fullLines: LedgerLine[] = [];
   check(
     foodRoomMeals(full, "Grain") < 1 &&
       buyFromBarge(full, 1, fullLines) === 0 &&
-      fullLines[fullLines.length - 1] === "🧺 The larder is full.",
+      ledgerSentences(fullLines)[fullLines.length - 1] ===
+        "🧺 The larder is full.",
     "a stores with no room takes no rations, and the vendor says so in the same words the port counter uses, because there is one larder and one answer to a full one",
   );
   // The purse is drawn down after the crew is aboard rather than handed to
@@ -209,12 +212,12 @@ export async function supplyBargeSuite(inputs: {
   // sentence a vendor whose price is over the purse gives the captain.
   const thin = bargeVoyage();
   thin.money = 1;
-  const thinLines: string[] = [];
+  const thinLines: LedgerLine[] = [];
   check(
     price > 1 &&
       buyFromBarge(thin, 1, thinLines) === 0 &&
       thin.money === 1 &&
-      thinLines[thinLines.length - 1] ===
+      ledgerSentences(thinLines)[thinLines.length - 1] ===
         `❌ The barge charges ${price} Gold a ration, and the purse cannot cover one.`,
     "and a purse that cannot cover one ration buys nothing rather than going into debt to the vendor, told the price it is short of",
   );
@@ -222,25 +225,25 @@ export async function supplyBargeSuite(inputs: {
   crewless.money = 1000;
   crewless.larder = 0;
   reconcileLarder(crewless);
-  const crewlessLines: string[] = [];
+  const crewlessLines: LedgerLine[] = [];
   check(
     crewSize(crewless) === 0 &&
       buyFromBarge(crewless, 1, crewlessLines) === 0 &&
-      crewlessLines[crewlessLines.length - 1] ===
+      ledgerSentences(crewlessLines)[crewlessLines.length - 1] ===
         "⚓ No crew aboard, so there is nothing to provision.",
     "while a captain with nobody aboard has nobody to feed and is told so in one line, which is the answer that case already gives a buyer at the port",
   );
   const odd = bargeVoyage();
-  const oddLines: string[] = [];
+  const oddLines: LedgerLine[] = [];
   check(
     buyFromBarge(odd, 0.4, oddLines) === 0 &&
       odd.money === 1000 &&
-      oddLines[oddLines.length - 1] ===
+      ledgerSentences(oddLines)[oddLines.length - 1] ===
         "❌ Name how many rations to buy from the barge.",
     "and a press that names no ration at all is refused in words rather than read as a zero it would quietly take and charge nothing for",
   );
 
-  // ---- The share can never pass one ----
+  // ========== The share can never pass one ==========
   // The invariant the page's headline rests on: every Gold the vendor
   // takes is a Gold of food spending, so the numerator is inside the
   // denominator whatever a voyage buys and wherever it buys it.
@@ -256,7 +259,7 @@ export async function supplyBargeSuite(inputs: {
     "every Gold the vendor takes is booked in the denominator its share is divided by, so the page's headline can never read above one hundred percent however a voyage spends",
   );
 
-  // ---- A save this build did not write ----
+  // ========== A save this build did not write ==========
   const nonsense = {
     ...voyageState(),
     bargeTaken: -3,
@@ -283,7 +286,7 @@ export async function supplyBargeSuite(inputs: {
     "a tally this build cannot read heals to a voyage that never bought at the vendor, and a save written before the vendor existed reads the same way rather than as a captain who spent Gold nobody can account for",
   );
 
-  // ---- The switch ----
+  // ========== The switch ==========
   check(
     withEnv(
       "NEXT_PUBLIC_SURVIVAL",
@@ -295,7 +298,7 @@ export async function supplyBargeSuite(inputs: {
   check(
     withEnv("NEXT_PUBLIC_SURVIVAL", "off", () => {
       const dark = bargeVoyage();
-      const darkLines: string[] = [];
+      const darkLines: LedgerLine[] = [];
       const sold = buyFromBarge(dark, 1, darkLines);
       return (
         !bargeOn(GAMBIT) &&
@@ -312,7 +315,7 @@ export async function supplyBargeSuite(inputs: {
     "and with the switch off there is no quay, no lot and no sale, so the base game is exactly as it was",
   );
 
-  // ---- The page's two numbers ----
+  // ========== The page's two numbers ==========
   // Records shaped the way the spine writes one, through the builder the
   // dashboard's own suite hands on rather than through a second copy of
   // the shape. Each captain files two legs, because the counters are the
@@ -439,7 +442,7 @@ export async function supplyBargeSuite(inputs: {
     "with the seat panel still reading as nothing to read on an empty window, because the vendor's two rows are reports and a report nobody filed is not a rate",
   );
 
-  // ---- The house rule ----
+  // ========== The house rule ==========
   // The row itself, with its comments taken out, because these checks are
   // about what a captain reads rather than about what the file says.
   const panelCode = withoutComments(

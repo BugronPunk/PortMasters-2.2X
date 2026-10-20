@@ -28,6 +28,7 @@ import {
   parseHeldCards,
   readPairs,
 } from "@/lib/game/combinations";
+import { ratePercent } from "@/lib/game/balance";
 import { db } from "@/lib/db";
 import { runReport } from "./report";
 
@@ -67,8 +68,8 @@ async function main(): Promise<void> {
       String(pair.wins).padStart(6),
       pair.rate === null
         ? "n/a".padStart(7)
-        : `${(pair.rate * 100).toFixed(1)}%`.padStart(7),
-      `${(pair.share * 100).toFixed(1)}%`.padStart(8),
+        : ratePercent(pair.rate).padStart(7),
+      ratePercent(pair.share).padStart(8),
       pair.flags.length > 0 ? ` ${pair.flags.join(", ")}` : "",
     ];
     console.log(cells.join("  "));

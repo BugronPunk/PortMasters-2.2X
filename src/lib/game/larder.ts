@@ -69,18 +69,8 @@ import {
 import { survivalLayerOn } from "./flags";
 import { addLot, drawMeals, foodRoomMeals, reconcileLarder } from "./foods";
 import { pathCargoModifier } from "./paths";
-import { flatWorkerRoster, wholeStamp, type GameState } from "./types";
-import { t } from "@/lib/game/i18n";
-
-/**
- * The crew: the artisan roster, counted through the one helper that
- * flattens it. Taken here rather than written out at each reader so the
- * number the Larder feeds and the number the voyage summary prints cannot
- * come from two different counts of the same roster.
- */
-export function crewSize(state: Pick<GameState, "workers">): number {
-  return flatWorkerRoster(state).length;
-}
+import { crewSize, wholeStamp, type GameState } from "./types";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 
 /**
  * Whether this captain is on short rations right now.
@@ -129,8 +119,8 @@ export function shortRationsYield(amount: number): number {
  * The leg stamp is what makes "once a leg" true rather than hopeful. A leg
  * opens through more than one path, and two of them can reach the same
  * client for the same leg: the captain who leaves Dusk rolls the round over
- * locally, and every captain in the room is then carried into the same Dawn
- * by the room's advance, which is the entry that calls the draft's opener.
+ * locally, and every captain in the harbor is then carried into the same Dawn
+ * by the harbor's advance, which is the entry that calls the draft's opener.
  * Feeding on arrival instead of on a stamp would charge a captain for a leg
  * twice, and a double charge is a silent defect: nothing throws, no screen
  * looks wrong, and the captain simply runs out of food a leg early for a
@@ -152,7 +142,7 @@ export function shortRationsYield(amount: number): number {
  * stamp, one meal, one price. The answer is false when the switch is off
  * as well, since the rules that would read it are not running.
  */
-export function feedCrew(state: GameState, logs: string[]): boolean {
+export function feedCrew(state: GameState, logs: LedgerLine[]): boolean {
   if (!survivalLayerOn(state.mode)) return false;
   if (state.larderFedRound === state.currentRound) return false;
   state.larderFedRound = state.currentRound;
@@ -190,7 +180,7 @@ export function feedCrew(state: GameState, logs: string[]): boolean {
     // sentence claims both because the engine applies both.
     const pace = Math.round(SHORT_RATIONS_YIELD * 100);
     logs.push(
-      t(
+      line(
         "⚠️ Short rations! {crew} aboard and the larder is empty: the crew works this leg at {pace}% pace, and every line still brings home at least one item. The fleet can see it.",
         { crew, pace },
       ),
@@ -198,7 +188,7 @@ export function feedCrew(state: GameState, logs: string[]): boolean {
     return true;
   }
   logs.push(
-    t(
+    line(
       "🍲 The crew eats {need} {rationWord}. {state.larder} left in the larder.",
       {
         need,
@@ -309,11 +299,11 @@ const NO_CREW_LINE = "⚓ No crew aboard, so there is nothing to provision.";
  */
 export function provisioningCrew(
   state: GameState,
-  logs: string[],
+  logs: LedgerLine[],
 ): number | null {
   const crew = crewSize(state);
   if (crew === 0) {
-    logs.push(t(NO_CREW_LINE));
+    logs.push(line(NO_CREW_LINE));
     return null;
   }
   return crew;
@@ -344,7 +334,7 @@ export function provisioningCrew(
  * returns zero and says why, so the panel can print the reason rather than
  * a button that appears to do nothing.
  *
- * The account is reconciled before the room is read, because a count that
+ * The account is reconciled before the harbor is read, because a count that
  * has run ahead of it, which only a hand that wrote one of the two can
  * leave behind, would otherwise read as a pantry with more free space than
  * it has.
@@ -356,7 +346,7 @@ export function provisionFood(
   state: GameState,
   food: FoodId,
   legs: number,
-  logs: string[],
+  logs: LedgerLine[],
 ): number {
   if (!survivalLayerOn(state.mode)) return 0;
   const crew = provisioningCrew(state, logs);
@@ -364,7 +354,7 @@ export function provisionFood(
   reconcileLarder(state);
   const room = provisionRoom(state, food);
   if (room <= 0) {
-    logs.push(t(LARDER_FULL_LINE));
+    logs.push(line(LARDER_FULL_LINE));
     return 0;
   }
   const affordable = provisionAffordable(state);
@@ -372,7 +362,7 @@ export function provisionFood(
   if (wanted <= 0) {
     const cost = legRationCost(state);
     logs.push(
-      t(
+      line(
         "❌ Not enough Gold to provision the crew: a leg of rations is {cost} Gold.",
         {
           cost,
@@ -396,12 +386,12 @@ export function provisionFood(
   // between them is the plan's front page number.
   state.foodSpend += cost;
   logs.push(
-    t(
+    line(
       "🧺 Provisioned {rations} {rationWord} of {food} for {crew} aboard ({cost} Gold). {state.larder} in the larder.",
       {
         rations,
         rationWord: rations === 1 ? "ration" : "rations",
-        food: t(food),
+        food: line(food),
         crew,
         cost,
         "state.larder": state.larder,
@@ -430,7 +420,7 @@ export function provisionFood(
  * trimmed to the old ceiling would empty a captain's pantry of food the
  * game had already sold them. The end is therefore the stores' own, read
  * from ./hold, and it is an end and not a tune: nothing in play reaches
- * it, because the room checks stop a purchase first.
+ * it, because the harbor checks stop a purchase first.
  */
 export function normalizeLarder(raw: unknown, mode: unknown): number {
   if (typeof raw !== "number" || !Number.isFinite(raw)) return LARDER_START;

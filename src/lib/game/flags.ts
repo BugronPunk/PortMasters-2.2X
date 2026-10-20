@@ -159,7 +159,7 @@ export function pathOrdersOn(mode: unknown): boolean {
 /**
  * Whether the Convoy sells protection on the Parley board.
  *
- * D3's own rollback, and the plan's clause is "contracts are transient room
+ * D3's own rollback, and the plan's clause is "contracts are transient harbor
  * state rather than durable, so this rolls back cleanly". With the switch
  * off no contract can be posted (the server refuses one, see the contract
  * handlers in src/server/realtime/wiring/escort-contracts.ts), no board is
@@ -167,7 +167,7 @@ export function pathOrdersOn(mode: unknown): boolean {
  * in ./engine/contracts), so a voyage plays exactly the raid it played
  * before this feature existed. A contract already agreed when the switch
  * goes off loses its cover the same way a rolled back path order loses its
- * lock: the room's board is not drawn from and the engine's cover answers
+ * lock: the harbor's board is not drawn from and the engine's cover answers
  * null, so the buyer sails on their own luck and no claim can be raised.
  */
 export function escortContractsOn(mode: unknown): boolean {
@@ -237,7 +237,7 @@ export function bazaarRumorsOn(mode: unknown): boolean {
  * would put the environment in a module whose whole point is that it is
  * pure. The read is written out in full at each call site, per the rule
  * flagOn's own comment states, and it has three: the deal on room:start,
- * the room's switch handler, and the panel that offers the voyage's one
+ * the harbor's switch handler, and the panel that offers the voyage's one
  * change of papers.
  */
 export function pathDraftOn(mode: unknown): boolean {

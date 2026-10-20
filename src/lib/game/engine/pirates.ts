@@ -19,12 +19,12 @@
 // the sentence. This module runs on the captain the raiders found, and the
 // seller is another machine: what this client can do is keep its own Gold
 // and leave a claim behind (state.pendingEscortClaim) for the React layer
-// to relay to the room, which is the same division of labour the whole
+// to relay to the harbor, which is the same division of labour the whole
 // contract runs on (see ./contracts). The claim carries the Gold the raid
 // would have taken, because the seller is the one who prices what they eat.
 // =====================================================================
 import { cardLead } from "../cards";
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import { difficultyConfig, pirateChanceFor } from "../difficulty";
 import type { GameState } from "../types";
 import { escortClaimFrom, escortCoverOf } from "./contracts";
@@ -34,9 +34,9 @@ import { hasModule } from "./core";
 // maintenance come due, so a hit here can be exactly what tips a captain
 // into needing a financial aid request. Personal luck, the same as the
 // Salvage Crane refund or the Tax Evasion audit elsewhere in the engine:
-// rolled client side, never a room wide checkpoint.
+// rolled client side, never a harbor wide checkpoint.
 // The chance this round's raid is actually rolled against, with every
-// modifier folded in: the room's tier, a corrupt broker's leak, Golden
+// modifier folded in: the harbor's tier, a corrupt broker's leak, Golden
 // Lotus's extra raids, the Deep Sea Escort Pact's reduction, Fleet Colors'
 // own reduction, the Gun Charter's own reduction, and the Persian Dome
 // Compass.
@@ -47,7 +47,7 @@ import { hasModule } from "./core";
 // the Escort Pact was shown the unhalved odds and then advised to buy an
 // escort on the strength of a figure twice what they actually faced.
 export function pirateChance(state: GameState): number {
-  // [DIFFICULTY] Raid chance comes from the room's tier, stepping up past the
+  // [DIFFICULTY] Raid chance comes from the harbor's tier, stepping up past the
   // midpoint on the harder tiers (see pirateChanceFor). A raid still takes
   // every coin, so severity is unchanged; only the odds move.
   const base = pirateChanceFor(
@@ -102,7 +102,7 @@ export function escortCost(state: GameState): number {
   return Math.floor(state.money * rate);
 }
 
-export function resolvePirateAttack(state: GameState, logs: string[]) {
+export function resolvePirateAttack(state: GameState, logs: LedgerLine[]) {
   if (state.pirateAttackResolved) return;
   state.pirateAttackResolved = true;
   if (Math.random() < pirateChance(state)) {
@@ -119,7 +119,7 @@ export function resolvePirateAttack(state: GameState, logs: string[]) {
       if (claim !== null) {
         state.pendingEscortClaim = claim;
         logs.push(
-          t(
+          line(
             "🛡️ Pirates closed on your hold and met {cover.sellerName}'s guns. All {raidGold} Gold saved, and the boarding party is theirs to answer for.",
             { "cover.sellerName": cover.sellerName, raidGold },
           ),
@@ -131,7 +131,7 @@ export function resolvePirateAttack(state: GameState, logs: string[]) {
       // to raise: a claim of zero Gold would put a loss on the seller's
       // ledger that never happened. See escortClaimFrom in ./contracts.
       logs.push(
-        t(
+        line(
           "🛡️ Pirates boarded and found the hold already bare. {cover.sellerName}'s escort turned them away for nothing.",
           { "cover.sellerName": cover.sellerName },
         ),
@@ -157,17 +157,21 @@ export function resolvePirateAttack(state: GameState, logs: string[]) {
     // in the language already, the reading every other lead line takes.
     if (salvaged > 0)
       logs.push(
-        t(
+        line(
           "🏴‍☠️ Pirates raided your hold! Lost all {lost} Gold, and {lead} recovered {salvaged} of it.",
-          { lost, lead: cardLead("letter_of_marque"), salvaged },
+          {
+            lost,
+            lead: (locale) => cardLead("letter_of_marque", locale),
+            salvaged,
+          },
         ),
       );
     else
       logs.push(
-        t("🏴‍☠️ Pirates raided your hold! Lost all {lost} Gold.", { lost }),
+        line("🏴‍☠️ Pirates raided your hold! Lost all {lost} Gold.", { lost }),
       );
   } else {
-    logs.push(t("🌊 Clear seas. No pirates sighted this round."));
+    logs.push(line("🌊 Clear seas. No pirates sighted this round."));
   }
 }
 
@@ -175,9 +179,9 @@ export function resolvePirateAttack(state: GameState, logs: string[]) {
 // instead of risking it. Only available before the attack resolves;
 // resolving it the other way (the function above) is what closes this
 // off for the round, same as resolving it here closes off that one.
-export function hireEscort(state: GameState, logs: string[]) {
+export function hireEscort(state: GameState, logs: LedgerLine[]) {
   if (state.pirateAttackResolved) {
-    logs.push(t("❌ Too late, this round's waters are already resolved"));
+    logs.push(line("❌ Too late, this round's waters are already resolved"));
     return;
   }
   const cost = escortCost(state);
@@ -185,7 +189,7 @@ export function hireEscort(state: GameState, logs: string[]) {
   state.escortHired = true;
   state.pirateAttackResolved = true;
   logs.push(
-    t(
+    line(
       "🛡️ Hired an escort for {cost} Gold. Safe passage guaranteed this round.",
       {
         cost,

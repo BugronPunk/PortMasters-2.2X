@@ -3,13 +3,13 @@
 //
 // [B1: the six phase leg, as data] One record per phase, and the only
 // place in the tree where a phase is described. A phase is an identity
-// the room synchronizes on (see ./checkpoint.ts for the order and the
+// the harbor synchronizes on (see ./checkpoint.ts for the order and the
 // rank, and ./mode.ts for which order a mode walks), a face a captain
 // reads, and nothing else: what work happens inside a phase is the
 // engine's, and what leaving it does belongs to the engine's spine.
 //
 // Six of the entries below are the leg: Dawn, Market, Orders, Parley,
-// Resolve, Dusk. The engine used to cycle eight room checkpoints, a
+// Resolve, Dusk. The engine used to cycle eight harbor checkpoints, a
 // mixture of numbers and strings that had grown one insertion at a time,
 // and the design asks for six phases instead. Only one shape can be the
 // truth, so the eight are gone and the six are the phases the ready check
@@ -20,7 +20,7 @@
 // The rest of the union lives here too, because a captain can be in them
 // and every one of them needs a face: the harbor (the pier, before the
 // leg begins), the shipyard's two personal sub states, and the two
-// terminals. Personal sub states and terminals have never been room
+// terminals. Personal sub states and terminals have never been harbor
 // checkpoints and that rule is unchanged.
 //
 // Nothing here reads a clock, a database, or a socket. It is a data
@@ -32,7 +32,7 @@
 import type { Phase, LegPhase } from "./types";
 
 // One phase's face: the words a captain reads, the glyph beside them, and
-// the accent the panel wears while the room is standing here.
+// the accent the panel wears while the harbor is standing here.
 //
 // One table rather than one per surface, which is what it was: the phase
 // dispatcher held an accent per phase, the voyage rail held a label and a
@@ -60,27 +60,27 @@ interface PhaseFace {
   // not left the yard, and the rail has folded both screens into Dusk since
   // the six phase leg landed; this is that same fold written down as data
   // rather than left in the rail's drawing code, so the one reader that has
-  // to place a captain against the room can read it (see seatOf below).
+  // to place a captain against the harbor can read it (see seatOf below).
   //
   // A fact about the phase, which is why it is named here and not in
   // ./mode.ts: both modes reach their yard through Dusk, and the lap that
   // does not would say so on its own shipyard record rather than by putting
-  // a second answer beside the phase's name. Nothing that asks where a room
-  // stands reads this, because a room never stands at a personal screen.
+  // a second answer beside the phase's name. Nothing that asks where a harbor
+  // stands reads this, because a harbor never stands at a personal screen.
   inside?: LegPhase;
-  // How long the room may stand here before the server moves it on, in
+  // How long the harbor may stand here before the server moves it on, in
   // seconds. Null for everything that is not a seat of the leg: the pier is
   // opened by the host rather than by a clock, and the personal and terminal
-  // phases are never room checkpoints, so none of them has a clock at all.
+  // phases are never harbor checkpoints, so none of them has a clock at all.
   //
   // [B2: hard timers, the server as timekeeper] A budget per phase rather
   // than one number for the leg, because the phases are not the same
-  // pressure: the market is where a round is decided and wants room to
+  // pressure: the market is where a round is decided and wants harbor to
   // think, and the boon draft is one card out of three. The numbers are the
   // authored first cut. What tunes them is the event the clock records when
   // it fires (leg_timed_out, see ../game/telemetry.ts): a leg that runs its
   // full clock with nobody readied means the phase is too short for the
-  // work, and one that runs it with the room already readied means
+  // work, and one that runs it with the harbor already readied means
   // something other than the work is holding the door.
   seconds: number | null;
 }
@@ -108,7 +108,7 @@ export const PHASE_FACES: Record<Phase, PhaseFace> = {
   // ./checkpoint.ts), which is what lets the rank, the ready gate and the
   // catch up all place a captain here without a word of their own.
   //
-  // seconds is null and stays null: the room waits at this seat for its
+  // seconds is null and stays null: the harbor waits at this seat for its
   // captains rather than for a clock, and nothing is shown to hurry them.
   // A seat that has gone quiet is rescued on the server's own watch, which
   // no surface ever displays (see armDraftWatch in
@@ -140,7 +140,7 @@ export const PHASE_FACES: Record<Phase, PhaseFace> = {
     icon: "📦",
     // Two stations, in this order: the port purchase board, then the
     // artisan bench. They were two checkpoints until B1 folded them, so a
-    // captain's work is unchanged and the room waits once instead of
+    // captain's work is unchanged and the harbor waits once instead of
     // twice. The artisan step is the second one because a captain who
     // wanted to see the table before setting artisans to work can still
     // read the market they just bought in, and because the manifest is
@@ -200,7 +200,7 @@ export const PHASE_FACES: Record<Phase, PhaseFace> = {
   // The shipyard's two sub states. A captain who is drafting or swapping a
   // module is still standing in the yard, so both wear its face and both
   // carry the yard as their seat: the rail folds them into dusk rather than
-  // drawing a step for work the room is not waiting on, and the seat field
+  // drawing a step for work the harbor is not waiting on, and the seat field
   // above says the same thing to the protocol that has to place them.
   module_draft: {
     label: "Drafting Module",
@@ -210,10 +210,10 @@ export const PHASE_FACES: Record<Phase, PhaseFace> = {
     leg: false,
     inside: "dusk",
     // The four below are null for one reason, stated once: none of them is
-    // a seat the room waits on. A captain drafting a module, swapping one,
+    // a seat the harbor waits on. A captain drafting a module, swapping one,
     // or sitting at either terminal is standing inside a phase of the leg
     // (Dusk) or outside the voyage entirely, and a clock on a personal
-    // screen would be a second answer to when the room moves.
+    // screen would be a second answer to when the harbor moves.
     seconds: null,
   },
   module_swap: {
@@ -248,7 +248,7 @@ export const ENTRY_PHASE: Phase = "harbor";
 
 // The six leg phases, in the order the design names them rather than in
 // either mode's order. A mode's own order is its lap (see ./mode.ts), and
-// this list is the shape a walk should cover, not the route a room walks.
+// this list is the shape a walk should cover, not the route a harbor walks.
 //
 // Read by the suite, which proves of each mode that its lap visits these
 // six and only these, once each. Declared from the table above rather than
@@ -287,7 +287,7 @@ const LEGACY_PHASES: Record<string, Phase> = {
  * value it has not is read as the pier rather than throwing, and a value
  * that is already current passes through. A captain whose save says `3` is
  * placed in Resolve; a captain whose save says something no version of
- * this engine ever wrote is placed at the harbor, where the room's own
+ * this engine ever wrote is placed at the harbor, where the harbor's own
  * checkpoint will pick them up on load, rather than being dropped into a
  * phase that no lap contains.
  */
@@ -325,13 +325,13 @@ export function isLegPhase(value: unknown): value is LegPhase {
  * autoCommit in ./engine/lifecycle).
  *
  * This is the answer to "where is this captain", which is a different
- * question from "does the room wait here" and was read as the same one until
+ * question from "does the harbor wait here" and was read as the same one until
  * it cost a table a voyage. A personal screen is not gated by the ready
  * check and must not be (see isGatedPhase), and a captain standing in one is
- * still standing somewhere the room can be compared against. Folded here so
+ * still standing somewhere the harbor can be compared against. Folded here so
  * the one place that comparison is made, checkpointRank, reads it, rather
  * than a phase name being special cased at each of the four guards that
- * compare a captain against the room.
+ * compare a captain against the harbor.
  *
  * A terminal answers with itself rather than with a seat, which is the
  * honest reading for a captain who is out of the voyage: what a lap makes of

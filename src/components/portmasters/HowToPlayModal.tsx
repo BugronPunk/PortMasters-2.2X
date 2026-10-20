@@ -46,16 +46,16 @@ import { cn } from "@/lib/utils";
  * the rules before ever setting sail.
  *
  * The original game has tutorialSteps and guideText locked behind the
- * game room (they need a difficulty to render the tuned numbers). This
+ * harbor (they need a difficulty to render the tuned numbers). This
  * component is a higher level, visual first read that covers the shape
- * of a voyage without requiring a room.
+ * of a voyage without requiring a harbor.
  *
  * It takes the mode rather than assuming one, because it is the first
  * manual a captain opens and the lobby is where they choose between the
  * modes: a manual that answered every question with the founding voyage's
  * rules was teaching half the harbor the wrong game before they set sail.
  * What it says about a mode comes out of the record, so the page a
- * captain reads here and the pages they read in the room cannot disagree.
+ * captain reads here and the pages they read in the harbor cannot disagree.
  */
 
 type Step = {
@@ -181,7 +181,7 @@ function voyagePage(mode: GameMode): Step {
  * The page reads the mode the way the mode's own page above does, and
  * the stake it closes on is the record's own sentence (see
  * play.failureRule): the sentence a captain reads here, on the voyage
- * page and in the room's tutorial is one sentence rather than three
+ * page and in the harbor's tutorial is one sentence rather than three
  * paraphrases of one rule.
  */
 function artisanPage(mode: GameMode): Step {

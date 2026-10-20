@@ -51,14 +51,10 @@ import type { GameState, Phase, WornGarment } from "@/lib/game/types";
 import type { VoyageLogEntry } from "@/lib/game/voyage-log";
 import { voyageLogLine } from "@/lib/game/voyage-log";
 import {
-  GAMBIT,
-  LEDGER_PHRASE,
-  call,
   carriesADash,
   check,
-  openAuthedSocket,
-  signUp,
-  suffix,
+  GAMBIT,
+  ledgerSentences,
   switchFor,
   voyageState,
   waitForEvent,
@@ -66,24 +62,20 @@ import {
   withEnv,
   withoutComments,
 } from "../harness";
-import type { Captain, WireHistory } from "../wire";
-import type { Socket } from "socket.io-client";
+import { openMarketHarbor, rememberRows, settle } from "../wire";
+import type { Captain } from "../wire";
 import type { SmokeRun } from "../run";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 export async function loomTheRefitSuite(
   run: SmokeRun,
   inputs: {
-    host: {
-      id: string;
-      token: string;
-      cookie: string;
-      username: string;
-    };
+    host: Captain;
   },
 ): Promise<void> {
   const { host } = inputs;
 
-  // ---- The bench, on a captain's own machine ----
+  // ========== The bench, on a captain's own machine ==========
   //
   // The wardrobe is switched on for the whole block, because the bench
   // stands on it (see refitsOn), and the bench's own switch is switched on
@@ -119,11 +111,11 @@ export async function loomTheRefitSuite(
       ...over,
     });
     const attempt = (
-      trade: (logs: string[]) => boolean,
+      trade: (logs: LedgerLine[]) => boolean,
     ): { ok: boolean; said: string } => {
-      const logs: string[] = [];
+      const logs: LedgerLine[] = [];
       const ok = trade(logs);
-      return { ok, said: logs[logs.length - 1] ?? "" };
+      return { ok, said: ledgerSentences(logs)[logs.length - 1] ?? "" };
     };
 
     withEnv("NEXT_PUBLIC_REFITS", "1", () => {
@@ -518,9 +510,9 @@ export async function loomTheRefitSuite(
       // defect wearing a log line.
       const settledNumber = warmthText(warmthScore(reported));
       const settled = JSON.parse(JSON.stringify(reported)) as GameState;
-      const settledLogs: string[] = [];
+      const settledLogs: LedgerLine[] = [];
       tickGarments(settled, settledLogs);
-      const shortLine = settledLogs.find((line) =>
+      const shortLine = ledgerSentences(settledLogs).find((line) =>
         line.includes("falls short"),
       );
       check(
@@ -713,8 +705,8 @@ export async function loomTheRefitSuite(
         currentRound: 3,
         garments: [{ good: REWEAVE_GOOD, durability: 2 }],
       });
-      const sellerLogs: string[] = [];
-      const customerLogs: string[] = [];
+      const sellerLogs: LedgerLine[] = [];
+      const customerLogs: LedgerLine[] = [];
       check(
         applyRefitSide(seller, agreedRefit, "loom", sellerLogs) &&
           applyRefitSide(customer, agreedRefit, "customer", customerLogs) &&
@@ -768,20 +760,22 @@ export async function loomTheRefitSuite(
         money: 5,
         garments: [{ good: REWEAVE_GOOD, durability: 2 }],
       });
-      const brokeLogs: string[] = [];
+      const brokeLogs: LedgerLine[] = [];
       check(
         applyRefitSide(broke, agreedRefit, "customer", brokeLogs) &&
           broke.money === 0 &&
           broke.refitFeesPaid === 5 &&
           broke.garments[0]?.durability === 2 + REFIT_POINTS &&
-          brokeLogs.some((line) => line.includes("paid 5 Gold")),
+          ledgerSentences(brokeLogs).some((line) =>
+            line.includes("paid 5 Gold"),
+          ),
         "a purse that moved between the accept and the settlement pays what it has rather than a negative hold, and the work still happens, because the price was agreed in the open and the purse is the customer's own business",
       );
       const bare = benchState({ currentRound: 3 });
-      const bareLogs: string[] = [];
+      const bareLogs: LedgerLine[] = [];
       check(
         applyRefitSide(bare, agreedRefit, "customer", bareLogs) &&
-          bareLogs.some((line) => line.includes("no worn")),
+          ledgerSentences(bareLogs).some((line) => line.includes("no worn")),
         "and a customer whose wardrobe lost the garment between the accept and the settlement reads a sentence saying so, which is the line for a state that moved underneath an agreement rather than for an ordinary leg",
       );
       const dark = benchState({ currentRound: 3 });
@@ -871,81 +865,49 @@ export async function loomTheRefitSuite(
     );
   });
 
-  // ---- The bench, in a real harbor ----
+  // ========== The bench, in a real harbor ==========
   //
   // Three captains at a table of their own, for the reason the market above
   // gave: the harbor this run shares is still standing at the end of this
   // section, and the checks after it read that one.
-  const loomSeller = await signUp("loom_s");
-  const loomBuyer = await signUp("loom_b");
-  const loomForeigner = await signUp("loom_f");
-  run.extraAccounts.push(loomSeller, loomBuyer, loomForeigner);
-
-  const loomRoom = await call<{ room: { id: string; code: string } }>(
-    "/api/rooms",
-    {
-      method: "POST",
-      cookie: loomSeller.cookie,
-      body: JSON.stringify({
-        name: `Smoke loom ${suffix}`,
-        isPublic: false,
-        mode: "ocean_gambit",
-        unlock: LEDGER_PHRASE,
-      }),
-    },
-  );
-  if (loomRoom.status !== 200) {
-    throw new Error("No harbor to put a garment right in.");
-  }
-  const loomRoomId = loomRoom.body.room.id;
-  const loomCrew = [loomSeller, loomBuyer, loomForeigner];
-  const loomJoins = await Promise.all(
-    loomCrew.slice(1).map((captain) =>
-      call<{ room: { id: string } }>("/api/rooms/join", {
-        method: "POST",
-        cookie: captain.cookie,
-        body: JSON.stringify({ code: loomRoom.body.room.code }),
-      }),
-    ),
-  );
-  check(
-    loomJoins.every((join) => join.status === 200),
-    "three captains can sit at a table where garments are put right",
-  );
-
+  //
+  // The table itself is the shared one the four consent markets sit at, so
+  // what this suite names is the bench: the stem of the harbor's name, the
+  // frame its board arrives on and the row it carries.
+  //
   // Each socket's newest bench, and every row that bench has ever carried.
   // The second is what makes the privacy check below a claim about what a
   // captain was told rather than about what they happened to read last.
   const loomBoards = new Map<string, RefitContract[]>();
-  const loomSeen = new Map<string, Set<string>>();
-  const loomSockets = new Map<string, Socket>();
-  for (const captain of loomCrew) {
-    const socket = await openAuthedSocket(captain);
-    run.sockets.push(socket);
-    const seatedHere = waitForEvent<WireHistory>(
-      socket,
-      "chat:history",
-      (payload) => payload?.roomId === loomRoomId,
-    );
-    socket.emit("room:join", { roomId: loomRoomId });
-    await seatedHere;
-    socket.on("refit:update", (payload: RefitBoard) => {
-      if (payload?.roomId !== loomRoomId) return;
-      loomBoards.set(captain.id, payload.refits);
-      const seen = loomSeen.get(captain.id) ?? new Set<string>();
-      for (const refit of payload.refits) seen.add(refit.id);
-      loomSeen.set(captain.id, seen);
-    });
-    loomSockets.set(captain.id, socket);
-  }
-  const loomSocketOf = (captain: Captain): Socket => {
-    const found = loomSockets.get(captain.id);
-    if (!found) throw new Error(`No socket for ${captain.username}.`);
-    return found;
-  };
+  const loom = await openMarketHarbor(
+    run,
+    {
+      labels: ["loom_s", "loom_b", "loom_f"],
+      harbor: "loom",
+      openFailure: "No harbor to put a garment right in.",
+    },
+    (captain, socket, roomId, seen) => {
+      socket.on("refit:update", (payload: RefitBoard) => {
+        if (payload?.roomId !== roomId) return;
+        loomBoards.set(captain.id, payload.refits);
+        rememberRows(
+          seen,
+          captain.id,
+          payload.refits.map((refit) => refit.id),
+        );
+      });
+    },
+  );
+  const [loomSeller, loomBuyer, loomForeigner] = loom.crew;
+  const loomRoomId = loom.roomId;
+  const loomSeen = loom.seen;
+  const loomSocketOf = loom.socketOf;
+  check(
+    loom.joins.every((join) => join.status === 200),
+    "three captains can sit at a table where garments are put right",
+  );
   const loomBoardOf = (captain: Captain): RefitContract[] =>
     loomBoards.get(captain.id) ?? [];
-  const loomSettle = () => new Promise((resolve) => setTimeout(resolve, 500));
   // The emit and the wait are one call, for the reason the market above
   // gives: a refusal waited for after the fact is a refusal this run might
   // already have missed.
@@ -974,9 +936,9 @@ export async function loomTheRefitSuite(
     );
 
   loomSocketOf(loomSeller).emit("room:start", { roomId: loomRoomId });
-  await loomSettle();
+  await settle();
 
-  // The bench belongs to the Market, and the departure puts the room at its
+  // The bench belongs to the Market, and the departure puts the harbor at its
   // opening seat rather than at one, so this is posted out of season by
   // construction rather than by a clock the run has to wait on.
   const loomOffSeason = await loomRefused(loomSeller, "refit:post", {
@@ -988,7 +950,7 @@ export async function loomTheRefitSuite(
     "a refit cannot be offered outside the Market, and the refusal names the phase that opens the bench, because a refit is offered at a port rather than at sea",
   );
 
-  // The room's seat, moved the way this suite moves any room's seat.
+  // The harbor's seat, moved the way this suite moves any harbor's seat.
   const loomSeat = (captain: Captain, round: number, phase: Phase) =>
     loomSocketOf(captain).emit("game:status", {
       roomId: loomRoomId,
@@ -1001,7 +963,7 @@ export async function loomTheRefitSuite(
       gameOver: false,
     });
   loomSeat(loomSeller, 1, "market");
-  await loomSettle();
+  await settle();
 
   const loomBadFee = await loomRefused(loomSeller, "refit:post", {
     fee: CONSENT_FEE_MAX + 1,
@@ -1073,7 +1035,7 @@ export async function loomTheRefitSuite(
   );
   check(
     loomOpenRow !== undefined && loomBoardOf(loomForeigner).length === 1,
-    "and it is the only row the third captain is handed, because an offer to the room is the one every captain may take",
+    "and it is the only row the third captain is handed, because an offer to the harbor is the one every captain may take",
   );
 
   const loomDoubled = await loomRefused(loomSeller, "refit:post", {
@@ -1103,7 +1065,7 @@ export async function loomTheRefitSuite(
     loomDirectRow !== undefined && loomDirectRow.fee === 30,
     "a direct offer lands for the captain it names, at the price that was asked",
   );
-  await loomSettle();
+  await settle();
   check(
     loomDirectRow !== undefined &&
       loomSeen.get(loomBuyer.id)?.has(loomDirectRow.id) === true &&
@@ -1126,7 +1088,7 @@ export async function loomTheRefitSuite(
     loomOpenRow !== undefined &&
       answeredBench.length === 1 &&
       answeredBench[0]?.id === loomOpenRow.id,
-    "a captain who asks for the bench is handed the same bench the room broadcast, personalised by the same rules, so the row addressed to somebody else is absent from the answer as well",
+    "a captain who asks for the bench is handed the same bench the harbor broadcast, personalised by the same rules, so the row addressed to somebody else is absent from the answer as well",
   );
 
   const loomTakenByThird = await loomRefused(loomForeigner, "refit:accept", {
@@ -1217,7 +1179,7 @@ export async function loomTheRefitSuite(
     "and a captain who is not the seller of a row cannot take it back, which the server answers with silence rather than with an error",
   );
 
-  // The room's log, which is the other place the trade is written down.
+  // The harbor's log, which is the other place the trade is written down.
   const loomLog = waitForEvent<{
     roomId: string;
     entries: VoyageLogEntry[];
@@ -1251,13 +1213,13 @@ export async function loomTheRefitSuite(
       loomAgreedRow !== undefined &&
       loomLines.includes(loomPostedLine) &&
       loomLines.includes(loomAgreedLine),
-    "the room's log carries the trade as the bench wrote it, the offer and the agreement, with the price and the garment on both lines and the taker named on the second",
+    "the harbor's log carries the trade as the bench wrote it, the offer and the agreement, with the price and the garment on both lines and the taker named on the second",
   );
 
   // The leg moves on. Everything on the bench was sold for the leg that
   // just ended, so the sweep is what takes the whole of it away.
   loomSeat(loomSeller, 2, "market");
-  await loomSettle();
+  await settle();
   check(
     loomBoardOf(loomSeller).length === 0 &&
       loomBoardOf(loomBuyer).length === 0 &&
@@ -1351,7 +1313,7 @@ export async function loomTheRefitSuite(
         contractId: loomReopenedRow?.id ?? "",
       })
     : null;
-  await loomSettle();
+  await settle();
   check(
     loomPressedTwice !== null &&
       loomPressedTwice.includes("already gone") &&
@@ -1408,7 +1370,7 @@ export async function loomTheRefitSuite(
     loomThirdAcceptLost,
     loomThirdCancelLost,
   ]);
-  await loomSettle();
+  await settle();
   const loomThirdEnd = loomBoardOf(loomSeller).find(
     (row) => row.id === loomThirdRow?.id,
   );
@@ -1430,7 +1392,7 @@ export async function loomTheRefitSuite(
   const loomThirdLate = await loomRefused(loomForeigner, "refit:accept", {
     contractId: loomThirdRow?.id ?? "",
   });
-  await loomSettle();
+  await settle();
   const loomThirdStill = loomBoardOf(loomSeller).find(
     (row) => row.id === loomThirdRow?.id,
   );
@@ -1482,7 +1444,7 @@ export async function loomTheRefitSuite(
   );
 
   // The other end of the warmth seam, which is what makes the mend's own
-  // arithmetic final rather than first: what the room's sockets know about
+  // arithmetic final rather than first: what the harbor's sockets know about
   // a garment is its name, checked against the wardrobe table at the moment
   // an offer is posted, and nothing else. The tailors' point is a call on
   // the mender's machine and a refit's points are put back by the customer's
@@ -1498,7 +1460,7 @@ export async function loomTheRefitSuite(
       !wireCode.includes("restoreGarment") &&
       !wireCode.includes("warmthScore") &&
       !wireCode.includes("durability"),
-    "no module the room's sockets run through names the mend, the repair, a durability or a warmth, so the work is applied exactly once, on the machine that owns the garment, and no frame can arrive behind the panel to apply it again",
+    "no module the harbor's sockets run through names the mend, the repair, a durability or a warmth, so the work is applied exactly once, on the machine that owns the garment, and no frame can arrive behind the panel to apply it again",
   );
 
   // And the panel that prints the number, which is the screen the field

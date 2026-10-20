@@ -23,16 +23,17 @@ import { newCrewIdentity } from "../crew";
 import { isFrostbitten } from "../garments";
 import { unlockedWorkerTypes } from "../pools";
 import {
-  frozenAssignRefusal,
-  frozenWorkLog,
-  hungryProductionNote,
+  frozenAssignRefusalLine,
+  frozenWorkLogLine,
+  hungryProductionNoteLine,
 } from "../status-copy";
 import type { GameState } from "../types";
+import { joined, line, type LedgerLine } from "@/lib/game/ledger";
 import { t } from "@/lib/game/i18n";
 import { hasModule } from "./core";
 import { getHireCost } from "./pricing";
 
-export function hireWorker(state: GameState, type: string, logs: string[]) {
+export function hireWorker(state: GameState, type: string, logs: LedgerLine[]) {
   const wage = getHireCost(state, type);
   const def = workerType(type);
   const label = def?.label ?? type;
@@ -45,7 +46,7 @@ export function hireWorker(state: GameState, type: string, logs: string[]) {
   // free hire that their House promised them.
   const pledged = state.housePerks.jadeFreeHireAvailable;
   if (!pledged && state.money < wage) {
-    logs.push(t("❌ Insufficient funds to hire workers!"));
+    logs.push(line("❌ Insufficient funds to hire workers!"));
     return;
   }
   const list = state.workers[type as WorkerTypeId];
@@ -76,12 +77,12 @@ export function hireWorker(state: GameState, type: string, logs: string[]) {
     freeFirstWage: pledged || undefined,
   });
   logs.push(
-    t(
+    line(
       "{workerIcon} Hired {identity.name} the {label}! Wage: {wage} Gold / Round (paid at round end)",
       {
         workerIcon: def?.icon ?? "🧑",
         "identity.name": identity.name,
-        label: t(label),
+        label: line(label),
         wage,
       },
     ),
@@ -89,7 +90,7 @@ export function hireWorker(state: GameState, type: string, logs: string[]) {
   if (pledged) {
     state.housePerks.jadeFreeHireAvailable = false;
     logs.push(
-      t(
+      line(
         "🪷 Jade Pavilion pledge honored: this artisan joins at no cost, so the first wage is on the House.",
       ),
     );
@@ -100,7 +101,7 @@ export function fireWorker(
   state: GameState,
   type: string,
   idx: number,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   const list = state.workers[type as WorkerTypeId];
   if (!list) return;
@@ -112,8 +113,8 @@ export function fireWorker(
   if (idx < 0 || idx >= list.length) return;
   if (state.money < wage) {
     logs.push(
-      t("❌ Insufficient funds for {label}'s severance: {wage} Gold", {
-        label: t(label),
+      line("❌ Insufficient funds for {label}'s severance: {wage} Gold", {
+        label: line(label),
         wage,
       }),
     );
@@ -126,18 +127,19 @@ export function fireWorker(
   // carried; the bench's rows show a name now, and a dismissal that named
   // only the craft would leave a captain matching people to the bill.
   logs.push(
-    t("💔 Dismissed {worker.name} the {label}. Severance: {wage} Gold", {
+    line("💔 Dismissed {worker.name} the {label}. Severance: {wage} Gold", {
       "worker.name": worker.name,
-      label: t(label),
+      label: line(label),
       wage,
     }),
   );
   if (worker.task)
     logs.push(
-      "  " +
-        t("This worker was making: {worker.task}", {
-          "worker.task": t(worker.task),
-        }),
+      line(
+        "This worker was making: {worker.task}",
+        { "worker.task": line(worker.task) },
+        "  ",
+      ),
     );
 }
 
@@ -145,7 +147,7 @@ export function assignTask(
   state: GameState,
   type: string,
   task: string,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   const list = state.workers[type as WorkerTypeId];
   if (!list) return;
@@ -186,8 +188,8 @@ export function assignTask(
           })
           .join(" + ");
         logs.push(
-          t("❌ Material shortage to produce {task}! (Have: {short})", {
-            task: t(task),
+          line("❌ Material shortage to produce {task}! (Have: {short})", {
+            task: line(task),
             short,
           }),
         );
@@ -196,13 +198,22 @@ export function assignTask(
       for (const [m, a] of Object.entries(recipe.materials))
         state.inventory[m] -= a;
       worker.task = task;
-      const matTxt = Object.entries(recipe.materials)
-        .map(([m, a]) => `${ICONS[m]}${t(m)}×${a}`)
-        .join(" + ");
+      // The materials are joined at the read rather than at the write, so
+      // the list reads in the reader's language.
+      const matTxt = joined(
+        Object.entries(recipe.materials).map(([m, a]) =>
+          line("{icon}{m}×{amount}", {
+            icon: ICONS[m],
+            m: line(m),
+            amount: a,
+          }),
+        ),
+        () => " + ",
+      );
       logs.push(
-        t("📋 Assigned: Produce {icon}{task} (Req: {materials})", {
+        line("📋 Assigned: Produce {icon}{task} (Req: {materials})", {
           icon: ICONS[task],
-          task: t(task),
+          task: line(task),
           materials: matTxt,
         }),
       );
@@ -211,12 +222,12 @@ export function assignTask(
   }
   logs.push(
     frozen
-      ? frozenAssignRefusal()
-      : t("❌ All workers are already assigned tasks!"),
+      ? frozenAssignRefusalLine()
+      : line("❌ All workers are already assigned tasks!"),
   );
 }
 
-export function processProduction(state: GameState, logs: string[]) {
+export function processProduction(state: GameState, logs: LedgerLine[]) {
   const bonus = state.modifierFlags.worker_bonus_production || 0;
   // [F6: charters at leg four] The Weavers' Charter, read once here for the
   // reason the boon above is: one fact about the captain, not one per
@@ -251,7 +262,7 @@ export function processProduction(state: GameState, logs: string[]) {
   // composed in ../status-copy, where the hunger family's three clauses
   // are authored once and its way back is held to every surface.
   const short = onShortRations(state);
-  if (short) logs.push(hungryProductionNote());
+  if (short) logs.push(hungryProductionNoteLine());
   for (const { list, name, weaves } of allLists) {
     for (const w of list) {
       // [C3: garments and the cold] The bench will not hand work to a hand
@@ -261,7 +272,7 @@ export function processProduction(state: GameState, logs: string[]) {
       // materials were spent when it was assigned, and it produces the leg
       // after this one.
       if (isFrostbitten(w, state.currentRound)) {
-        if (w.task) logs.push(frozenWorkLog(w.name, w.task));
+        if (w.task) logs.push(frozenWorkLogLine(w.name, w.task));
         continue;
       }
       if (w.task) {
@@ -283,12 +294,15 @@ export function processProduction(state: GameState, logs: string[]) {
         // they have in common rather than one of the three.
         if (amt > base)
           logs.push(
-            t("✅ Skilled {name} finished {amt}× {taskIcon}{w.task}! (Bonus)", {
-              name: t(name),
-              amt,
-              taskIcon: ICONS[w.task],
-              "w.task": t(w.task),
-            }),
+            line(
+              "✅ Skilled {name} finished {amt}× {taskIcon}{w.task}! (Bonus)",
+              {
+                name: line(name),
+                amt,
+                taskIcon: ICONS[w.task],
+                "w.task": line(w.task),
+              },
+            ),
           );
         // Reads its own amount rather than the 2 this branch used to spell
         // out. That was true for as long as a skilled artisan's output could
@@ -298,26 +312,26 @@ export function processProduction(state: GameState, logs: string[]) {
         // work the captain can count.
         else if (w.isSkilled)
           logs.push(
-            t("✅ Skilled {name} finished {amt}× {taskIcon}{w.task}!", {
-              name: t(name),
+            line("✅ Skilled {name} finished {amt}× {taskIcon}{w.task}!", {
+              name: line(name),
               amt,
               taskIcon: ICONS[w.task],
-              "w.task": t(w.task),
+              "w.task": line(w.task),
             }),
           );
         else
           logs.push(
-            t("✅ {name} finished {taskIcon}{w.task}!", {
-              name: t(name),
+            line("✅ {name} finished {taskIcon}{w.task}!", {
+              name: line(name),
               taskIcon: ICONS[w.task],
-              "w.task": t(w.task),
+              "w.task": line(w.task),
             }),
           );
         if (w.producedCount >= 2 && !w.isSkilled) {
           w.isSkilled = true;
           logs.push(
-            t("⭐ {name} Promotion! Can now produce 2 items per round!", {
-              name: t(name),
+            line("⭐ {name} Promotion! Can now produce 2 items per round!", {
+              name: line(name),
             }),
           );
         }
@@ -382,7 +396,7 @@ export function wageBill(state: GameState): WageBillRow[] {
  * type the roster does not know rather than a type with an unpaid wage.
  * The join itself is unlockedWorkerRoster below, which both screens read.
  */
-export function payrollIndex(state: GameState): Map<WorkerTypeId, WageBillRow> {
+function payrollIndex(state: GameState): Map<WorkerTypeId, WageBillRow> {
   return new Map(wageBill(state).map((b) => [b.id, b]));
 }
 
@@ -427,7 +441,7 @@ export function wagesDue(state: GameState): number {
 
 export function payWages(
   state: GameState,
-  logs: string[],
+  logs: LedgerLine[],
 ): true | "bankruptcy" {
   // The bill comes off the shared reader above, so the figure charged
   // here and the figure every screen quotes are one reading of one
@@ -458,7 +472,7 @@ export function payWages(
     const bLabel = b.sponsored === 1 ? t(b.label) : b.plural;
     if (b.sponsored > 0)
       logs.push(
-        t(
+        line(
           "🪷 Jade Pavilion covers the wage for {b.sponsored} {bLabel} this round.",
           {
             "b.sponsored": b.sponsored,
@@ -482,7 +496,7 @@ export function payWages(
       const bLabel = b.count === 1 ? t(b.label) : b.plural;
       if (b.due > 0)
         logs.push(
-          t("💰 Paid wages for {b.count} {bLabel}: {b.due} Gold", {
+          line("💰 Paid wages for {b.count} {bLabel}: {b.due} Gold", {
             "b.count": b.count,
             bLabel,
             "b.due": b.due,
@@ -492,10 +506,13 @@ export function payWages(
     return true;
   }
   logs.push(
-    t("⚠️ Insufficient funds! Needed: {total} Gold, Have: {state.money} Gold", {
-      total,
-      "state.money": state.money,
-    }),
+    line(
+      "⚠️ Insufficient funds! Needed: {total} Gold, Have: {state.money} Gold",
+      {
+        total,
+        "state.money": state.money,
+      },
+    ),
   );
   // Both lines stopped short of promising what happens next. They used to
   // say the workers struck and the voyage was over, which was true for as
@@ -503,8 +520,8 @@ export function payWages(
   // sailing, the crew is left unpaid and the voyage is not over at all.
   // What the failure costs is decided in ./seats, which is the one place
   // that knows which mode this is.
-  logs.push(t("💥 Could not pay wages, the crew is left unpaid."));
-  logs.push(t("💥 Reputation collapsed: a bankruptcy is recorded."));
+  logs.push(line("💥 Could not pay wages, the crew is left unpaid."));
+  logs.push(line("💥 Reputation collapsed: a bankruptcy is recorded."));
   return "bankruptcy";
 }
 
@@ -523,7 +540,7 @@ export function maintenanceDue(state: GameState): number {
 
 export function payMaintenance(
   state: GameState,
-  logs: string[],
+  logs: LedgerLine[],
 ): true | "bankruptcy" {
   const cost = maintenanceDue(state);
   // Maintenance is its own expense line on both payment paths below, and the
@@ -534,7 +551,7 @@ export function payMaintenance(
   if (state.money >= cost) {
     state.money -= cost;
     state.maintenanceCosts += cost;
-    logs.push(t("💸 Paid Ship Maintenance Fee: {cost} Gold", { cost }));
+    logs.push(line("💸 Paid Ship Maintenance Fee: {cost} Gold", { cost }));
     return true;
   }
   if (state.money > 0) {
@@ -542,14 +559,14 @@ export function payMaintenance(
     state.money = 0;
     state.maintenanceCosts += paid;
     logs.push(
-      t("⚠️ Forced payment of {paid} Gold (Needed {cost} Gold)", {
+      line("⚠️ Forced payment of {paid} Gold (Needed {cost} Gold)", {
         paid,
         cost,
       }),
     );
     // See the note on the wage failure above: this line used to end the
     // voyage in words, which is only half of what it now means.
-    logs.push(t("⚠️ Funds depleted: the maintenance fee goes unpaid."));
+    logs.push(line("⚠️ Funds depleted: the maintenance fee goes unpaid."));
     return "bankruptcy";
   }
   return "bankruptcy";

@@ -2,9 +2,9 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { cardText, cargoCarriesTag } from "@/lib/game/cards";
+import { cardText } from "@/lib/game/cards";
 import {
   flatWorkerRoster,
   type GameState,
@@ -14,11 +14,7 @@ import type { CardRecord } from "@/lib/game/constants/cards";
 import {
   basePriceRange,
   priceRatio,
-  brokersFavorCommission,
-  calcTransportCost,
   canFillOrder,
-  explainVAT,
-  fleetOfTreasuresUnits,
   getCardFinalCost,
   getHireCost,
   getIntelCost,
@@ -26,7 +22,7 @@ import {
   lockedBehind,
   maintenanceDue,
   moduleSlotsOpen,
-  orderRewardBonusSteps,
+  quoteOrder,
   wagesDue,
 } from "@/lib/game/engine";
 import { RECIPES } from "@/lib/game/constants/goods";
@@ -71,7 +67,11 @@ const TONE_CLASSES: Record<Suggestion["tone"], string> = {
 
 export function ActionSuggester({ game }: { game: GameState }) {
   const [open, setOpen] = useState(false);
-  const suggestion = analyzePhase(game);
+  // The reading, held until the game itself changes. The suggestion is
+  // worked out from the whole game, and this panel is mounted more than
+  // once in the harbor, so a reading taken on every render was taken
+  // again for every panel, every time anything above it drew.
+  const suggestion = useMemo(() => analyzePhase(game), [game]);
 
   if (!suggestion) return null;
 
@@ -304,7 +304,7 @@ function analyzePurchase(game: GameState): Suggestion | null {
   // good the card happens to list first, which is not always the one the
   // score picked.
   let bestCard = null as (typeof unpurchased)[0] | null;
-  let bestScore = -1;
+  let bestPriceRatio = -1;
   let bestGoodName = "";
   let bestGoodPrice = 0;
   for (const card of unpurchased) {
@@ -312,8 +312,8 @@ function analyzePurchase(game: GameState): Suggestion | null {
       const range = basePriceRange(r.type) ?? [0, 100];
       const unit = r.price ?? 0;
       const score = 1 - priceRatio(unit, range);
-      if (score > bestScore) {
-        bestScore = score;
+      if (score > bestPriceRatio) {
+        bestPriceRatio = score;
         bestCard = card;
         bestGoodName = r.type;
         bestGoodPrice = unit;
@@ -368,7 +368,7 @@ function analyzePurchase(game: GameState): Suggestion | null {
         bestGoodName: t(bestGoodName),
         bestPrice: bestGoodPrice,
         "bestCard.port": t(bestCard.port),
-        pricePct: Math.round(bestScore * 100),
+        pricePct: Math.round(bestPriceRatio * 100),
       },
     ),
     tone: "gain",
@@ -544,54 +544,17 @@ function analyzeOrders(game: GameState): Suggestion | null {
     // cannot come to disagree about which orders are a captain's (see [D2]
     // in ./engine/orders).
     if (!canFillOrder(game, o)) continue;
-    const hasWoven = cargoCarriesTag(o.resources, "woven");
-    // The freight through the same read the fill charges through, the
-    // Fleet of Treasures units included (see fleetOfTreasuresUnits).
-    const transport = calcTransportCost(
-      game,
-      o.totalItems,
-      hasWoven,
-      fleetOfTreasuresUnits(game, o.resources),
-    );
-    let net = o.reward - transport;
-    let vatTotal = 0;
-    if (o.isProductOrder) {
-      // Charged exactly as completeOrder charges it, per unit, rather than
-      // as a flat five percent of the reward. The real figure comes off the
-      // sale net of the material and wage cost of making the thing, and
-      // then moves with the captain's own VAT modifiers. This reads the
-      // engine mirror Orders already reads rather than a second estimate,
-      // because the estimate was the one the captain was never charged.
-      // The engine's own reading of the taxed line (see completeOrder),
-      // the guard included: a product card with no line, or a line with
-      // no count, is taxed on nothing rather than reading a count off a
-      // line that is not there.
-      const productRef = o.resources[0];
-      const required = productRef?.required ?? 0;
-      if (productRef && required > 0) {
-        vatTotal =
-          explainVAT(game, productRef.type, o.reward / required).final *
-          required;
-        net -= vatTotal;
-      }
-    }
-    // The percentage bonuses the fill will credit, read through the
-    // settlement's own chain off the same post VAT reward it starts from
-    // (see orderRewardBonusSteps), so the sentence below names the Gold
-    // the fill actually lands rather than the face value.
-    const rewardWithBonuses = orderRewardBonusSteps(
-      game,
-      o,
-      o.reward - vatTotal,
-    ).reward;
-    net += rewardWithBonuses - (o.reward - vatTotal);
-    if (o.isBrokerFavor) {
-      net -= brokersFavorCommission(o.reward);
-    }
-    if (net > bestProfit) {
-      bestProfit = net;
+    // The order priced through the engine's own quote (see quoteOrder),
+    // which is the chain the fill pays through: the VAT per unit, the
+    // percentage bonuses off what is left, and the Broker's cut last. The
+    // estimate this replaced left the Broker's cut out of the reward the
+    // sentence named, so it quoted a sum the harbor was never going to
+    // pay, and the net it ranked the orders by was priced a second way.
+    const quote = quoteOrder(game, o);
+    if (quote.net > bestProfit) {
+      bestProfit = quote.net;
       bestOrder = o;
-      bestReward = rewardWithBonuses;
+      bestReward = quote.reward;
     }
   }
 

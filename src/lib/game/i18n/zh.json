@@ -11,43 +11,20 @@
   "terms": {
     "term.gold": { "en": "Gold", "zh": "金币" },
     "term.captain": { "en": "Captain", "zh": "船长" },
-    "term.harbor": { "en": "Harbor (the room)", "zh": "港湾" },
-    "term.port": { "en": "Port", "zh": "港" },
+    "term.harbor": { "en": "Harbor", "zh": "港湾" },
     "term.host": { "en": "Host", "zh": "港主" },
-    "term.seat": { "en": "Seat", "zh": "席位" },
     "term.renown": { "en": "Renown", "zh": "声望" },
     "term.reputation": { "en": "Reputation", "zh": "声誉" },
-    "term.score": { "en": "Score", "zh": "积分" },
     "term.legacy": { "en": "Captain's Legacy", "zh": "船长传承" },
-    "term.merits": { "en": "Merits", "zh": "功勋" },
     "term.sea_master": { "en": "Sea Master", "zh": "沧海之主" },
-    "term.sea_master_crowns": { "en": "Sea Master crowns", "zh": "沧海之冠" },
     "term.voyage": { "en": "Voyage", "zh": "航程" },
-    "term.round": { "en": "Round", "zh": "轮" },
-    "term.leg": { "en": "Leg", "zh": "航段" },
-    "term.order": { "en": "Trade order", "zh": "订单" },
-    "term.locked_order": { "en": "Locked order", "zh": "专属订单" },
-    "term.manifest": { "en": "Manifest", "zh": "舱单" },
-    "term.path": { "en": "Path", "zh": "商道" },
-    "term.boon": { "en": "Boon (card kind)", "zh": "机缘" },
-    "term.module": { "en": "Module (card kind)", "zh": "模块" },
-    "term.charter": { "en": "Charter (card kind)", "zh": "特许状" },
-    "term.draft": { "en": "To draft (a card)", "zh": "抽取" },
     "term.hold": { "en": "Hold", "zh": "货舱" },
     "term.cargo": { "en": "Cargo", "zh": "货物" },
     "term.stores": { "en": "Stores", "zh": "存粮" },
     "term.larder": { "en": "Larder", "zh": "粮舱" },
-    "term.pantry": { "en": "Pantry", "zh": "伙房" },
     "term.rations": { "en": "Rations", "zh": "口粮" },
-    "term.slot": { "en": "Cargo slot", "zh": "仓位" },
     "term.freight": { "en": "Freight", "zh": "运费" },
-    "term.maintenance": { "en": "Ship maintenance", "zh": "维护费" },
-    "term.wages": { "en": "Wages", "zh": "工钱" },
-    "term.severance": { "en": "Severance", "zh": "遣散费" },
-    "term.vat": { "en": "VAT", "zh": "增值税" },
-    "term.income_tax": { "en": "Income tax", "zh": "所得税" },
-    "term.dues": { "en": "Harbor dues", "zh": "港务费" },
-    "term.settlement": { "en": "Settlement", "zh": "结算" }
+    "term.wages": { "en": "Wages", "zh": "工钱" }
   },
 
   "phases": {
@@ -82,7 +59,6 @@
       "en": "The founding voyage. Buy the port, work the orders, trade with the table between rounds, settle, and refit.",
       "zh": "最初的航程。在港口采购，交付订单，与同席船长易货，结算账目，再整备船只。"
     },
-    "mode.ocean_gambit.name": { "en": "Ocean Gambit", "zh": "暗潮" },
     "mode.ocean_gambit.badge": { "en": "Gambit", "zh": "暗潮" },
     "mode.ocean_gambit.tagline": {
       "en": "Orders lock before the table opens.",
@@ -148,12 +124,7 @@
     "food.grain": { "en": "Grain", "zh": "米粮" },
     "food.salt_fish": { "en": "Salt Fish", "zh": "咸鱼" },
     "food.produce": { "en": "Produce", "zh": "时鲜" },
-    "food.meal": { "en": "Meal", "zh": "餐" },
-    "food.short_rations": { "en": "Short rations", "zh": "减半口粮" },
-    "food.preserve": { "en": "To preserve", "zh": "腌制" },
-    "food.barge": { "en": "Supply Barge", "zh": "补给驳船" },
-    "food.barge_rations": { "en": "Barge rations", "zh": "驳船口粮" },
-    "food.ration_price": { "en": "Ration price", "zh": "口粮单价" }
+    "food.barge": { "en": "Supply Barge", "zh": "补给驳船" }
   },
 
   "crew": {
@@ -281,8 +252,6 @@
   },
 
   "houses": {
-    "house.term": { "en": "Great House", "zh": "世家" },
-    "house.standing": { "en": "House Standing", "zh": "世家口碑" },
     "house.jade_pavilion.name": { "en": "Jade Pavilion", "zh": "玉阁" },
     "house.jade_pavilion.motto": {
       "en": "Patience polishes the stone.",
@@ -331,15 +300,7 @@
     },
     "rating.qualified_trader": { "en": "Qualified Trader", "zh": "合格商人" },
     "rating.novice_merchant": { "en": "Novice Merchant", "zh": "新手商人" },
-    "legacy.merchant_ledger": { "en": "The merchant ledger", "zh": "商名录" },
-    "legacy.renown_level": { "en": "Renown Level", "zh": "声望等级" },
-    "legacy.renown_xp": { "en": "Renown XP", "zh": "声望经验" },
-    "legacy.voyages_completed": { "en": "Voyages Completed", "zh": "完成航程" },
-    "legacy.best_score": { "en": "Best Score", "zh": "最佳积分" },
-    "legacy.solvent_streak": {
-      "en": "Consecutive solvent voyages",
-      "zh": "连续不破产航程"
-    }
+    "legacy.renown_xp": { "en": "Renown XP", "zh": "声望经验" }
   },
 
   "merits": {
@@ -348,7 +309,6 @@
       "en": "Complete your first voyage.",
       "zh": "完成你的第一次航程。"
     },
-    "merit.first_crown.name": { "en": "Sea Master", "zh": "沧海之主" },
     "merit.first_crown.desc": {
       "en": "Get crowned Sea Master for the first time.",
       "zh": "首次荣登沧海之主。"
@@ -366,44 +326,17 @@
   },
 
   "tags": {
-    "tag.cold": { "en": "Cold", "zh": "御寒" },
-    "tag.bulk": { "en": "Bulk", "zh": "散货" },
-    "tag.perishable": { "en": "Perishable", "zh": "易腐" },
-    "tag.preserved": { "en": "Preserved", "zh": "耐储" },
-    "tag.woven": { "en": "Woven", "zh": "织物" },
-    "tag.luxury": { "en": "Luxury", "zh": "奢华" },
-    "tag.armed": { "en": "Armed", "zh": "武装" },
-    "tag.crewed": { "en": "Crewed", "zh": "人手" },
-    "tag.contraband": { "en": "Contraband", "zh": "私货" },
-    "tag.sealed": { "en": "Sealed", "zh": "封验" },
-    "tag.public": { "en": "Public", "zh": "公开" },
-    "tag.debt": { "en": "Debt", "zh": "债务" }
+    "tag.public": { "en": "Public", "zh": "公开" }
   },
 
   "systems": {
     "system.broker": { "en": "Broker", "zh": "掮客" },
-    "system.brokers_rumor": { "en": "Broker's Rumor", "zh": "掮客密语" },
-    "system.brokers_whisper": { "en": "Broker's Whisper", "zh": "掮客密语" },
     "system.brokers_favor": { "en": "Broker's Favor", "zh": "掮客的人情" },
-    "system.honest_broker": { "en": "Honest Broker", "zh": "诚信掮客" },
-    "system.corrupt_broker": { "en": "Corrupt Broker", "zh": "通匪掮客" },
     "system.word_on_the_docks": { "en": "Word on the Docks", "zh": "码头风闻" },
     "system.tidewatch": { "en": "Tidewatch Alerts", "zh": "观潮预警" },
-    "system.ventures": { "en": "Ventures", "zh": "合股" },
-    "system.backing": { "en": "Backing (a loan)", "zh": "作保" },
     "system.exchange": { "en": "Captain's Exchange", "zh": "船长行市" },
     "system.audit": { "en": "Manifest Audit", "zh": "舱单稽查" },
-    "system.maroon": { "en": "Maroon (the vote ashore)", "zh": "放逐" },
-    "system.harbormaster": { "en": "Harbormaster", "zh": "港务长" },
-    "system.mandate": { "en": "Imperial Mandate", "zh": "皇命采办" },
-    "system.commission": {
-      "en": "The fleet's commission (the shared objective)",
-      "zh": "公议"
-    },
-    "system.standing_order": { "en": "Standing Order", "zh": "常备订单" },
-    "system.salvage": { "en": "Salvage", "zh": "打捞" },
-    "system.escort": { "en": "Escort", "zh": "护航" },
-    "system.raid": { "en": "Pirate raid", "zh": "海盗劫掠" }
+    "system.harbormaster": { "en": "Harbormaster", "zh": "港务长" }
   },
 
   "moments": {
@@ -715,23 +648,9 @@
   },
 
   "ui": {
-    "ui.hold": { "en": "Hold", "zh": "货舱" },
-    "ui.cargo": { "en": "Cargo", "zh": "货物" },
-    "ui.stores": { "en": "Stores", "zh": "存粮" },
-    "ui.wardrobe": { "en": "Wardrobe", "zh": "衣箱" },
     "ui.warmth": { "en": "Warmth", "zh": "暖意" },
-    "ui.frostbite": { "en": "Frostbite", "zh": "冻伤" },
-    "ui.shipyard": { "en": "Shipyard", "zh": "船坞" },
-    "ui.hull": { "en": "Hull", "zh": "船体" },
-    "ui.upgrade": { "en": "Upgrade", "zh": "升级" },
     "ui.market": { "en": "Market", "zh": "集市" },
-    "ui.port_purchase": { "en": "Port Purchase", "zh": "港口采购" },
     "ui.artisan_bench": { "en": "Artisan Bench", "zh": "匠作台" },
-    "ui.standing_orders": { "en": "Standing Orders", "zh": "常备订单" },
-    "ui.objective": { "en": "Objective", "zh": "公议" },
-    "ui.leaderboard": { "en": "Leaderboard", "zh": "排行榜" },
-    "ui.lobby": { "en": "Lobby", "zh": "大厅" },
-    "ui.standings": { "en": "Standings", "zh": "排名" },
     "ui.cta.gather": { "en": "Gather in the Harbor", "zh": "在港湾集合" },
     "ui.cta.draft_path": { "en": "Draft Your Path", "zh": "抽取你的商道" },
     "ui.cta.draft_boon": { "en": "Draft a Boon", "zh": "抽取机缘" },
@@ -913,7 +832,7 @@
       "zh": "<p>{rounds}轮之后，声誉最高的船长赢得<strong>沧海之主</strong>的头衔。声誉来自贸易利润和完成的订单。</p>\n<p>{play.failureRule}</p>\n<p>初始金币是<strong>{cfg.startingGold}</strong>。够起步，不够大手大脚。</p>"
     },
     "guides.015": {
-      "en": "<p>A round is one lap of the voyage, and this voyage runs {rounds} of them. Each round walks the phases below in the order your voyage puts them:</p>\n{roundSteps}\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\"><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+N</kbd> readies you for the next phase without clicking (the room sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.</p>",
+      "en": "<p>A round is one lap of the voyage, and this voyage runs {rounds} of them. Each round walks the phases below in the order your voyage puts them:</p>\n{roundSteps}\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\"><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+N</kbd> readies you for the next phase without clicking (the harbor sails on once every captain is ready), and a voyage is one whole run of these rounds rather than a round of its own.</p>",
       "zh": "<p>一轮是航程里的一圈，这趟要走{rounds}轮。每轮依次走过下面的阶段，顺序由你的航程排定：</p>\n{roundSteps}\n<p style=\"font-size:12px;color:var(--muted-foreground);margin:4px 0 0\"><kbd style=\"background:var(--muted);border:1px solid var(--border);color:var(--foreground);padding:1px 6px;border-radius:3px\">Ctrl+N</kbd> 可以不点鼠标直接就绪（所有船长都就绪，港湾才继续）；航程是这些轮连起来的一整趟，不是单独的一轮。</p>"
     },
     "guides.016": {
@@ -1304,8 +1223,6 @@
       "en": "Trade directly with another captain instead of through the market, on the Captain's Exchange during the Parley or from the harbor chat once you reach Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}. Post what you have for what you want; the offered amount is set aside the moment you post it, and comes back to you if it's canceled, if nobody takes it, or if a flexible offer of yours is taken and this one is retired with it.",
       "zh": "绕开集市，直接和另一位船长易货：洽谈时的船长行市，或声望到 {FLEXIBLE_BARTER_UNLOCK_LEVEL}级后的港湾聊天。挂出你有的、写明你想要的；挂出的那一刻数量就寄存起来，被取消、没人接，或者你的另一份灵活挂单成交、把它一并带走，都会原样回到你手上。"
     },
-    "guides.050": { "en": "Pirate Attack", "zh": "海盗劫掠" },
-    "guides.051": { "en": "Financial Aid", "zh": "资金援助" },
     "guides.052": {
       "en": "A loan from another captain when you can't cover this round's wages or maintenance on your own. The lender's Gold transfers to you immediately; you owe it back before the voyage ends, or it's deducted automatically and handed to them at the voyage's final round.",
       "zh": "自己盖不住本轮的工钱或维护费时，向另一位船长借的一笔款。对方的金币立刻到账；在航程结束前还清，还不清，最后一轮会自动从你的金币里扣下来，交到他手上。"
@@ -1740,7 +1657,7 @@
       "zh": "航程离港时，每位船长都发到一张别人看不到的私牌：多数是诚信船长，跟着船队的公开目标走；四人以上的桌上，船队里藏着一个海盗，六人以上还可能多藏一个掮客。航程结束时，所有牌都翻开。"
     },
     "descriptions.033": {
-      "en": "From round 5, a simple majority of the fleet can open one captain's manifest at a Parley. The room is shown 2 of that captain's last 5 fills, and calling the vote spends the rest of that Parley's trading.",
+      "en": "From round 5, a simple majority of the fleet can open one captain's manifest at a Parley. The harbor is shown 2 of that captain's last 5 fills, and calling the vote spends the rest of that Parley's trading.",
       "zh": "从第5轮起，船队过半数可以在洽谈时翻开一位船长的舱单。港湾会看到那位船长最近5笔交货中的2笔；发起这次表决，那场洽谈剩下的交易时间就没了。"
     },
     "descriptions.034": {
@@ -1873,7 +1790,7 @@
       "en": "swept when the voyage moved on",
       "zh": "航段推进时清出"
     },
-    "engine.027": { "en": "refused by the room", "zh": "被众人拒收" },
+    "engine.027": { "en": "refused by the harbor", "zh": "被众人拒收" },
     "engine.028": {
       "en": "returned as the voyage loaded",
       "zh": "随航程载入退回"
@@ -1936,14 +1853,6 @@
       "en": "{row.good}: every price {percent} percent {way} at the next port",
       "zh": "{row.good}：下一港的每个价格{way} {percent}%"
     },
-    "engine.308": {
-      "en": "{good}: every price {percent} percent higher at the next port",
-      "zh": "{good}：下一个港口所有价格上浮{percent}%"
-    },
-    "engine.309": {
-      "en": "{good}: every price {percent} percent lower at the next port",
-      "zh": "{good}：下一个港口所有价格下调{percent}%"
-    },
     "engine.328": { "en": "higher", "zh": "涨" },
     "engine.329": { "en": "lower", "zh": "跌" },
     "engine.038": {
@@ -1953,10 +1862,6 @@
     "engine.039": {
       "en": "❌ Need {cost} Gold to upgrade the ship",
       "zh": "❌ 升级船只要{cost}金币"
-    },
-    "engine.040": {
-      "en": "+{SHIP_DISCOUNT_PER_LEVEL} Discount",
-      "zh": "折扣 +{SHIP_DISCOUNT_PER_LEVEL}"
     },
     "engine.041": {
       "en": "❌ No empty slots! Must swap.",
@@ -3074,10 +2979,8 @@
     "room-a.001": { "en": "gold", "zh": "金币" },
     "room-a.002": { "en": "Cancel", "zh": "取消" },
     "room-a.003": { "en": "· {clock.label}", "zh": "· {clock.label}" },
-    "room-a.004": { "en": "of {spec.durability}", "zh": "/{spec.durability}" },
     "room-a.005": { "en": "offer", "zh": "给出" },
     "room-a.006": { "en": "Weighing anchor…", "zh": "正在起锚..." },
-    "room-a.007": { "en": "Harbor", "zh": "港湾" },
     "room-a.008": { "en": "Direct", "zh": "私聊" },
     "room-a.009": { "en": "Open the captain panel", "zh": "打开船长面板" },
     "room-a.010": {
@@ -3104,7 +3007,7 @@
       "zh": "这趟航程对你已经结束，没有席位可退。"
     },
     "room-a.018": {
-      "en": "Your own screen has work open on it. Finish or close it and the room moves on.",
+      "en": "Your own screen has work open on it. Finish or close it and the harbor moves on.",
       "zh": "你自己屏幕上还有活没干完。做完或关掉，港湾才能往下走。"
     },
     "room-a.019": { "en": "Crowned Sea Master!", "zh": "加冕沧海之主！" },
@@ -3169,7 +3072,7 @@
     "room-a.042": { "en": "🌊 Anyone in the harbor", "zh": "🌊 港湾里所有人" },
     "room-a.336": { "en": "🔒 {name} only", "zh": "🔒 仅{name}" },
     "room-a.043": {
-      "en": "A majority of the captains still sailing can open one manifest. What comes back is a sample of what they filed. A carried vote ends this leg&apos;s trading, and the voyage carries on at the next leg. The count below names who is still to vote, and what the vote does when the names it needs land on one captain.",
+      "en": "A majority of the captains still sailing can open one manifest. What comes back is a sample of what they filed. A carried vote ends this leg's trading, and the voyage carries on at the next leg. The count below names who is still to vote, and what the vote does when the names it needs land on one captain.",
       "zh": "仍在航的船长过半数，就能开一份舱单。开出来的是他们申报内容的抽样。表决过了，本航段的交易就到此为止，航程接着走下一航段。下面的计数写着还有谁没投，也写着所需的名字全落到同一位船长头上时，表决会起什么作用。"
     },
     "room-a.044": {
@@ -3201,7 +3104,6 @@
       "zh": "{manifestLine}第{reveal.round}航段过半数票开启，那一段的交易就此结束；这条结论在本航程余下期间留在桌上。"
     },
     "room-a.317": { "en": "{name}'s manifest", "zh": "{name}的舱单" },
-    "room-a.318": { "en": "Larder {value}", "zh": "粮舱 {value}" },
     "room-a.054": { "en": "for", "zh": "换取" },
     "room-a.055": { "en": "🤝 Trade", "zh": "🤝 交易" },
     "room-a.056": { "en": "🔒 Flexible bartering", "zh": "🔒 灵活易货" },
@@ -3247,7 +3149,7 @@
       "zh": "本航程还没有人在香市开口。"
     },
     "room-a.076": {
-      "en": "Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the room has already priced and traded through.",
+      "en": "Nobody has spoken in this leg or the one before it. The board keeps those two legs and no more. Older rows moved markets the harbor has already priced and traded through.",
       "zh": "本航段和上一段都没人开口。板上只留这两段，再早的不留。更早的行拨动过的集市，全桌早就定价、交易过了。"
     },
     "room-a.077": {
@@ -3479,7 +3381,7 @@
       "zh": "通知，{unreadCount} 条未读"
     },
     "room-a.164": {
-      "en": "🧭 The Harbormaster&apos;s Hand",
+      "en": "🧭 The Harbormaster's Hand",
       "zh": "🧭 港务长之手"
     },
     "room-a.165": { "en": "Choose a port", "zh": "选一个港" },
@@ -3734,10 +3636,6 @@
     },
     "room-a.306": { "en": "Offer a Refit", "zh": "挂出缝补" },
     "room-a.307": { "en": "· in the hold: {held}", "zh": "· 舱里还有：{held}" },
-    "room-a.308": {
-      "en": "Buy a Rag ({value}💰)",
-      "zh": "买一块碎布（{value}💰）"
-    },
     "room-a.309": {
       "en": "Reweave {rags} Rags into {good}",
       "zh": "把{rags}块碎布重织成{good}"
@@ -3802,11 +3700,11 @@
       "zh": "船队申报了，交出来的却是零。"
     },
     "room-a.273": {
-      "en": "Instructions your seat follows when the harbor&apos;s clock plays it while you are not standing at it.",
+      "en": "Instructions your seat follows when the harbor's clock plays it while you are not standing at it.",
       "zh": "你不在席位边上时，港湾的计时替你出牌，你的席位就照着这里写的走。"
     },
     "room-a.274": {
-      "en": "Three seats are deliberately not here. Parley is a conversation with a captain, which is not something a form can answer. The module draft is rolled fresh every round, so there is no honest way to name one ahead of it. And the Broker&apos;s Favor is a decision rather than a default, so it is left for you to spend.",
+      "en": "Three seats are deliberately not here. Parley is a conversation with a captain, which is not something a form can answer. The module draft is rolled fresh every round, so there is no honest way to name one ahead of it. And the Broker's Favor is a decision rather than a default, so it is left for you to spend.",
       "zh": "这里故意空着三件事。洽谈是你和船长的一番对话，一张表格答不了。模块抽取每轮重新掷，事前写下名字并不诚实。掮客的人情是一次决定，不是默认，留给你自己花。"
     },
     "room-a.275": {
@@ -3858,7 +3756,7 @@
     "room-a.287": { "en": "Choose a captain", "zh": "选一位船长" },
     "room-a.288": { "en": "Your name is in", "zh": "你的名字已投出" },
     "room-a.289": {
-      "en": "The room&apos;s count has not arrived yet. It comes with this leg&apos;s vote.",
+      "en": "The harbor's count has not arrived yet. It comes with this leg's vote.",
       "zh": "港湾的票数还没到，它随本航段的表决一起来。"
     },
     "room-a.290": {
@@ -3878,7 +3776,7 @@
       "zh": "{namesNeeded}才能通过。"
     },
     "room-a.294": { "en": "The voyage log", "zh": "航程日志" },
-    "room-a.295": { "en": "The harbor&apos;s log", "zh": "港湾日志" },
+    "room-a.295": { "en": "The harbor's log", "zh": "港湾日志" },
     "room-a.296": {
       "en": "The harbor has recorded nothing on this voyage yet.",
       "zh": "本航程港湾还没有记下任何东西。"
@@ -3936,8 +3834,6 @@
       "en": "⏱️ Production Cycle: What Happens When",
       "zh": "⏱️ 生产周期：何时发生什么"
     },
-    "room-b.019": { "en": "💡 Materials consumed", "zh": "💡 原材料消耗" },
-    "room-b.020": { "en": "now", "zh": "现在" },
     "room-b.021": { "en": ", not instantly.", "zh": "，并非当场。" },
     "room-b.022": { "en": "Draft a boon", "zh": "抽取机缘" },
     "room-b.023": {
@@ -4020,14 +3916,13 @@
       "zh": "⏳ 港湾其余船长的航程还没走完，等他们结束后才加冕沧海之主..."
     },
     "room-b.056": {
-      "en": "Highest Reputation in this harbor&apos;s voyage.",
+      "en": "Highest Reputation in this harbor's voyage.",
       "zh": "本港湾航程中声誉最高的人。"
     },
     "room-b.057": {
-      "en": "🤝 Broker&apos;s Favor Unlocked!",
+      "en": "🤝 Broker's Favor Unlocked!",
       "zh": "🤝 掮客的人情已解锁！"
     },
-    "room-b.058": { "en": "· Renown level up!", "zh": "· 声望升级！" },
     "room-b.312": { "en": "Captain's Merit: ", "zh": "船长功勋： " },
     "room-b.374": { "en": "{reputation} Rep.", "zh": "{reputation}声誉" },
     "room-b.059": { "en": "Financial Summary", "zh": "财务汇总" },
@@ -4103,7 +3998,6 @@
       "zh": "{closeCount}单就快备齐"
     },
     "room-b.317": { "en": "Order #{id} needs:", "zh": "订单 #{id} 需要：" },
-    "room-b.318": { "en": "{net}g", "zh": "{net}金币" },
     "room-b.093": { "en": "Trade Manifest", "zh": "贸易舱单" },
     "room-b.094": {
       "en": "(look for the 🔮 badge below).",
@@ -4114,7 +4008,7 @@
       "zh": "✅ 完成贸易，继续"
     },
     "room-b.096": { "en": "📜 Imperial Mandate", "zh": "📜 皇命采办" },
-    "room-b.097": { "en": "🤝 Broker&apos;s Favor", "zh": "🤝 掮客的人情" },
+    "room-b.097": { "en": "🤝 Broker's Favor", "zh": "🤝 掮客的人情" },
     "room-b.098": { "en": "🔮 Guaranteed", "zh": "🔮 保底" },
     "room-b.099": {
       "en": "Profit margin: {margin}% of reward is net profit after transport, VAT, and commission",
@@ -4143,9 +4037,8 @@
       "en": "🤝 Broker's cut ({pct}%): {gold} Gold",
       "zh": "🤝 掮客抽成（{pct}%）：{gold}金币"
     },
-    "room-b.105": { "en": "Broker&apos;s Favor", "zh": "掮客的人情" },
     "room-b.106": {
-      "en": "(once per voyage): summon a guaranteed buyer for as much of a good as you choose from your hold. The bigger the ask, the bigger the Broker&apos;s cut.",
+      "en": "(once per voyage): summon a guaranteed buyer for as much of a good as you choose from your hold. The bigger the ask, the bigger the Broker's cut.",
       "zh": "（每航程一次）：从你的货舱里挑一件货，要多少都行，替你把买主叫来。要得越多，掮客抽得越多。"
     },
     "room-b.107": { "en": "Call in a Favor", "zh": "动用一次人情" },
@@ -4163,7 +4056,7 @@
     },
     "room-b.111": { "en": "Pick another good", "zh": "换一件货" },
     "room-b.112": {
-      "en": "A bigger ask pays out more, but the Broker&apos;s cut grows with it too, so a single favor can never swing the whole voyage.",
+      "en": "A bigger ask pays out more, but the Broker's cut grows with it too, so a single favor can never swing the whole voyage.",
       "zh": "要得越多进账越多，但掮客的抽成也跟着涨，所以一次人情翻不了整条航程的盘。"
     },
     "room-b.113": { "en": "Call in the Favor", "zh": "动用这条人情" },
@@ -4235,7 +4128,7 @@
       "zh": "还在外头的牌：{view.open}"
     },
     "room-b.139": {
-      "en": "🗣️ Broker&apos;s Whispers active this round:",
+      "en": "🗣️ Broker's Whispers active this round:",
       "zh": "🗣️ 本轮生效的掮客密语："
     },
     "room-b.140": { "en": "Just for you", "zh": "只给你看" },
@@ -4268,7 +4161,6 @@
       "en": "Hire Escort ({fee} Gold)",
       "zh": "雇护航（{fee}金币）"
     },
-    "room-b.154": { "en": "Port Board", "zh": "港口采购板" },
     "room-b.155": { "en": "🔮 Broker's Rumor Board", "zh": "🔮 掮客密语板" },
     "room-b.156": {
       "en": "✅ Board Done, to the Artisan Bench",
@@ -4606,10 +4498,6 @@
       "en": "✅ Complete Market, Continue",
       "zh": "✅ 集市结束，继续"
     },
-    "room-b.302": {
-      "en": "Hire {label} ({cost}💰/round)",
-      "zh": "雇佣{label}（{cost}💰/轮）"
-    },
     "room-b.303": { "en": "{cost} Gold/round", "zh": "{cost}金币/轮" },
     "room-b.365": {
       "en": "{icon} Hire {label} ({cost}💰/round)",
@@ -4636,7 +4524,6 @@
       "en": "{skilled} of {count} trained: each produces 2 per round, working at {pacePct}% pace while the crew goes hungry",
       "zh": "{count}人中有{skilled}人熟练：每人每轮产出2件，船员挨饿时干活的速度只有{pacePct}%"
     },
-    "room-b.366": { "en": "{count} item", "zh": "{count}件" },
     "room-b.367": { "en": "{count} items", "zh": "{count}件" },
     "room-b.368": { "en": "Raw {count}", "zh": "原料 {count}" },
     "room-b.369": { "en": "Products {count}", "zh": "成品 {count}" },
@@ -4833,8 +4720,6 @@
       "en": "{daysLeft} days remaining",
       "zh": "还剩{daysLeft}天"
     },
-    "lobby.264": { "en": "Lender", "zh": "债主" },
-    "lobby.265": { "en": "Trader", "zh": "商贾" },
     "lobby.266": { "en": "Age details: {name}", "zh": "时代详情：{name}" },
     "lobby.031": {
       "en": "Maritime trade on the ancient Silk Road",
@@ -4850,7 +4735,6 @@
     "lobby.036": { "en": "Hoist the Colors", "zh": "扬旗" },
     "lobby.037": { "en": "Not yet earned", "zh": "尚未获得" },
     "lobby.038": { "en": "Best Rep.", "zh": "最佳声誉" },
-    "lobby.039": { "en": "Head to head with", "zh": "与" },
     "lobby.040": {
       "en": "🤝 Broker's Favor unlocked",
       "zh": "🤝 掮客的人情已解锁"
@@ -4903,7 +4787,7 @@
     "lobby.061": { "en": "Yours", "zh": "你的" },
     "lobby.062": { "en": "Total Crowns", "zh": "沧海之冠总数" },
     "lobby.063": { "en": "Total Voyages", "zh": "航程总数" },
-    "lobby.064": { "en": "Top Score", "zh": "最高积分" },
+    "lobby.274": { "en": "Top Reputation", "zh": "最高声誉" },
     "lobby.271": { "en": "{crowns} crowns", "zh": "{crowns}顶沧海之冠" },
     "lobby.065": {
       "en": "Top captains across all voyages",
@@ -4949,7 +4833,7 @@
     "lobby.086": { "en": "Create", "zh": "创建" },
     "lobby.087": { "en": "Unlock phrase", "zh": "解锁暗语" },
     "lobby.088": {
-      "en": "A captain&apos;s tenth completed voyage hands them this phrase, and the guide keeps a copy for whoever goes looking. Anyone who has it can open the table, and every seat at that table sails the voyage it opens.",
+      "en": "A captain's tenth completed voyage hands them this phrase, and the guide keeps a copy for whoever goes looking. Anyone who has it can open the table, and every seat at that table sails the voyage it opens.",
       "zh": "船长完成第十次航程，就能拿到这句暗语；指南也为上门来查的人留了一份。暗语在手，谁都能开这张桌子；坐上桌的每个席位，都驶进它开的那次航程。"
     },
     "lobby.089": { "en": "Voyage Chronicles", "zh": "航程实录" },
@@ -5015,13 +4899,13 @@
       "en": "Quick Start is unavailable right now.",
       "zh": "快速开局暂时用不了。"
     },
-    "lobby.119": { "en": "Failed to create room", "zh": "创建港湾失败" },
+    "lobby.119": { "en": "Failed to create harbor", "zh": "创建港湾失败" },
     "lobby.120": {
       "en": "Harbor codes are 6 characters.",
       "zh": "港湾口令是6个字符。"
     },
-    "lobby.121": { "en": "Failed to join room", "zh": "加入港湾失败" },
-    "lobby.122": { "en": "Failed to enter room", "zh": "进入港湾失败" },
+    "lobby.121": { "en": "Failed to join harbor", "zh": "加入港湾失败" },
+    "lobby.122": { "en": "Failed to enter harbor", "zh": "进入港湾失败" },
     "lobby.123": {
       "en": "Could not load chronicles",
       "zh": "航程实录加载不了"
@@ -5085,7 +4969,6 @@
       "en": "The race to {WORD_ON_THE_DOCKS_THRESHOLD} completed orders",
       "zh": "抢先交满{WORD_ON_THE_DOCKS_THRESHOLD}笔订单的竞赛"
     },
-    "lobby.150": { "en": "Tidewatch Alerts", "zh": "观潮预警" },
     "lobby.151": {
       "en": "The harbor crossing {TIDEWATCH_SURGE_THRESHOLD} combined Reputation",
       "zh": "港湾声誉合计突破{TIDEWATCH_SURGE_THRESHOLD}"
@@ -5120,7 +5003,7 @@
     "lobby.165": { "en": "Scanning the horizon", "zh": "正在眺望海面" },
     "lobby.166": { "en": "No harbors open yet", "zh": "还没有港湾开放" },
     "lobby.167": {
-      "en": "Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a room of your own.",
+      "en": "Hit Quick Start above to be paired with the next captain looking, or switch to Chart a new harbor and open a harbor of your own.",
       "zh": "点上面的快速开局，和下一位找港湾的船长配对；或者切到开一个新港湾，自己开一间。"
     },
     "lobby.168": { "en": "Private", "zh": "私密" },
@@ -5143,7 +5026,6 @@
     "lobby.175": { "en": "Connecting to the harbor…", "zh": "正在连接港湾..." },
     "lobby.176": { "en": "In a harbor", "zh": "在港湾" },
     "lobby.177": { "en": "In the lobby", "zh": "在大厅" },
-    "lobby.178": { "en": "Captain&apos;s Legacy", "zh": "船长传承" },
     "lobby.179": {
       "en": "Renown carries across every voyage this account ever sails, in any harbor.",
       "zh": "这个账号驶过的每一次航程，不管在哪个港湾，声望都攒在一起。"
@@ -5153,7 +5035,7 @@
       "zh": "每天能领一份声望奖励。七天一轮，漏了一天也接着上次往下走，领过第七天就从头再来。"
     },
     "lobby.181": {
-      "en": "The Harbormaster&apos;s ledger of your finished voyages, newest first.",
+      "en": "The Harbormaster's ledger of your finished voyages, newest first.",
       "zh": "港务长替你记着跑完的航程，最新的排最前。"
     },
     "lobby.182": { "en": "Loading chronicles…", "zh": "正在加载航程实录..." },
@@ -5193,8 +5075,6 @@
     "lobby.200": { "en": "loans given", "zh": "笔借出" },
     "lobby.201": { "en": "loans taken", "zh": "笔借入" },
     "lobby.202": { "en": "Crowned", "zh": "加冕" },
-    "lobby.249": { "en": "fair winds", "zh": "顺风" },
-    "lobby.250": { "en": "open waters", "zh": "开阔水域" },
     "lobby.251": { "en": "monsoon", "zh": "季风时节" },
     "lobby.203": {
       "en": "No chronicles saved yet. A chronicle is written when your voyage concludes.",
@@ -5292,13 +5172,13 @@
       "zh": "本航程的存档太大，存不下。"
     },
     "misc.005": { "en": "Captain not found", "zh": "查无此船长" },
-    "misc.006": { "en": "Room not found", "zh": "查无此港湾" },
+    "misc.006": { "en": "Harbor not found", "zh": "查无此港湾" },
     "misc.007": {
-      "en": "A 6 character room code is required",
+      "en": "A 6 character harbor code is required",
       "zh": "港湾口令得是6个字符"
     },
     "misc.008": {
-      "en": "No room exists with that code",
+      "en": "No harbor exists with that code",
       "zh": "这个口令对不上任何港湾"
     },
     "misc.009": {
@@ -5316,10 +5196,6 @@
     "misc.012": { "en": "Search messages…", "zh": "搜索消息..." },
     "misc.013": { "en": "Close search", "zh": "关闭搜索" },
     "misc.014": { "en": "You're muted", "zh": "你被禁言了" },
-    "misc.015": {
-      "en": "The host has muted you in the harbor chat for the rest of this voyage.",
-      "zh": "本航程余下的时间，港主已经把你禁言，港湾聊天里说不了话。"
-    },
     "misc.016": {
       "en": "Nothing on the harbor square yet. Say hello to the fleet.",
       "zh": "港湾广场上还什么都没有。跟船队打个招呼吧。"
@@ -5435,13 +5311,13 @@
       "zh": "还剩 {minutes}:{seconds}"
     },
     "misc.051": {
-      "en": "This voyage has already set sail. Ask the host to open a new room.",
+      "en": "This voyage has already set sail. Ask the host to open a new harbor.",
       "zh": "本航程已经起航。请港主另开一个港湾。"
     },
     "misc.052": { "en": "The Second Ledger", "zh": "第二本账簿" },
     "misc.053": { "en": "the second ledger", "zh": "第二本账簿" },
     "misc.054": {
-      "en": "One harbor is sealed as well as hard. It opens with a phrase, and the phrase is the second ledger, entered when the room is charted.",
+      "en": "One harbor is sealed as well as hard. It opens with a phrase, and the phrase is the second ledger, entered when the harbor is charted.",
       "zh": "有一座港湾，路难走，门也锁着。开它得用一句暗语，暗语就是第二本账簿，开辟港湾时填上。"
     },
     "misc.055": {
@@ -5761,8 +5637,8 @@
       "zh": "{xpIntoLevel} / {xpForNextLevel}点声望经验，升往声望{nextLevel}"
     },
     "residual.106": {
-      "en": "{stats.crowns} Sea Master crown{pluralS} · best Reputation {stats.bestScore}",
-      "zh": "{stats.crowns}顶沧海之冠 · 最佳声誉{stats.bestScore}"
+      "en": "{stats.crowns} Sea Master crown{pluralS} · best Reputation {stats.bestReputation}",
+      "zh": "{stats.crowns}顶沧海之冠 · 最佳声誉{stats.bestReputation}"
     },
     "residual.107": {
       "en": "Head to head with {rival.displayName}: {rival.myWins} wins, {rival.theirWins} losses, {rival.ties} ties",
@@ -5799,11 +5675,11 @@
     },
     "residual.449": { "en": "Lv {n}", "zh": "等级{n}" },
     "residual.115": {
-      "en": "Press ? or F2 in a game room to see all keyboard shortcuts.",
+      "en": "Press ? or F2 in a harbor to see all keyboard shortcuts.",
       "zh": "在港湾里按 ? 或 F2，查看全部快捷键。"
     },
     "residual.116": {
-      "en": "No messages match &ldquo;{searchQuery}&rdquo;.",
+      "en": "No messages match “{searchQuery}”.",
       "zh": "没有消息与“{searchQuery}”匹配。"
     },
     "residual.117": {
@@ -5940,10 +5816,6 @@
     "residual.147": {
       "en": "No name is in yet. {namesNeeded} on one captain {carryWord} it.",
       "zh": "还没有人署名：一位船长身上凑够{namesNeeded}才能通过。"
-    },
-    "residual.148": {
-      "en": "{leader.name} needs {namesShort} to carry it.",
-      "zh": "{leader.name}还差{namesShort}才能通过。"
     },
     "residual.149": {
       "en": "Your name is in for {votedName}. Nothing else is asked of you this leg.",
@@ -6113,10 +5985,6 @@
       "en": "⏳ Waiting for the host to start the voyage… ({harborIds.length} in harbor)",
       "zh": "⏳ 等待港主启航...（港湾里{harborIds.length}人）"
     },
-    "residual.439": {
-      "en": "{count} captain in the harbor",
-      "zh": "{count}位船长在港湾里"
-    },
     "residual.440": {
       "en": "{count} captain{pluralS} in the harbor",
       "zh": "{count}位船长在港湾里"
@@ -6191,7 +6059,7 @@
       "zh": "本航段你已经有护卫了。"
     },
     "residual.202": {
-      "en": "Not a member of that room",
+      "en": "Not a member of that harbor",
       "zh": "不是这个港湾的成员"
     },
     "residual.203": {
@@ -6301,7 +6169,6 @@
       "en": "Restart voyage (host only)",
       "zh": "重开航程（仅限房主）"
     },
-    "residual.469": { "en": "{gold} Gold", "zh": "{gold}金币" },
     "residual.234": {
       "en": "The goods that answer a cold leg, and the cards that speak of one: read against the wardrobe's own table, which is where a garment's warmth already lives.",
       "zh": "应付寒程的货物，以及说到寒程的卡牌：对照衣箱自己的那张表来读，每件衣服的暖意本来就写在那里。"

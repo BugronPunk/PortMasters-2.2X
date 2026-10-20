@@ -106,7 +106,7 @@ export interface TelemetryPayloads {
   // about a leg of a voyage rather than a family of its own. What has
   // still not landed is the reason to write a survival event at all:
   // nothing in this build reads the family, C1's own evaluation watches
-  // what the room says in the leg after a captain visibly goes hungry
+  // what the harbor says in the leg after a captain visibly goes hungry
   // rather than a stored count of it, and a family declared ahead of the
   // events that would fill it is a schema with no rows in it. It arrives
   // with the epic that measures it.
@@ -246,15 +246,15 @@ export interface TelemetryPayloads {
     crewLosses?: number;
   };
   // [B2: hard timers, the server as timekeeper] A leg's clock ran out and
-  // the room was moved on without every captain having readied. The tally
+  // the harbor was moved on without every captain having readied. The tally
   // is the whole point of the event: ready is how many captains had said
-  // they were done when the clock fired, and required is the room the phase
+  // they were done when the clock fired, and required is the harbor the phase
   // was actually waiting on. Read together they are the plan's tuning
   // number, which is the share of legs that ran their full clock with
   // nobody idle (ready 0 of required, meaning the crew was still working
   // when time ran out, which is a phase that is too short) against the legs
   // where the clock merely waited on a straggler (ready all but one or two).
-  // A leg nobody was sitting in at all writes nothing, because a room with
+  // A leg nobody was sitting in at all writes nothing, because a harbor with
   // no sockets is not moved by its clock; see the fire path in
   // src/server/realtime/checkpoint.ts.
   leg_timed_out: { leg: number; ready: number; required: number };
@@ -278,7 +278,7 @@ export interface TelemetryPayloads {
   path_taken: { leg: number; actor: string; path: string; seconds: number };
   // The one change of papers a voyage allows. The path is the one taken up
   // rather than the one set aside, for the reason the log line carries the
-  // same field: the room sees the identity a captain sails on as, and the
+  // same field: the harbor sees the identity a captain sails on as, and the
   // engine's own line carries both (see applyPathSwitch). The plan's
   // iteration for this feature wants the switch watched as usage, which is
   // this event counted per voyage against the voyages that could have
@@ -293,9 +293,9 @@ export interface TelemetryPayloads {
   // pirates at the same rate, because a charter only traitors take has
   // stopped being cover). Neither field rides the wire, and that is the
   // classification rather than a convenience: the client claims the card
-  // id alone, the path is read from the room's own draft book, and the
+  // id alone, the path is read from the harbor's own draft book, and the
   // alignment from the same table the voyage's end already reads, at one
-  // call site inside the room's realtime layer. A take the server cannot
+  // call site inside the harbor's realtime layer. A take the server cannot
   // attribute on both is not written, because a guessed field on an
   // operator measurement is worse than a missing one. The role field
   // lives operator side by construction: it rides a stored record the
@@ -321,7 +321,7 @@ export interface TelemetryPayloads {
   offer_filled: { leg: number; actor: string; goods: number };
   offer_expired: { leg: number; goods: number };
   // ==== social ====
-  // One message in the harbor's own room chat. The lobby square and the
+  // One message in the harbor's own harbor chat. The lobby square and the
   // direct threads are account level rather than voyage level, so they
   // are not events in a voyage record.
   message_sent: { leg: number; actor: string };

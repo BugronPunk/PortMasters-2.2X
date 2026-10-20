@@ -19,13 +19,13 @@
 // server holds it for the leg, broadcasts the notice below, and includes
 // the bare shift on the advance that opens a port market (see
 // maybeAdvance in src/server/realtime/checkpoint.ts). Nothing prices a
-// market off the notice. The notice is what the room reads.
+// market off the notice. The notice is what the harbor reads.
 // =====================================================================
 
 /** One captain's nomination, sent to the server. */
 export type MaroonVote = {
   roomId: string;
-  /** The round the vote belongs to, checked against the room's checkpoint. */
+  /** The round the vote belongs to, checked against the harbor's checkpoint. */
   round: number;
   targetUserId: string;
 };
@@ -51,7 +51,7 @@ export type MaroonTally = {
   needed: number;
   /**
    * The captains the count is divided by who have not named anyone yet
-   * this leg, which is who the room is waiting on. Ids, so the reader
+   * this leg, which is who the harbor is waiting on. Ids, so the reader
    * names them from the roster it already has.
    */
   awaiting: string[];
@@ -85,9 +85,9 @@ export type MaroonResult = {
 /**
  * The Harbormaster's call, sent to the server: one port, one direction.
  *
- * The leg and the harbor are read off the room rather than trusted from
+ * The leg and the harbor are read off the harbor rather than trusted from
  * here, the same way an audit nomination's are, so a client cannot lean a
- * market it is not standing in or name a port the room has not unlocked.
+ * market it is not standing in or name a port the harbor has not unlocked.
  */
 export type PortShiftCall = {
   roomId: string;
@@ -97,7 +97,7 @@ export type PortShiftCall = {
 };
 
 /**
- * The same call as the room receives it, with the hand that made it.
+ * The same call as the harbor receives it, with the hand that made it.
  *
  * The name is in the frame because the power is public by design: a
  * captain who moves every price in a harbor has to be nameable at the

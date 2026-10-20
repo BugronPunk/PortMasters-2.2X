@@ -8,11 +8,12 @@
 // grantHelperReputation is imported from ./aid rather than duplicated,
 // because lending and backing share one per voyage Reputation ceiling.
 // =====================================================================
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import { BACKING_REPUTATION_PER_GOLD } from "../constants/reputation";
 import type { GameState } from "../types";
 import { ageBackingReputationMultiplier } from "./ages";
 import { grantHelperReputation } from "./aid";
+import { debitGold } from "./settlement";
 
 // [MANIFEST 05: Backing] Escrows a pledge immediately, the same escrow on
 // commitment timing every other cross player commitment in this game
@@ -25,22 +26,17 @@ import { grantHelperReputation } from "./aid";
 export function pledgeBacking(
   state: GameState,
   amount: number,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
-  if (amount <= 0) return;
-  if (state.money < amount) {
-    logs.push(
-      t("❌ Need {amount} Gold to back that loan, have {state.money}", {
-        amount,
-        "state.money": state.money,
-      }),
-    );
-    return;
-  }
-  state.money -= amount;
-  logs.push(
-    t("🛡️ Pledged {amount} Gold to back a fellow captain's loan", { amount }),
-  );
+  debitGold(state, amount, logs, {
+    short: line("❌ Need {amount} Gold to back that loan, have {state.money}", {
+      amount,
+      "state.money": state.money,
+    }),
+    taken: line("🛡️ Pledged {amount} Gold to back a fellow captain's loan", {
+      amount,
+    }),
+  });
 }
 
 // [MANIFEST 05: Backing] The backer's own side of however the loan they
@@ -54,7 +50,7 @@ export function receiveBackingOutcome(
   state: GameState,
   refundAmount: number,
   calledAmount: number,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   if (refundAmount > 0) state.money += refundAmount;
   if (calledAmount <= 0) {
@@ -72,32 +68,32 @@ export function receiveBackingOutcome(
     );
     if (multiplier > 1 && base > 0)
       logs.push(
-        t(
+        line(
           "⚖️ Age of the Lender: a pledge that comes home whole pays {pledgeBonusPct}% more while it holds the harbor.",
           { pledgeBonusPct: Math.round((multiplier - 1) * 100) },
         ),
       );
     logs.push(
       repGain > 0
-        ? t(
+        ? line(
             "🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold. Reputation +{repGain} for the risk paying off.",
             { refundAmount, repGain },
           )
-        : t(
+        : line(
             "🛡️ Your backing was never called on. Pledge returned in full: {refundAmount} Gold.",
             { refundAmount },
           ),
     );
   } else if (refundAmount > 0) {
     logs.push(
-      t(
+      line(
         "🛡️ Your backing partially covered a captain's shortfall: {calledAmount} Gold spent, {refundAmount} Gold returned.",
         { calledAmount, refundAmount },
       ),
     );
   } else {
     logs.push(
-      t(
+      line(
         "🛡️ Your backing fully covered a captain's shortfall: all {calledAmount} Gold pledged was spent helping the lender.",
         { calledAmount },
       ),
@@ -116,11 +112,11 @@ export function receiveBackedCoverage(
   amount: number,
   backerName: string,
   borrowerName: string,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   state.money += amount;
   logs.push(
-    t(
+    line(
       "🛡️ {backerName} covered {amount} Gold of {borrowerName}'s shortfall as a backer.",
       {
         backerName,

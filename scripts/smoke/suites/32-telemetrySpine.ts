@@ -88,7 +88,7 @@ export async function telemetrySpineSuite(
     revRoomId,
   } = inputs;
 
-  // ---- The vocabulary, on its own ----
+  // ========== The vocabulary, on its own ==========
   // The pure half is checked first and without a server, so a failure
   // here is never read as a server that declined to record something.
   const telVoyage = voyageIdFor("harbor-1", 4);
@@ -226,7 +226,7 @@ export async function telemetrySpineSuite(
     "and a captain line written before the voyage recorded any of them reads as a captain the harbor did not put ashore and did not silence, and who took nothing in trade, rather than as a line a reader has to guard",
   );
 
-  // ---- The voyage that sails to its end ----
+  // ========== The voyage that sails to its end ==========
   // Every fixture below reads this process's own configuration, which is
   // the same file the server under test reads when both are run the way
   // the README says. A rate below one is refused here rather than
@@ -247,7 +247,7 @@ export async function telemetrySpineSuite(
 
   // One harbor, chartered, seated and started. The three fixtures differ
   // in what they then do to it rather than in how it comes into being,
-  // so the shared part is written once: the room is opened through the
+  // so the shared part is written once: the harbor is opened through the
   // route a host uses, the rest of the crew joins by code, everyone takes
   // the channel, and the first of them sets sail.
   const telSail = async (
@@ -309,7 +309,7 @@ export async function telemetrySpineSuite(
   };
 
   // A harbor reaches a leg the way it always does: a captain reports
-  // where they are standing and the room's checkpoint follows the
+  // where they are standing and the harbor's checkpoint follows the
   // furthest report. Nothing here is special to the spine, which is why
   // it is four lines and a wait rather than a fixture of its own.
   const telStand = async (
@@ -383,7 +383,7 @@ export async function telemetrySpineSuite(
   // votes below are called from.
   await telStand(sailHome, sailRoomId, 1, "parley");
 
-  // ---- the market, all three of its lines ----
+  // ========== the market, all three of its lines ==========
   // One offer taken, and one left standing to expire when the harbor
   // leaves the bartering phase.
   const takenBoard = waitForEvent<{ offers: WireOffer[] }>(
@@ -440,7 +440,7 @@ export async function telemetrySpineSuite(
     "a second offer is left on the board where nobody takes it",
   );
 
-  // ---- talk, and the two figures only a captain's screen holds ----
+  // ========== talk, and the two figures only a captain's screen holds ==========
   sailHome.emit("chat:room", {
     roomId: sailRoomId,
     content: "Leg one, good wind.",
@@ -500,8 +500,8 @@ export async function telemetrySpineSuite(
 
   // The Parley ends and the standing offer goes back to its poster, which
   // is the expired line. The checkpoint has to move forward off the table
-  // for that to happen, so this stands the room at the phase after it on
-  // this voyage's own lap, which is the one the room would open next.
+  // for that to happen, so this stands the harbor at the phase after it on
+  // this voyage's own lap, which is the one the harbor would open next.
   await telStand(sailHome, sailRoomId, 1, "resolve");
   await telStand(sailHome, sailRoomId, 2, "parley");
   // And a report filed one leg ahead of the harbor, which is the one leg
@@ -551,7 +551,7 @@ export async function telemetrySpineSuite(
   });
   await new Promise((resolve) => setTimeout(resolve, 300));
 
-  // ---- the two votes, at their own rungs ----
+  // ========== the two votes, at their own rungs ==========
   // Two of three carries both, and the record keeps the nominations and
   // the harbor's answer separately: the first is usage and the second is
   // the outcome.
@@ -581,7 +581,7 @@ export async function telemetrySpineSuite(
   });
   await new Promise((resolve) => setTimeout(resolve, 400));
 
-  // ---- the captain who walks out ----
+  // ========== the captain who walks out ==========
   // The ordinary Leave button, in the order the client sends it: the
   // route that gives up the seat, then the socket that says so. The
   // captain the harbor just put ashore is the one who goes, which is
@@ -601,7 +601,7 @@ export async function telemetrySpineSuite(
   );
   await new Promise((resolve) => setTimeout(resolve, 400));
 
-  // ---- the ending ----
+  // ========== the ending ==========
   const sailEnds = waitForEvent<{ roomId?: string }>(
     sailHome,
     "voyage:reveal",
@@ -844,7 +844,7 @@ export async function telemetrySpineSuite(
     "and every event in the record sits on a leg the voyage reached, or on the one leg its captain was allowed to be ahead on",
   );
 
-  // ---- The two readings a captain's line carries ----
+  // ========== The two readings a captain's line carries ==========
   // Both are read off harbors this run sailed earlier rather than off
   // fixtures of their own, because the point of each field is that it
   // carries something the game already decided with rather than something
@@ -904,10 +904,10 @@ export async function telemetrySpineSuite(
     "and a voyage its host wiped still carries the captain the harbor put ashore, since an ending with no conclusion is the one a mark derived from the events would have lost",
   );
 
-  // ---- The voyage that is abandoned mid leg ----
+  // ========== The voyage that is abandoned mid leg ==========
   // One captain, alone in a harbor of their own, who walks out at leg
   // two. This is the plan's deliberately broken voyage, and the point of
-  // it is that the record survives the harbor: the room is deleted the
+  // it is that the record survives the harbor: the harbor is deleted the
   // moment its last seat goes, and a measurement that vanished with it
   // would read as a harbor where nobody ever abandons anything.
   const driftRoom = await telSail("abandoned", [telDrift]);
@@ -945,7 +945,7 @@ export async function telemetrySpineSuite(
   );
   // The two fields goal I2 added on the ending with nothing to read them
   // from: the harbor emptied, so there is no conclusion and no save left
-  // in the room, and the line still reads as a captain who was not put
+  // in the harbor, and the line still reads as a captain who was not put
   // ashore and who took nothing in trade. The same zero the concluded
   // voyage's unread captains get, which is what makes the field a reading
   // rather than a hole in the record.
@@ -967,7 +967,7 @@ export async function telemetrySpineSuite(
     "and it carries the leg the voyage reached and the abandonment that ended it",
   );
 
-  // ---- The voyage its host wipes ----
+  // ========== The voyage its host wipes ==========
   // A restart is the third way a voyage stops, and the one that has to
   // prove forgetting as well as writing: the record is closed by the
   // frame that reopens the harbor, and nothing the harbor does afterwards

@@ -24,11 +24,7 @@ import {
 } from "../bazaar";
 import { getCheckpoint } from "../checkpoint";
 import { noteVoyageLog } from "../voyage-log";
-
-// The refusal the desk answers with when the switch is off. The constant
-// keeps its English value; the read below wraps it in tFor so the refusal
-// answers in the language of the captain who pressed.
-const BAZAAR_OFF = "The bazaar is not running in this harbor.";
+import { makeFail, marketOffRefusal } from "./fail";
 
 export function wireBazaar(io: Server, socket: Socket): void {
   //
@@ -50,18 +46,18 @@ export function wireBazaar(io: Server, socket: Socket): void {
   // this voyage opens rather than a settlement that never comes. It
   // names a good the coming market actually trades, so a lean always lands
   // on a price rather than on nothing. And it respects the cooldown, which
-  // is measured off the room's own rows rather than off a counter a client
+  // is measured off the harbor's own rows rather than off a counter a client
   // could carry: the wait between two of one captain's rumors is a fact
-  // about this room's voyage, and it is the one rule in this feature that
+  // about this harbor's voyage, and it is the one rule in this feature that
   // a doctored client could otherwise simply not obey.
   //
   // Where the direction travels is the last of it, and the server is what
   // makes that work: the publish broadcast and the state request both go
   // through the payload builder, which strips a standing row's direction
   // from every reader but its publisher (see publicRumors). There is no
-  // frame in this feature that carries a live direction to the room, and
+  // frame in this feature that carries a live direction to the harbor, and
   // the delivery is held rather than trusted here: bazaar:update is the
-  // private scan's eighth rule, which refuses a board that reaches a room
+  // private scan's eighth rule, which refuses a board that reaches a harbor
   // channel (see scripts/private-scan.ts).
   socket.on("bazaar:state:request", async (payload: { roomId?: string }) => {
     const s = seated(socket, payload);
@@ -81,11 +77,9 @@ export function wireBazaar(io: Server, socket: Socket): void {
       const s = seated(socket, payload);
       if (!s) return;
       const { roomId } = s;
-      const fail = (error: string): void => {
-        socket.emit("bazaar:error", { roomId, error });
-      };
+      const fail = makeFail(socket, roomId, "bazaar:error");
       if (!bazaarRumorsOn(s.mode)) {
-        fail(tFor(s.locale, BAZAAR_OFF));
+        fail(marketOffRefusal("bazaar", s.locale));
         return;
       }
       // The lean itself, checked before anything is read: a row whose
@@ -114,7 +108,7 @@ export function wireBazaar(io: Server, socket: Socket): void {
       // every check below judges and what the row gets written with: a
       // checkpoint read before the wait would be a checkpoint a phase
       // change could have moved during it, and the refusal below would
-      // then be deciding against the seat the room has already left. Both
+      // then be deciding against the seat the harbor has already left. Both
       // reads stay ahead of every check, and nothing between the last one
       // and publishBazaarRumor below yields.
       const room = await db.room.findUnique({
@@ -147,7 +141,7 @@ export function wireBazaar(io: Server, socket: Socket): void {
         return;
       }
       // The good is read against the market the rumor will move, which is
-      // the next one, and against the room's own tier rather than against
+      // the next one, and against the harbor's own tier rather than against
       // the catalogue: see bazaarGoods for why the two lists are one list.
       if (!rumorGoodAllowed(payload?.good, room?.difficulty, cp.round + 1)) {
         fail(tFor(s.locale, "The next port does not trade that good."));
@@ -167,7 +161,7 @@ export function wireBazaar(io: Server, socket: Socket): void {
         direction,
         round: cp.round,
       });
-      // [B4: the log surfaces] The room's line, which carries the good and
+      // [B4: the log surfaces] The harbor's line, which carries the good and
       // the captain and deliberately not the direction: the log is public
       // the instant it is written, and the direction is not public until
       // the market answers the row (see VoyageLogFacts for this kind).

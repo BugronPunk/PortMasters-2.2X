@@ -21,10 +21,10 @@
 // What is NOT here is as deliberate. This module does not decide whether
 // the power is available: the rung lives on the mode (see ModeConfig in
 // ./mode, and maroonFrom in particular), beside the other rule that
-// decides a seat's fate. It does not run the vote or hold the room's
+// decides a seat's fate. It does not run the vote or hold the harbor's
 // record of it either, for the reason nothing else in this tree splits a
 // rule across two owners: the arithmetic is here so it can be tested
-// without a socket, and the room state is next to the socket that needs
+// without a socket, and the harbor state is next to the socket that needs
 // it (see src/server/realtime/maroon.ts).
 //
 // Pure: no socket, no database, no clock.
@@ -92,7 +92,7 @@ export function maroonKeptGold(gold: number): number {
  *
  * Two thirds of the active roster, counted from the roster rather than
  * from the votes, exactly as the audit's majority is: a captain who is
- * not in the room's calculation is not a vote the room is waiting on.
+ * not in the harbor's calculation is not a vote the harbor is waiting on.
  *
  * The count is inclusive, and that is the only reading that means
  * anything at the sizes a harbor is dealt. Strictly more than two thirds
@@ -131,7 +131,7 @@ export function maroonCarried(
  * states it and the comparison that decides it are one rule, and the
  * smoke suite holds the two together at every roster this game deals.
  *
- * A roster of nobody needs nobody: an empty room has no vote to carry.
+ * A roster of nobody needs nobody: an empty harbor has no vote to carry.
  */
 export function maroonNamesNeeded(roster: number): number {
   if (roster <= 0) return 0;
@@ -175,7 +175,7 @@ export function portShiftMultiplier(
 }
 
 /**
- * The shift as the room reads it, which is the only rendering there is.
+ * The shift as the harbor reads it, which is the only rendering there is.
  *
  * A clause rather than a sentence, exactly as a manifest line is (see
  * fulfillmentLine in ./audit): whoever shows it frames it with the leg and

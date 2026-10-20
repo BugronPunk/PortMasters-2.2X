@@ -3,10 +3,10 @@
 //
 // The harbor's boards and the asks that sit on them.
 //
-// Six shapes for one idea, a thing posted for the room to answer: goods
+// Six shapes for one idea, a thing posted for the harbor to answer: goods
 // wanted in trade, Gold asked for as a loan, and the four markets the server
 // personalizes before it sends, so a board is what one captain may see
-// rather than what the room holds.
+// rather than what the harbor holds.
 // =====================================================================
 
 import type {
@@ -79,7 +79,7 @@ export type AidRequest = {
 //
 // The board is personalized by the server before it is ever sent, the way
 // the barter board is: a direct offer belongs to two captains and a claimed
-// contract's raid figure belongs to its seller, so two captains in one room
+// contract's raid figure belongs to its seller, so two captains in one harbor
 // can legitimately receive two different boards and the filtering happens
 // where the rows are held rather than on the client that draws them.
 export type EscortBoard = {
@@ -111,9 +111,9 @@ export type RefitBoard = {
 //
 // It is personalized more sharply than either of the other two, and that is
 // the feature rather than a detail of it. A standing rumor's direction
-// belongs to its publisher, so two captains in one room are sent two boards
+// belongs to its publisher, so two captains in one harbor are sent two boards
 // that differ in a field rather than in which rows they carry, and the
-// filtering happens where the rows and the room's leg are both in hand (see
+// filtering happens where the rows and the harbor's leg are both in hand (see
 // publicRumors). That is also why the type says the direction may be null:
 // a null there is not a missing answer, it is the server saying this row's
 // answer is not yours yet.

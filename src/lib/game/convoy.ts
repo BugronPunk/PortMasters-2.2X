@@ -2,7 +2,7 @@
 // [MANIFEST 04: Convoy Ventures] Pure decision logic, split out of
 // src/server/realtime/index.ts for the same reason computeHarborPulse was split
 // out into harborPulse.ts: this is real Gold math and the one exploit
-// prevention rule (one filled venture per voyage, room wide) that a
+// prevention rule (one filled venture per voyage, harbor wide) that a
 // doctored client or a race between two captains has to actually be safe
 // against, and none of it can be unit tested while it sits nested inside
 // attachRealtime's socket closures, where nothing outside a live server
@@ -11,7 +11,7 @@
 // The server (src/server/realtime/index.ts) is still the one authority over
 // *when* each of these run and over the one check that genuinely can't be
 // pure, hasRoomClaimedVenture, which has to ask the database whether any
-// venture in this room's voyage has ever reached "filled". Everything here
+// venture in this harbor's voyage has ever reached "filled". Everything here
 // is a plain function of its arguments: parse a stored JSON blob, total a
 // contribution map, decide how much of a contribution a venture can
 // actually use, decide a settlement's payout rate and per contributor
@@ -29,10 +29,10 @@ type VentureContribution = { name: string; amount: number };
 type VentureContributions = Record<string, VentureContribution>;
 
 // "filled" pays CONVOY_VENTURE_PAYOUT_MULTIPLIER times a contributor's own
-// stake, and is the one outcome that can ever happen once per voyage, room
+// stake, and is the one outcome that can ever happen once per voyage, harbor
 // wide. "failed" refunds only CONVOY_VENTURE_FAILURE_REFUND_RATE after a
 // venture's own deadline round passes short of target. "destroyed" refunds
-// every contributor in full: a different venture in the same room's voyage
+// every contributor in full: a different venture in the same harbor's voyage
 // reached "filled" first and claimed the one shared chance before this one
 // got the chance to.
 //
@@ -59,7 +59,7 @@ export type VentureSettlement = {
 
 // Deliberately defensive: a malformed or hand edited row should degrade
 // to "nobody contributed" rather than throw inside a socket handler every
-// other captain in the room is waiting on. The parse itself is the shared
+// other captain in the harbor is waiting on. The parse itself is the shared
 // one (see parseJsonObject in ./json); what follows is this column's own
 // field checks.
 export function parseVentureContributions(raw: string): VentureContributions {
@@ -94,8 +94,8 @@ export function ventureTotal(contributions: VentureContributions): number {
 // CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE of a venture's own target across
 // every contribution they've made to it. Without this, a captain could
 // post a venture and fill the entire target alone in one contribution,
-// which both prints free Gold and burns the room's one shared chance for
-// personal gain instead of the room's; requiring real headroom to remain
+// which both prints free Gold and burns the harbor's one shared chance for
+// personal gain instead of the harbor's; requiring real headroom to remain
 // for someone else is what actually forces genuine multi captain
 // participation before a venture can ever fill.
 //
@@ -111,7 +111,7 @@ export function contributorShareCap(
   maxContributorShare: number = CONVOY_VENTURE_MAX_CONTRIBUTOR_SHARE,
 ): number {
   // Rounded up (not down) so two contributors splitting an odd targetGold
-  // in half still have exactly enough combined room to reach it; rounding
+  // in half still have exactly enough combined harbor to reach it; rounding
   // down would occasionally leave a venture mathematically impossible to
   // ever fill at all.
   return Math.ceil(targetGold * maxContributorShare);
@@ -197,7 +197,7 @@ export function ventureAlreadySpentReason(): string {
   );
 }
 
-// The room wide chat announcement for each outcome, kept alongside the
+// The harbor wide chat announcement for each outcome, kept alongside the
 // settlement math so the two can never quietly drift out of sync with each
 // other, the same reasoning WORD_ON_THE_DOCKS_REWARD and its own guide
 // copy are both derived from one constant rather than two separate numbers.
@@ -208,7 +208,7 @@ export function ventureAlreadySpentReason(): string {
 //
 // The read takes a language rather than reading this process's own,
 // because the announcement is a line the server sends: it goes to every
-// socket in the room (see settleVenture in src/server/realtime/ventures),
+// socket in the harbor (see settleVenture in src/server/realtime/ventures),
 // and one harbor can hold two languages, so the sentence is built once
 // per reader at the send.
 export function ventureAnnouncementFor(

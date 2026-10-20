@@ -94,7 +94,7 @@ export const OPPORTUNIST_PENALTY = 0.4;
 // rule: a fee is a whole number of Gold, at least one (a free agreement is
 // not an agreement, and zero would let an offer sit on the board that
 // nobody can be held to) and at most a thousand, which is the number that
-// keeps a doctored client from posting a fee the room's arithmetic would
+// keeps a doctored client from posting a fee the harbor's arithmetic would
 // have to reason about. See consentFeeFor in ./engine/consent.
 //
 // They are named for the consent primitive rather than for the contract
@@ -129,11 +129,11 @@ export const CONSENT_FEE_MAX = 1000;
 // knob that can be tuned to zero is not a guarantee.
 //
 // DRAFT_WATCH_MS is the one clock the feature has left, and nobody is ever
-// shown it. The room waits at the draft for its captains, not for a timer:
+// shown it. The harbor waits at the draft for its captains, not for a timer:
 // the steps close when every seat has answered, and a captain who is still
 // connected holds the table however long they take. What this window is
 // for is the seat that is gone rather than slow. When a seat's last socket
-// drops, the room gives it this long to come back, and then lays the first
+// drops, the harbor gives it this long to come back, and then lays the first
 // card of that captain's own hand for them so the table is not held for
 // somebody who is no longer there (see armDraftWatch and DRAFT_AUTO_PICK).
 // The number is the plan's forty five second target divided across the

@@ -6,11 +6,11 @@
 // The objective is public: everyone in the harbor owes the same commission
 // and everyone can see how much of it has been handed over. So this shape
 // is the one place in the mode that is meant to be broadcast to the whole
-// room, and it carries two fields for the same reason the private entry
+// harbor, and it carries two fields for the same reason the private entry
 // carries a typed role: a payload with nowhere to put a secret cannot leak
 // one. There is no captain id in either direction. A report says what one
 // captain handed over and nothing about who they are, and the total the
-// room receives is a sum that names nobody.
+// harbor receives is a sum that names nobody.
 // =====================================================================
 
 /** What one captain reports to the harbor: their own running total. */
@@ -128,7 +128,7 @@ export type LegReport = {
 };
 
 /**
- * The harbor's total, summed server side and sent to the whole room.
+ * The harbor's total, summed server side and sent to the whole harbor.
  *
  * `total` is keyed by good and holds items handed over, not gold: the
  * server never has to know what the commission pays, only what it asked

@@ -1,16 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import { Geist, Geist_Mono, Noto_Serif_SC } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { requestLocale } from "@/lib/api-auth";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/game/constants/brand";
-import {
-  DEFAULT_LOCALE,
-  isLocale,
-  LOCALE_COOKIE_NAME,
-  tFor,
-  type Locale,
-} from "@/lib/game/i18n";
+import { tFor } from "@/lib/game/i18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,7 +55,7 @@ const SITE_URL = process.env.RAILWAY_PUBLIC_DOMAIN
 // keep the shipped constant unwired rather than gaining a prefix their
 // card has never shown.
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await shellLocale();
+  const locale = await requestLocale();
   // The meta description, with the build's own name in front. The social
   // fields below carry the same sentence without the name (see the note
   // above the function).
@@ -113,11 +107,11 @@ export const viewport: Viewport = {
 // renders them), so the cookie is the only reading it can make, and the
 // shipped language stands wherever the cookie is absent or names a
 // language this pack cannot print.
-async function shellLocale(): Promise<Locale> {
-  const store = await cookies();
-  const value = store.get(LOCALE_COOKIE_NAME)?.value;
-  return isLocale(value) ? value : DEFAULT_LOCALE;
-}
+//
+// The reading itself is the shared one (see requestLocale in
+// @/lib/api-auth), which is where every route reads the same cookie the
+// same way. The shell used to read it a second time, here, and two
+// readers of one cookie are two places for the fallback to drift.
 
 export default async function RootLayout({
   children,
@@ -127,7 +121,7 @@ export default async function RootLayout({
   // The document's own language, for a screen reader, a search engine and
   // the browser's font fallback, follows the same cookie the words do:
   // "en" is what it has always been for an English captain.
-  const locale = await shellLocale();
+  const locale = await requestLocale();
   return (
     <html lang={locale} suppressHydrationWarning>
       <body

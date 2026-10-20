@@ -12,7 +12,7 @@ import { check, voyageState } from "../harness";
  * A gate records that a beat already ran (a swap taken, an escort
  * sailed, the raid answered, the broker paid), so it coalesces: a damaged
  * value that still reads truthy keeps the gate closed. Reopening one
- * would let a reload replay a beat the room already settled, while a
+ * would let a reload replay a beat the harbor already settled, while a
  * spurious closed gate only costs an option the next leg returns anyway.
  *
  * A mark is a verdict about the captain (the bankruptcy, the maroon, the

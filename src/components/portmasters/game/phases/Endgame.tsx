@@ -15,7 +15,7 @@ import { CrewSummary } from "./EndgameCrewSummary";
 import { EndgameResults } from "./EndgameResults";
 
 // The head to head line the Legacy card draws when both captains are in
-// the room. The account has one rivalry list (see /api/rivals), so this
+// the harbor. The account has one rivalry list (see /api/rivals), so this
 // picks out the partners who sailed this voyage rather than asking for a
 // named one. A rivalry with someone who is elsewhere is real, but it says
 // nothing about the voyage just finished, so it stays off the card.
@@ -65,7 +65,7 @@ type EndgameProps = Pick<PhasePanelProps, "game" | "me" | "room"> & {
   // server emits on voyage:complete, reveal is the harbor's cards turned
   // face up on voyage:reveal, myLegacy is the captain's post voyage
   // CaptainLegacySummary, and onRestart is the host's "restart voyage"
-  // handler. onLeave is the room's leave flow, offered to a captain who
+  // handler. onLeave is the harbor's leave flow, offered to a captain who
   // would rather set out for a new harbor than wait on the host. All five
   // are optional so the Endgame panel still renders a sane waiting state
   // when the parent hasn't wired them through yet.

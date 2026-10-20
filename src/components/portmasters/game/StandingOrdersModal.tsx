@@ -326,16 +326,9 @@ export function StandingOrdersModal({
             {t("Standing orders")}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            {/* The pack carries this row with the source's &apos; entity,
-                so it is read as HTML and the browser decodes it to the
-                same apostrophe JSX used to print. */}
-            <span
-              dangerouslySetInnerHTML={{
-                __html: t(
-                  "Instructions your seat follows when the harbor&apos;s clock plays it while you are not standing at it.",
-                ),
-              }}
-            />
+            {t(
+              "Instructions your seat follows when the harbor's clock plays it while you are not standing at it.",
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -430,14 +423,9 @@ export function StandingOrdersModal({
           </Section>
 
           <p className="text-[11px] leading-snug text-muted-foreground">
-            {/* An entity row for the same reason as the header above. */}
-            <span
-              dangerouslySetInnerHTML={{
-                __html: t(
-                  "Three seats are deliberately not here. Parley is a conversation with a captain, which is not something a form can answer. The module draft is rolled fresh every round, so there is no honest way to name one ahead of it. And the Broker&apos;s Favor is a decision rather than a default, so it is left for you to spend.",
-                ),
-              }}
-            />
+            {t(
+              "Three seats are deliberately not here. Parley is a conversation with a captain, which is not something a form can answer. The module draft is rolled fresh every round, so there is no honest way to name one ahead of it. And the Broker's Favor is a decision rather than a default, so it is left for you to spend.",
+            )}
           </p>
         </div>
 

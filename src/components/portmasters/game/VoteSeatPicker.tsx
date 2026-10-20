@@ -31,7 +31,7 @@ import { seatMarks, type SeatStatus } from "@/lib/seatMarks";
 import { captainName } from "@/lib/voteTally";
 
 /**
- * The room's live statuses, read for the mark a vote may not be aimed at.
+ * The harbor's live statuses, read for the mark a vote may not be aimed at.
  * Structural rather than the roster hook's whole record, the same shape
  * the two cards take, so a card cannot reach for anything it has no
  * business reading.

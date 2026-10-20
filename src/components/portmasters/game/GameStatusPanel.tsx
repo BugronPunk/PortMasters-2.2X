@@ -1,6 +1,10 @@
 "use client";
 
-import { maintenanceDue, unlockedWorkerRoster } from "@/lib/game/engine";
+import {
+  maintenanceDue,
+  unlockedWorkerRoster,
+  wagesDue,
+} from "@/lib/game/engine";
 import { onShortRations } from "@/lib/game/larder";
 import { survivalLayerOn } from "@/lib/game/flags";
 import {
@@ -10,10 +14,11 @@ import {
   warmthScore,
 } from "@/lib/game/garments";
 import { t } from "@/lib/game/i18n";
-import type { GameState } from "@/lib/game/types";
+import { crewSize, type GameState } from "@/lib/game/types";
 import type { WorkerType } from "@/lib/game/constants/crew";
 import { useConvoy } from "@/lib/use-convoy";
 import { VoyageTimeline } from "./VoyageTimeline";
+import type { LedgerLine } from "@/lib/game/ledger";
 import { GameLogPanel } from "./GameLogPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { VoyageHeader } from "./status/VoyageHeader";
@@ -73,7 +78,7 @@ export function GameStatusPanel({
   colorFor,
 }: {
   game: GameState;
-  logs: string[];
+  logs: LedgerLine[];
   onRepayLoan?: (debtId: string) => void;
   // The hook's own return rather than a shape written out again here, so a
   // field the hook gains reaches the panel below with it.
@@ -104,15 +109,19 @@ export function GameStatusPanel({
   // The whole unlocked roster, not the three founding types, each type
   // with its hands and the wage it is due: the join lives in the engine
   // now (see unlockedWorkerRoster), so this rail and Worker Management
-  // cannot come to disagree about who owes what. The obligations figure
-  // below is summed from it, which is what keeps the alarm tone off a
-  // solvent captain's rail.
+  // cannot come to disagree about who owes what.
+  //
+  // The two figures below are not summed from that roster. The wage is
+  // the engine's own reading of the bill it is about to charge, and the
+  // hands are the whole crew rather than the visible part of it, so the
+  // rail and the settle sheet quote one number each rather than two
+  // walks of the same list that can only agree by accident.
   const roster = unlockedWorkerRoster(game);
-  const pendWages = roster.reduce((sum, r) => sum + r.due, 0);
+  const pendWages = wagesDue(game);
   const pendMaint = maintenanceDue(game);
   const pendTotal = pendWages + pendMaint;
   const safe = game.money >= pendTotal;
-  const nW = roster.reduce((sum, r) => sum + r.list.length, 0);
+  const nW = crewSize(game);
   const duesAlert = (showObligations && !safe) || game.debts.length > 0;
 
   return (

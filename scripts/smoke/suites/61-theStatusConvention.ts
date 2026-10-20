@@ -17,7 +17,7 @@
 //
 // Then the two engine contracts the sentences sit on, checked here so
 // they cannot move quietly: the cold's way back is the exact promise the
-// smoke oracle reads for at the engine's refusal line, and the hunger
+// smoke suite reads for at the engine's refusal line, and the hunger
 // rule quotes the engine's own count rather than a retyped number.
 //
 // Last, the sweep's guard list itself, held to its contract: every
@@ -140,7 +140,7 @@ export async function theStatusConventionSuite(): Promise<void> {
 
   check(
     frozenAssignRefusal().includes("keeps every hand working"),
-    "the engine's refusal still carries the promise the oracle reads for, so the sentence can only move by moving this check first rather than by a copy edit six files away",
+    "the engine's refusal still carries the promise the smoke suite reads for, so the sentence can only move by moving this check first rather than by a copy edit six files away",
   );
 
   check(

@@ -23,8 +23,9 @@ import {
 import type { GameState, OrderCard } from "@/lib/game/types";
 import {
   CARRIES_A_DASH,
-  GAMBIT,
   check,
+  GAMBIT,
+  ledgerSentences,
   switchFor,
   voyageState,
   walkSrc,
@@ -32,6 +33,7 @@ import {
 } from "../harness";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 export async function pathboundOrderBoardSuite(): Promise<void> {
   // =================================================================
@@ -183,13 +185,15 @@ export async function pathboundOrderBoardSuite(): Promise<void> {
     };
     if (marked && owner) {
       const refused = seatFor(null);
-      const refusal: string[] = [];
+      const refusal: LedgerLine[] = [];
       completeOrder(refused.state, refused.card.id, refusal);
       check(
         canFillOrder(refused.state, refused.card) === false &&
           refused.state.money === 100 &&
           !refused.state.completedOrders.includes(refused.card.id) &&
-          refusal.some((line) => line.includes(pathLockLine(owner))),
+          ledgerSentences(refusal).some((line) =>
+            line.includes(pathLockLine(owner)),
+          ),
         "a locked card is refused even with the goods aboard, and the refusal is the same sentence the board prints on the card rather than a second one written for the ledger",
       );
       const opened = seatFor(owner);

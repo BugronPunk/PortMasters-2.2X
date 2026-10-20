@@ -181,12 +181,12 @@ function PurchaseCard({
  * why it is a map and a grid and very little else.
  *
  * The columns it deals are the stage's, not the window's. The board is
- * drawn in the middle column of the room, so a breakpoint read off the
+ * drawn in the middle column of the harbor, so a breakpoint read off the
  * window answers a question nobody asked: at a window wide enough for the
- * old three across rule the stage is still a single column of the room, and
+ * old three across rule the stage is still a single column of the harbor, and
  * three cards dealt into it wrapped every goods line and every chip they
- * had. The stage is a container (see the room's own note), so this measures
- * the room it is actually drawn in: one column while the stage cannot hold
+ * had. The stage is a container (see the harbor's own note), so this measures
+ * the harbor it is actually drawn in: one column while the stage cannot hold
  * two cards, two while it can, and three once each card still has the width
  * the goods rows want. The bottom margin is the panel rhythm the rest of
  * this screen keeps, because each panel here carries its own.

@@ -136,7 +136,7 @@ export function Lobby({
   const [difficulty, setDifficulty] = useState<Difficulty>("fair_winds");
   // Which voyage the harbor is playing (see src/lib/game/mode.ts). Fixed at
   // creation for the same reason the tier is: it decides the order every
-  // captain's phases run in, so a room that changed it mid voyage would be
+  // captain's phases run in, so a harbor that changed it mid voyage would be
   // asking its table to keep two different clocks. Starts on the founding
   // mode, which is the one a captain who never touches this control gets.
   const [mode, setMode] = useState<GameMode>(DEFAULT_MODE);
@@ -161,7 +161,7 @@ export function Lobby({
 
   // [MANIFEST: Quick Start Match] While queued, the Quick Start button
   // stays in a loading state and waits for the quickstart:matched socket
-  // event before routing the captain into the matched room.
+  // event before routing the captain into the matched harbor.
   const [quickStarting, setQuickStarting] = useState(false);
 
   // [MANIFEST: Voyage Chronicle] Dialog state. Fetched on open.
@@ -216,7 +216,7 @@ export function Lobby({
 
   // A captain's Renown only ever changes when a voyage concludes, which
   // never happens while sitting in the lobby, so a plain fetch on mount is
-  // enough; no polling needed like the room list above. The same fetch
+  // enough; no polling needed like the harbor list above. The same fetch
   // carries the captain's current House pledge so the House dialog can mark
   // the pledged row without an extra round trip.
   useEffect(() => {
@@ -281,7 +281,7 @@ export function Lobby({
   // of the UTC day is the one thing that makes it true again. The day math
   // is pure and shared with the route that serves it (see
   // src/lib/game/checkin), so the reading is taken again here on every
-  // render from the two persisted fields. The room list already redraws
+  // render from the two persisted fields. The harbor list already redraws
   // this panel every eight seconds, so a lobby left open across midnight
   // lights the gift again on its own, where before it stayed dark until a
   // reload.
@@ -295,7 +295,7 @@ export function Lobby({
   // POST /api/legacy/batch). Keyed on the *set* of online ids, not the
   // onlineUsers array itself, since that array gets a new reference on
   // every presence:update broadcast (anyone, anywhere, connecting or
-  // switching rooms), most of which don't actually add or remove anyone
+  // switching harbors), most of which don't actually add or remove anyone
   // from this list.
   const [otherLegacies, setOtherLegacies] = useState<
     Record<string, CaptainLegacySummary>
@@ -328,6 +328,19 @@ export function Lobby({
   // cleanup both read it, and neither should rerun when it changes.
   const queuedForMatch = useRef(false);
 
+  // The silence the button waits on, held so it can be called off when
+  // the harbor closes under the captain rather than firing into a tree
+  // that is no longer there.
+  const quickStartTimer = useRef<number | null>(null);
+  useEffect(
+    () => () => {
+      if (quickStartTimer.current !== null) {
+        window.clearTimeout(quickStartTimer.current);
+      }
+    },
+    [],
+  );
+
   // [MANIFEST: Quick Start Match] Join the queue and wait to be paired.
   //
   // The emit below is what actually enqueues this captain. The queue is a
@@ -357,7 +370,7 @@ export function Lobby({
     }
 
     queuedForMatch.current = true;
-    // The tier goes with the request. It decides the room when this
+    // The tier goes with the request. It decides the harbor when this
     // captain is the one who opens it; a captain seated into a harbor
     // that already exists sails at that harbor's tier instead.
     socket.emit("quickstart:join", { difficulty });
@@ -367,7 +380,11 @@ export function Lobby({
 
     // A match is answered within a round trip, so a long silence means the
     // reply went missing. Give up gracefully instead of spinning.
-    window.setTimeout(() => {
+    if (quickStartTimer.current !== null) {
+      window.clearTimeout(quickStartTimer.current);
+    }
+    quickStartTimer.current = window.setTimeout(() => {
+      quickStartTimer.current = null;
       if (!queuedForMatch.current) return;
       queuedForMatch.current = false;
       socket.emit("quickstart:leave");
@@ -382,7 +399,7 @@ export function Lobby({
   // harbor is waiting, the realtime layer opens one and makes them the
   // host. The next captain to ask is seated into that same harbor, because
   // it is public and has not set sail. So both callers get a match, and
-  // they end up in the same room. We fetch the full room detail and enter,
+  // they end up in the same harbor. We fetch the full harbor detail and enter,
   // exactly as if the captain had typed the code in by hand.
   useEffect(() => {
     // The live socket off the hook, not a second one fetched from the
@@ -457,7 +474,7 @@ export function Lobby({
       // A refused phrase is the route's answer to a bad phrase rather than
       // a failure of the form, and its message already says which of the
       // two mistakes it was: nothing typed, or the wrong words.
-      setError(e instanceof Error ? e.message : t("Failed to create room"));
+      setError(e instanceof Error ? e.message : t("Failed to create harbor"));
     } finally {
       setBusy(false);
     }
@@ -475,7 +492,7 @@ export function Lobby({
       setJoinCode("");
       onEnterRoom(room);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("Failed to join room"));
+      setError(e instanceof Error ? e.message : t("Failed to join harbor"));
     } finally {
       setBusy(false);
     }
@@ -488,7 +505,7 @@ export function Lobby({
       const { room: joined } = await api.joinRoomById(room.id);
       onEnterRoom(joined);
     } catch (e) {
-      setError(e instanceof Error ? e.message : t("Failed to enter room"));
+      setError(e instanceof Error ? e.message : t("Failed to enter harbor"));
     } finally {
       setJoining(null);
     }
@@ -519,7 +536,7 @@ export function Lobby({
 
   // The square's backlog, read once on landing. Nothing reseeds it later,
   // and nothing needs to: this channel is written down rather than held in
-  // the room's session log, so whatever was said while this captain was at
+  // the harbor's session log, so whatever was said while this captain was at
   // sea is simply part of the backlog they read on their next landing.
   useEffect(() => {
     api
@@ -1155,18 +1172,11 @@ export function Lobby({
                         className="pm-field"
                         onKeyDown={(e) => e.key === "Enter" && createRoom()}
                       />
-                      {/* The row carries the apostrophe as the entity the
-                          source spelled it with, so the read hands it over
-                          whole and the paragraph renders the answer as HTML:
-                          a text node would print "&apos;" on the screen. */}
-                      <p
-                        className="text-[11px] leading-relaxed text-muted-foreground"
-                        dangerouslySetInnerHTML={{
-                          __html: t(
-                            "A captain&apos;s tenth completed voyage hands them this phrase, and the guide keeps a copy for whoever goes looking. Anyone who has it can open the table, and every seat at that table sails the voyage it opens.",
-                          ),
-                        }}
-                      />
+                      <p className="text-[11px] leading-relaxed text-muted-foreground">
+                        {t(
+                          "A captain's tenth completed voyage hands them this phrase, and the guide keeps a copy for whoever goes looking. Anyone who has it can open the table, and every seat at that table sails the voyage it opens.",
+                        )}
+                      </p>
                     </div>
                   )}
 
@@ -1195,7 +1205,7 @@ export function Lobby({
                       mode={mode}
                       renownLevel={renownProgress(legacy.renownXP).level}
                       voyagesCompleted={legacy.voyagesCompleted}
-                      bestScore={legacy.bestScore}
+                      bestReputation={legacy.bestReputation}
                       solventStreak={legacy.consecutiveSolventVoyages}
                     />
                   </div>

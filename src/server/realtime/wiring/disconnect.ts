@@ -34,7 +34,7 @@ export function wireDisconnect(
       }
       if (s.roomId) {
         forgetStatusIfLastSocket(s.roomId, s.userId, userSockets);
-        // The room reads this notice, so it goes to every socket still
+        // The harbor reads this notice, so it goes to every socket still
         // seated in the harbor, each in that captain's own language. The
         // leaving socket was taken out of the map above, so the walk is
         // the rest of the crew.
@@ -51,7 +51,7 @@ export function wireDisconnect(
         }
         void emitRoomMembers(io, s.roomId);
         if (!set || set.size === 0) {
-          // [W2: the path draft] A live draft holds the room at the
+          // [W2: the path draft] A live draft holds the harbor at the
           // draft's seat, so a seat whose last socket just went is a seat
           // the draft would otherwise wait on forever. The draft's own
           // absence watch gives it a window to come back and then lays
@@ -70,7 +70,7 @@ export function wireDisconnect(
       }
       // A disconnect also pulls the captain out of the Quick Start
       // queue, so a closed tab doesn't leave a phantom entry that
-      // matchQueuedCaptains would try to seat into a room.
+      // matchQueuedCaptains would try to seat into a harbor.
       leaveQueue(s.userId);
       broadcastPresence(io);
     }

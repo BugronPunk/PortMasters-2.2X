@@ -8,13 +8,14 @@
 // or pin to their Legacy card. Pure function: same numbers in, same
 // prose out, no RNG, no clock, no dash characters in any line.
 //
-// Tone: natural and plain. Reads like a harbour gazette rather than a
+// Tone: natural and plain. Reads like a harbor gazette rather than a
 // stat block, names the difficulty by its in game label, and never
 // editorialises the outcome. A bankrupt voyage still gets a Chronicle,
 // just one that says so plainly rather than dressing it up, and in a mode
 // that sails on through insolvency the sentence says that too.
 // =====================================================================
 import { t } from "@/lib/game/i18n";
+import { merchantRatingLabel } from "../constants/reputation";
 import type { Difficulty } from "../difficulty";
 
 type ChronicleInput = {
@@ -40,6 +41,10 @@ type ChronicleInput = {
   // before the voyage was done" is the plain truth in a mode that ends
   // there, and a lie in a mode where the same captain sailed on.
   bankruptcyIsFinal: boolean;
+  // The rating's bare English label, the same string the column holds.
+  // A name rather than a tier, because the row keeps a name and the
+  // reads translate it (see merchantRatingLabel in
+  // ../constants/reputation.ts).
   merchantRating: string;
   // [H9: the unlock code] The line the harbor hands a captain whose
   // voyage count just crossed the threshold, or null on every other
@@ -214,9 +219,12 @@ function buildBody(input: ChronicleInput): string {
           ),
     );
   } else {
+    // The rating is a name the harbor keeps, so it is read into the
+    // language of the sentence around it rather than dropped in as the
+    // bare English the column holds.
     sentences.push(
       t("The harbor closed the books at {input.merchantRating}.", {
-        "input.merchantRating": input.merchantRating,
+        "input.merchantRating": merchantRatingLabel(input.merchantRating),
       }),
     );
   }

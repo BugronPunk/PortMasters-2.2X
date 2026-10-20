@@ -30,10 +30,10 @@ export async function legClockSuite(): Promise<void> {
   // gates those six and nothing else, and a voyage that was already
   // sailing when this landed is placed where it was rather than dropped.
   //
-  // Everything below reads the same two modules the engine and the room
+  // Everything below reads the same two modules the engine and the harbor
   // read (./checkpoint and ./phases) rather than restating them, which is
   // the point: a lap written out here a second time would pass every
-  // check in this section while the room walked a different one.
+  // check in this section while the harbor walked a different one.
   for (const mode of MODE_ORDER) {
     const badge = MODES[mode].badge;
     const lap = lapPhases(mode);
@@ -50,19 +50,19 @@ export async function legClockSuite(): Promise<void> {
       "and carries nothing on it that is not a phase of the leg, beyond the pier and the draft's own seat where the deal is on",
     );
     // Where a round actually opens, which is not the pier: the lap opens
-    // there so the room has a lobby, and the first entry after it is what
+    // there so the harbor has a lobby, and the first entry after it is what
     // the host's Set Sail opens the round at, which is the path draft in a
     // dealing Gambit harbor and Dawn everywhere else (see openingPhase,
     // which reads the lap rather than naming either phase).
     check(
       openingPhase(mode) === lap[1] && isGatedPhase(mode, openingPhase(mode)),
-      `the ${badge} round opens at the first seat after the pier, which is a seat the room waits on`,
+      `the ${badge} round opens at the first seat after the pier, which is a seat the harbor waits on`,
     );
-    // The room waits where the lap says it waits, which is every seat of
+    // The harbor waits where the lap says it waits, which is every seat of
     // the lap but the pier. Bartering and artisan management used to be
     // checkpoints of their own; neither names a lap seat now, so neither
     // is a place the harbor can be made to wait, and the draft's seat is
-    // one because a room that deals stops there.
+    // one because a harbor that deals stops there.
     const gated = (Object.keys(PHASE_FACES) as Phase[]).filter((phase) =>
       isGatedPhase(mode, phase),
     );
@@ -170,12 +170,12 @@ export async function legClockSuite(): Promise<void> {
     "and none of the words a captain reads on one carries an en dash, an em dash or a doubled hyphen",
   );
 
-  // Where a captain stands and where the room waits are two questions, and
+  // Where a captain stands and where the harbor waits are two questions, and
   // the release keeps them apart on purpose. A captain inside the shipyard's
   // draft or swap is standing in Dusk: the rail has folded both screens into
   // Dusk since the six phase leg landed, the engine leaves Dusk when a
   // departure walks out of a draft, and folding the two onto Dusk is what
-  // lets the room place a captain against itself at all. Their screen is not
+  // lets the harbor place a captain against itself at all. Their screen is not
   // a seat the ready check gates, and that pair is the shape of the stall
   // held shut below: a roster that waited on a captain whose screen draws no
   // ready bar left a table holding a full set of votes it could not spend.
@@ -194,7 +194,7 @@ export async function legClockSuite(): Promise<void> {
         seatOf("module_swap") === "dusk" &&
         !isGatedPhase(mode, "module_draft") &&
         !isGatedPhase(mode, "module_swap"),
-      `a captain at either shipyard screen is placed in Dusk by the ${badge} room and waited on by nobody`,
+      `a captain at either shipyard screen is placed in Dusk by the ${badge} harbor and waited on by nobody`,
     );
     check(
       checkpointRank(mode, 1, "module_draft") ===
@@ -202,7 +202,7 @@ export async function legClockSuite(): Promise<void> {
         checkpointRank(mode, 1, "module_swap") ===
           checkpointRank(mode, 1, "dusk") &&
         checkpointRank(mode, 1, "dusk") !== null,
-      "and ranks as the seat they are standing in, so a room that has moved on is a room they are behind",
+      "and ranks as the seat they are standing in, so a harbor that has moved on is a harbor they are behind",
     );
     check(
       (["bankruptcy", "endgame"] as Phase[]).every(

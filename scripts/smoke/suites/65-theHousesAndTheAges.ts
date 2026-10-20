@@ -37,8 +37,9 @@ import {
 import { startMarket } from "@/lib/game/engine/market";
 import { HOUSE_IDS, normalizeHouseId, type HouseId } from "@/lib/game/legacy";
 import {
-  check,
   call,
+  check,
+  ledgerSentences,
   signUp,
   voyageState,
   walkSrc,
@@ -47,6 +48,7 @@ import {
 import type { SmokeRun } from "../run";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 const REPO = join(import.meta.dirname, "..", "..", "..");
 
@@ -62,7 +64,7 @@ function readSource(relative: string): string {
 const FORTNIGHT = 14 * 24 * 60 * 60 * 1000;
 
 export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
-  // ---- A. The pledge is account level, and its route is the Lobby's ----
+  // ========== A. The pledge is account level, and its route is the Lobby's ==========
   const captain = await signUp("pledge");
   run.extraAccounts.push(captain);
 
@@ -102,7 +104,7 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
     perk: string;
     crowns: number;
     voyages: number;
-    bestScore: number;
+    bestReputation: number;
   };
   const standingsAfter = await call<{
     standings: StandingRow[];
@@ -138,20 +140,20 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
       houseId: true,
       voyagesCompleted: true,
       seaMasterCrowns: true,
-      bestScore: true,
+      bestReputation: true,
     },
   });
   const reduction = new Map<
     HouseId,
-    { voyages: number; crowns: number; bestScore: number }
-  >(HOUSE_IDS.map((id) => [id, { voyages: 0, crowns: 0, bestScore: 0 }]));
+    { voyages: number; crowns: number; bestReputation: number }
+  >(HOUSE_IDS.map((id) => [id, { voyages: 0, crowns: 0, bestReputation: 0 }]));
   for (const row of legacyRows) {
     const id = normalizeHouseId(row.houseId);
     if (!id) continue;
     const total = reduction.get(id)!;
     total.voyages += row.voyagesCompleted;
     total.crowns += row.seaMasterCrowns;
-    total.bestScore = Math.max(total.bestScore, row.bestScore);
+    total.bestReputation = Math.max(total.bestReputation, row.bestReputation);
   }
   check(
     standingsAfter.body.standings.every((row) => {
@@ -160,10 +162,10 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
         total !== undefined &&
         row.voyages === total.voyages &&
         row.crowns === total.crowns &&
-        row.bestScore === total.bestScore
+        row.bestReputation === total.bestReputation
       );
     }),
-    "and the totals beside each name are the legacy table's own reduction, recomputed here row by row: the voyages summed, the crowns summed and the best score kept at its maximum, with no captain's pledge counted into a House they did not choose",
+    "and the totals beside each name are the legacy table's own reduction, recomputed here row by row: the voyages summed, the crowns summed and the best Reputation kept at its maximum, with no captain's pledge counted into a House they did not choose",
   );
 
   // Switching is free and takes effect on the next fresh voyage, which is
@@ -185,7 +187,7 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
     "and a captain can switch Houses between voyages at no cost: the pledge follows the picker to the new House while the voyage in progress keeps the one it was stamped with",
   );
 
-  // ---- B. The perk is stamped on a fresh voyage, and it fires ----
+  // ========== B. The perk is stamped on a fresh voyage, and it fires ==========
 
   // The flags table, read off voyages the engine builds at its one birth
   // place. Each House flips exactly its own perk and no other, and a
@@ -217,21 +219,27 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
   // next hire over that empty purse is refused like any other.
   const emptyPurse = voyageState({ houseId: "jade_pavilion" });
   emptyPurse.money = 0;
-  const jadeHireLogs: string[] = [];
+  const jadeHireLogs: LedgerLine[] = [];
   hireWorker(emptyPurse, "weaver", jadeHireLogs);
   hireWorker(emptyPurse, "weaver", jadeHireLogs);
   const plainPurse = voyageState({});
   plainPurse.money = 0;
-  const plainHireLogs: string[] = [];
+  const plainHireLogs: LedgerLine[] = [];
   hireWorker(plainPurse, "weaver", plainHireLogs);
   check(
     emptyPurse.workers.weaver.length === 1 &&
       !emptyPurse.housePerks.jadeFreeHireAvailable &&
       emptyPurse.workers.weaver[0].freeFirstWage === true &&
-      jadeHireLogs.some((line) => line.includes("Jade Pavilion pledge")) &&
-      jadeHireLogs.some((line) => line.includes("Insufficient funds")) &&
+      ledgerSentences(jadeHireLogs).some((line) =>
+        line.includes("Jade Pavilion pledge"),
+      ) &&
+      ledgerSentences(jadeHireLogs).some((line) =>
+        line.includes("Insufficient funds"),
+      ) &&
       plainPurse.workers.weaver.length === 0 &&
-      plainHireLogs.some((line) => line.includes("Insufficient funds")),
+      ledgerSentences(plainHireLogs).some((line) =>
+        line.includes("Insufficient funds"),
+      ),
     "the Jade Pavilion pledge is spent by the first hire it covers and by no second one: a pledged captain with an empty purse comes away with one artisan, written as the one the waiver meant, while an unpledged captain with the same purse is refused at the hire",
   );
 
@@ -276,7 +284,7 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
     "and the same pledge draws raiders five percent more often on the voyage's own tier odds, read through the one function the panel and the roll share rather than a second opinion of the risk",
   );
 
-  // ---- C. The Ages anchor on the epoch, in every client the same ----
+  // ========== C. The Ages anchor on the epoch, in every client the same ==========
 
   // The three boundaries and the wrap, plus the one date no voyage will
   // pass and the function is still total for: a Date before 1970 lands
@@ -350,7 +358,7 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
     "the branch from an Age's id to its effect lives in one file and nowhere else in the game library, and the three readers the record names still call their own accessor, so what an Age changes is decided in exactly one place",
   );
 
-  // ---- D. The two boards are the tables' own rows ----
+  // ========== D. The two boards are the tables' own rows ==========
 
   type LeaderboardEntry = {
     userId: string;
@@ -360,7 +368,7 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
     renownXP: number;
     voyagesCompleted: number;
     seaMasterCrowns: number;
-    bestScore: number;
+    bestReputation: number;
     consecutiveSolventVoyages: number;
     houseId: string | null;
   };
@@ -395,7 +403,7 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
           entry.renownXP === row.renownXP &&
           entry.voyagesCompleted === row.voyagesCompleted &&
           entry.seaMasterCrowns === row.seaMasterCrowns &&
-          entry.bestScore === row.bestScore &&
+          entry.bestReputation === row.bestReputation &&
           entry.consecutiveSolventVoyages === row.consecutiveSolventVoyages &&
           entry.houseId === normalizeHouseId(row.houseId) &&
           (index === 0 ||
@@ -448,6 +456,6 @@ export async function theHousesAndTheAgesSuite(run: SmokeRun): Promise<void> {
   const strangerBoard = await call<{ error?: string }>("/api/leaderboard");
   check(
     strangerBoard.status === 401,
-    "and the board refuses a stranger the same way the standings do, because both read accounts rather than the room they were standing in",
+    "and the board refuses a stranger the same way the standings do, because both read accounts rather than the harbor they were standing in",
   );
 }

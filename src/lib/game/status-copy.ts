@@ -32,6 +32,7 @@
 import { CREW_LOSS_AFTER_HUNGRY_LEGS } from "./constants/crew";
 import { COLD_LEG_WARMTH } from "./constants/garments";
 import { t } from "./i18n";
+import { line, type LedgerLine } from "./ledger";
 
 /** The three clauses every status family carries. */
 type StatusClause = "state" | "cause" | "remedy";
@@ -92,31 +93,62 @@ export function frozenBenchLine(): string {
   );
 }
 
+// The English the assignment refusal is told in, named beside its two
+// readers so the engine's ledger and the validator are reading the same
+// sentence rather than two sentences that can drift.
+const FROZEN_ASSIGN_REFUSAL =
+  "❌ The only free hands are frozen out this leg: the crew {FROZEN_CREW.cause}, and they are back next leg. {FROZEN_CREW.remedy}.";
+
 /** The assignment refusal: the line the engine logs when every free
     hand is standing the leg down for the cold. */
 export function frozenAssignRefusal(): string {
-  return t(
-    "❌ The only free hands are frozen out this leg: the crew {FROZEN_CREW.cause}, and they are back next leg. {FROZEN_CREW.remedy}.",
-    {
-      "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
-      "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
-    },
-  );
+  return t(FROZEN_ASSIGN_REFUSAL, {
+    "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
+    "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
+  });
+}
+
+/** The same refusal, as a line for a captain's own ledger.
+ *
+ * The ledger holds material rather than a finished sentence, so the
+ * refusal is held the same way: a captain who reads their ledger in
+ * another language reads the refusal in that language, and the family's
+ * own clauses travel with the sentence rather than being frozen into it.
+ */
+export function frozenAssignRefusalLine(): LedgerLine {
+  return line(FROZEN_ASSIGN_REFUSAL, {
+    "FROZEN_CREW.cause": line(FROZEN_CREW.cause),
+    "FROZEN_CREW.remedy": line(FROZEN_CREW.remedy),
+  });
 }
 
 /** The per hand line in the voyage log, said for the hand whose work
     waits rather than for the crew. The task is the worker record's own
     word, so it is read here the same way the bench reads it. */
 export function frozenWorkLog(name: string, task: string): string {
-  return t(
-    "🥶 {name} is frozen out this leg: the crew {FROZEN_CREW.cause}, and the work on {task} waits for next leg. {FROZEN_CREW.remedy}.",
-    {
-      name,
-      task: t(task),
-      "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
-      "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
-    },
-  );
+  return t(FROZEN_WORK_LOG, {
+    name,
+    task: t(task),
+    "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
+    "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
+  });
+}
+
+// The English the per hand frozen line is told in, named beside its two
+// readers for the reason the refusal's own English is named.
+const FROZEN_WORK_LOG =
+  "🥶 {name} is frozen out this leg: the crew {FROZEN_CREW.cause}, and the work on {task} waits for next leg. {FROZEN_CREW.remedy}.";
+
+/** The same line, as a line for a captain's own ledger. The task is the
+    worker record's own word, so it is read in the reader's language
+    along with the rest of the sentence. */
+export function frozenWorkLogLine(name: string, task: string): LedgerLine {
+  return line(FROZEN_WORK_LOG, {
+    name,
+    task: line(task),
+    "FROZEN_CREW.cause": line(FROZEN_CREW.cause),
+    "FROZEN_CREW.remedy": line(FROZEN_CREW.remedy),
+  });
 }
 
 /** The frostbite line: the one frozen sentence whose subject is the
@@ -125,15 +157,32 @@ export function frozenWorkLog(name: string, task: string): string {
     craft the crew record carries, read through the pack like the task
     above. */
 export function frozenFrostbiteLog(name: string, label: string): string {
-  return t(
-    "🥶 Frostbite: {name} the {label} {FROZEN_CREW.cause}, and is out of action next leg. {FROZEN_CREW.remedy}.",
-    {
-      name,
-      label: t(label),
-      "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
-      "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
-    },
-  );
+  return t(FROZEN_FROSTBITE_LOG, {
+    name,
+    label: t(label),
+    "FROZEN_CREW.cause": t(FROZEN_CREW.cause),
+    "FROZEN_CREW.remedy": t(FROZEN_CREW.remedy),
+  });
+}
+
+// The English the frostbite line is told in, named beside its two readers
+// for the reason the refusal's own English is named.
+const FROZEN_FROSTBITE_LOG =
+  "🥶 Frostbite: {name} the {label} {FROZEN_CREW.cause}, and is out of action next leg. {FROZEN_CREW.remedy}.";
+
+/** The same line, as a line for a captain's own ledger. The label is the
+    craft the crew record carries, read through the pack in the reader's
+    language along with the rest of the sentence. */
+export function frozenFrostbiteLogLine(
+  name: string,
+  label: string,
+): LedgerLine {
+  return line(FROZEN_FROSTBITE_LOG, {
+    name,
+    label: line(label),
+    "FROZEN_CREW.cause": line(FROZEN_CREW.cause),
+    "FROZEN_CREW.remedy": line(FROZEN_CREW.remedy),
+  });
 }
 
 // ==== The cold leg chip, as the rail says it ====
@@ -175,9 +224,20 @@ const HUNGRY_RULE_TAIL =
 /** The rule on its own, for the surfaces that print it beside their own
     lead in: the tooltip, the provisions note, the engine's own line. */
 export function hungryRule(): string {
-  return t("{CREW_LOSS_AFTER_HUNGRY_LEGS} {HUNGRY_RULE_TAIL}", {
+  return t(HUNGRY_RULE, {
     CREW_LOSS_AFTER_HUNGRY_LEGS,
     HUNGRY_RULE_TAIL: t(HUNGRY_RULE_TAIL),
+  });
+}
+
+// The English the rule is told in, named beside its two readers.
+const HUNGRY_RULE = "{CREW_LOSS_AFTER_HUNGRY_LEGS} {HUNGRY_RULE_TAIL}";
+
+/** The same rule, as a line for a captain's own ledger. */
+function hungryRuleLine(): LedgerLine {
+  return line(HUNGRY_RULE, {
+    CREW_LOSS_AFTER_HUNGRY_LEGS,
+    HUNGRY_RULE_TAIL: line(HUNGRY_RULE_TAIL),
   });
 }
 
@@ -211,13 +271,25 @@ export function hungryProvisionsNote(): string {
 /** The engine's production line, said once per hungry leg above the
     smaller numbers it explains. */
 export function hungryProductionNote(): string {
-  return t(
-    "⚠️ The crew is on short rations, so every artisan works the leg at a slower pace, and {hungryEffect} {HUNGRY_CREW.remedy} at the next Market.",
-    {
-      hungryEffect: hungryRule(),
-      "HUNGRY_CREW.remedy": t(HUNGRY_CREW.remedy),
-    },
-  );
+  return t(HUNGRY_PRODUCTION_NOTE, {
+    hungryEffect: hungryRule(),
+    "HUNGRY_CREW.remedy": t(HUNGRY_CREW.remedy),
+  });
+}
+
+// The English the production note is told in, named beside its two
+// readers.
+const HUNGRY_PRODUCTION_NOTE =
+  "⚠️ The crew is on short rations, so every artisan works the leg at a slower pace, and {hungryEffect} {HUNGRY_CREW.remedy} at the next Market.";
+
+/** The same note, as a line for a captain's own ledger. The rule it
+    quotes is held as material, so the whole note reads in one language
+    rather than a Mandarin sentence wrapped around an English one. */
+export function hungryProductionNoteLine(): LedgerLine {
+  return line(HUNGRY_PRODUCTION_NOTE, {
+    hungryEffect: hungryRuleLine(),
+    "HUNGRY_CREW.remedy": line(HUNGRY_CREW.remedy),
+  });
 }
 
 /** The roster pill's visible line: the state and the way back together,

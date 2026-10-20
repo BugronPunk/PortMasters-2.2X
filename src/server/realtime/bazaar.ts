@@ -2,11 +2,11 @@
 // Realtime layer: the bazaar board.
 //
 // [D5: Aroma: the Bazaar Rumor] The board an Aroma captain speaks from
-// during Parley. It is the third market this epic's paths hold in room
+// during Parley. It is the third market this epic's paths hold in harbor
 // state and it is the simplest of the three, because there is nothing to
 // agree: an escort contract and a refit are both promises between two
 // captains and need the consent machinery underneath them (see ./consent),
-// and a rumor is one captain speaking and the room hearing it. So what
+// and a rumor is one captain speaking and the harbor hearing it. So what
 // this module keeps is a list of rows rather than a table of offers, and
 // what it borrows from the other two is only the one thing all three
 // share: every send is personalized, and the personalization is the
@@ -14,7 +14,7 @@
 //
 // The rule being held here is that the direction a captain leaned stays
 // with that captain until the market it moves has been drawn. Two captains
-// in one room therefore read two different boards, so every payload is
+// in one harbor therefore read two different boards, so every payload is
 // built for its reader (see publicRumors in @/lib/game/engine/bazaar,
 // which is the rule itself) and every board a captain is ever shown has
 // been through that one function.
@@ -40,8 +40,8 @@ import type { Server } from "socket.io";
 import { publicRumors, rumorId, type BazaarRumor } from "@/lib/game/engine";
 import { sockets } from "./presence";
 
-// The room's rumors. Module local on the same reasoning as the barter
-// board's map: every reader and writer in the room's socket layer goes
+// The harbor's rumors. Module local on the same reasoning as the barter
+// board's map: every reader and writer in the harbor's socket layer goes
 // through the functions below, and there is one meaning for a room's row
 // list being absent.
 const roomRumors = new Map<string, BazaarRumor[]>();
@@ -51,7 +51,7 @@ export function bazaarList(roomId: string): BazaarRumor[] {
 }
 
 // Writes a room's rows back, dropping the map entry outright when the last
-// one has gone. The one writer, so "a room with no rumors" has one
+// one has gone. The one writer, so "a harbor with no rumors" has one
 // representation rather than an empty array in some paths and a missing
 // key in others.
 function setBazaarRumors(roomId: string, rows: BazaarRumor[]): void {
@@ -69,7 +69,7 @@ function setBazaarRumors(roomId: string, rows: BazaarRumor[]): void {
  * has to hold. Every refusal that keeps that true is upstream, in the
  * handler that reads the cooldown before calling this.
  *
- * The caller is handed the row back because it is the fact the room is
+ * The caller is handed the row back because it is the fact the harbor is
  * about to be told about: the voyage log line and the broadcast both need
  * the stored shape, and neither should be rebuilding it from the request.
  */
@@ -90,10 +90,10 @@ export function publishBazaarRumor(
  * bazaar:update on the wire carries.
  *
  * The round is a parameter rather than read off the rows, because it is
- * the room's leg and not the row's: the same rows read one leg later are
+ * the harbor's leg and not the row's: the same rows read one leg later are
  * a different board, since the leg is what decides which of them have
  * landed and whose directions are therefore public. Every site that sends
- * a board has the room's checkpoint in hand, and this is the one place
+ * a board has the harbor's checkpoint in hand, and this is the one place
  * that turns it into the visibility rule.
  */
 export function bazaarPayloadFor(
@@ -111,12 +111,12 @@ export function bazaarPayloadFor(
 
 // Personalized per connected socket, one captain at a time, the way the
 // barter board and both consent boards are: a standing rumor means two
-// captains in the same room legitimately see two different boards, and
+// captains in the same harbor legitimately see two different boards, and
 // the whole feature depends on them being handed the two they are owed.
 //
 // The delivery is a rule rather than a habit, and it is held by the
 // private scan rather than by this comment: bazaar:update is its eighth
-// rule, which refuses a board that reaches a room channel at all (see
+// rule, which refuses a board that reaches a harbor channel at all (see
 // scripts/private-scan.ts). A later broadcast added here would be caught
 // by that rule rather than by a reader of this header.
 //
@@ -138,7 +138,7 @@ export function broadcastBazaar(
 }
 
 /**
- * Drops the board for a room and tells the captains still in it, which is
+ * Drops the board for a harbor and tells the captains still in it, which is
  * what the end of a voyage gets.
  *
  * A voyage is the whole life of a rumor: rows are kept from the first leg
@@ -152,7 +152,7 @@ export function clearBazaar(io: Server, roomId: string, round: number): void {
   broadcastBazaar(io, roomId, round);
 }
 
-// Wipes the board for a room without broadcasting. Called when the room
+// Wipes the board for a harbor without broadcasting. Called when the harbor
 // itself is being torn down (last member departed) and there is nobody
 // left in the channel to broadcast to.
 export function clearBazaarSilent(roomId: string): void {

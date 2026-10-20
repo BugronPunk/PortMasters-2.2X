@@ -18,7 +18,7 @@ import { phaseLabel } from "@/lib/game/engine";
  * of the desktop layout and, on any screen under the lg breakpoint, stacks
  * to the very bottom of the page behind the phase panel and the roster's
  * own scroll. This strip sits directly under the header instead, full
- * width, on every screen size, so the room's state is visible without
+ * width, on every screen size, so the harbor's state is visible without
  * scrolling past anything. The live roster comes from useRoomRoster, the
  * same hook MembersPanel uses, rather than threading a second copy of that
  * state down from GameRoom.

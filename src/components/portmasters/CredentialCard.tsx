@@ -127,7 +127,7 @@ export interface DoorProps {
   onDismissNotice?: () => void;
 }
 
-interface CredentialCardProps {
+interface CredentialCardProps extends DoorProps {
   /** The fields of each tab, in the order that tab draws them. */
   fields: { login: CredentialFieldSpec[]; register: CredentialFieldSpec[] };
   /** The block above the form: the door's own logo and name. */
@@ -138,15 +138,11 @@ interface CredentialCardProps {
    * this is a slot rather than a boolean.
    */
   backdrop?: ReactNode;
-  /** Why the captain is back at this card rather than where they were. */
-  notice?: string | null;
-  onDismissNotice?: () => void;
   /** The tab's own trip to the server, answering with the captain it made. */
   submit: (
     mode: CredentialMode,
     values: Record<string, string>,
   ) => Promise<{ user: PublicUser; token: string }>;
-  onAuthed: (user: PublicUser, token: string) => void;
   /** The two submit labels and the icon each carries, one pair a tab. */
   labels: { login: string; register: string };
   icons: { login: ReactNode; register: ReactNode };

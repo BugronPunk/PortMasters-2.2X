@@ -48,15 +48,10 @@ import { cargoRoom } from "../larder";
 import type { PathId } from "../paths";
 import { createRng } from "../rng";
 import { wholeStamp, type GameState } from "../types";
-import { t } from "@/lib/game/i18n";
-import {
-  consentPartyBusy,
-  floorTallies,
-  markMovement,
-  movementApplied,
-  type ConsentTerms,
-} from "./consent";
-import { addOwnedAmount, getOwnedAmount, paidFee } from "./core";
+import { line, type LedgerLine } from "@/lib/game/ledger";
+import { consentPartyBusy, floorTallies, type ConsentTerms } from "./consent";
+import { addOwnedAmount, getOwnedAmount } from "./core";
+import { settleConsentTrade } from "./settlement";
 
 /**
  * The path whose ability is the refit bench, as a reading of the record
@@ -211,27 +206,27 @@ export function ragsLeftAtPort(state: GameState): number {
  * rather than worked out here, so a rag takes a slot in exactly the way a
  * bolt of silk does.
  */
-export function buyRag(state: GameState, logs: string[]): boolean {
+export function buyRag(state: GameState, logs: LedgerLine[]): boolean {
   if (!refitsOn(state.mode)) return false;
   if (state.path !== REFIT_SELLER_PATH) {
-    logs.push(t("❌ Only a Loom captain buys rags off the harbor pile."));
+    logs.push(line("❌ Only a Loom captain buys rags off the harbor pile."));
     return false;
   }
   const left = ragsLeftAtPort(state);
   if (left < 1) {
-    logs.push(t("❌ The harbor has no rags left for you this leg."));
+    logs.push(line("❌ The harbor has no rags left for you this leg."));
     return false;
   }
   if (getOwnedAmount(state, "Gold") < RAG_SCRAP_VALUE) {
     logs.push(
-      t("❌ {RAG_SCRAP_VALUE} Gold buys a rag, and the purse is short.", {
+      line("❌ {RAG_SCRAP_VALUE} Gold buys a rag, and the purse is short.", {
         RAG_SCRAP_VALUE,
       }),
     );
     return false;
   }
   if (cargoRoom(state) < 1) {
-    logs.push(t("❌ There is no room in the hold for another rag."));
+    logs.push(line("❌ There is no room in the hold for another rag."));
     return false;
   }
   addOwnedAmount(state, "Gold", -RAG_SCRAP_VALUE);
@@ -243,7 +238,7 @@ export function buyRag(state: GameState, logs: string[]): boolean {
   }
   state.ragsTaken += 1;
   logs.push(
-    t(
+    line(
       "{ICONS.Rags} Bought a rag off the harbor pile for {RAG_SCRAP_VALUE} Gold. {scrapsLeft} left for you this leg.",
       {
         "ICONS.Rags": ICONS.Rags,
@@ -269,17 +264,17 @@ export function buyRag(state: GameState, logs: string[]): boolean {
  * and the coat takes less space than they did, so a reweave that was
  * refused for room would be refusing to make room.
  */
-export function reweaveRags(state: GameState, logs: string[]): boolean {
+export function reweaveRags(state: GameState, logs: LedgerLine[]): boolean {
   if (!refitsOn(state.mode)) return false;
   if (state.path !== REFIT_SELLER_PATH) {
     logs.push(
-      t("❌ Only a Loom captain knows how to work rags back into cloth."),
+      line("❌ Only a Loom captain knows how to work rags back into cloth."),
     );
     return false;
   }
   if ((state.inventory[RAGS] ?? 0) < REWEAVE_RAGS) {
     logs.push(
-      t("❌ A reweave takes {REWEAVE_RAGS} rags and the hold has fewer.", {
+      line("❌ A reweave takes {REWEAVE_RAGS} rags and the hold has fewer.", {
         REWEAVE_RAGS,
       }),
     );
@@ -289,9 +284,9 @@ export function reweaveRags(state: GameState, logs: string[]): boolean {
   state.inventory[REWEAVE_GOOD] = (state.inventory[REWEAVE_GOOD] ?? 0) + 1;
   state.ragsRewoven += 1;
   logs.push(
-    t(
+    line(
       "🧵 {REWEAVE_RAGS} rags go back on the loom and come off as one {REWEAVE_GOOD}.",
-      { REWEAVE_RAGS, REWEAVE_GOOD: t(REWEAVE_GOOD) },
+      { REWEAVE_RAGS, REWEAVE_GOOD: line(REWEAVE_GOOD) },
     ),
   );
   return true;
@@ -317,33 +312,36 @@ export function reweaveRags(state: GameState, logs: string[]): boolean {
 export function mendGarment(
   state: GameState,
   good: unknown,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
   if (!refitsOn(state.mode)) return false;
   const spec = garmentSpec(good);
   if (!spec || typeof good !== "string") {
-    logs.push(t("❌ That is not something the harbor can put right."));
+    logs.push(line("❌ That is not something the harbor can put right."));
     return false;
   }
   if (state.mendRound === state.currentRound) {
     logs.push(
-      t("❌ The harbor tailors have already worked on the crew this leg."),
+      line("❌ The harbor tailors have already worked on the crew this leg."),
     );
     return false;
   }
   if (garmentRoom(state, good) < 1) {
     logs.push(
-      t("❌ The crew is wearing no worn {good} for the harbor to mend.", {
-        good: t(good),
+      line("❌ The crew is wearing no worn {good} for the harbor to mend.", {
+        good: line(good),
       }),
     );
     return false;
   }
   if (getOwnedAmount(state, "Gold") < MEND_GOLD_PER_POINT) {
     logs.push(
-      t("❌ A mend costs {MEND_GOLD_PER_POINT} Gold and the purse is short.", {
-        MEND_GOLD_PER_POINT,
-      }),
+      line(
+        "❌ A mend costs {MEND_GOLD_PER_POINT} Gold and the purse is short.",
+        {
+          MEND_GOLD_PER_POINT,
+        },
+      ),
     );
     return false;
   }
@@ -353,13 +351,13 @@ export function mendGarment(
   state.mendsMade += 1;
   state.mendRound = state.currentRound;
   logs.push(
-    t(
+    line(
       "{ICONS.Rags} The harbor tailor takes {MEND_GOLD_PER_POINT} Gold for {back} point of the {good}.",
       {
         "ICONS.Rags": ICONS.Rags,
         MEND_GOLD_PER_POINT,
         back,
-        good: t(good),
+        good: line(good),
       },
     ),
   );
@@ -369,88 +367,73 @@ export function mendGarment(
 /**
  * Applies this captain's side of a refit, once.
  *
- * One function for both sides, the shape the escort's own settlement takes,
- * and for the same reason: the two cases differ in who they are and in
- * which direction the Gold moves, and agree on everything else. The buyer
- * is the one who can put the points back, because the garment is theirs;
- * the seller is the one who is paid, and the payment is the price they
- * agreed rather than what the customer's purse could cover, exactly as a
- * contract's fee is.
- *
- * The ledger is the idempotence (see movementApplied in ./consent): a
- * reload between the agreement and the broadcast that carries it must not
- * charge the same fee twice.
- *
- * Returns whether the state changed, which is what the React layer reads to
- * decide whether it owes the captain a fresh render.
+ * The settlement itself is the shared one (see settleConsentTrade in
+ * ./settlement), and what this function adds is the work: the buyer is the
+ * one who can put the points back, because the garment is theirs, and the
+ * seller is the one who is paid.
  */
 export function applyRefitSide(
   state: GameState,
   contract: RefitContract,
   meId: string,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
-  if (!refitsOn(state.mode)) return false;
-  if (contract.status !== "agreed") return false;
-  const isSeller = contract.sellerUserId === meId;
-  const isBuyer = contract.buyerUserId === meId;
-  if (!isSeller && !isBuyer) return false;
-  const key = `${contract.id}:fee`;
-  if (movementApplied(state, key)) return false;
-
-  if (isBuyer) {
-    // The customer's own garment, put right by the customer's own machine.
-    // The fee moves first so the log reads in the order the captain lived
-    // it, and a purse that moved between the accept and this call pays what
-    // it has rather than a negative hold, which is the reading paidFee takes
-    // for all three of the priced settles (see ./core).
-    const paid = paidFee(state, contract.fee);
-    addOwnedAmount(state, "Gold", -paid);
-    state.refitsBought += 1;
-    state.refitFeesPaid += paid;
-    logs.push(
-      t(
-        "🤝 Refit: paid {paid} Gold to {seller} for the {good} to be put right.",
-        {
-          paid,
-          seller: contract.sellerName,
-          good: t(contract.good),
-        },
-      ),
-    );
-    const back = restoreGarment(state, contract.good, REFIT_POINTS, logs);
-    if (back < 1) {
-      // Reachable only if the garment left the wardrobe between the offer
-      // being accepted and this call. The board hides the accept when there
-      // is no work to do, so this is the sentence for a state that moved
-      // underneath the agreement rather than for an ordinary one. The fee
-      // stands as it was moved above, and deliberately: the seller's own
-      // machine credits the agreed price on its own side of this same
-      // function, so the two saves cannot unpay what one of them already
-      // banked, which is the same reading the module trade takes when its
-      // card fails to resolve (see the buyer branch in ./modules). The
-      // sentence is what the captain gets for the price, rather than
-      // silence.
-      logs.push(
-        t("❌ There is no worn {contract.good} left to work on.", {
-          "contract.good": t(contract.good),
-        }),
-      );
-    }
-  } else {
-    addOwnedAmount(state, "Gold", contract.fee);
-    state.refitsSold += 1;
-    state.refitFeesEarned += contract.fee;
-    logs.push(
-      t("🤝 Refit: {buyer} paid {fee} Gold for the {good} to be put right.", {
-        buyer: contract.buyerName ?? t("A captain"),
-        fee: contract.fee,
-        good: t(contract.good),
-      }),
-    );
-  }
-  markMovement(state, key);
-  return true;
+  return settleConsentTrade(state, logs, {
+    on: refitsOn,
+    status: "agreed",
+    row: contract,
+    meId,
+    counters: {
+      bought: "refitsBought",
+      feesPaid: "refitFeesPaid",
+      sold: "refitsSold",
+      feesEarned: "refitFeesEarned",
+    },
+    copy: {
+      buyer: (paid) =>
+        line(
+          "🤝 Refit: paid {paid} Gold to {seller} for the {good} to be put right.",
+          {
+            paid,
+            seller: contract.sellerName,
+            good: line(contract.good),
+          },
+        ),
+      seller: (fee) =>
+        line(
+          "🤝 Refit: {buyer} paid {fee} Gold for the {good} to be put right.",
+          {
+            buyer: contract.buyerName ?? line("A captain"),
+            fee,
+            good: line(contract.good),
+          },
+        ),
+    },
+    onBuy: (state, logs) => {
+      // The customer's own garment, put right by the customer's own machine,
+      // and the fee moved first so the log reads in the order the captain
+      // lived it.
+      const back = restoreGarment(state, contract.good, REFIT_POINTS, logs);
+      if (back < 1) {
+        // Reachable only if the garment left the wardrobe between the offer
+        // being accepted and this call. The board hides the accept when there
+        // is no work to do, so this is the sentence for a state that moved
+        // underneath the agreement rather than for an ordinary one. The fee
+        // stands as it was moved above, and deliberately: the seller's own
+        // machine credits the agreed price on its own side of this same
+        // function, so the two saves cannot unpay what one of them already
+        // banked, which is the same reading the module trade takes when its
+        // card fails to resolve (see the buyer branch in ./modules). The
+        // sentence is what the captain gets for the price, rather than
+        // silence.
+        logs.push(
+          line("❌ There is no worn {contract.good} left to work on.", {
+            "contract.good": line(contract.good),
+          }),
+        );
+      }
+    },
+  });
 }
 
 /**
@@ -475,22 +458,8 @@ export function normalizeRefitState(state: GameState): void {
     "ragsRewoven",
     "ragsTaken",
   ]);
-  state.mendRound = legStamp(state.mendRound);
-  state.ragsRound = legStamp(state.ragsRound);
-}
-
-/**
- * A leg stamp as the readers above expect one: a whole leg, or zero for a
- * voyage that never stamped this one.
- *
- * Zero is a leg no voyage has, which is the direction both stamps heal in:
- * a save that predates this feature lands on "the harbor has not worked on
- * the crew yet" rather than on a leg that reads as already spent. Written
- * once for the two stamps, on the one arithmetic every stamp in the game
- * shares (see wholeStamp in ../types).
- */
-function legStamp(raw: unknown): number {
-  return wholeStamp(raw);
+  state.mendRound = wholeStamp(state.mendRound);
+  state.ragsRound = wholeStamp(state.ragsRound);
 }
 
 // =====================================================================

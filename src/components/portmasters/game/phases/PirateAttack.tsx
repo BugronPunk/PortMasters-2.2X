@@ -15,6 +15,7 @@ import {
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { AlertTriangle, ShieldCheck, Skull } from "lucide-react";
+import type { LedgerAct } from "@/lib/game/ledger";
 import { PhaseHeading, StatTile, SummaryHeading } from "./PhaseShared";
 
 /**
@@ -32,7 +33,7 @@ export function PirateAttack({
   act,
 }: {
   game: GameState;
-  act: (fn: (g: GameState, logs: string[]) => void) => void;
+  act: LedgerAct;
 }) {
   const escortFee = escortCost(game);
   const raidPct = Math.round(pirateChance(game) * 100);

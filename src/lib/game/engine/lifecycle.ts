@@ -11,17 +11,18 @@
 // nextPhase and snapToCheckpoint are the two dispatch tables. The first
 // advances a captain one step from wherever they are; the second drops a
 // captain straight onto a given round and phase, which is what lets
-// someone joining a room mid voyage land where everyone else already is
+// someone joining a harbor mid voyage land where everyone else already is
 // rather than back at round 1.
 //
-// Where nextPhase steps TO is not written here. It comes from the room's
-// mode, through the lap in ./mode.ts, so the same engine runs a different
+// Where nextPhase steps TO is not written here. It comes from the harbor's
+// mode, through the lap in ../mode.ts, so the same engine runs a different
 // leg for a different voyage without a single branch on which mode it is.
 // Every departure below does its own content work and names no successor;
 // the handoff at the bottom of nextPhase is the only thing that decides
 // where a phase leads, and it asks the lap.
 // =====================================================================
 import { APP_NAME } from "../constants/brand";
+import { line, rule, type LedgerLine } from "@/lib/game/ledger";
 import { t } from "@/lib/game/i18n";
 import { endgameRatingFor } from "../constants/reputation";
 import { closesRound, isGatedPhase, lapSuccessor } from "../checkpoint";
@@ -56,27 +57,28 @@ import { payMaintenance, payWages, processProduction } from "./workers";
 // dragging in the engine's lifecycle. The barrel (../engine.ts) exports it
 // from there.
 
-function endRound(state: GameState, logs: string[]) {
+function endRound(state: GameState, logs: LedgerLine[]) {
   logs.push(
-    t("\n📊=== Round {state.currentRound} Settlement ===", {
+    line("\n📊=== Round {state.currentRound} Settlement ===", {
       "state.currentRound": state.currentRound,
     }),
   );
   logs.push(
-    t("💰 Revenue this round: {state.roundRevenue} Gold", {
+    line("💰 Revenue this round: {state.roundRevenue} Gold", {
       "state.roundRevenue": state.roundRevenue,
     }),
   );
   const totalCost =
     state.roundCosts + state.maintenanceCosts + state.workerWages;
-  logs.push(t("💸 Total Cost this round: {totalCost} Gold", { totalCost }));
+  logs.push(line("💸 Total Cost this round: {totalCost} Gold", { totalCost }));
   // The indent is the ledger's own nesting, not the row's, so it stays
   // outside the read.
   logs.push(
-    "   " +
-      t("🔧 Maintenance: {state.maintenanceCosts} Gold", {
-        "state.maintenanceCosts": state.maintenanceCosts,
-      }),
+    line(
+      "🔧 Maintenance: {state.maintenanceCosts} Gold",
+      { "state.maintenanceCosts": state.maintenanceCosts },
+      "   ",
+    ),
   );
   // A Materials line sat here, reading a materialCosts field that nothing in
   // the engine ever wrote, so it printed 0 Gold every round of every voyage.
@@ -86,12 +88,12 @@ function endRound(state: GameState, logs: string[]) {
   // which charged them twice against the tax base this ledger feeds.
   // This row carries its own indent, unlike the maintenance row above.
   logs.push(
-    t("   👥 Wages: {state.workerWages} Gold", {
+    line("   👥 Wages: {state.workerWages} Gold", {
       "state.workerWages": state.workerWages,
     }),
   );
   const preTax = state.roundRevenue - totalCost;
-  logs.push(t("📈 Pretax Profit: {preTax} Gold", { preTax }));
+  logs.push(line("📈 Pretax Profit: {preTax} Gold", { preTax }));
   const tax = calcIncomeTax(state, preTax);
   if (tax > 0) {
     state.money -= tax;
@@ -107,15 +109,15 @@ function endRound(state: GameState, logs: string[]) {
     // showed ten while the charge took five.
     const rate = incomeTaxRate(state) * 100;
     logs.push(
-      t("🏛️ Income Tax Paid ({rate}%): {tax} Gold", {
+      line("🏛️ Income Tax Paid ({rate}%): {tax} Gold", {
         rate: rate.toFixed(0),
         tax,
       }),
     );
-  } else logs.push(t("🏛️ No profit, no income tax due"));
+  } else logs.push(line("🏛️ No profit, no income tax due"));
   if (state.vatPaid > 0)
     logs.push(
-      t("🧾 VAT Paid this round: {state.vatPaid} Gold", {
+      line("🧾 VAT Paid this round: {state.vatPaid} Gold", {
         "state.vatPaid": state.vatPaid,
       }),
     );
@@ -140,7 +142,7 @@ function endRound(state: GameState, logs: string[]) {
     return;
   }
   logs.push(
-    t("\n🔄=== Preparing for Round {state.currentRound} ===", {
+    line("\n🔄=== Preparing for Round {state.currentRound} ===", {
       "state.currentRound": state.currentRound,
     }),
   );
@@ -165,11 +167,11 @@ function endRound(state: GameState, logs: string[]) {
 //
 // Private so the lap stays the only caller: a second caller is exactly the
 // second code path that would keep its own opinion about what comes next.
-function completeOrders(state: GameState, logs: string[]) {
-  if (state.orderCount === 0) logs.push(t("⏭️ Trading skipped"));
+function completeOrders(state: GameState, logs: LedgerLine[]) {
+  if (state.orderCount === 0) logs.push(line("⏭️ Trading skipped"));
   else
     logs.push(
-      t("✅ Trading ended, completed {state.orderCount} trades", {
+      line("✅ Trading ended, completed {state.orderCount} trades", {
         "state.orderCount": state.orderCount,
       }),
     );
@@ -183,9 +185,9 @@ function completeOrders(state: GameState, logs: string[]) {
 // Named for the phase it opens rather than for its position in the leg: a
 // function called startPhase3 that opens Resolve is a name a reader has to
 // translate.
-function startResolve(state: GameState, logs: string[]) {
+function startResolve(state: GameState, logs: LedgerLine[]) {
   state.phase = "resolve";
-  logs.push(t("\n👥=== Processing Worker Production ==="));
+  logs.push(line("\n👥=== Processing Worker Production ==="));
   processProduction(state, logs);
 }
 
@@ -212,7 +214,7 @@ function startResolve(state: GameState, logs: string[]) {
 //
 // Private for the same reason as completeOrders above: the settlement panel
 // reaches it through nextPhase now, so nothing outside this module names it.
-function finishSettlement(state: GameState, logs: string[]) {
+function finishSettlement(state: GameState, logs: LedgerLine[]) {
   // [C3: garments and the cold] The cold is settled with the books, which is
   // where the plan puts it: decay and the check tick inside settlement, on
   // the deterministic resolve step, and the module reads the round rather
@@ -235,11 +237,11 @@ function finishSettlement(state: GameState, logs: string[]) {
   // who wrote their evidence, and never at a screen (see
   // noteSettlementMilestones in ./milestones).
   noteSettlementMilestones(state, logs);
-  logs.push(t("\n💰=== Paying Worker Wages ==="));
+  logs.push(line("\n💰=== Paying Worker Wages ==="));
   const wageResult = payWages(state, logs);
   if (wageResult === "bankruptcy") return failSeat(state, logs);
   logs.push(
-    t("\n🔧=== Round {state.currentRound} · Resolve: Ship Maintenance ===", {
+    line("\n🔧=== Round {state.currentRound} · Resolve: Ship Maintenance ===", {
       "state.currentRound": state.currentRound,
     }),
   );
@@ -247,10 +249,10 @@ function finishSettlement(state: GameState, logs: string[]) {
   if (maintResult === "bankruptcy") return failSeat(state, logs);
 }
 
-function startDusk(state: GameState, logs: string[]) {
+function startDusk(state: GameState, logs: LedgerLine[]) {
   state.phase = "dusk";
   logs.push(
-    t("\n🚢=== Round {state.currentRound} · Dusk: Shipyard & Modules ===", {
+    line("\n🚢=== Round {state.currentRound} · Dusk: Shipyard & Modules ===", {
       "state.currentRound": state.currentRound,
     }),
   );
@@ -264,35 +266,36 @@ function startDusk(state: GameState, logs: string[]) {
 // never settled a round at all. Closing is now the handoff's job, driven by
 // whether the lap says this is its last entry, so a longer leg settles on its
 // own closing phase without the engine being told which one that is.
-function skipUpgrade(logs: string[]) {
-  logs.push(t("⏭️ Skipped Shipyard Actions"));
+function skipUpgrade(logs: LedgerLine[]) {
+  logs.push(line("⏭️ Skipped Shipyard Actions"));
 }
 
-function endGame(state: GameState, logs: string[]) {
+function endGame(state: GameState, logs: LedgerLine[]) {
   state.gameOver = true;
   state.phase = "endgame";
-  logs.push("\n" + "=".repeat(50));
-  logs.push(t("🎮 {APP_NAME} · Game Over!", { APP_NAME }));
+  logs.push(rule("=", 50, "\n"));
+  logs.push(line("🎮 {APP_NAME} · Game Over!", { APP_NAME }));
   logs.push(
-    t("💰 Final Funds: {state.money} Gold", { "state.money": state.money }),
+    line("💰 Final Funds: {state.money} Gold", { "state.money": state.money }),
   );
   logs.push(
-    t("🏆 Final Reputation: {state.score}", { "state.score": state.score }),
+    line("🏆 Final Reputation: {state.score}", { "state.score": state.score }),
   );
   logs.push(
-    t("🧾 Total Taxes Paid: {taxesPaid} Gold", {
+    line("🧾 Total Taxes Paid: {taxesPaid} Gold", {
       taxesPaid: state.vatPaid + state.incomeTaxPaid,
     }),
   );
   logs.push(
-    t("📈 Rank: {rating}", {
-      rating: endgameRatingFor(state.score, state.defaultedDebt),
+    line("📈 Rank: {rating}", {
+      rating: (locale) =>
+        endgameRatingFor(state.score, state.defaultedDebt, locale),
     }),
   );
-  logs.push("=".repeat(50));
+  logs.push(rule());
 }
 
-// A voyage restarted by the host, or by the room rolling into a new one.
+// A voyage restarted by the host, or by the harbor rolling into a new one.
 // Everything the new voyage is seeded with, including the captain's pledged
 // House, arrives as one VoyageSetup; see createInitialGameState for what
 // each field means and what it falls back to.
@@ -307,7 +310,7 @@ function endGame(state: GameState, logs: string[]) {
 // than a reference shared with the abandoned voyage.
 export function restartGame(
   state: GameState,
-  logs: string[],
+  logs: LedgerLine[],
   setup: VoyageSetup = {},
 ) {
   const orders = state.standingOrders;
@@ -317,13 +320,15 @@ export function restartGame(
   showWelcome(state, logs);
 }
 
-export function showWelcome(state: GameState, logs: string[]) {
+export function showWelcome(state: GameState, logs: LedgerLine[]) {
   state.phase = "harbor";
-  logs.push("=".repeat(50));
-  logs.push(t("⚓ Welcome to {APP_NAME}!", { APP_NAME }));
-  logs.push(t("🚢 Sail across ports, build your business empire!"));
-  logs.push(t("👥 Hire artisans to craft valuable goods for higher profits!"));
-  logs.push("=".repeat(50));
+  logs.push(rule());
+  logs.push(line("⚓ Welcome to {APP_NAME}!", { APP_NAME }));
+  logs.push(line("🚢 Sail across ports, build your business empire!"));
+  logs.push(
+    line("👥 Hire artisans to craft valuable goods for higher profits!"),
+  );
+  logs.push(rule());
 }
 
 // Advances a captain one step from wherever they are.
@@ -332,7 +337,7 @@ export function showWelcome(state: GameState, logs: string[]) {
 // phase it leads to, because that is the lap's business: the handoff at the
 // bottom reads the mode's own order and opens whatever comes next. Two modes
 // can therefore run two different legs through this same function, and a third
-// one only has to be described in ./mode.ts.
+// one only has to be described in ../mode.ts.
 //
 // The switch falls through to the handoff for every phase whose departure is a
 // ready check step. The harbor is the pier, where nothing advances without the
@@ -353,10 +358,14 @@ export function showWelcome(state: GameState, logs: string[]) {
 // [W2: the path draft] And a seventh case beside them, which breaks rather
 // than settling anything: the draft's seat has no work of its own to commit
 // at the departure, because the whole of its work happened on the server
-// before the room was told to move. The picks were laid as they were taken,
+// before the harbor was told to move. The picks were laid as they were taken,
 // the settled path rides the view this client already read (see
 // applyDraftPath), and the departure is the lap's own step off the seat.
-export function nextPhase(state: GameState, ctx: GameContext, logs: string[]) {
+export function nextPhase(
+  state: GameState,
+  ctx: GameContext,
+  logs: LedgerLine[],
+) {
   // Read through the same normalizer the load heal uses (see heal-save):
   // a token this build does not speak moves as the phase it means rather
   // than falling to the default below, where the seat would advance
@@ -418,7 +427,7 @@ export function nextPhase(state: GameState, ctx: GameContext, logs: string[]) {
 function handOff(
   state: GameState,
   ctx: GameContext,
-  logs: string[],
+  logs: LedgerLine[],
   from: Phase,
 ) {
   if (closesRound(state.mode, from)) {
@@ -442,7 +451,7 @@ export function lockInBoon(
   state: GameState,
   ctx: GameContext,
   boonId: string,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   if (!selectBoon(state, boonId, logs)) return;
   handOff(state, ctx, logs, "dawn");
@@ -456,7 +465,7 @@ const AUTO_COMMIT_PRESSES = 3;
 // Whether a generic "I am done with this seat" press has a departure to make
 // from where this captain stands.
 //
-// The room gates five seats, and every one of them is left by doing the seat's
+// The harbor gates five seats, and every one of them is left by doing the seat's
 // work and then stepping off it: the market settles, the parley closes, the
 // orders are counted, the raid and then the books are settled, the yard is
 // skipped. Three seats are not left that way and have no generic departure at
@@ -466,14 +475,14 @@ const AUTO_COMMIT_PRESSES = 3;
 // And the draft's seat [W2] is left by the deal settling rather than by any
 // captain's press: the server announces the advance when every seat holds a
 // card, so a ready vote here would be a promise about a step that is not the
-// room's to take early. A captain standing anywhere else (inside the module
-// draft, at the terminal screens) is not standing at a seat the room is
+// harbor's to take early. A captain standing anywhere else (inside the module
+// draft, at the terminal screens) is not standing at a seat the harbor is
 // waiting on at all.
 //
 // This is asked before a ready vote rather than after one, because the vote is
-// a promise the whole table pays for. The room announces the advance once
+// a promise the whole table pays for. The harbor announces the advance once
 // every captain has readied, and each client then runs the transition it was
-// holding: a captain who readies with nothing that can move leaves the room
+// holding: a captain who readies with nothing that can move leaves the harbor
 // holding a full ready set that no departure will carry out, which is a table
 // where the bar reads "2/2 ready" and the voyage never proceeds. A press that
 // cannot move is refused instead of sent.
@@ -502,11 +511,11 @@ export function canLeavePhase(state: {
 // Returns whether the seat was actually left. The false answer is a real one
 // and its callers check it: a captain standing where canLeavePhase says no,
 // or in a seat whose departure failed, is a captain whose press must not be
-// sent to the room.
+// sent to the harbor.
 export function leavePhase(
   state: GameState,
   ctx: GameContext,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
   if (!canLeavePhase(state)) return false;
   const from = state.phase;
@@ -537,11 +546,15 @@ export function leavePhase(
 // inside Dusk rather than at a seat of its own. That walk is leavePhase, one
 // definition under this one and the one a captain's own press makes; the cap
 // it carries is what makes a departure that will not move a captain who
-// stands still instead of a loop that never ends, and the room's clock is what
+// stands still instead of a loop that never ends, and the harbor's clock is what
 // tries again.
-export function autoCommit(state: GameState, ctx: GameContext, logs: string[]) {
+export function autoCommit(
+  state: GameState,
+  ctx: GameContext,
+  logs: LedgerLine[],
+) {
   // The draft and the swap are the two phases that are inside a seat rather
-  // than a seat: the room's checkpoint waits at Dusk while a captain is in
+  // than a seat: the harbor's checkpoint waits at Dusk while a captain is in
   // one, and Dusk is what the clock ran out on.
   if (state.phase === "module_draft" || state.phase === "module_swap") {
     cancelModuleDraft(state);
@@ -579,9 +592,9 @@ export function autoCommit(state: GameState, ctx: GameContext, logs: string[]) {
   // [W2: the path draft] The draft's seat is left by the deal settling
   // rather than by a press, which is why the generic departure below cannot
   // carry it: canLeavePhase refuses this seat on purpose, so that no ready
-  // vote can promise the room a step only the settle may take. The
+  // vote can promise the harbor a step only the settle may take. The
   // departure still runs here, because this function is what a client runs
-  // when the room's own advance frame arrives, and that frame only ever
+  // when the harbor's own advance frame arrives, and that frame only ever
   // comes after settleDraft has put every seat's path in its captain's
   // hands. The step off is the lap's, the same one a ready set would have
   // taken, and no standing order has anything to do at this seat.
@@ -599,7 +612,7 @@ export function autoCommit(state: GameState, ctx: GameContext, logs: string[]) {
   //
   // The cancel above is why the guard inside leavePhase is read after it
   // rather than before: a captain the clock found inside the module draft has
-  // just been put back at Dusk, which is a seat the room gates and which this
+  // just been put back at Dusk, which is a seat the harbor gates and which this
   // departure can therefore leave.
   if (orders) workStandingOrders(state, orders, logs);
   leavePhase(state, ctx, logs);
@@ -609,20 +622,20 @@ export function autoCommit(state: GameState, ctx: GameContext, logs: string[]) {
 //
 // This is the lower half of snapToCheckpoint and the upper half of the lap
 // handoff above, which is why it is one function rather than two switches:
-// a captain catching up to the room and a captain stepping forward through
+// a captain catching up to the harbor and a captain stepping forward through
 // their own voyage have to land in exactly the same state, and the only way
 // to be sure of that is for both to run this.
 //
 // The value comes off a wire or out of a save, so it is normalized before it
-// is read: a room that still holds one of the older checkpoint names, or a
+// is read: a harbor that still holds one of the older checkpoint names, or a
 // save written by an older build, opens the phase that name means rather than
 // falling through to nothing and leaving the captain where they were. The pier
 // falls through on purpose, because the pier is where a voyage waits: nothing
-// in catching up to the room may replace the host's own order to set sail.
+// in catching up to the harbor may replace the host's own order to set sail.
 function enterPhase(
   state: GameState,
   ctx: GameContext,
-  logs: string[],
+  logs: LedgerLine[],
   phaseStr: string,
 ): void {
   switch (normalizePhase(phaseStr)) {
@@ -662,7 +675,7 @@ export function snapToCheckpoint(
   ctx: GameContext,
   round: number,
   phaseStr: string,
-  logs: string[],
+  logs: LedgerLine[],
 ): void {
   state.currentRound = round;
   enterPhase(state, ctx, logs, phaseStr);

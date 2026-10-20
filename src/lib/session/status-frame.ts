@@ -37,7 +37,7 @@ export function statusFrame(roomId: string, game: GameState) {
     marooned: game.marooned,
     // [C1: the Larder and Short Rations] The fleet can see a hungry crew.
     // The plan asks for the shortage to be public, and this is the frame
-    // the room already broadcasts: onShortRations answers false with the
+    // the harbor already broadcasts: onShortRations answers false with the
     // layer switched off, so a base game voyage reports undefined here
     // and no badge is drawn anywhere.
     shortRations: onShortRations(game) || undefined,

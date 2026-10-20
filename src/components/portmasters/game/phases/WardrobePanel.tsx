@@ -16,12 +16,11 @@ import {
   wearGarment,
 } from "@/lib/game/garments";
 import { t } from "@/lib/game/i18n";
-import { crewSize } from "@/lib/game/larder";
+import { crewSize } from "@/lib/game/types";
 import { itemColorResolver } from "@/lib/use-color-preference";
-import { ItemIcon } from "../../shared";
+import { ItemIcon, PanelLabel } from "../../shared";
 import {
   HuePanel,
-  PanelLabel,
   PanelNote,
   PanelStat,
   type PhasePanelProps,
@@ -72,6 +71,7 @@ export function Wardrobe({
       <PanelLabel
         tone="text-wardrobe"
         note={t("a garment worn stays on until it wears out")}
+        className="mb-1.5"
       >
         {t("🧥 Wardrobe")}
       </PanelLabel>

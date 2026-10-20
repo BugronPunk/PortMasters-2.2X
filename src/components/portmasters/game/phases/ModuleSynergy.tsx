@@ -6,6 +6,7 @@ import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { HuePanel } from "./PhasePanels";
+import { PanelLabel } from "../../shared";
 
 /**
  * Module interaction rules. Each rule names a set of module IDs and the
@@ -150,9 +151,9 @@ export function ModuleSynergyAnalyzer({
 
   return (
     <HuePanel tone="modules" className="p-3.5 mb-4">
-      <div className="text-[10px] font-semibold tracking-wide text-muted-foreground mb-2">
+      <PanelLabel tone="text-muted-foreground" className="mb-2">
         {t("Module Synergy Analysis")}
-      </div>
+      </PanelLabel>
       {/* Active bonuses */}
       {activeBonuses.length > 0 && (
         <div className="mb-2">

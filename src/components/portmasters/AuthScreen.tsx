@@ -36,7 +36,7 @@ import {
 } from "@/components/portmasters/CredentialCard";
 
 // The register tab: the captain's own two fields with the app's display
-// name between them, because a harbor is easier to read when the room
+// name between them, because a harbor is easier to read when the harbor
 // shows what a captain calls themselves rather than what they sign in as.
 const REGISTER_FIELDS: CredentialFieldSpec[] = [
   { ...CHOSEN_NAME, autoFocus: true },

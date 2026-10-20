@@ -26,7 +26,7 @@ import {
  * The cards are the same draft cards the boon draft deals, in the module
  * hue.
  *
- * The room's bar is drawn under the header because this screen is a seat
+ * The harbor's bar is drawn under the header because this screen is a seat
  * the ready check waits on: a captain inside the draft is standing at
  * Dusk, and the table holds for them until they finish or the seat's clock
  * runs out. The bar is what says so, with the countdown and the captains

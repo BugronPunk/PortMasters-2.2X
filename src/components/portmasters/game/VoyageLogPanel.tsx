@@ -10,7 +10,7 @@ import type { VoyageLog } from "@/lib/use-voyage-log";
 //
 // The plan asks for one surface holding a public log and a private one,
 // and the pair is the whole point: the column on the left is what the
-// room said out loud, written by the server and sent to every socket in
+// harbor said out loud, written by the server and sent to every socket in
 // the harbor, and the column on the right is what was addressed to this
 // captain alone. Reading them together is what tells a captain who stepped
 // away what happened while they were gone and what happened to them in
@@ -75,17 +75,16 @@ export function VoyageLogPanel({
       </div>
       {/* The two columns split once the stage is wide enough to hold them
           side by side, and stack before that. Read off the window instead,
-          the split would happen on a screen where the room's middle column
+          the split would happen on a screen where the harbor's middle column
           is narrower than the window and leave two columns of four words. */}
       <div
         ref={scrollRef}
         className="pm-scroll mt-2 max-h-64 overflow-y-auto pr-1 grid grid-cols-1 @2xl:grid-cols-2 gap-x-4 gap-y-3"
       >
         <div>
-          <div
-            className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1"
-            dangerouslySetInnerHTML={{ __html: t("The harbor&apos;s log") }}
-          />
+          <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+            {t("The harbor's log")}
+          </div>
           {entries.length === 0 ? (
             <p className="text-[11px] italic text-muted-foreground">
               {t("The harbor has recorded nothing on this voyage yet.")}

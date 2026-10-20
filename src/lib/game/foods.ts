@@ -57,7 +57,7 @@ import {
 import { survivalLayerOn } from "./flags";
 import { holdCapacityOn, storeRoomMeals } from "./hold";
 import { wholeStamp, type GameState, type LarderLot } from "./types";
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 
 // The most lots a voyage can legitimately be carrying. Purchases merge
 // into the lot of the same food bought in the same leg, so a twelve leg
@@ -274,7 +274,7 @@ export function reconcileLarder(state: GameState): void {
  * lasts six, and grain is never asked. The count comes down with the
  * account, in the same statement, so the two cannot part over a loss.
  */
-export function tickSpoilage(state: GameState, logs: string[]): void {
+export function tickSpoilage(state: GameState, logs: LedgerLine[]): void {
   if (!survivalLayerOn(state.mode)) return;
   if (state.larderSpoilRound === state.currentRound) return;
   state.larderSpoilRound = state.currentRound;
@@ -298,13 +298,13 @@ export function tickSpoilage(state: GameState, logs: string[]): void {
     if (!meals) continue;
     spoiled += meals;
     logs.push(
-      t(
+      line(
         "{foodIcon} {meals} {rationWord} of {food} turned at sea. {larderAfter} left in the larder.",
         {
           foodIcon: FOODS[food].icon,
           meals,
           rationWord: meals === 1 ? "ration" : "rations",
-          food: t(food),
+          food: line(food),
           larderAfter: Math.max(0, state.larder - spoiled),
         },
       ),
@@ -335,14 +335,14 @@ export function tickSpoilage(state: GameState, logs: string[]): void {
  *
  * Returns the batches converted, so the caller can report what happened.
  */
-export function preserveFood(state: GameState, logs: string[]): number {
+export function preserveFood(state: GameState, logs: LedgerLine[]): number {
   if (!survivalLayerOn(state.mode)) return 0;
   reconcileLarder(state);
   const produce = mealsOf(state, "Produce");
   const batches = Math.floor(produce / PRESERVE_MEALS_IN);
   if (batches <= 0) {
     logs.push(
-      t(
+      line(
         "❌ Not enough Produce aboard to preserve: a batch is {PRESERVE_MEALS_IN} meals.",
         { PRESERVE_MEALS_IN },
       ),
@@ -355,7 +355,7 @@ export function preserveFood(state: GameState, logs: string[]): number {
   addLot(state, "Salt Fish", made, state.currentRound);
   state.larder = Math.max(0, state.larder - (taken - made));
   logs.push(
-    t(
+    line(
       "🐟 Preserved {taken} {rationWord} of Produce into {made} of Salt Fish ({state.larder} in the larder).",
       {
         taken,

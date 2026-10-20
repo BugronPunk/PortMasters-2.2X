@@ -34,28 +34,29 @@ Two things surprise people at first. The port is 8080, not 3000. And there is no
 
 ## What each command does
 
-| Command                     | What it does                                                                                        |
-| --------------------------- | --------------------------------------------------------------------------------------------------- |
-| `npm run dev`               | Starts the game in development mode on port 8080, with hot reload                                   |
-| `npm run build`             | Generates the database client, runs the tag, card and status checks, then produces a build          |
-| `npm start`                 | Runs the production build on port 8080                                                              |
-| `npm run typecheck`         | Checks every TypeScript file and reports type errors                                                |
-| `npm run lint`              | Runs ESLint across the project                                                                      |
-| `npm run test:smoke`        | Drives a real voyage through a running server and checks it arrived                                 |
-| `npm run check:palette`     | Checks the widget hues, their distance from the danger red, and that no raw colour class slipped in |
-| `npm run check:private`     | Scans the tree for a second path to any secret the game hides, and fails on the first one           |
-| `npm run check:tags`        | Checks the tag vocabulary, the two tag rule, and every entry that carries a word                    |
-| `npm run check:cards`       | Checks the card record, the mode pools, and that no card names a good in its text                   |
-| `npm run check:closed-test` | Refuses to bless a closed test unless the database it resolves is a local closed-test file          |
-| `npm run check:status`      | Checks the status convention: three clauses per family, and no guarded sentence spelled twice       |
-| `npm run report:bands`      | Prints every Ocean Gambit win rate band against its target, per role and per table size             |
-| `npm run report:gates`      | Prints the plan's sixteen launch gates over the last three hundred voyages, with the ship decision  |
-| `npm run report:cards`      | Prints each card's offer to pick conversion with the appearance count beside it                     |
-| `npm run report:modules`    | Prints each module's equipped count against its traded count across every voyage save               |
-| `npm run report:milestones` | Prints retention for each milestone cohort: the share still in the harbor at the close              |
-| `npm run report:pairs`      | Prints every card pair's win rate, flagging any pair past the win ceiling or share                  |
-| `npm run db:push`           | Creates or updates the SQLite tables to match the schema                                            |
-| `npm run db:generate`       | Regenerates the database client after a schema change                                               |
+| Command                     | What it does                                                                                             |
+| --------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `npm run dev`               | Starts the game in development mode on port 8080, with hot reload                                        |
+| `npm run build`             | Generates the database client, runs the tag, card, status and dead surface checks, then produces a build |
+| `npm start`                 | Runs the production build on port 8080                                                                   |
+| `npm run typecheck`         | Checks every TypeScript file and reports type errors                                                     |
+| `npm run lint`              | Runs ESLint across the project                                                                           |
+| `npm run test:smoke`        | Drives a real voyage through a running server and checks it arrived                                      |
+| `npm run check:palette`     | Checks the widget hues, their distance from the danger red, and that no raw colour class slipped in      |
+| `npm run check:private`     | Scans the tree for a second path to any secret the game hides, and fails on the first one                |
+| `npm run check:tags`        | Checks the tag vocabulary, the two tag rule, and every entry that carries a word                         |
+| `npm run check:cards`       | Checks the card record, the mode pools, and that no card names a good in its text                        |
+| `npm run check:closed-test` | Refuses to bless a closed test unless the database it resolves is a local closed-test file               |
+| `npm run check:status`      | Checks the status convention: three clauses per family, and no guarded sentence spelled twice            |
+| `npm run check:dead`        | Finds every export nothing reads and every module nothing imports, and fails on the first one            |
+| `npm run report:bands`      | Prints every Ocean Gambit win rate band against its target, per role and per table size                  |
+| `npm run report:gates`      | Prints the plan's sixteen launch gates over the last three hundred voyages, with the ship decision       |
+| `npm run report:cards`      | Prints each card's offer to pick conversion with the appearance count beside it                          |
+| `npm run report:modules`    | Prints each module's equipped count against its traded count across every voyage save                    |
+| `npm run report:milestones` | Prints retention for each milestone cohort: the share still in the harbor at the close                   |
+| `npm run report:pairs`      | Prints every card pair's win rate, flagging any pair past the win ceiling or share                       |
+| `npm run db:push`           | Creates or updates the SQLite tables to match the schema                                                 |
+| `npm run db:generate`       | Regenerates the database client after a schema change                                                    |
 
 For a production run, the order is `npm install`, `npm run db:push`, `npm run build`, then `npm start`.
 
@@ -119,7 +120,7 @@ Each House carries one small passive perk, applied when a fresh voyage starts an
 
 ### Bartering between captains
 
-Captains trade goods and Gold directly, on two surfaces that share one board. An offer can be open to the whole harbor or aimed at one named captain, and it is real room state rather than a message, so the goods behind it are escrowed the moment it is posted and come back to the poster if it is withdrawn or swept.
+Captains trade goods and Gold directly, on two surfaces that share one board. An offer can be open to the whole harbor or aimed at one named captain, and it is real harbor state rather than a message, so the goods behind it are escrowed the moment it is posted and come back to the poster if it is withdrawn or swept.
 
 The Captain's Exchange is the first surface, and it stands open for the whole Parley of every round, to every captain aboard, from their first voyage. The harbor chat carries the second one, which is where flexible bartering lives, and that is the surface that is earned rather than given.
 
@@ -145,13 +146,13 @@ The phrase is seeded in the world rather than printed on the form, and there are
 
     the second ledger
 
-It is a room setting rather than an account one, and that is the design rather than a shortcut. Whoever has the phrase can open the table for everybody who sits down at it, the harbor remembers which door it was opened through and says so on the room card, and nothing is spent or rationed by using it. A phrase that opened one harbor opens the next one too.
+It is a harbor setting rather than an account one, and that is the design rather than a shortcut. Whoever has the phrase can open the table for everybody who sits down at it, the harbor remembers which door it was opened through and says so on the harbor card, and nothing is spent or rationed by using it. A phrase that opened one harbor opens the next one too.
 
 ## What is in the game
 
-**The harbor and the room.** Public and private harbors, a six character join code, a live roster, a ready check that keeps the whole crew in step, and a host who controls the difficulty and the restart.
+**The harbor.** Public and private harbors, a six character join code, a live roster, a ready check that keeps the whole crew in step, and a host who controls the difficulty and the restart.
 
-**The market.** A per captain, per round draw of goods and prices, shaped by what the whole harbor has been buying. Goods the room leans into get dearer, goods nobody touches soften.
+**The market.** A per captain, per round draw of goods and prices, shaped by what the whole harbor has been buying. Goods the harbor leans into get dearer, goods nobody touches soften.
 
 **Trading between captains.** Open barter offers on a shared board, direct offers aimed at one named captain, and an escrow that holds the offered goods the moment an offer is posted. The Captain's Exchange is open to every captain at any Renown level, and the flexible surface in the harbor chat opens at level 10 and widens at level 15. The terms are under Bartering between captains above.
 
@@ -169,19 +170,19 @@ It is a room setting rather than an account one, and that is the design rather t
 
 **The long game.** Captain's Legacy and Renown levels with titles, nine Captain's Merits, a daily check in on a seven day cycle that never punishes a missed day, voyage chronicles written in prose at the end of a run, head to head rivalries, and a harbor wide leaderboard.
 
-**Live harbor life.** Presence, room chat, direct messages, a fleet ticker, tidewatch surge alerts, and Word on the Docks.
+**Live harbor life.** Presence, harbor chat, direct messages, a fleet ticker, tidewatch surge alerts, and Word on the Docks.
 
 **A guide while you play.** The How to Play screen walks a new captain through the whole voyage, and glossary terms throughout the interface can be hovered for a plain explanation.
 
 Solo practice is built in as well. A captain can set sail alone, which is the easiest way to learn a tier before playing it against other people.
 
-**Quick Start.** A captain who just wants to play, without rounding up a room code, presses one button and is seated in the first open public harbor with a free seat. If there is none, the game opens a fresh one and makes them the host.
+**Quick Start.** A captain who just wants to play, without rounding up a harbor code, presses one button and is seated in the first open public harbor with a free seat. If there is none, the game opens a fresh one and makes them the host.
 
 **Seeing the captains you sail with.** A captain at Renown level 5 or above sees the detail of any captain at level 3 or above: what is in their hold and roughly how much Gold they carry. Below either level, only the headline numbers show. Holds are shown as a band rather than an exact count, so a partner can tell a few from a haul without reading your ledger.
 
 **Standing orders.** A captain who has to step away can write down what their seat should do when a phase's clock runs out without them: which boon to take at the draft, the most they will pay for each good on the market board, whether to fill the trade board's orders their hold already covers, and whether to buy the next hull at the shipyard. The set is kept with the voyage and the table does not see it, and every seat an order plays signs the ledger once, so a captain who comes back can read what happened while they were gone. The switch turns the whole thing off without erasing a word of it, and a voyage whose captain never opens the form sails exactly the way it did before the form existed.
 
-**The voyage log.** Dusk shows a captain what happened while they were not looking, in two columns. The left one is the harbor's own log, written by the server and read by everyone in the room: the voyage leaving the dock, each seat the harbor weighs anchor for, offers posted, filled and lapsed, seats the tide ran out on, and captains who left the harbor. The right one is what was addressed to this captain alone, which is where the dealt alignment card arrives and where anything else the table is hiding will land. The log is kept for as long as the voyage is, so a captain who reloads mid voyage can be handed the legs they missed, and it is bounded, so a twelve leg voyage never grows a screen without a ceiling.
+**The voyage log.** Dusk shows a captain what happened while they were not looking, in two columns. The left one is the harbor's own log, written by the server and read by everyone in the harbor: the voyage leaving the dock, each seat the harbor weighs anchor for, offers posted, filled and lapsed, seats the tide ran out on, and captains who left the harbor. The right one is what was addressed to this captain alone, which is where the dealt alignment card arrives and where anything else the table is hiding will land. The log is kept for as long as the voyage is, so a captain who reloads mid voyage can be handed the legs they missed, and it is bounded, so a twelve leg voyage never grows a screen without a ceiling.
 
 ## The 2.2 build and the one before it
 
@@ -214,7 +215,7 @@ The server reads six environment variables. Five of them configure the process a
 
 An environment variable that is already set always wins over the file, which is the order a hosting platform expects. Point `ENV_FILE` at a different file to read from that one instead, which is how two servers run side by side from a single checkout without editing anything back and forth.
 
-Twelve further variables are documented in `.env.example` under their own heading, and none of them is a setting of the server the way the six above are. Each is the rollback for one system of Ocean Gambit, the experimental voyage this branch is building toward, and each is read as two questions in a fixed order: whether the room is a Gambit room, and then what the file says. The mode is asked first, so a switch can only ever take a system away from the mode it belongs to and never hand it to Classic, which is the shipped release kept exactly as it was. That boundary is also why they are not in the table above: they are not knobs on the game, they are the way one mode of it is taken apart, and a Classic harbor plays the game this branch forked from whatever any of them says.
+Twelve further variables are documented in `.env.example` under their own heading, and none of them is a setting of the server the way the six above are. Each is the rollback for one system of Ocean Gambit, the experimental voyage this branch is building toward, and each is read as two questions in a fixed order: whether the harbor is a Gambit harbor, and then what the file says. The mode is asked first, so a switch can only ever take a system away from the mode it belongs to and never hand it to Classic, which is the shipped release kept exactly as it was. That boundary is also why they are not in the table above: they are not knobs on the game, they are the way one mode of it is taken apart, and a Classic harbor plays the game this branch forked from whatever any of them says.
 
 `next.config.ts` reads two more, and only while the development server is running, because they decide which hostnames may load development resources: the compiled chunks under `/_next`, the hot reload channel, and the internal endpoints. Next.js allows `localhost` on its own. `ALLOWED_DEV_ORIGINS` adds any other hostname as a comma separated list, and `RAILWAY_PUBLIC_DOMAIN` is read as well, which the host injects with the hostname the running service answers on. A production build reads neither.
 
@@ -268,20 +269,20 @@ The shared HTTP surface is deliberately narrow. Cross origin socket access is sw
 
 ### Where things live
 
-| Path                         | What is in it                                                               |
-| ---------------------------- | --------------------------------------------------------------------------- |
-| `server.ts`                  | The process entry point: Next.js and Socket.IO on one server                |
-| `src/app`                    | The page and every REST route under `/api`                                  |
-| `src/components/portmasters` | The game interface: the lobby, the room, every phase screen and every modal |
-| `src/lib/game`               | The rules engine. Pure functions with no React, no database and no sockets  |
-| `src/lib/game/engine`        | The per system rules, from market and orders to houses and the ages         |
-| `src/lib`                    | The client hooks, the REST helpers and the session and realtime plumbing    |
-| `src/server`                 | The realtime layer and the environment bootstrap                            |
-| `prisma`                     | The database schema                                                         |
-| `scripts`                    | The build gates and the end to end smoke battery                            |
-| `docs`                       | The release notes for 2.2 plus the design notes and the analysis            |
-| `next.config.ts`             | The Next.js settings, including which hosts may load development resources  |
-| `railway.json`               | The host configuration: build, start, healthcheck and the volume guard      |
+| Path                         | What is in it                                                                 |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| `server.ts`                  | The process entry point: Next.js and Socket.IO on one server                  |
+| `src/app`                    | The page and every REST route under `/api`                                    |
+| `src/components/portmasters` | The game interface: the lobby, the harbor, every phase screen and every modal |
+| `src/lib/game`               | The rules engine. Pure functions with no React, no database and no sockets    |
+| `src/lib/game/engine`        | The per system rules, from market and orders to houses and the ages           |
+| `src/lib`                    | The client hooks, the REST helpers and the session and realtime plumbing      |
+| `src/server`                 | The realtime layer and the environment bootstrap                              |
+| `prisma`                     | The database schema                                                           |
+| `scripts`                    | The build gates and the end to end smoke battery                              |
+| `docs`                       | The release notes for 2.2 plus the design notes and the analysis              |
+| `next.config.ts`             | The Next.js settings, including which hosts may load development resources    |
+| `railway.json`               | The host configuration: build, start, healthcheck and the volume guard        |
 
 ### The rules engine is separate on purpose
 
@@ -291,9 +292,9 @@ The database holds the durable things: accounts, sessions, harbors, memberships,
 
 ### One behaviour worth knowing
 
-On boot, the realtime layer reconciles room membership. A seat belongs to a live connection, so every captain who is not currently connected is scheduled to leave, and the room is left holding only the people actually there. That keeps a harbor from waiting forever on somebody whose tab closed weeks ago.
+On boot, the realtime layer reconciles harbor membership. A seat belongs to a live connection, so every captain who is not currently connected is scheduled to leave, and the harbor is left holding only the people actually there. That keeps a harbor from waiting forever on somebody whose tab closed weeks ago.
 
-The room itself survives the restart, along with the voyage saved inside it. Starting the server drops the seats that went cold and keeps the harbor, so a room you made is still listed the next time you launch the game. One consequence is worth knowing: a harbor whose entire crew has gone home can be walked into and taken over by whoever finds it, because there is no voyage in progress to interrupt. That is what stops a kept room from turning into one nobody can ever open again.
+The harbor itself survives the restart, along with the voyage saved inside it. Starting the server drops the seats that went cold and keeps the harbor, so a harbor you made is still listed the next time you launch the game. One consequence is worth knowing: a harbor whose entire crew has gone home can be walked into and taken over by whoever finds it, because there is no voyage in progress to interrupt. That is what stops a kept harbor from turning into one nobody can ever open again.
 
 ## Troubleshooting
 

@@ -16,6 +16,7 @@ import {
 import { useId } from "react";
 import type { MeritId } from "@/lib/game/merits";
 import { ICONS } from "@/lib/game/constants/brand";
+import { t } from "@/lib/game/i18n";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -112,8 +113,8 @@ export function OnlineDot({
  * than broken, and red would be the wrong word for it. Gold is the entry
  * that made one copy worth having.
  * It is the one tone whose words do not wear the token's own text colour,
- * pairing its wash with the gold ink instead, and both --gold and
- * --gold-ink are real tokens. A copy that reached for the wrong one
+ * pairing its wash with the gold ink instead, and both the gold token and
+ * the gold ink token are real ones. A copy that reached for the wrong one
  * would render in a plausible colour rather than a broken one, which is
  * the kind of mistake that survives a review.
  */
@@ -232,6 +233,65 @@ export function ItemIcon({
   );
 }
 
+// The two tiers this label is printed at. The small one is a real tier and
+// not a copy that drifted: a panel's own subhead reads a size under the
+// panel's label, and a hand copy of that shape is a copy that can drift
+// out of the shape it was made from.
+//
+// The space a label leaves under itself is the caller's and not the tier's:
+// the same label heads a panel, a section of the status rail and a line on
+// a header row, and each of those sits at its own depth.
+const PANEL_LABEL_SIZES = {
+  md: "text-[10px] font-semibold tracking-wide",
+  sm: "text-[9px] font-semibold tracking-wide",
+} as const;
+
+/**
+ * The small label a hue panel leads with: the glyph and the name in the
+ * panel's own hue, with an optional plain sentence trailing it.
+ *
+ * The status rail's own section heads are this label as well, which is why
+ * it lives here beside the rest of the shared kit rather than in the phase
+ * panels: two folders read it and neither of them owns it.
+ *
+ * The element is a prop because one of these labels is a heading, the
+ * vote card's own (see VoteCardShell), and a heading that quietly stops
+ * being one is a heading a screen reader stops announcing.
+ */
+export function PanelLabel({
+  tone,
+  children,
+  note,
+  size = "md",
+  className,
+  as: Tag = "div",
+}: {
+  tone: string;
+  children: React.ReactNode;
+  note?: React.ReactNode;
+  /** The tier the label is printed at. */
+  size?: keyof typeof PANEL_LABEL_SIZES;
+  className?: string;
+  /** The element the label is drawn as. */
+  as?: "div" | "h4" | "span";
+}) {
+  return (
+    <Tag
+      className={cn(
+        "flex items-center gap-1.5",
+        PANEL_LABEL_SIZES[size],
+        tone,
+        className,
+      )}
+    >
+      {children}
+      {note && (
+        <span className="font-normal text-muted-foreground ml-1">{note}</span>
+      )}
+    </Tag>
+  );
+}
+
 /**
  * The header cell of the two operator tables. Both are read by the same
  * person in the same sitting, so both draw their headings the same way:
@@ -319,6 +379,36 @@ export function CredentialField({
   );
 }
 
+// The two tiers the notice is printed at. The small one is a real tier and
+// not a copy that drifted: a panel that reports a refused action prints it
+// inside the panel, where the figure it refused is the loud part of the
+// screen and the sentence beside it is not. The two carry their own shape
+// rather than one shape at two sizes, because a notice that sits beside a
+// press and a notice that stands on its own are not the same box.
+const NOTICE_TIERS = {
+  md: {
+    frame: "rounded-xl border-alarm/20 py-2.5 text-sm",
+    layout: "items-start gap-2.5",
+    // The message stands on its own, so it is a paragraph and it takes the
+    // space the press leaves it.
+    body: "p",
+    bodyClass: "flex-1 leading-relaxed",
+    glyph: "",
+    dismiss:
+      "-mr-1 -mt-0.5 shrink-0 rounded-full p-1 transition-colors hover:bg-alarm/10",
+  },
+  sm: {
+    frame: "rounded-lg border-alarm/25 py-2 text-xs",
+    layout: "items-center justify-between",
+    // Here the message sits beside the press, so it is a span and it wears
+    // the warning glyph that says the panel is refusing something.
+    body: "span",
+    bodyClass: "",
+    glyph: "⚠️ ",
+    dismiss: "",
+  },
+} as const;
+
 /**
  * The banner a screen shows when it has something to explain about the
  * session rather than about what was just typed: a ban, a deletion, a
@@ -332,26 +422,36 @@ export function Notice({
   message,
   onDismiss,
   className,
+  size = "md",
 }: {
   message: string;
   onDismiss?: () => void;
   className?: string;
+  /** The tier the notice is printed at. */
+  size?: keyof typeof NOTICE_TIERS;
 }) {
+  const tier = NOTICE_TIERS[size];
+  const Body = tier.body;
   return (
     <div
       className={cn(
-        "flex items-start gap-2.5 rounded-xl border border-alarm/20 bg-alarm/5 px-3.5 py-2.5 text-sm text-alarm",
+        "flex border bg-alarm/5 px-3.5 text-alarm",
+        tier.frame,
+        tier.layout,
         className,
       )}
     >
-      <p className="flex-1 leading-relaxed">{message}</p>
+      <Body className={tier.bodyClass || undefined}>
+        {tier.glyph}
+        {message}
+      </Body>
       {onDismiss && (
         <button
           type="button"
           onClick={onDismiss}
-          className="-mr-1 -mt-0.5 shrink-0 rounded-full p-1 transition-colors hover:bg-alarm/10"
-          title="Dismiss"
-          aria-label="Dismiss"
+          className={tier.dismiss || undefined}
+          title={size === "sm" ? undefined : "Dismiss"}
+          aria-label={size === "sm" ? t("Dismiss error") : "Dismiss"}
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -367,7 +467,7 @@ export function Notice({
  *
  * The alignment and the margin are the call site's, because each desk
  * sits the line at its own spot in its layout; what is shared is the
- * sentence, the press and the tone rather than the room around them.
+ * sentence, the press and the tone rather than the harbor around them.
  */
 export function RefusalLine({
   error,

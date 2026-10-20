@@ -122,7 +122,7 @@ export function wireBarter(io: Server, socket: Socket): void {
       // carries both surfaces and nothing in the frame itself tells
       // them apart. So the claim is pinned down rather than taken on
       // faith: an offer that says it is an exchange offer is only
-      // accepted while the room is actually sitting in the Parley
+      // accepted while the harbor is actually sitting in the Parley
       // phase, which is the only time the Captain's Exchange is on
       // screen. A chat composer claiming to be the exchange board to
       // slip past the gate is therefore refused rather than believed,
@@ -221,7 +221,7 @@ export function wireBarter(io: Server, socket: Socket): void {
         actor: s.userId,
         goods: offer.offerAmount,
       });
-      // [B4: the log surfaces] And the room's own line for it. The whole
+      // [B4: the log surfaces] And the harbor's own line for it. The whole
       // trade travels rather than only the side that was escrowed,
       // because a captain reading the log is asking what was on offer
       // and not how much of it the board was holding.
@@ -280,7 +280,7 @@ export function wireBarter(io: Server, socket: Socket): void {
       // The audit's spend closes the leg's trading the moment the count
       // carries (see auditSpentLeg), and a standing exchange offer is
       // trading the same as a fresh one: without this gate an offer
-      // posted before the carry could settle into the very leg the room
+      // posted before the carry could settle into the very leg the harbor
       // voted to close. Flexible offers are not gated here or at the
       // post, for the reason the post handler gives: they travel the
       // chat road, and no parley clock ever priced them.
@@ -395,7 +395,7 @@ export function wireBarter(io: Server, socket: Socket): void {
         actor: s.userId,
         goods: offer.offerAmount,
       });
-      // [B4: the log surfaces] The room's line for the same settlement,
+      // [B4: the log surfaces] The harbor's line for the same settlement,
       // naming both captains: the record above counts an offer taken off
       // the board, and this says who took it from whom, which is the
       // thing a table talks about afterwards.

@@ -61,16 +61,17 @@ import {
   WORKER_TYPE_IDS,
   type WorkerTypeId,
 } from "./constants/crew";
-import { crewSize, onShortRations } from "./larder";
+import { onShortRations } from "./larder";
 import { flagOnFor } from "./flags";
 import {
+  crewSize,
   flatWorkerRoster,
   wholeStamp,
   type CrewLoss,
   type GameState,
   type Worker,
 } from "./types";
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 
 // The longest a name read off a save may be, and the most losses a save may
 // claim. Both are bounds on input rather than content: names are drawn from
@@ -117,13 +118,37 @@ export function newCrewIdentity(state: GameState): {
   seq: number;
 } {
   const roster = flatWorkerRoster(state);
+  const seq = topSeq(roster) + 1;
+  return { name: drawCrewName(takenNames(state), seq), seq };
+}
+
+/**
+ * The highest number the roster has handed out, or zero when it has handed
+ * out none.
+ *
+ * One walk, because two rules ask this same question, the hire above and
+ * the heal further down, and a second copy of the walk would be a second
+ * opinion about which hand is newest. The number a hand carries is read the
+ * way the heal reads it, a number that is not one reads as none and a
+ * fraction reads as a whole number, so a save carrying rubbish where a
+ * count should be hands out the next number rather than one nobody can
+ * read.
+ */
+function topSeq(roster: readonly Worker[]): number {
   let top = 0;
   for (const worker of roster) {
-    const seq = Number.isFinite(worker.seq) ? Math.floor(worker.seq) : 0;
+    const seq = workerSeq(worker);
     if (seq > top) top = seq;
   }
-  const seq = top + 1;
-  return { name: drawCrewName(takenNames(state), seq), seq };
+  return top;
+}
+
+/**
+ * One hand's number aboard, read the way the roster holds it: a number
+ * that is not one is none, and a fraction is a whole number.
+ */
+function workerSeq(worker: Worker): number {
+  return Number.isFinite(worker.seq) ? Math.floor(worker.seq) : 0;
 }
 
 /**
@@ -145,7 +170,7 @@ export function newCrewIdentity(state: GameState): {
  * captain provisioned while the rule was off is not met by a loss the
  * moment an operator turns it back on.
  */
-export function settleHunger(state: GameState, logs: string[]): void {
+export function settleHunger(state: GameState, logs: LedgerLine[]): void {
   if (!crewLossRuleOn(state.mode) || !onShortRations(state)) {
     state.hungryLegs = 0;
     return;
@@ -170,7 +195,7 @@ export function settleHunger(state: GameState, logs: string[]): void {
  * spent when the task was assigned, and the line below says so rather than
  * letting the hold lose goods with no sentence over them.
  */
-function loseNewest(state: GameState, logs: string[]): void {
+function loseNewest(state: GameState, logs: LedgerLine[]): void {
   const newest = newestAboard(state);
   if (newest === null) return;
   const list = state.workers[newest.type];
@@ -184,32 +209,34 @@ function loseNewest(state: GameState, logs: string[]): void {
   // own line: a rule that changed its number must not leave a sentence
   // behind telling the table something the rule no longer does.
   logs.push(
-    t(
+    line(
       "⚰️ {gone.name} the {label} is lost after {CREW_LOSS_AFTER_HUNGRY_LEGS} legs on short rations, and nothing brings them back.",
       {
         // The hand's own name stays a value; the role and the task are
         // content with rows of their own (crew.role.*, goods.*), read
         // here so the sentence arrives whole.
         "gone.name": gone.name,
-        label: t(label),
+        label: line(label),
         CREW_LOSS_AFTER_HUNGRY_LEGS,
       },
     ),
   );
   if (gone.task) {
     // The indent belongs to the log's own shape rather than to the
-    // sentence, so it stays outside the read.
+    // sentence, so it stays outside the read, as a mark printed before
+    // the words.
     logs.push(
-      "  " +
-        t("The {gone.task} they were working is lost with them.", {
-          "gone.task": t(gone.task),
-        }),
+      line(
+        "The {gone.task} they were working is lost with them.",
+        { "gone.task": line(gone.task) },
+        "  ",
+      ),
     );
   }
   logs.push(
     left === 0
-      ? t("🌊 There is no one left aboard.")
-      : t("🌊 {left} still aboard.", { left }),
+      ? line("🌊 There is no one left aboard.")
+      : line("🌊 {left} still aboard.", { left }),
   );
 }
 
@@ -325,11 +352,7 @@ export function healCrewIdentity(state: GameState): void {
   const roster = flatWorkerRoster(state);
   const claimed = new Set(state.crewLost.map((loss) => loss.name));
   const kept = new Map<Worker, string>();
-  let top = 0;
-  for (const worker of roster) {
-    const seq = Number.isFinite(worker.seq) ? Math.floor(worker.seq) : 0;
-    if (seq > top) top = seq;
-  }
+  let top = topSeq(roster);
   for (const worker of roster) {
     const name = readStoredName(worker.name);
     if (name && !claimed.has(name)) {
@@ -341,7 +364,7 @@ export function healCrewIdentity(state: GameState): void {
     const stored = kept.get(worker);
     if (stored !== undefined) {
       worker.name = stored;
-      const seq = Number.isFinite(worker.seq) ? Math.floor(worker.seq) : 0;
+      const seq = workerSeq(worker);
       if (seq < 1) {
         top += 1;
         worker.seq = top;

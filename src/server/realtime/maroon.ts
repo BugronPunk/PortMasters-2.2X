@@ -2,17 +2,17 @@
 // Realtime layer: the maroon vote, and the Harbormaster's hand.
 //
 // [H7: Maroon and the Harbormaster] The second thing in this game a
-// majority of the room can do to one captain, and the only one that costs
+// majority of the harbor can do to one captain, and the only one that costs
 // them anything. The audit opens a manifest; this takes a ship. So the
 // rules below are all about what a majority is allowed to take and when.
 //
 // It may be called once a voyage, from the mode's rung (nine legs, see
 // ModeConfig.maroonFrom), during the Parley checkpoint, and only for a
-// captain the room still counts. It may not be called against a captain
+// captain the harbor still counts. It may not be called against a captain
 // the harbor has already written off: a bankrupt captain has lost the
 // race already, and handing them the Harbormaster's power would make the
 // vote a way to arm an ally rather than a way to punish one. It may not
-// be called twice, and the captain it names is not removed from the room,
+// be called twice, and the captain it names is not removed from the harbor,
 // which is the point of the mode rather than a mercy (see ./game/seats).
 //
 // The power that comes with it is the one piece of another captain's
@@ -52,21 +52,21 @@ import { unlockedPorts } from "@/lib/game/pools";
 import { writtenOff } from "@/lib/seatMarks";
 import { roomChannel } from "./channel";
 import { activeRosterSet } from "./checkpoint";
+import { legStateFor, type LegState } from "./leg-state";
 import { roomStatuses } from "./status";
+import { recountAndTell } from "./tally";
 import { noteCaptainMarooned, noteTelemetry } from "./telemetry";
 import { noteVoyageLog } from "./voyage-log";
 
-// One room's maroon, for as long as the voyage lasts. The nominations
+// One harbor's maroon, for as long as the voyage lasts. The nominations
 // belong to a leg and are replaced when the leg turns, like the audit's.
 // The result and the shift do not: the result is the voyage's one vote,
 // and the shift is the last call the Harbormaster made, which is read
-// once, on the advance that opens the next market.
-type RoomMaroon = {
-  round: number;
-  // voter id -> the captain they nominated, for the leg above.
-  votes: Map<string, string>;
+// once, on the advance that opens the next market. The leg's own half
+// of that record is the shape both votes keep (see ./leg-state).
+type RoomMaroon = LegState & {
   // Set once the vote carries, and never cleared except by a restart. Both
-  // the room's record to hand a joiner and the flag that makes this once
+  // the harbor's record to hand a joiner and the flag that makes this once
   // per voyage.
   result: MaroonResult | null;
   // The most recent call, stamped with the leg it was called in. Only the
@@ -77,19 +77,14 @@ type RoomMaroon = {
 
 const roomMaroons = new Map<string, RoomMaroon>();
 
-// The room's maroon, moved on to this leg if it was sitting on another.
+// The harbor's maroon, moved on to this leg if it was sitting on another.
 // A new leg clears the nominations and keeps everything else.
 function maroonStateFor(roomId: string, round: number): RoomMaroon {
-  const existing = roomMaroons.get(roomId);
-  if (existing && existing.round === round) return existing;
-  const moved: RoomMaroon = {
-    round,
-    votes: new Map(),
+  return legStateFor(roomMaroons, roomId, round, (existing, leg) => ({
+    ...leg,
     result: existing?.result ?? null,
     shift: existing?.shift ?? null,
-  };
-  roomMaroons.set(roomId, moved);
-  return moved;
+  }));
 }
 
 // Who the harbor put ashore, for a joiner to be handed. Null for a harbor
@@ -99,7 +94,7 @@ export function maroonResultFor(roomId: string): MaroonResult | null {
 }
 
 // The Harbormaster's last call, for a joiner to be handed so the strip on
-// their screen says what the room is already trading against.
+// their screen says what the harbor is already trading against.
 export function maroonShiftNoticeFor(roomId: string): PortShiftNotice | null {
   return roomMaroons.get(roomId)?.shift ?? null;
 }
@@ -118,7 +113,7 @@ export function portShiftFor(roomId: string, round: number): PortShift | null {
   return { port: shift.port, direction: shift.direction };
 }
 
-// Wipes a room's maroon. Called on room:restart and when a room is deleted
+// Wipes a harbor's maroon. Called on room:restart and when a harbor is deleted
 // after its last member departs.
 //
 // Load bearing rather than tidy, for the reason clearAudits is: the result
@@ -129,10 +124,10 @@ export function clearMaroons(roomId: string): void {
   roomMaroons.delete(roomId);
 }
 
-// The room's facts as this file needs them: the rung the mode sets, the
-// tier, which is what decides whether a port name is one the room can
+// The harbor's facts as this file needs them: the rung the mode sets, the
+// tier, which is what decides whether a port name is one the harbor can
 // actually see this leg, and the length of the voyage the guard below is
-// counting down. Read from the room and never from a payload, for the
+// counting down. Read from the harbor and never from a payload, for the
 // reason the audit reads its own: a client cannot call a vote in a harbor
 // that is playing Classic, or name a port that does not exist yet.
 type MaroonRoom = {
@@ -162,13 +157,13 @@ async function maroonRoomFacts(roomId: string): Promise<MaroonRoom | null> {
 }
 
 /**
- * The room's count of the vote, built in one place.
+ * The harbor's count of the vote, built in one place.
  *
  * One builder for the two moments a frame about this vote goes out: the
  * count after a nomination, and the count a card is answered with when it
  * opens. One builder because the numbers have to agree whichever way a
  * captain hears them, and because this vote reached the count later than
- * the audit did: the book is derived again against the room that exists now,
+ * the audit did: the book is derived again against the harbor that exists now,
  * exactly as the audit's is (see pruneStaleVotes, which lives with the
  * audit's arithmetic and is read here rather than copied, since both
  * books are divided by the same roster), and the captains still to speak
@@ -200,7 +195,7 @@ function maroonTallyFrame(
 }
 
 /**
- * One accepted nomination, carried as far as it goes: the count the room is
+ * One accepted nomination, carried as far as it goes: the count the harbor is
  * owed, and the one result a voyage gets.
  *
  * The mirror of the audit's settle (see ./audit), and a mirror rather than
@@ -220,7 +215,7 @@ function maroonTallyFrame(
  * saying plainly what that race is, since this is the vote that costs a
  * captain their ship:
  *
- * The book is derived again against the room that exists now, which is a
+ * The book is derived again against the harbor that exists now, which is a
  * second read rather than the door's, so a captain who leaves the harbor
  * in the gap between the carry being decided and the result's own read of
  * the membership row cannot lose the carry. Returning there would leave
@@ -228,18 +223,18 @@ function maroonTallyFrame(
  * been shown the result, which is the worst shape this vote can fail in: a
  * majority visibly voted a captain ashore and nothing happened. The loop
  * derives it again instead, which takes the departed captain's nominations out of
- * the book and decides the carry again on what is left, and the room is
+ * the book and decides the carry again on what is left, and the harbor is
  * told whenever the count it is reading moves. It turns at most once per
  * nomination dropped, so it cannot spin.
  *
  * The other half is the pair in the same tick: two ballots that arrive together
- * can both decide the same carry, and the second to resume finds the room
+ * can both decide the same carry, and the second to resume finds the harbor
  * already answered here and stops, so one carry is one result, one mark on
  * the target's line, one log line and one frame.
  *
  * The first pass is always told, because it follows an accepted
  * nomination, which is always news; every pass after it is a recount a
- * refusal prompted, and those tell the room only when the book actually
+ * refusal prompted, and those tell the harbor only when the book actually
  * moved under it.
  */
 async function settleMaroon(
@@ -248,15 +243,18 @@ async function settleMaroon(
   round: number,
   state: RoomMaroon,
 ): Promise<void> {
-  let tell = true;
+  let first = true;
   for (;;) {
-    const roster = await activeRosterSet(roomId);
-    const book = pruneStaleVotes(state.votes, roster);
-    const moved = book.size !== state.votes.size;
-    state.votes = book;
-    if (tell || moved) {
-      io.to(roomChannel(roomId)).emit(
-        "maroon:tally",
+    // The count the harbor reads, recounted and told by the shared walk
+    // (see ./tally). The frame is this vote's own, and it is the one
+    // thing the two votes do not share: the maroon's count carries the
+    // result the voyage already had, and the audit's does not.
+    const tally = await recountAndTell(
+      io,
+      roomId,
+      state,
+      "maroon:tally",
+      (roster, book) =>
         maroonTallyFrame(
           roomId,
           round,
@@ -264,12 +262,12 @@ async function settleMaroon(
           book,
           state.result?.target ?? null,
         ),
-      );
-    }
+      first,
+    );
     // Every pass after this one recounts rather than nominates, so
     // only a count that actually moved is worth a second frame.
-    tell = false;
-    const carried = maroonCarried(book, roster.size);
+    first = false;
+    const carried = maroonCarried(tally.book, tally.roster.size);
     if (!carried) return;
     const member = await db.roomMember.findUnique({
       where: { userId_roomId: { userId: carried, roomId } },
@@ -297,7 +295,7 @@ async function settleMaroon(
     // outlives a voyage that ends by a wipe or by the harbor emptying, which
     // are the two endings with no conclusion to read it from.
     noteCaptainMarooned(roomId, carried);
-    // [B4: the log surfaces] The room's line for the same vote, written
+    // [B4: the log surfaces] The harbor's line for the same vote, written
     // before the result goes out so the log never trails the screen it
     // explains. It names the captain off the result above rather than off a
     // second lookup, which is the same discipline the audit's line keeps: a
@@ -307,7 +305,7 @@ async function settleMaroon(
       kind: "maroon_carried",
       target: result.target.name,
     });
-    // The nominations die with the vote they carried: the room's answer is
+    // The nominations die with the vote they carried: the harbor's answer is
     // the result now, and leaving the tally standing would put the count
     // that got there on the same screen as the thing it did.
     state.votes.clear();
@@ -317,17 +315,17 @@ async function settleMaroon(
 }
 
 /**
- * One captain's nomination, all the way to the room.
+ * One captain's nomination, all the way to the harbor.
  *
- * Everything the vote is judged against comes from the room rather than
+ * Everything the vote is judged against comes from the harbor rather than
  * from the vote: the mode and the rung from the room row, the roster from
  * the durable membership table, and the leg from the caller, which reads
  * it off the checkpoint rather than off the payload. A nomination that
- * arrives for a captain the room has stopped counting is refused rather
+ * arrives for a captain the harbor has stopped counting is refused rather
  * than counted, because the arithmetic below divides by that roster and a
  * vote outside it would move a majority with nobody behind it, and the
  * same roster recounts the votes already in the book, so a nomination
- * the room has stopped counting is out of the tally whether it was cast
+ * the harbor has stopped counting is out of the tally whether it was cast
  * before or after its captain left.
  *
  * A captain names one captain a leg, checked and written in the same
@@ -347,7 +345,7 @@ async function settleMaroon(
  * result only ever goes out once. The carry itself is the walk in
  * settleMaroon above, which is also where the two ways a carry could be
  * lost or doubled are closed, and which runs for a refusal as well: a
- * refusal tells the room nothing unless the recount behind it moved the
+ * refusal tells the harbor nothing unless the recount behind it moved the
  * book, so a captain pressing twice cannot move the count the table is
  * arguing over.
  */
@@ -376,14 +374,14 @@ export async function recordMaroonVote(
     );
   const roster = await activeRosterSet(roomId);
   // The book is derived again before the door rather than after it, for the
-  // reason the audit's is: a nomination the prune drops is the room's news
+  // reason the audit's is: a nomination the prune drops is the harbor's news
   // rather than this ballot's, and a refusal made because a captain left
-  // still leaves the room with the count that captain's leaving produced.
+  // still leaves the harbor with the count that captain's leaving produced.
   const book = pruneStaleVotes(state.votes, roster);
   const moved = book.size !== state.votes.size;
   state.votes = book;
-  // The room's count, owed only where the recount moved it: a refused
-  // ballot leaves the book alone otherwise, and the count the room is
+  // The harbor's count, owed only where the recount moved it: a refused
+  // ballot leaves the book alone otherwise, and the count the harbor is
   // already reading is still the count.
   const refuse = (sentence: string): string => {
     if (moved)
@@ -401,7 +399,7 @@ export async function recordMaroonVote(
   };
   if (!roster.has(voterId)) return refuse(tFor(locale, SEAT_NOT_COUNTED));
   // A captain the harbor has already written off is not a captain the
-  // harbor may put ashore. The marks are read from the status the room
+  // harbor may put ashore. The marks are read from the status the harbor
   // holds for them rather than from the caller, so a vote cannot be aimed
   // at somebody whose own client says otherwise, and they are read
   // through the one predicate the vote's own list is drawn with (see
@@ -426,7 +424,7 @@ export async function recordMaroonVote(
     );
   state.votes.set(voterId, targetUserId);
   // [I1: the telemetry spine] The nomination, recorded where the vote is
-  // accepted and before the tally goes out, so the record and the room
+  // accepted and before the tally goes out, so the record and the harbor
   // cannot disagree about whether it happened. A nomination refused at the
   // door files nothing, the same rule the audit keeps: the record counts
   // what the table saw happen, and the table was shown a refusal.
@@ -439,7 +437,7 @@ export async function recordMaroonVote(
 }
 
 /**
- * The room's count as it stands, for the captain whose card has just
+ * The harbor's count as it stands, for the captain whose card has just
  * opened.
  *
  * A leg's book is built by the captains in it and the empty one is never
@@ -475,11 +473,11 @@ export async function maroonTallyFor(
 }
 
 /**
- * The Harbormaster names a port, and the room reads it.
+ * The Harbormaster names a port, and the harbor reads it.
  *
  * Only the captain the harbor marooned may call this, and the server
  * decides that from its own record of the vote rather than from anything
- * the caller says about itself. The port has to be one the room has
+ * the caller says about itself. The port has to be one the harbor has
  * unlocked by the leg the market lands on, which is the round after the
  * one this is called in, since a market opens at the top of a leg and this
  * is called from the middle of one.
@@ -498,7 +496,7 @@ export async function maroonTallyFor(
  * sentence is composed in the language the caller names, which is the
  * Harbormaster's own, because they are its one reader. The one
  * silence left is the harbor itself being wrong, which is the same silence
- * the votes keep: a room whose mode deals no such hand has nothing to
+ * the votes keep: a harbor whose mode deals no such hand has nothing to
  * explain about it.
  */
 export async function recordPortShift(

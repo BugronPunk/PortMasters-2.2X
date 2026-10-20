@@ -122,7 +122,7 @@ export async function balanceDashboardSuite(inputs: {
     })),
   ];
 
-  // ---- An empty window ----
+  // ========== An empty window ==========
   // The state the page opens in before the mode has been played, which is
   // the one a fresh database would show. Every gate is still named and
   // still answered for: a page that printed nothing, or a zero, for a
@@ -214,7 +214,7 @@ export async function balanceDashboardSuite(inputs: {
     "and the front page number is named as the share of all food spending the proposal identifies, reading as no report rather than as a share of zero until a voyage files what it spent",
   );
 
-  // ---- The window ----
+  // ========== The window ==========
   // What the page is reading, counted from the records rather than asked
   // for: two voyages and three captains between them, one voyage recorded
   // under a rate below one, one truncated, and two rows the route could
@@ -243,7 +243,7 @@ export async function balanceDashboardSuite(inputs: {
     "and reports the lowest rate its records were sampled at, so a window that spans a config change is never read as the whole run",
   );
 
-  // ---- The variance panel, over the rows the report reads ----
+  // ========== The variance panel, over the rows the report reads ==========
   // Three rated bands, every one of them inside its target: four won of
   // seven at the five seat Honest table, one won of five Pirates at six,
   // and two won of five Brokers at four. The page does not compute a rate
@@ -308,7 +308,7 @@ export async function balanceDashboardSuite(inputs: {
     "and one band under its target moves the panel to watching and names the band in the answer",
   );
 
-  // ---- The three readings the spine can already answer ----
+  // ========== The three readings the spine can already answer ==========
   // Session length is a clock the record carries: charted to closed, at
   // the five captain tune target, and only over the voyages that
   // concluded. The three hour harbor is in the window to be sat beside
@@ -422,7 +422,7 @@ export async function balanceDashboardSuite(inputs: {
     "while a window with no voyage in it says as much, rather than printing three bands of nothing",
   );
 
-  // ---- The floor ----
+  // ========== The floor ==========
   // Retention is read off the two fields goal I2 added to a captain line,
   // and only over the voyages that closed with somebody standing: a
   // harbor that emptied has nobody left to be standing, so its lines
@@ -487,7 +487,7 @@ export async function balanceDashboardSuite(inputs: {
     "and nothing in the reading names a captain, since the page is about the mode rather than about who sailed it",
   );
 
-  // ---- The route the page reads ----
+  // ========== The route the page reads ==========
   // The page's own check is a convenience that keeps a captain from being
   // shown a dashboard, so the gate is checked here the way the console's
   // is: the server is what has to refuse, against the account row.
@@ -538,7 +538,7 @@ export async function balanceDashboardSuite(inputs: {
     "and naming no captain on the wire, exactly as on the page",
   );
 
-  // ---- The page itself ----
+  // ========== The page itself ==========
   // The route above is the page's only wire, so the last thing to check
   // is that the page is served at all. It is a client component, so what
   // the server sends is the sentence it waits on, which is the one string

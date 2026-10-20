@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
 import { consentSettled, type ConsentTerms } from "@/lib/game/engine";
-import { refusedForRoom } from "@/lib/refusals";
+import { guardedRefusalHandler } from "@/lib/refusals";
 
 /**
  * The channel one kind of agreement speaks on, which is the whole of what
@@ -117,7 +117,7 @@ export function useConsentBoard<T extends ConsentTerms>(
     // here rather than asserted at every read: the cast below is the single
     // place this layer trusts a shape it did not build, which is the same
     // boundary the server's pack function sits on from the other side. A
-    // frame that does not carry a room and a list is dropped rather than
+    // frame that does not carry a harbor and a list is dropped rather than
     // drawn, since a board that failed to parse is not an empty board.
     const onUpdate = (data: unknown): void => {
       if (!data || typeof data !== "object") return;
@@ -128,11 +128,7 @@ export function useConsentBoard<T extends ConsentTerms>(
       setRows(next);
       report(next);
     };
-    const onBoardError = (data: { roomId?: string; error?: string }) => {
-      const err = refusedForRoom(data, roomId);
-      if (err === null) return;
-      setError(err);
-    };
+    const onBoardError = guardedRefusalHandler(roomId, setError);
 
     socket.on(channel.update, onUpdate);
     socket.on(channel.error, onBoardError);
@@ -146,5 +142,12 @@ export function useConsentBoard<T extends ConsentTerms>(
 
   const clearError = useCallback(() => setError(null), []);
 
-  return { rows, error, clearError };
+  // The answer, held to one identity until something inside it changes.
+  // The three markets above read this relay and pass their own answers on
+  // as props, and an object rebuilt every render is a board that looks new
+  // to everything downstream of it.
+  return useMemo(
+    () => ({ rows, error, clearError }),
+    [rows, error, clearError],
+  );
 }

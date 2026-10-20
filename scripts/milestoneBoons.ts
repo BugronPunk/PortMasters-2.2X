@@ -35,6 +35,7 @@
  * DATABASE_URL names at the time. It only reads.
  */
 
+import { ratePercent } from "@/lib/game/balance";
 import type { TelemetryCaptain, TelemetryRecord } from "@/lib/game/telemetry";
 import { readOperatorWindow } from "@/server/telemetry-window";
 import { runReport } from "./report";
@@ -56,8 +57,17 @@ function cohortOf(
 // A share of a cohort, or a dash when the cohort is empty: a share of no
 // captains is not a reading of zero, and printing 0% for it would read as
 // a cohort that all walked out.
+//
+// The share is printed through the formatter the dashboard prints I2's
+// maroon row with, because this report is that same reading: the cohort
+// of captains who lost a hand against the cohort who lost none, both
+// measured at the close of their voyage. One number, one way to print it,
+// so a reader who has seen the dashboard is not handed a second rounding
+// rule to learn. The dashboard keeps a whole percent for its own gate,
+// which is a question about a threshold rather than a number to show; this
+// report shows the number.
 function shareOf(stayed: number, captains: number): string {
-  return captains === 0 ? "-" : `${Math.round((stayed / captains) * 100)}%`;
+  return captains === 0 ? "-" : ratePercent(stayed / captains);
 }
 
 async function main(): Promise<void> {
@@ -92,11 +102,11 @@ async function main(): Promise<void> {
     stayed: string,
     share: string,
   ) =>
-    `${label.padEnd(nameWidth)}  ${captains.padStart(8)}  ${stayed.padStart(14)}  ${share.padStart(5)}`;
+    `${label.padEnd(nameWidth)}  ${captains.padStart(8)}  ${stayed.padStart(14)}  ${share.padStart(6)}`;
   console.log("");
   console.log(line("cohort", "captains", "still standing", "share"));
   console.log(
-    line("-".repeat(nameWidth), "-".repeat(8), "-".repeat(14), "-".repeat(5)),
+    line("-".repeat(nameWidth), "-".repeat(8), "-".repeat(14), "-".repeat(6)),
   );
   for (const row of rows) {
     console.log(

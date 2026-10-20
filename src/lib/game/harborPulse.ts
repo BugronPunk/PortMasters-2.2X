@@ -12,12 +12,12 @@
 // tallied through addPulseReport in
 // src/server/realtime/wiring/pulse.ts, and the pulse is then computed
 // exactly once by maybeAdvance in src/server/realtime/checkpoint.ts, at
-// the moment the room advances into the next round's Market. This module
+// the moment the harbor advances into the next round's Market. This module
 // only owns the formula itself.
 // =====================================================================
 
 // Turns a round's raw summed quantities into a small per item price
-// multiplier: an item the room leaned into harder than an even split gets
+// multiplier: an item the harbor leaned into harder than an even split gets
 // pricier, one nobody touched gets cheaper. PULSE_CAP bounds it to a lean
 // rather than a shove, and an empty or missing tally (round 1, or a round
 // nobody reported for) is neutral rather than guessed at.
@@ -27,7 +27,7 @@
 // so it has to be counted rather than assumed: a flat one in three is right
 // only while the harbor trades exactly three goods, and an even split of
 // seven read off a flat third would take the full discount at once and stop
-// saying anything about what the room had done. Passing nothing falls back
+// saying anything about what the harbor had done. Passing nothing falls back
 // to the goods in the tally, which is the best an unknown market allows.
 const PULSE_CAP = 0.12;
 const PULSE_SENSITIVITY = 0.6;

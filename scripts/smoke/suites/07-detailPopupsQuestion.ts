@@ -27,7 +27,7 @@ export async function detailPopupsQuestionSuite(
   const { guest, guestSocket, guestToken, hostId, hostSocket, roomId } = inputs;
   // [J1: the private information review] The one place a captain asks
   // another for a snapshot of their hold. The server used to relay the
-  // answer on the sender's own word for who had asked and which room
+  // answer on the sender's own word for who had asked and which harbor
   // the answer was about, so any authenticated captain could push a
   // forged snapshot at any account in the tree. It now holds the
   // question between the ask and the answer, and relays only what it
@@ -179,7 +179,7 @@ export async function detailPopupsQuestionSuite(
   const waitSites = peekHook.split("PEEK_TIMEOUT_MS").length - 1;
   check(
     waitSites === 2 &&
-      peekHook.includes("{ ...prev, [targetUserId]: false }") &&
+      peekHook.includes("setPeek(targetUserId, { loading: false })") &&
       peekHook.includes("stopWaiting(data.targetUserId)"),
     "a peek whose answer never comes stops waiting on its own clock, and one that does come stops the clock instead",
   );

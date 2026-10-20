@@ -14,7 +14,6 @@ import {
 } from "@/lib/game/constants/supplies";
 import {
   cargoCapacity,
-  crewSize,
   legRationCost,
   onShortRations,
   provisionAffordable,
@@ -30,6 +29,7 @@ import {
 } from "@/lib/game/hold";
 import { survivalLayerOn } from "@/lib/game/flags";
 import { t } from "@/lib/game/i18n";
+import { crewSize } from "@/lib/game/types";
 import {
   bargeLeftAtPort,
   bargePortAtLeg,
@@ -41,6 +41,7 @@ import {
 import { Utensils } from "lucide-react";
 import { FoldRow } from "../FoldRow";
 import { Term } from "../../Term";
+import { PanelLabel } from "../../shared";
 import {
   HuePanel,
   PanelNote,
@@ -183,13 +184,14 @@ export function Provisions({
           and the panel that leads with its numbers is the shape every
           other desk on this screen already wears. */}
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-        <span className="flex items-center gap-1.5 text-[10px] font-semibold tracking-wide text-larder">
+        <PanelLabel
+          as="span"
+          tone="text-larder"
+          note={t("one ration a head, eaten at each Dawn")}
+        >
           <Utensils className="h-3.5 w-3.5" />
           {t("Provisions")}
-          <span className="font-normal text-muted-foreground ml-1">
-            {t("one ration a head, eaten at each Dawn")}
-          </span>
-        </span>
+        </PanelLabel>
         <PanelStat
           label={<Term term="Larder">{t("Larder")}</Term>}
           value={game.larder}

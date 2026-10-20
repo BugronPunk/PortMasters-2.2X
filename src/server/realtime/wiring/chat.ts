@@ -1,5 +1,5 @@
 // =====================================================================
-// Chat: the room's conversation, held in this process and never written
+// Chat: the harbor's conversation, held in this process and never written
 // to the database, so nothing said in a voyage outlives it.
 // =====================================================================
 
@@ -31,9 +31,9 @@ import {
 import { noteCaptainMuted, noteTelemetry } from "../telemetry";
 
 export function wireChat(io: Server, socket: Socket): void {
-  // Harbor chat is a session conversation, so it lives in the room's
+  // Harbor chat is a session conversation, so it lives in the harbor's
   // own log in this process and is never written to the database. The
-  // log dies with the room, which is the whole guarantee: nothing said
+  // log dies with the harbor, which is the whole guarantee: nothing said
   // during a voyage outlives the voyage.
   socket.on("chat:room", (payload: { roomId?: string; content?: string }) => {
     const s = seated(socket, payload);
@@ -48,7 +48,7 @@ export function wireChat(io: Server, socket: Socket): void {
     }
     const message = buildSessionMessage(content, s.user);
     recordHarborMessage(roomId, message);
-    // [I1: the telemetry spine] One message in the harbor's own room,
+    // [I1: the telemetry spine] One message in the harbor's own chat,
     // which is what the plan counts for messages per captain per leg.
     // The lobby square and the direct threads are not voyage talk and
     // are deliberately not counted; see the note on the event itself.
@@ -96,7 +96,7 @@ export function wireChat(io: Server, socket: Socket): void {
   // A direct message is a session conversation the moment either
   // captain is at sea, and it is held against whichever harbor is
   // involved, the sender's own when they are the one at sea. That log
-  // dies with the room, so nothing said during a voyage outlives the
+  // dies with the harbor, so nothing said during a voyage outlives the
   // voyage. Only two captains who are both in the lobby reach the
   // database, which is the lobby's own Direct Messages thread, and that
   // one is meant to still be there tomorrow.
@@ -163,7 +163,7 @@ export function wireChat(io: Server, socket: Socket): void {
       if (targetUserId === room.hostId) return;
       // [J2: the mute and the report] The target has to be a captain
       // actually standing in this harbor. Without this the host could
-      // name any account in the tree and silence it in a room it is not
+      // name any account in the tree and silence it in a harbor it is not
       // in, which is a mute that does nothing visible to the captain it
       // was aimed at and a mute list that grows an entry per stranger.
       // Read off live presence rather than the membership table, because
@@ -178,7 +178,7 @@ export function wireChat(io: Server, socket: Socket): void {
       }
       muteUser(roomId, targetUserId);
       // [J2] The record of the act, written where the mute is applied and
-      // before the room is handed the new list, so the record and the
+      // before the harbor is handed the new list, so the record and the
       // harbor cannot disagree about whether it happened.
       noteTelemetry(roomId, "mute_set", {
         actor: s.userId,
@@ -281,7 +281,7 @@ export function wireChat(io: Server, socket: Socket): void {
         // dressed up as a duplicate.
         if (!isUniqueViolation(error)) {
           console.warn(
-            `[report] could not file a report for room ${roomId}:`,
+            `[report] could not file a report for harbor ${roomId}:`,
             error,
           );
           socket.emit("room:error", {

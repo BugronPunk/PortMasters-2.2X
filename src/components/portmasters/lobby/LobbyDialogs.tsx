@@ -65,12 +65,7 @@ export function LegacyDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 font-display">
             <Star className="h-5 w-5 text-legacy" />
-            {/* The pack carries this row with the source's &apos; entity, so
-                it is read as HTML and the browser decodes it to the same
-                apostrophe JSX used to print. */}
-            <span
-              dangerouslySetInnerHTML={{ __html: t("Captain&apos;s Legacy") }}
-            />
+            {t("Captain's Legacy")}
           </DialogTitle>
           <DialogDescription>
             {t(
@@ -167,7 +162,7 @@ export function CheckInDialog({
   );
 }
 
-// The harbour master's ledger of finished voyages, newest first, with
+// The harbormaster's ledger of finished voyages, newest first, with
 // headline, body, and creation date.
 export function ChronicleDialog({
   open,
@@ -189,16 +184,9 @@ export function ChronicleDialog({
             {t("Voyage Chronicles")}
           </DialogTitle>
           <DialogDescription>
-            {/* An entity row like the legacy title above: the pack keeps the
-                source's &apos; and the HTML read decodes it for both
-                languages. */}
-            <span
-              dangerouslySetInnerHTML={{
-                __html: t(
-                  "The Harbormaster&apos;s ledger of your finished voyages, newest first.",
-                ),
-              }}
-            />
+            {t(
+              "The Harbormaster's ledger of your finished voyages, newest first.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="pm-scroll-capped max-h-[60vh] pr-2">
@@ -324,7 +312,7 @@ export function HousesDialog({
                         <span>·</span>
                         <span>⛵ {standing.voyages}</span>
                         <span>·</span>
-                        <span>★ {standing.bestScore}</span>
+                        <span>★ {standing.bestReputation}</span>
                       </div>
                     )}
                   </div>

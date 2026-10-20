@@ -144,7 +144,7 @@ export function expireConsent<T extends ConsentTerms>(
  * second identical row would only be a second way to take the same thing.
  * The rule is the board's bound as well as its tidiness. Nothing else caps
  * how many rows a board can hold, and a post costs no escrow the way a
- * barter offer does, so without this a single client could paper the room.
+ * barter offer does, so without this a single client could paper the harbor.
  * With it, a seller's rows are bounded by the table: one open offer and one
  * named offer per other captain, which is the most a market of N captains
  * can mean anything by.

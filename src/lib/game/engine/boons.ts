@@ -22,7 +22,7 @@
 // (see ./constants/cards and ../cards), so this file holds the two drafts
 // and the flow between them and nothing about any particular card.
 // =====================================================================
-import { t } from "@/lib/game/i18n";
+import { line, type LedgerLine } from "@/lib/game/ledger";
 import {
   cardById,
   cardLead,
@@ -83,7 +83,7 @@ function draftBoons(state: GameState): CardRecord[] {
 // that is the pool validator's doing rather than this spread's (see the
 // one owner per key clause in ../cards), so the order here is a
 // declaration of precedence rather than a rule anything depends on.
-function applyBoon(state: GameState, card: CardRecord, logs: string[]) {
+function applyBoon(state: GameState, card: CardRecord, logs: LedgerLine[]) {
   if (card.effect.kind !== "flags") return;
   state.modifierFlags = { ...card.effect.flags, ...heldFlagsOf(state) };
   if (card.effect.flags.instant_gold) {
@@ -95,25 +95,25 @@ function applyBoon(state: GameState, card: CardRecord, logs: string[]) {
     // credit, so the tally and the purse cannot disagree.
     state.boonGoldEarned += card.effect.flags.instant_gold;
     logs.push(
-      t("💰 Boon applied: Gained {card.effect.flags.instant_gold} Gold!", {
+      line("💰 Boon applied: Gained {card.effect.flags.instant_gold} Gold!", {
         "card.effect.flags.instant_gold": card.effect.flags.instant_gold,
       }),
     );
   }
 }
 
-export function upgradeShip(state: GameState, logs: string[]) {
+export function upgradeShip(state: GameState, logs: LedgerLine[]) {
   if (state.shipLevel >= MAX_SHIP_LEVEL) return;
   const cost =
     state.shipUpgradeCost[state.shipLevel] + state.shipUpgradePenalty;
   if (state.money < cost) {
-    logs.push(t("❌ Need {cost} Gold to upgrade the ship", { cost }));
+    logs.push(line("❌ Need {cost} Gold to upgrade the ship", { cost }));
     return;
   }
   state.money -= cost;
   state.shipLevel++;
   logs.push(
-    t(
+    line(
       "🎉 Ship Upgraded to Level {state.shipLevel}! +1 Module Slot, +{SHIP_DISCOUNT_PER_LEVEL} Discount",
       { "state.shipLevel": state.shipLevel, SHIP_DISCOUNT_PER_LEVEL },
     ),
@@ -211,24 +211,28 @@ function equipModule(
   state: GameState,
   mod: CardRecord,
   swapIdx: number | null,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   if (swapIdx !== null) {
     const old = state.equippedModules[swapIdx];
     unequipModuleAccounting(state, old);
     state.equippedModules[swapIdx] = mod;
     logs.push(
-      t("🔄 Swapped {oldCardName} for {newCardName}!", {
-        oldCardName: cardName(old.id),
-        newCardName: cardName(mod.id),
+      line("🔄 Swapped {oldCardName} for {newCardName}!", {
+        oldCardName: (locale) => cardName(old.id, locale),
+        newCardName: (locale) => cardName(mod.id, locale),
       }),
     );
   } else {
     if (moduleSlotsOpen(state) > 0) {
       state.equippedModules.push(mod);
-      logs.push(t("✅ Installed {cardName}!", { cardName: cardName(mod.id) }));
+      logs.push(
+        line("✅ Installed {cardName}!", {
+          cardName: (locale) => cardName(mod.id, locale),
+        }),
+      );
     } else {
-      logs.push(t("❌ No empty slots! Must swap."));
+      logs.push(line("❌ No empty slots! Must swap."));
       return;
     }
   }
@@ -236,12 +240,12 @@ function equipModule(
   // See note above: brokers_network no longer writes state.intelCost.
 }
 
-export function startBoonDrafting(state: GameState, logs: string[]) {
+export function startBoonDrafting(state: GameState, logs: LedgerLine[]) {
   state.phase = "dawn";
   // [C1: the Larder and Short Rations] The crew eats at the top of the leg,
   // and this is the one function every leg opens through: the host's start
   // reaches it from the departure, the round that rolls over reaches it from
-  // endRound, and a client catching up to the room reaches it through
+  // endRound, and a client catching up to the harbor reaches it through
   // enterPhase. Putting the meal here rather than at any of those three is
   // what makes it once a leg by construction; the stamp the meal itself
   // keeps is what makes it once a leg anyway, since two of those paths can
@@ -283,8 +287,8 @@ export function startBoonDrafting(state: GameState, logs: string[]) {
   // agreed stops carrying the last leg's keys in every save it writes.
   resetEscortLeg(state);
   resetConsentLedger(state);
-  logs.push(t("\n🧭=== The Navigator's Compass ==="));
-  logs.push(t("Choose a Boon to bend the rules of the upcoming voyage..."));
+  logs.push(line("\n🧭=== The Navigator's Compass ==="));
+  logs.push(line("Choose a Boon to bend the rules of the upcoming voyage..."));
 }
 
 // Rerolls the current boon pool for BOON_SWAP_COST, once per round. The
@@ -293,14 +297,14 @@ export function startBoonDrafting(state: GameState, logs: string[]) {
 // whatever they want, see the matching swapModuleChoices below for the no
 // cost equivalent on the module side, where the scarcity is the
 // equippable slots rather than a gold sink.
-export function swapBoonChoices(state: GameState, logs: string[]) {
+export function swapBoonChoices(state: GameState, logs: LedgerLine[]) {
   if (state.boonSwapUsed) {
-    logs.push(t("❌ You've already swapped your boon choices this round"));
+    logs.push(line("❌ You've already swapped your boon choices this round"));
     return;
   }
   if (state.money < BOON_SWAP_COST) {
     logs.push(
-      t("❌ Need {BOON_SWAP_COST} Gold to swap boon choices", {
+      line("❌ Need {BOON_SWAP_COST} Gold to swap boon choices", {
         BOON_SWAP_COST,
       }),
     );
@@ -310,7 +314,9 @@ export function swapBoonChoices(state: GameState, logs: string[]) {
   state.boonChoices = draftBoons(state);
   state.boonSwapUsed = true;
   logs.push(
-    t("🔄 Swapped Boon Choices for {BOON_SWAP_COST} Gold", { BOON_SWAP_COST }),
+    line("🔄 Swapped Boon Choices for {BOON_SWAP_COST} Gold", {
+      BOON_SWAP_COST,
+    }),
   );
 }
 
@@ -327,12 +333,14 @@ export function swapBoonChoices(state: GameState, logs: string[]) {
 export function selectBoon(
   state: GameState,
   boonId: string,
-  logs: string[],
+  logs: LedgerLine[],
 ): boolean {
   const card = cardById(boonId);
   if (!card || card.kind !== "boon") return false;
   logs.push(
-    t("🧭 Boon Locked In: {boonLead}", { boonLead: cardLead(card.id) }),
+    line("🧭 Boon Locked In: {boonLead}", {
+      boonLead: (locale) => cardLead(card.id, locale),
+    }),
   );
   noteCardPick(state.cardTally, card);
   // [F5: public offers] The fleet's record of this pick, written from the
@@ -482,7 +490,7 @@ function rerollModuleChoices(
  * hull with an open slot installs on top, so the card is weighed against
  * the held power as it stands. A full hull can only swap, and the swap
  * may give up any equipped module, so the card fits if it fits over the
- * heaviest one, which is the most room the hull can make. Everywhere
+ * heaviest one, which is the most harbor the hull can make. Everywhere
  * this answer gates an action the panel names the sentence for, and the
  * two install paths below refuse as well: the refusals are the floor,
  * the filter above is the screen.
@@ -523,11 +531,15 @@ function powerRefusal(
   state: GameState,
   card: CardRecord,
   displaced: CardRecord | null,
-): string {
+): LedgerLine {
   const total = powerAfterTaking(state, card, displaced);
-  return t(
+  return line(
     "❌ {moduleName} would put your hull at {total} power, and a hull carries at most {HELD_POWER_CAP}.",
-    { moduleName: cardName(card.id), total, HELD_POWER_CAP },
+    {
+      moduleName: (locale) => cardName(card.id, locale),
+      total,
+      HELD_POWER_CAP,
+    },
   );
 }
 
@@ -589,19 +601,19 @@ export function startModuleDrafting(state: GameState) {
 // new to deal refuses and leaves the round's one use unspent, because a
 // press that could not change the table is not the use the round spends
 // its swap on.
-export function swapModuleChoices(state: GameState, logs: string[]) {
+export function swapModuleChoices(state: GameState, logs: LedgerLine[]) {
   if (state.moduleSwapUsed) {
-    logs.push(t("❌ You've already swapped your module choices this round"));
+    logs.push(line("❌ You've already swapped your module choices this round"));
     return;
   }
   if (!state._draftChoices?.length) {
-    logs.push(t("❌ Nothing to swap, draft your modules first"));
+    logs.push(line("❌ Nothing to swap, draft your modules first"));
     return;
   }
   const { fresh, carried } = swapCandidates(state);
   if (fresh.length === 0) {
     logs.push(
-      t(
+      line(
         "❌ The yard has nothing new to deal this hull: every module it could offer is either aboard or already on the table. Take one of these, sell one at the table, or come back next leg.",
       ),
     );
@@ -609,13 +621,13 @@ export function swapModuleChoices(state: GameState, logs: string[]) {
   }
   state._draftChoices = rerollModuleChoices(state, fresh, carried);
   state.moduleSwapUsed = true;
-  logs.push(t("🔄 Swapped Module Choices for a fresh batch"));
+  logs.push(line("🔄 Swapped Module Choices for a fresh batch"));
 }
 
 export function handleModuleSelect(
   state: GameState,
   idx: number,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   const mod = state._draftChoices?.[idx];
   if (!mod) return;
@@ -652,7 +664,7 @@ export function handleModuleSelect(
 export function finalizeModuleSwap(
   state: GameState,
   slotIdx: number,
-  logs: string[],
+  logs: LedgerLine[],
 ) {
   const mod = state._newModule;
   if (!mod) return;
@@ -673,7 +685,7 @@ export function finalizeModuleSwap(
   const displaced = state.equippedModules[slotIdx];
   if (!displaced) {
     logs.push(
-      t(
+      line(
         "❌ That seat is no longer on your hull, so there is nothing there to replace. Back to Draft and take the card again: the yard fits it to the hull as it stands.",
       ),
     );
@@ -725,8 +737,8 @@ export function cancelModuleDraft(state: GameState) {
   state._newModule = undefined;
 }
 
-// A captain joining a room for the first time should drop into the voyage
-// wherever the room currently is rather than back at round 1, otherwise
+// A captain joining a harbor for the first time should drop into the voyage
+// wherever the harbor currently is rather than back at round 1, otherwise
 // they'd never be able to ready up for the same checkpoint as everyone
 // else (see the ready check protocol in
 // src/server/realtime/wiring/phase-ready.ts). This runs the same setup

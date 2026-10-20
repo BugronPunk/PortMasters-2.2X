@@ -3,8 +3,8 @@
 //
 // [H6: the Manifest Audit] The fleet's one evidence tool. From leg five,
 // once per voyage, a simple majority of the table may nominate one captain
-// during the Parley checkpoint and open their manifest to the room. What
-// the room then sees is two of that captain's last five order
+// during the Parley checkpoint and open their manifest to the harbor. What
+// the harbor then sees is two of that captain's last five order
 // fulfillments, chosen at random, and nothing else.
 //
 // The randomness is the design and not a shortcut. Two of five means an
@@ -47,8 +47,8 @@
 
 import { createRng } from "./rng";
 // The manifest line below is read at the moment it is built rather than
-// stored, so the line the reveal hands the room follows the language that
-// room prints in. The two constants above keep their English values
+// stored, so the line the reveal hands the harbor follows the language that
+// harbor prints in. The two constants above keep their English values
 // instead: they are shared strings, and a shared string is read where it
 // is rendered rather than wrapped where it is written.
 import { t } from "./i18n";
@@ -75,7 +75,7 @@ export const AUDIT_REVEAL_COUNT = 2;
 
 // The count above, in the words the vote card states it in: the reveal
 // opens this many order fulfillments, and the sentence below promises the
-// same number to the room, so a retune moves both or the card would say
+// same number to the harbor, so a retune moves both or the card would say
 // "a pair" over a reveal that opened three.
 export const AUDIT_REVEAL_WORDS = "a random pair";
 
@@ -95,7 +95,7 @@ export const AUDIT_VOTE_RULE =
  * the reveal checkable rather than trusted: the server is the only party
  * that can read the manifest, but given the manifest any client could
  * arrive at the identical two lines, so a reveal that did not match the
- * record would be a lie somebody could catch rather than a claim the room
+ * record would be a lie somebody could catch rather than a claim the harbor
  * has to take on faith.
  *
  * The target's id is in the seed rather than the round alone so that two
@@ -112,7 +112,7 @@ export function auditSeed(
 }
 
 /**
- * Which of the manifest's recent lines the room is shown.
+ * Which of the manifest's recent lines the harbor is shown.
  *
  * The window is taken first and the sample second, so a captain with forty
  * fills is judged on their last five rather than on a career. Fewer than
@@ -157,14 +157,14 @@ export function drawAudit(
  * rather than as a broken screen in front of the whole table.
  *
  * A third job landed with the bug audit: the leg bound. A line dated past
- * the leg the room itself has reached cannot be a thing the captain did,
+ * the leg the harbor itself has reached cannot be a thing the captain did,
  * so a save that files one is filing evidence the voyage never produced,
- * and the reader who can catch it is the one that knows the room's own
+ * and the reader who can catch it is the one that knows the harbor's own
  * leg. The bound is a parameter rather than a constant for exactly that
  * reason: the audit reveal passes the leg the vote carried in, the finish
  * ledger passes the voyage's own length, and the load path passes
- * nothing, because a save being healed on its way into the room has no
- * room to be read against yet. A bounded reader drops the impossible
+ * nothing, because a save being healed on its way into the harbor has no
+ * harbor to be read against yet. A bounded reader drops the impossible
  * lines rather than trimming the manifest around them: what survives is
  * the shape an honest voyage files.
  */
@@ -174,7 +174,7 @@ export function drawAudit(
 // reveal, and until this pass the only bound on its text and its width was
 // the client that wrote it, so a doctored save could put a paragraph of
 // its choosing in front of six captains, or ten thousand items in one
-// line, or both, at a moment the room was watching. Nothing here judges a
+// line, or both, at a moment the harbor was watching. Nothing here judges a
 // captain's honesty, which the integrity pass does and only four fields
 // deep: this bounds what a shared surface will print.
 //
@@ -182,7 +182,7 @@ export function drawAudit(
 // name in the catalogue is fourteen characters, and the widest order any
 // charter or mandate asks for is three kinds of good. So a fill is allowed
 // twice the longest name and one kind more than the widest order, which
-// leaves a growing catalogue and a growing board room while still being a
+// leaves a growing catalogue and a growing board harbor while still being a
 // bound. A line over either is dropped rather than trimmed, because a
 // half printed fill is a line that reads as a smaller trade than it was.
 const FILL_TEXT_MAX = 32;
@@ -210,7 +210,7 @@ export function normalizeOrderFills(
     const round = Math.floor(fill.round);
     const reward = Math.floor(fill.reward);
     if (round < 1 || reward < 0) continue;
-    // The leg bound, when the reader knows the room's own leg: a line from
+    // The leg bound, when the reader knows the harbor's own leg: a line from
     // a leg the voyage has not reached is a line the captain could not
     // have filed, so it is dropped rather than shown as evidence.
     if (maxRound !== undefined && round > maxRound) continue;
@@ -254,7 +254,7 @@ export function normalizeOrderFills(
  * threshold of zero.
  *
  * The two thresholds differ because the two votes are meant to be
- * different sizes of majority (evidence opens at half the room, a
+ * different sizes of majority (evidence opens at half the harbor, a
  * captain's ship costs two thirds), and each is named in its own module
  * rather than derived from the other, so a retune of one cannot move the
  * other by accident. Nothing else about the count differs: both books are
@@ -297,7 +297,7 @@ export function carriedTarget(
  * maroon's own threshold also rides).
  *
  * The roster rather than the votes is the denominator: a captain who
- * went bankrupt is not a vote the room is waiting on, the same rule
+ * went bankrupt is not a vote the harbor is waiting on, the same rule
  * every ready check already follows.
  */
 export function auditCarried(
@@ -313,12 +313,12 @@ export function auditCarried(
  * The smallest whole count that is more than half, and the threshold
  * auditCarried carries on: one name fewer never carries and this many
  * always does. It is written as arithmetic rather than as a sentence so
- * a card that tells the room how many names it needs and the server that
+ * a card that tells the harbor how many names it needs and the server that
  * decides when it has them answer out of one rule, and the smoke suite
  * checks the two against each other at every roster this game deals
  * rather than trusting them to stay in step.
  *
- * A roster of nobody needs nobody: an empty room has no vote to carry.
+ * A roster of nobody needs nobody: an empty harbor has no vote to carry.
  */
 export function auditNamesNeeded(roster: number): number {
   if (roster <= 0) return 0;
@@ -326,24 +326,24 @@ export function auditNamesNeeded(roster: number): number {
 }
 
 /**
- * The nominations a majority may still count, derived again against the room
+ * The nominations a majority may still count, derived again against the harbor
  * that exists now.
  *
  * The vote map outlives the voters: a captain nominates and then goes
  * bankrupt or reaches the endgame, and their nomination sits in the book
  * while the roster below it shrinks. Counting that vote would let a
- * captain the room has stopped counting carry a majority with nobody
+ * captain the harbor has stopped counting carry a majority with nobody
  * behind it, which is the one thing the roster denominator above exists
  * to prevent, so every nomination is judged again the way a fresh one is at
  * the door: both the voter and the captain they named must still be on
  * the active roster. A vote either of them has left behind is dropped
- * rather than frozen, and the room is free to nominate again in the same
+ * rather than frozen, and the harbor is free to nominate again in the same
  * leg, which is what a table that watched a captain walk out would do
  * anyway.
  *
  * It lives here and is read by both votes rather than copied into the
  * heavier one (see src/server/realtime/maroon.ts, which imports it): the
- * two books are divided by the same roster, so a nomination the room has
+ * two books are divided by the same roster, so a nomination the harbor has
  * stopped counting is the same fact in either book, and a second copy of
  * this rule would be a second place for it to drift.
  */
@@ -359,13 +359,13 @@ export function pruneStaleVotes(
 }
 
 /**
- * One manifest line, as the room reads it. The reveal's only rendering,
+ * One manifest line, as the harbor reads it. The reveal's only rendering,
  * kept here so the prose a captain sees and the record behind it cannot
  * drift, and worded without a verdict: the audit shows what was filed and
  * leaves the conclusion to the table.
  *
  * The line and the goods inside it are read through the pack where they
- * are composed, so the reveal follows the language of the room reading
+ * are composed, so the reveal follows the language of the harbor reading
  * it while the port and the good are the same facts either way. The
  * joining " and " between two goods carries its own fragment row, the
  * same reading the chronicle's joined sentence takes.

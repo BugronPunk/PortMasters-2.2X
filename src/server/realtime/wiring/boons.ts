@@ -15,7 +15,7 @@
 // report treats a present but unreadable figure: it is a caption for the
 // panel and no rule reads it, so a label can never cost a captain the
 // record of a pick. The frame cannot name another captain and cannot name
-// a room it is not in: the actor comes from the socket and the room from
+// a harbor it is not in: the actor comes from the socket and the harbor from
 // the seat, so the worst a doctored frame can do is mislabel its own
 // report, which the ledger then shows as exactly what was claimed and
 // nothing more.

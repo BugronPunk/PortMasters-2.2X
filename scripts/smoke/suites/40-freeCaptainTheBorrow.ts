@@ -28,13 +28,15 @@ import {
 import { PATH_IDS, pathLockLine } from "@/lib/game/paths";
 import type { GameState } from "@/lib/game/types";
 import {
-  GAMBIT,
   carriesADash,
   check,
+  GAMBIT,
+  ledgerSentences,
   suffix,
   voyageState,
   withEnv,
 } from "../harness";
+import type { LedgerLine } from "@/lib/game/ledger";
 
 export async function freeCaptainTheBorrowSuite(): Promise<void> {
   // =====================================================================
@@ -53,7 +55,7 @@ export async function freeCaptainTheBorrowSuite(): Promise<void> {
   // so what is read here is the board a Free Captain really meets in
   // the Orders phase.
   // =====================================================================
-  // ---- the allowance ----
+  // ========== the allowance ==========
   // The two numbers the plan sets, and the payout they make. The penalty
   // is read off the constant rather than typed here, and the empty flag
   // set is the captain before any charter: [F6] retunes the pair through
@@ -147,7 +149,7 @@ export async function freeCaptainTheBorrowSuite(): Promise<void> {
       opportunistBorrowsTaken({ opportunistBorrows: -4 }) === 0,
     "the allowance is a count rather than a flag, bounded by the constant F6 retunes, and a counter that claims more spent than this build allows reads as none left rather than as a debt handed back to the captain",
   );
-  // ---- the Factor, and the borrow's second door ----
+  // ========== the Factor, and the borrow's second door ==========
   // [F6: charters at leg four] The charter whose text sells the borrow
   // itself to whoever holds it: three open doors where the path has one,
   // sixty percent where the path pays forty, and a holder who never held
@@ -220,7 +222,7 @@ export async function freeCaptainTheBorrowSuite(): Promise<void> {
       normalizeOpportunistBorrows(-1) === 0,
     "and a save written before the borrow existed reads as a captain who never borrowed anything, rather than as a counter that would turn the first spend into a NaN the record would carry",
   );
-  // ---- where the counter lives ----
+  // ========== where the counter lives ==========
   // The plan's own clause: "The counter resets with the voyage, not with
   // the round, and it lives in the same place as the other once per
   // voyage limits." Both halves are observed rather than asserted: the
@@ -253,7 +255,7 @@ export async function freeCaptainTheBorrowSuite(): Promise<void> {
     "and setting sail again hands the allowance back with everything else the voyage holds, because the counter is part of the voyage's own state rather than of the account behind it",
   );
 
-  // ---- the board, and the fill ----
+  // ========== the board, and the fill ==========
   // The board a Free Captain meets, dealt through the engine's own
   // lifecycle: the tier's draw plus the paths' three, and every one of
   // the three is locked to a captain who holds none of those paths.
@@ -315,7 +317,7 @@ export async function freeCaptainTheBorrowSuite(): Promise<void> {
       cargoCarriesTag(card.resources, "woven"),
     );
     const paid = opportunistPayout(filled, card.reward);
-    const lines: string[] = [];
+    const lines: LedgerLine[] = [];
     completeOrder(filled, card.id, lines, true);
     check(
       filled.money === 500 + paid - freight &&
@@ -325,8 +327,9 @@ export async function freeCaptainTheBorrowSuite(): Promise<void> {
       "a borrowed order fills through the same settlement as any other, pays the reduced reward down to the coin, spends the allowance, and leaves the captain holding the path they already held: the order is filled without joining its own",
     );
     check(
-      lines.includes(opportunistLine(filled, card.reward, paid)) &&
-        paid < card.reward,
+      ledgerSentences(lines).includes(
+        opportunistLine(filled, card.reward, paid),
+      ) && paid < card.reward,
       "and the ledger says what the card promised it would: the board's own sentence for the borrow, with both numbers, and a payout strictly below the face value, which is the reach the plan says has to cost something real",
     );
 
@@ -337,13 +340,13 @@ export async function freeCaptainTheBorrowSuite(): Promise<void> {
     const spareLock = lockedBehind(filled, spare)!;
     stockFor(filled, spare);
     const moneyBefore = filled.money;
-    const refused: string[] = [];
+    const refused: LedgerLine[] = [];
     completeOrder(filled, spare.id, refused, true);
     check(
       filled.money === moneyBefore &&
         !filled.completedOrders.includes(spare.id) &&
         filled.opportunistBorrows === 1 &&
-        refused.includes(`❌ ${pathLockLine(spareLock)}`),
+        ledgerSentences(refused).includes(`❌ ${pathLockLine(spareLock)}`),
       "a second borrow in the same voyage is refused and the order stays standing, with the lock line every other captain reads rather than a sentence written for this path: one action with one counter, which is the plan's own rollback shape",
     );
 
@@ -370,17 +373,19 @@ export async function freeCaptainTheBorrowSuite(): Promise<void> {
       openCard.totalItems,
       cargoCarriesTag(openCard.resources, "woven"),
     );
-    const ordinaryLines: string[] = [];
+    const ordinaryLines: LedgerLine[] = [];
     completeOrder(ordinary, openCard.id, ordinaryLines, true);
     check(
       ordinary.money === 500 + openCard.reward - ordinaryFreight &&
         ordinary.opportunistBorrows === 0 &&
-        !ordinaryLines.some((line) => line.includes("Free Captain")),
+        !ledgerSentences(ordinaryLines).some((line) =>
+          line.includes("Free Captain"),
+        ),
       "while the same flag asked for on an order nobody locked is read as nothing at all: the card pays its full reward, the allowance is untouched and no borrow line is written, so an over eager caller cannot tax a captain for an ability their order never needed",
     );
   });
 
-  // ---- the switch, off ----
+  // ========== the switch, off ==========
   // The rollback the plan asks for, and it is the one switch D2 already
   // ships: with the locks off the board holds no pathbound card at all,
   // so there is nothing for the borrow to reach through and the ability

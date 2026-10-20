@@ -161,7 +161,7 @@ export const SEAT_BANDS: readonly SeatBand[] = [
 ];
 
 // Which band a fleet of this size sails on. A pinned count and 0 both land
-// here, which is the backward compatibility: 0 is the anchor, so a room
+// here, which is the backward compatibility: 0 is the anchor, so a harbor
 // that started before the rung existed draws the founding deck.
 export function seatBand(seats: number): SeatBand {
   let band = SEAT_BANDS[0];
@@ -179,7 +179,7 @@ export function seatBand(seats: number): SeatBand {
 // draw a new commission rather than replaying one the fleet already met.
 //
 // The fleet's size is folded in on the same reasoning and adds one case of
-// its own: the count is a public fact of the room (see Room.voyageSeats),
+// its own: the count is a public fact of the harbor (see Room.voyageSeats),
 // so every captain still works the commission out rather than being told
 // it, and a harbor restarted at a different size draws a different
 // commission for the same reason a restarted epoch does. It is appended
@@ -223,8 +223,8 @@ export function drawObjective(seed: string, seats = 0): Objective {
 }
 
 // How many items the commission is for, across every good. No production
-// site sums a commission, so the smoke oracle and its suites are this
-// export's readers: they hold the draw and the due to this one total.
+// site sums a commission, so the smoke suites are this export's readers:
+// they hold the draw and the due to this one total.
 export function objectiveTotalItems(objective: Objective): number {
   return objective.resources.reduce((sum, r) => sum + r.required, 0);
 }
@@ -278,10 +278,10 @@ export function clampObjectiveTally(
  * Two readings of one commission, merged good by good into the higher.
  *
  * A max rather than a sum, because the two readings overlap: the board a
- * room broadcasts already contains the captain hearing it, so adding the
+ * harbor broadcasts already contains the captain hearing it, so adding the
  * two would count that captain's own handover twice the moment one frame
  * landed. A max also cannot be walked backwards by a frame that arrives
- * late, which is the same reason the room's own tally merges this way (see
+ * late, which is the same reason the harbor's own tally merges this way (see
  * the merge in src/server/realtime/objective.ts).
  *
  * One definition rather than one per reader, because two readers need the
@@ -358,9 +358,9 @@ export function fleetTrace(
  * payment drift apart.
  *
  * The tally passed in is what the commission has already taken, good by
- * good, as the caller reads it: the board the room last reported merged
+ * good, as the caller reads it: the board the harbor last reported merged
  * with the captain's own record (see higherObjectiveTally), which is the
- * read a screen has. A caller driving one captain with no room around them
+ * read a screen has. A caller driving one captain with no harbor around them
  * passes that captain's own record alone, which is the whole of what a
  * lone captain's board could say.
  *
@@ -369,7 +369,7 @@ export function fleetTrace(
  * a captain offering three when one is still owed is handed back a row of
  * one, and a commission with nothing outstanding has no rows at all. That
  * is the same rule the Supply Barge reaches an ask by (see buyFromBarge)
- * and the same rule the room's own acceptance applies to a report (see
+ * and the same rule the harbor's own acceptance applies to a report (see
  * src/server/realtime/objective.ts), so a handover the engine would take
  * whole is a handover the harbor agrees it took.
  */
@@ -403,10 +403,6 @@ export type ObjectiveProgress = {
   rows: ObjectiveRow[];
   delivered: number;
   required: number;
-  // 0 to 1, for a progress bar. 0 for a commission asking for nothing,
-  // which no authored entry does and which must not divide by zero if one
-  // ever does.
-  fraction: number;
   met: boolean;
 };
 
@@ -433,7 +429,6 @@ export function objectiveProgress(
     rows,
     delivered,
     required,
-    fraction: required === 0 ? 0 : delivered / required,
     met: required > 0 && delivered >= required,
   };
 }

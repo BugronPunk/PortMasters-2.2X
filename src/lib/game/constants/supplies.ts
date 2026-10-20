@@ -68,7 +68,7 @@ export const SHORT_RATIONS_YIELD = 0.5;
 // has always had caps the Larder and never the trade. What the split adds
 // is the other half of the plan's sentence, "so survival supplies can
 // never crowd out trading capacity": with one hold the two compete for
-// the same room, and with two they do not.
+// the same harbor, and with two they do not.
 export type FoodId = "Grain" | "Salt Fish" | "Produce";
 // The shape of one row of the catalogue, private to this module: every
 // reader asks a food for a number by name (see ./foods and ./hold) rather

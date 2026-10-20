@@ -52,7 +52,7 @@
 // header, the tools and the register's frame all stand still and only the
 // register scrolls inside its frame, so an operator a thousand rows deep
 // can still see the title, the search and the way out. The shell is the
-// room's own shape (see GameRoom). Below lg nothing is pinned and the
+// harbor's own shape (see GameRoom). Below lg nothing is pinned and the
 // document scrolls, which is what a hand expects, and the unpinned card
 // list is drawn there anyway.
 //
@@ -110,7 +110,7 @@ import { APP_NAME } from "@/lib/game/constants/brand";
 const CHECKBOX =
   "h-4 w-4 cursor-pointer accent-admin disabled:cursor-not-allowed disabled:opacity-40";
 
-// The width at which the register has room to be a table, and the reason
+// The width at which the register has harbor to be a table, and the reason
 // it is 52rem rather than a round number out of the scale: the table below
 // is sized by its own content, and against this roster its floor, the
 // narrowest it can get before a cell's text starts to break, measures 817

@@ -58,7 +58,7 @@ type Props = PhasePanelProps & {
   reveal?: VoyageReveal | null;
   myLegacy?: CaptainLegacySummary | null;
   onRestart?: () => void;
-  // The room's leave flow, threaded to the two finished voyage screens so
+  // The harbor's leave flow, threaded to the two finished voyage screens so
   // a captain waiting on the host can set out for a new harbor instead.
   onLeave?: () => void;
 };
@@ -195,7 +195,7 @@ function ActivePhase(props: Props) {
       // above the board, because cards dealt as a band across the table
       // have a captain reading their first market behind them. The panel
       // takes the deal's own board and nothing else; the wait inside it is
-      // the room's count rather than a button, so there is no ready footer
+      // the harbor's count rather than a button, so there is no ready footer
       // here to draw (see canLeavePhase, which refuses this seat).
       return <PathDraft draft={draft} />;
     case "dawn":
@@ -344,7 +344,7 @@ function ActivePhase(props: Props) {
           me={me}
           roster={roster}
           // The host's restart travels with the panel for the same reason
-          // it travels to Endgame: the room owns the one handler, and the
+          // it travels to Endgame: the harbor owns the one handler, and the
           // two screens a finished voyage can end on offer the same call.
           room={room}
           onRestart={onRestart}

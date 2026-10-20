@@ -41,6 +41,7 @@ import { MERCHANT_RATINGS } from "./constants/reputation";
 import { milestoneBoonsOn } from "./flags";
 import { garmentsLayerOn, legIsCold } from "./garments";
 import { powerBudgetAllows } from "./held-cards";
+import { normalizeIdList } from "./id-list";
 import { createRng } from "./rng";
 import { flatWorkerRoster, type GameState } from "./types";
 
@@ -54,13 +55,17 @@ import { flatWorkerRoster, type GameState } from "./types";
  * normalizeMilestoneTrigger documents. A trigger queued twice is read
  * once, because the queue is a set of moments waiting rather than a
  * count of them.
+ *
+ * What a list is, and what an entry of it may be, is read by the one
+ * reader every list of ids shares (see normalizeIdList in ./id-list), so
+ * this healing and the boons a captain is holding cannot drift on what a
+ * save is allowed to say.
  */
 export function normalizeMilestoneOffers(raw: unknown): MilestoneTrigger[] {
-  if (!Array.isArray(raw)) return [];
   const offers: MilestoneTrigger[] = [];
-  for (const value of raw) {
-    const trigger = normalizeMilestoneTrigger(value);
-    if (trigger === null || offers.includes(trigger)) continue;
+  for (const id of normalizeIdList(raw)) {
+    const trigger = normalizeMilestoneTrigger(id);
+    if (trigger === null) continue;
     offers.push(trigger);
   }
   return offers;
@@ -177,7 +182,7 @@ export function milestoneDue(
  * answer can change what the second one should offer (a card taken is a
  * card no longer offered), so the honest set is the one derived at the
  * moment it is shown. And the seed leaves the round out on purpose: a
- * room advance, a checkpoint, a reload and a host start can all land
+ * harbor advance, a checkpoint, a reload and a host start can all land
  * between the offer being armed and the captain answering, and none of
  * them may reshuffle the three cards under a captain's eyes. The
  * trigger's own card is anchored first, because the moment and the card

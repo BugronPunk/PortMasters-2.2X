@@ -67,6 +67,7 @@ import {
 } from "./constants/paths";
 import { CARGO_SLOTS, FOODS } from "./constants/supplies";
 import { t } from "./i18n";
+import { line, type LedgerLine } from "./ledger";
 import { RENOWN_MAX_LEVEL, RENOWN_TITLES, renownTitleForLevel } from "./legacy";
 
 interface PathConfig {
@@ -342,11 +343,39 @@ export function pathCargoModifier(value: PathId | null): number {
  * board and the ledger line a refused fill writes (see completeOrder in
  * ./engine/orders), because two copies of it would be two chances for the
  * card and the ledger to disagree about the same refusal.
+ *
+ * The English itself is named beside the two readers, so the board's
+ * strip and the ledger's line are one sentence told twice rather than two
+ * sentences that can drift.
  */
+const PATH_LOCK_SENTENCE =
+  "Only a captain who holds the {path} may fill this order.";
 export function pathLockLine(id: PathId): string {
-  return t("Only a captain who holds the {path} may fill this order.", {
+  return t(PATH_LOCK_SENTENCE, {
     path: t(PATHS[id].name),
   });
+}
+
+// The same lock, as a line for a captain's own ledger.
+//
+// The ledger holds material rather than a finished sentence, so the lock
+// is held the same way and read in the reader's language, with the path's
+// own name travelling with the sentence rather than being frozen into it.
+// The English comes from the same constant the sentence above is made of,
+// so the board's strip and the ledger's line cannot drift apart.
+//
+// The mark is the ledger's own and not the sentence's: the board's strip
+// wears a lock, the ledger wears the sign of a refusal, and one sentence
+// reads under two signs rather than two sentences that say the same thing
+// in two ways.
+export function pathLockLedgerLine(id: PathId): LedgerLine {
+  return line(
+    PATH_LOCK_SENTENCE,
+    {
+      path: line(PATHS[id].name),
+    },
+    "❌ ",
+  );
 }
 
 // One reading a path's guide row prints, tagged with which reading it is.

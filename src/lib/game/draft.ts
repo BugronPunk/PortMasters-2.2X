@@ -47,7 +47,7 @@ import {
 // The ports list below is read at the moment it is composed, and its join
 // is the reader's own joiner, so the refusal that names the seats is one
 // sentence in either language.
-import { listJoiner, t } from "./i18n";
+import { listJoiner, t, tFor, type Locale } from "./i18n";
 import { PATH_IDS, type PathId } from "./paths";
 import { phaseFace } from "./phases";
 import { type Rng } from "./rng";
@@ -227,7 +227,7 @@ export function passLeft(rests: readonly PathId[][]): PathId[][] {
  * The first card in that captain's own hand, which is a card they were
  * dealt rather than a card the server liked, so a captain whose connection
  * dropped still sails with something from their own deal and the table is
- * not held for a captain who is no longer there. The room holds for its
+ * not held for a captain who is no longer there. The harbor holds for its
  * captains, not for clocks: a seat that still has a live connection holds
  * the table however long it takes, and this card is only ever laid for a
  * seat whose last socket has gone (see the absence watch in
@@ -312,12 +312,21 @@ export function pathSwitchPhase(phase: unknown): boolean {
  * to defend: a phrase of one or two would read as oddly as the clause
  * would.
  */
-export function pathSwitchPortsList(): string {
-  const names = PATH_SWITCH_PHASES.map((phase) => t(phaseFace(phase).label));
-  return t("{nameList} or {lastName}", {
-    nameList: names.slice(0, -1).join(listJoiner()),
-    lastName: names[names.length - 1],
-  });
+export function pathSwitchPortsList(locale?: Locale): string {
+  const names = PATH_SWITCH_PHASES.map((phase) =>
+    locale === undefined
+      ? t(phaseFace(phase).label)
+      : tFor(locale, phaseFace(phase).label),
+  );
+  return locale === undefined
+    ? t("{nameList} or {lastName}", {
+        nameList: names.slice(0, -1).join(listJoiner()),
+        lastName: names[names.length - 1],
+      })
+    : tFor(locale, "{nameList} or {lastName}", {
+        nameList: names.slice(0, -1).join(listJoiner(locale)),
+        lastName: names[names.length - 1],
+      });
 }
 
 /**

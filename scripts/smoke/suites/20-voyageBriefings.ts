@@ -216,7 +216,7 @@ export async function voyageBriefingsSuite(): Promise<void> {
 
   // The two surfaces a captain meets before the first round, which are
   // components rather than functions and so are read as source rather
-  // than rendered: the lobby's manual and the room's Welcome screen. Each
+  // than rendered: the lobby's manual and the harbor's Welcome screen. Each
   // one takes the mode and prints the record's own fields, and neither
   // states a mode's rules in words of its own. The sentence named in the
   // second check is the one the manual used to carry: it told every crew,
