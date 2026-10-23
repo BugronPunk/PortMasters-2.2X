@@ -24,7 +24,20 @@
 // =====================================================================
 import { BROKERS_FAVOR_PAYOUT_CAP } from "../constants/world";
 
-export type AgeId = "lender" | "trader" | "broker";
+/**
+ * The three Ages, as the ids the tree names them by.
+ *
+ * The list is the one place an Age is named, and the type is read off it,
+ * so a fourth Age added here is one the union knows about. The order is
+ * the cycle's order: the floor of the fortnight count picks an index into
+ * this list, so the Lender takes the first turn, the Trader the second and
+ * the Broker the third, forever. The palette reads its token names off
+ * the same list, so an Age cannot wear a colour the palette was never
+ * told about.
+ */
+export const AGE_IDS = ["lender", "trader", "broker"] as const;
+
+export type AgeId = (typeof AGE_IDS)[number];
 
 export type Age = {
   id: AgeId;
@@ -43,29 +56,37 @@ export type Age = {
 // regardless of local clock skew or DST.
 const FORTNIGHT_MS = 14 * 24 * 60 * 60 * 1000;
 
-const AGES: Age[] = [
-  {
-    id: "lender",
+// The Age table, keyed by the id the list above names. The key is the
+// whole point: an Age the list knows and this table does not is a compile
+// error, and an Age this table knows and the list does not is one too,
+// so the two cannot drift apart the way a pair of hand written lists can.
+const AGE_TABLE: { [K in AgeId]: Omit<Age, "id"> } = {
+  lender: {
     name: "Age of the Lender",
     description:
       "Backing another captain's loan pays extra Renown while this Age holds the harbor.",
     modifier: 0.5,
   },
-  {
-    id: "trader",
+  trader: {
     name: "Age of the Trader",
     description:
       "Every completed barter trade lands one extra Reputation on top of the goods changing hands.",
     modifier: 1,
   },
-  {
-    id: "broker",
+  broker: {
     name: "Age of the Broker",
     description:
       "The Broker's Favor commission cap is raised to 250 Gold, so a single favor can pay out more than usual.",
     modifier: 250,
   },
-];
+};
+
+// The Ages in the order the list above names them, which is the order the
+// cycle walks.
+const AGES: Age[] = AGE_IDS.map((id) => ({
+  id,
+  ...AGE_TABLE[id],
+}));
 
 // Returns the Age that holds the harbor at the given moment. Defaults to
 // the current time so a UI render or a server handler can call it with

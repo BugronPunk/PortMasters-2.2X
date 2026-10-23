@@ -60,10 +60,10 @@ export const COLORS: Record<string, string> = {
   Rags: "#A89A8C",
 };
 
-// [MANIFEST 16: Colorblind Safe Palette] The set above puts Silk (a
-// crimson red) and Tea (a forest green) close enough on the color wheel
-// that a red green colorblind captain, the most common form by far, would
-// struggle to tell them apart at a glance in the same list. This is a
+// The set above puts Silk (a crimson red) and Tea (a forest green) close
+// enough on the color wheel that a red green colorblind captain, the most
+// common form by far, would struggle to tell them apart at a glance in the
+// same list. This is a
 // second, complete mapping for the same set of goods, built around the
 // design technique that actually works for red green colorblindness:
 // separate every color by lightness and saturation as well as by hue,

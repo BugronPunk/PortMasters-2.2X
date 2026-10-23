@@ -37,7 +37,7 @@ const FOCUSABLE_SELECTOR =
  * and back to whatever held it when the dialog closes, so a captain who
  * opened the settings with the keyboard is returned to the settings
  * button rather than to the top of the page. Tab cycles within the dialog
- * instead of walking out into the room behind it, because a dimmed
+ * instead of walking out into the harbor behind it, because a dimmed
  * backdrop is a promise that the page behind will not be reached, and a
  * promise focus does not keep is a lie told to the readers who need the
  * promise most. Escape closes, as before.
@@ -217,19 +217,31 @@ export function ModalSheet({
  * itself. Five copies of a look is how a look drifts, and the drift is
  * invisible until two dialogs are open side by side, so the look lives here
  * and each caller passes only the label.
+ *
+ * A caller whose own layout needs one more rule on the button, such as a
+ * rule against being squeezed by a long heading beside it, hands that rule
+ * over as a class rather than drawing the circle again: the look is the
+ * part that has to stay shared, and a caller that copies the button has
+ * brought the drift back with it.
  */
 export function ModalClose({
   label,
   onClick,
+  className,
 }: {
   label: string;
   onClick: () => void;
+  /** A rule the caller's own layout needs on top of the shared look. */
+  className?: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="pm-pressable rounded-full p-2 hover:bg-black/5 dark:hover:bg-white/10"
+      className={cn(
+        "pm-pressable rounded-full p-2 hover:bg-black/5 dark:hover:bg-white/10",
+        className,
+      )}
       aria-label={label}
     >
       <X className="h-5 w-5" />

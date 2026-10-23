@@ -1,4 +1,4 @@
-// The harbour anchor, rebuilt from primitives for the two generated
+// The harbor anchor, rebuilt from primitives for the two generated
 // images beside this folder. The app icon and the social card are drawn
 // through satori, which lays out boxes and borders and does not rasterize
 // an svg element, so the game's mark cannot be handed to it as the path

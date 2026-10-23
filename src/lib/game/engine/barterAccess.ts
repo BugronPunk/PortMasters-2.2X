@@ -75,7 +75,7 @@ export function flexibleOffersLeft(
 // trade to happen between them. Both ends are checked, so this answers
 // the same way whoever is asking: the captain posting and the captain
 // accepting are held to one standard, which is what keeps the feature
-// alive in a mixed room rather than letting the least established captain
+// alive in a mixed harbor rather than letting the least established captain
 // at the table veto it for everyone.
 export function bothFlexibleBarterUnlocked(
   myRenownLevel: number,

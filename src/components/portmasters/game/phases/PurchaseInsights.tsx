@@ -2,6 +2,7 @@
 
 import {
   basePriceRange,
+  cardLineUnitPrice,
   getCardFinalCost,
   priceRatio,
 } from "@/lib/game/engine";
@@ -9,8 +10,8 @@ import { t } from "@/lib/game/i18n";
 import type { GameState } from "@/lib/game/types";
 import { cn } from "@/lib/utils";
 import { Lightbulb, TrendingUp, ArrowUp, ArrowDown } from "lucide-react";
-import { ItemIcon } from "../../shared";
-import { HuePanel, PanelLabel } from "./PhaseShared";
+import { ItemIcon, PanelLabel } from "../../shared";
+import { HuePanel } from "./PhaseShared";
 
 /**
  * Trade Route Advisor. Analyzes the current market cards and ranks
@@ -42,9 +43,13 @@ export function TradeAdvisor({
     .filter((c) => !game.purchasedCards.includes(c.id))
     .flatMap((c) => {
       const finalCost = getCardFinalCost(game, c);
-      return c.resources.map((r) => {
+      return c.resources.map((r, i) => {
         const range = basePriceRange(r.type) ?? [0, 100];
-        const unit = r.price ?? 0;
+        // The line's share of the charged total, not its list price:
+        // scoring a discounted card off the harbor's list put a card
+        // the captain would pay less for behind one they would pay
+        // more for (see cardLineUnitPrice).
+        const unit = Math.round(cardLineUnitPrice(game, c, i) * 10) / 10;
         const qty = r.quantity ?? 0;
         const baseScore = 1 - priceRatio(unit, range);
         // Boost score for goods that match revealed intel (guaranteed
@@ -76,7 +81,7 @@ export function TradeAdvisor({
 
   return (
     <HuePanel tone="advisor">
-      <PanelLabel tone="text-advisor">
+      <PanelLabel tone="text-advisor" className="mb-1.5">
         <Lightbulb className="h-3.5 w-3.5" /> {t("Best Deals This Round")}
       </PanelLabel>
       <div className="flex flex-wrap gap-2">
@@ -124,10 +129,10 @@ export function TradeAdvisor({
  * Market Pulse. Explains why the board in front of the captain is priced
  * the way it is.
  *
- * The pulse is built from the round the room just finished: a good the
+ * The pulse is built from the round the harbor just finished: a good the
  * crews leaned into harder than an even three way split comes out pricier,
  * one nobody touched comes out softer. The server computes it the moment
- * the room advances into Market, and startMarket hands it straight to
+ * the harbor advances into Market, and startMarket hands it straight to
  * genResourceCard, so by the time this panel draws, the lean is already in
  * the numbers on the cards. It is a reading of the board, not a prediction
  * about the round to come, and saying so plainly matters: a captain who
@@ -150,7 +155,11 @@ export function MarketPulse({ game }: { game: GameState }) {
 
   return (
     <HuePanel tone="pulse">
-      <PanelLabel tone="text-pulse" note={t("already priced into this board")}>
+      <PanelLabel
+        tone="text-pulse"
+        note={t("already priced into this board")}
+        className="mb-1.5"
+      >
         <TrendingUp className="h-3.5 w-3.5" />
         {t("Harbor Pulse")}
       </PanelLabel>
@@ -230,9 +239,9 @@ export function MarketDepth({
 
   return (
     <HuePanel tone="depth" className="px-3.5 py-2 mb-3.5">
-      <div className="text-[9px] font-semibold tracking-wide text-muted-foreground mb-1">
+      <PanelLabel tone="text-muted-foreground" size="sm" className="mb-1">
         {t("Market Depth")}
-      </div>
+      </PanelLabel>
       <div className="flex flex-wrap gap-1.5">
         {entries.map(([good, count]) => (
           <div

@@ -21,9 +21,10 @@
  *   4. Every pm-grad- class used in src/ has a rule to fill it. A class
  *      with no rule leaves the element with no background at all, which
  *      is silent in every other check.
- *   5. Every bright fill has an ink that can be read on it. A gradient
- *      is written in CSS and an ink in a className, so nothing connects
- *      the two unless this check does.
+ *   5. Every bright fill has an ink that can be read on it, and every ink
+ *      carries the value the table gives it. A gradient and its ink are
+ *      both written in CSS, so nothing connects the two unless this check
+ *      does.
  *   6. No raw Tailwind palette class is left in src/. A tree that still
  *      has them has two colour systems in it.
  *
@@ -35,6 +36,9 @@
 
 import { readFileSync } from "node:fs";
 import { join, relative } from "node:path";
+import { PHASE_FACES } from "@/lib/game/phases";
+import { AGE_IDS, HOUSE_TOKENS } from "@/lib/game/engine";
+import type { Phase } from "@/lib/game/types";
 import { walkSrc } from "./walk-src";
 
 const ROOT = join(import.meta.dirname, "..");
@@ -42,9 +46,48 @@ const PALETTE = join(ROOT, "src/app/palette.css");
 const GLOBALS = join(ROOT, "src/app/globals.css");
 const SRC = join(ROOT, "src");
 
+/* The findings, and the one way to add one. They are declared here rather
+   than beside the checks that fill them, because the first thing this
+   file reads is a token, and a token that disagrees with itself is a
+   finding before any of the checks below have run. */
+const problems: string[] = [];
+
+function fail(message: string) {
+  problems.push(message);
+}
+
+/* The hue a token in palette.css carries, read out of the file rather than
+   written here, the same way the widget hues below are read. The meaning
+   colours are declared twice, once for the day and once for the night, and
+   the night value carries the same hue, so the first declaration is the
+   number the check measures against. A token whose two declarations do
+   not agree is a finding, because a check that measured against one of
+   them would call the other one a second answer to the same question. */
+function tokenHue(token: string): number {
+  const css = readFileSync(PALETTE, "utf8");
+  const hues = [
+    ...css.matchAll(
+      new RegExp(`--${token}:\\s*oklch\\([0-9.]+ [0-9.]+ ([0-9.]+)\\)`, "g"),
+    ),
+  ].map((m) => Number(m[1]));
+  if (hues.length === 0) {
+    throw new Error(`palette.css declares no --${token}.`);
+  }
+  for (const hue of hues) {
+    if (hue !== hues[0]) {
+      fail(
+        `palette.css declares --${token} at ${hues[0]} and at ${hue}. ` +
+          `The day and the night must carry the same hue, or the check measures ` +
+          `against a number only one of them wears.`,
+      );
+    }
+  }
+  return hues[0];
+}
+
 /* The red that means danger, cost and error. Nothing identity may come
    this close to it, in either direction round the wheel. */
-const MEANING_RED = 17;
+const MEANING_RED = tokenHue("alarm");
 
 /* The Lobby is the densest screen, and it settles at eleven surfaces
    rather than seventeen once the dialogs are counted honestly: only one
@@ -68,6 +111,72 @@ type Widget = {
 /* Screens are named for what a captain actually has open. */
 const LOBBY = "lobby";
 
+/* The phases, as the engine spells them: the hue the wheel gives each one,
+   the screen it stands on, and the words the report calls it by. The list
+   of phases itself is not kept here: it comes from PHASE_FACES, so a phase
+   the engine adds is a phase this table has to answer for, and a phase the
+   engine drops takes its row with it rather than leaving a row behind. */
+const PHASE_WIDGETS: Record<
+  Phase,
+  { hue: number; screen: string; what: string }
+> = {
+  harbor: { hue: 68, screen: "phase:harbor", what: "The pier" },
+  /* The deal a dealing Gambit departure opens at,
+     between the pier and Dawn. It is a phase of the lap rather than one of
+     the round's six (see PHASE_FACES), so it is listed here with a screen of
+     its own and nothing beside it: what this rung has to clear is the five
+     session surfaces every phase stands among. 207 does, with Members at
+     175 and Chat at 240 the nearest two at 32 and 33 degrees against a
+     floor of twenty, and it sits 170 degrees off the meaning red. Chart
+     at 210.4 and Standing Orders at 208 are nearer than that floor, and
+     both are legal by the dialog rule: the one is a lobby surface this
+     screen never meets, and the other is a dialog, which dims the board
+     behind it and answers to its own screen. */
+  path_draft: {
+    hue: 207,
+    screen: "phase:path-draft",
+    what: "The Path Draft",
+  },
+  dawn: { hue: 325, screen: "phase:dawn", what: "Dawn, the boon draft" },
+  market: { hue: 154, screen: "phase:market", what: "Market" },
+  orders: { hue: 282, screen: "phase:orders", what: "Orders" },
+  parley: { hue: 218, screen: "phase:parley", what: "Parley" },
+  resolve: { hue: 261, screen: "phase:resolve", what: "Resolve" },
+  dusk: { hue: 90, screen: "phase:dusk", what: "Dusk, the shipyard" },
+  /* The two yard screens answer to one screen, because a captain reads one
+     or the other and never both, and that shared screen is what holds the
+     two apart on the wheel. */
+  module_draft: { hue: 132, screen: "phase:modules", what: "Module Draft" },
+  module_swap: { hue: 347, screen: "phase:modules", what: "Module Swap" },
+  bankruptcy: { hue: 325, screen: "phase:bankruptcy", what: "Bankruptcy" },
+  endgame: { hue: 132, screen: "phase:endgame", what: "Endgame" },
+};
+
+/* The phase widgets, in the engine's own order, and named the way
+   palette.css names the token behind each one. A phase the engine names
+   and the table above does not is a finding rather than a crash, because
+   a gate that dies on the finding cannot report it. */
+const PHASE_LIST: Widget[] = (Object.keys(PHASE_FACES) as Phase[]).flatMap(
+  (phase) => {
+    const widget = PHASE_WIDGETS[phase];
+    if (!widget) {
+      fail(
+        `PHASE_FACES names a phase the table gives no hue to (${phase}). ` +
+          `Every phase the engine runs needs a rung on the wheel.`,
+      );
+      return [];
+    }
+    return [
+      {
+        name: phase.replace(/_/g, "-"),
+        hue: widget.hue,
+        screens: [widget.screen],
+        what: widget.what,
+      },
+    ];
+  },
+);
+
 const WIDGETS: Widget[] = [
   /* The Lobby. Eleven surfaces, because the dialogs are their own
      screens. Eleven across the 322 degrees clear of the meaning red is
@@ -80,7 +189,7 @@ const WIDGETS: Widget[] = [
 
      These were counted as all being on screen at the same moment, which
      is what the floor below was set to hold. The lobby now switches
-     between two views, so the chart form and the room board are never up
+     between two views, so the chart form and the harbor board are never up
      together. The geometry is left alone: that pair is legal beside each
      other as it stands, and retuning the floor to one piece of slack
      would buy nothing a captain can see. A new Lobby surface still has to
@@ -211,65 +320,16 @@ const WIDGETS: Widget[] = [
      and never "session": two phases can never be on screen at once and
      several of them lean on that.
 
-     Named for the six phases of the leg plus the pier and the four
+     The list is the engine's own (see PHASE_FACES and the table above it),
+     and what is kept here is what the wheel decides.
+
+     Named for the six phases of the round plus the pier and the four
      personal and terminal states, which is the vocabulary the engine
      runs. There is no artisan entry: the bench is the second station of
      the market rather than a phase of its own, so it wears the market's
      hue and needs no hue that could collide with the panels it opens
      beside. */
-  { name: "harbor", hue: 68, screens: ["phase:harbor"], what: "The pier" },
-  /* [W2: the path draft] The deal a dealing Gambit departure opens at,
-     between the pier and Dawn. It is a phase of the lap rather than one of
-     the leg's six (see PHASE_FACES), so it is listed here with a screen of
-     its own and nothing beside it: what this rung has to clear is the five
-     session surfaces every phase stands among. 207 does, with Members at
-     175 and Chat at 240 the nearest two at 32 and 33 degrees against a
-     floor of twenty, and it sits 170 degrees off the meaning red. Chart
-     at 210.4 and Standing Orders at 208 are nearer than that floor, and
-     both are legal by the dialog rule above: the one is a lobby surface
-     this screen never meets, and the other is a dialog, which dims the
-     board behind it and answers to its own screen. */
-  {
-    name: "path-draft",
-    hue: 207,
-    screens: ["phase:path-draft"],
-    what: "The Path Draft",
-  },
-  {
-    name: "dawn",
-    hue: 325,
-    screens: ["phase:dawn"],
-    what: "Dawn, the boon draft",
-  },
-  { name: "market", hue: 154, screens: ["phase:market"], what: "Market" },
-  { name: "orders", hue: 282, screens: ["phase:orders"], what: "Orders" },
-  { name: "parley", hue: 218, screens: ["phase:parley"], what: "Parley" },
-  { name: "resolve", hue: 261, screens: ["phase:resolve"], what: "Resolve" },
-  {
-    name: "dusk",
-    hue: 90,
-    screens: ["phase:dusk"],
-    what: "Dusk, the shipyard",
-  },
-  {
-    name: "module-draft",
-    hue: 132,
-    screens: ["phase:modules"],
-    what: "Module Draft",
-  },
-  {
-    name: "module-swap",
-    hue: 347,
-    screens: ["phase:modules"],
-    what: "Module Swap",
-  },
-  {
-    name: "bankruptcy",
-    hue: 325,
-    screens: ["phase:bankruptcy"],
-    what: "Bankruptcy",
-  },
-  { name: "endgame", hue: 132, screens: ["phase:endgame"], what: "Endgame" },
+  ...PHASE_LIST,
 
   /* Panels that open inside a phase, and the screens that stand alone.
      Where a hue repeats, the two never share a screen. The Rumor Board
@@ -288,7 +348,7 @@ const WIDGETS: Widget[] = [
     what: "Market Depth",
   },
   { name: "pulse", hue: 90, screens: ["phase:market"], what: "Market Pulse" },
-  /* [C1: the Larder and Short Rations] The provisions panel is the fourth
+  /* The provisions panel is the fourth
      thing to open inside the Market, and it had to find a rung on a screen
      that already carries four: the phase tag at 154, the Advisor at 197,
      the Depth at 347 and the Pulse at 90, plus the five session surfaces a
@@ -302,7 +362,7 @@ const WIDGETS: Widget[] = [
     screens: ["phase:market"],
     what: "The Larder, and the provisions it buys",
   },
-  /* [C3: garments and the cold] The Wardrobe is the fifth panel to open
+  /* The Wardrobe is the fifth panel to open
      inside the Market, and the Larder's note above leaves it one window:
      217 to 220, between the Advisor at 197 and Chat at 240, which the
      session rule checks against every phase. 219 takes it, 22 degrees from
@@ -318,7 +378,7 @@ const WIDGETS: Widget[] = [
     screens: ["phase:market"],
     what: "The Wardrobe, and the clothes the crew wears",
   },
-  /* [D4: Loom: the Refit] The bench is the sixth panel to open inside the
+  /* The bench is the sixth panel to open inside the
      Market, and by the time it arrived the screen's rungs were nearly all
      spoken for: the phase tag at 154, the Advisor at 197, the Depth at 347,
      the Pulse at 90, the Larder at 270, the Wardrobe at 219, and the five
@@ -386,7 +446,7 @@ const WIDGETS: Widget[] = [
   { name: "admin", hue: 226, screens: ["admin"], what: "Operator Console" },
 ];
 
-/* A room's host crown is not in the table on purpose. A crown is gold,
+/* A harbor's host crown is not in the table on purpose. A crown is gold,
    and --gold is already a meaning token here, so it wears that rather
    than taking a hue of its own away from a panel. */
 
@@ -400,12 +460,6 @@ function sharesScreen(a: Widget, b: Widget): boolean {
   const chrome = (w: Widget) => w.screens.includes("session");
   const phase = (w: Widget) => w.screens.some((s) => s.startsWith("phase:"));
   return (chrome(a) && phase(b)) || (chrome(b) && phase(a));
-}
-
-const problems: string[] = [];
-
-function fail(message: string) {
-  problems.push(message);
 }
 
 function circularGap(a: number, b: number): number {
@@ -505,7 +559,14 @@ function checkTokens() {
      is, not which panel it belongs to, so they are not spread around the
      wheel. An Age is the same kind of fact as a House, since every
      harbor is in the same one and it is drawn in the Lobby and in the
-     session alike. */
+     session alike.
+
+     The House and Age tokens are read off the lists that name them, so a
+     fourth House or a fourth Age is a token this check already knows
+     about rather than a line somebody has to remember to add here. The
+     House tokens come from the House table and the Age tokens from the
+     Age list, and both are the same facts the screens that draw them
+     read. */
   const notWidgets = new Set([
     "gain",
     "alarm",
@@ -518,12 +579,8 @@ function checkTokens() {
     "medal-gold",
     "medal-silver",
     "medal-bronze",
-    "house-jade",
-    "house-vermilion",
-    "house-lotus",
-    "age-lender",
-    "age-trader",
-    "age-broker",
+    ...Object.values(HOUSE_TOKENS),
+    ...AGE_IDS.map((id) => `age-${id}`),
   ]);
   for (const name of declared) {
     if (!tableNames.has(name) && !notWidgets.has(name)) {
@@ -586,6 +643,32 @@ function checkGradients(files: string[]) {
    call site, where a rule order nobody can see was free to overrule it. */
 const BRIGHT = 0.7;
 
+/* The inks a fill may wear, and the value each one carries. The table is
+   the source of truth, the way the widget table is: globals.css is
+   checked against it rather than the other way round. A number on its own
+   cannot say which of the four it is, so each has a name, and the check
+   reads the name as well as the value. */
+const INKS: Record<string, string> = {
+  warm: "oklch(0.28 0.05 70)",
+  bronze: "oklch(0.26 0.05 50)",
+  vermilion: "oklch(0.28 0.04 30)",
+  silver: "oklch(0.26 0.02 265)",
+};
+
+/* Which ink each fill wears. The warm ink is the ink of the gold, the
+   gold medal, the lotus house and the trader age; the other three are
+   deliberate departures, one for each surface that wanted an ink of its
+   own. A fill that is not named here is a fill that names no ink. */
+const GRADIENT_INKS: Record<string, string> = {
+  "pm-grad-gold": "warm",
+  "pm-grad-medal-gold": "warm",
+  "pm-grad-medal-bronze": "bronze",
+  "pm-grad-house-lotus": "warm",
+  "pm-grad-house-vermilion": "vermilion",
+  "pm-grad-age-trader": "warm",
+  "pm-grad-medal-silver": "silver",
+};
+
 function checkInk() {
   const css = readFileSync(PALETTE, "utf8");
   const lightness = new Map<string, number>();
@@ -593,9 +676,40 @@ function checkInk() {
     lightness.set(m[1], Number(m[2]));
   }
 
-  for (const m of readFileSync(GLOBALS, "utf8").matchAll(
-    /\.pm-grad-([a-z-]+)\s*\{([^}]*)\}/g,
-  )) {
+  const globals = readFileSync(GLOBALS, "utf8");
+
+  /* The inks globals.css declares, by name and by value. */
+  const declared = new Map<string, string>();
+  for (const m of globals.matchAll(/--pm-ink-([a-z-]+)\s*:\s*([^;]+);/g)) {
+    declared.set(m[1], m[2].trim().replace(/\s+/g, " "));
+  }
+
+  /* Every ink the table names is declared, with the value the table gives
+     it, and no ink is declared that the table does not name. The first
+     half catches a value edited in the file and not here, the second
+     catches an ink added to the file without this check being told. */
+  for (const [name, value] of Object.entries(INKS)) {
+    const said = declared.get(name);
+    if (said === undefined) {
+      fail(
+        `globals.css declares no --pm-ink-${name}. The table gives it ${value}.`,
+      );
+    } else if (said !== value) {
+      fail(
+        `The table gives --pm-ink-${name} ${value}, globals.css says ${said}. ` +
+          `One of the two was edited without the other.`,
+      );
+    }
+  }
+  for (const name of declared.keys()) {
+    if (!(name in INKS)) {
+      fail(
+        `globals.css declares --pm-ink-${name}, which no ink in the table claims.`,
+      );
+    }
+  }
+
+  for (const m of globals.matchAll(/\.pm-grad-([a-z-]+)\s*\{([^}]*)\}/g)) {
     const [, name, body] = m;
     const fill = body.match(/--pm-fill:\s*var\((--w-[a-z-]+)\)/);
     if (!fill) continue;
@@ -603,10 +717,59 @@ function checkInk() {
       fill[1].replace(/^--w-/, "").replace(/-fill$/, ""),
     );
     if (value === undefined) continue;
-    if (value >= BRIGHT && !body.includes("--pm-ink")) {
+
+    /* The ink the rule names. A rule that names none at all is caught in
+       the same breath; a rule that writes a value of its own rather than
+       asking for a named one is caught here, because a bare value is a
+       copy of something the table holds and nothing could compare it
+       against. */
+    const names = /--pm-ink\s*:/.test(body);
+    const ink = body.match(/--pm-ink\s*:\s*var\(\s*--pm-ink-([a-z-]+)\s*\)/);
+
+    if (value >= BRIGHT && !names) {
       fail(
         `.pm-grad-${name} fills from ${fill[1]} at lightness ${value}, which is too ` +
           `bright for white ink, and it names no --pm-ink. The seal would be unreadable.`,
+      );
+      continue;
+    }
+    if (!names) continue;
+    if (!ink) {
+      fail(
+        `.pm-grad-${name} writes an ink of its own rather than asking for a named one. ` +
+          `The named inks are what a check can compare, and a bare value here is a copy ` +
+          `that nothing can check.`,
+      );
+      continue;
+    }
+
+    const inkName = ink[1];
+    const expected = GRADIENT_INKS[`pm-grad-${name}`];
+    if (expected === undefined) {
+      fail(
+        `.pm-grad-${name} wears the ink ${inkName}, and the table says no fill wears one. ` +
+          `A fill that names an ink is a decision this table has to be told about.`,
+      );
+      continue;
+    }
+    if (expected !== inkName) {
+      fail(
+        `.pm-grad-${name} wears the ink ${inkName}; the table gives it ${expected}. ` +
+          `One of the two was edited without the other.`,
+      );
+    }
+
+    /* The ink has to be dark enough to read on a fill this bright, which
+       is the claim the rule above makes about every fill past the line. */
+    const said = declared.get(inkName);
+    const inkLightness = said
+      ? Number(/oklch\(([0-9.]+)/.exec(said)?.[1])
+      : NaN;
+    if (value >= BRIGHT && inkLightness >= BRIGHT) {
+      fail(
+        `.pm-grad-${name} fills from ${fill[1]} at lightness ${value} and wears an ink at ` +
+          `lightness ${inkLightness}, which is too light to read on it. The seal would be ` +
+          `unreadable.`,
       );
     }
   }

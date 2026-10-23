@@ -169,11 +169,11 @@
      Eleven keys, eleven hues. That many can never run at once, which is
      why a pair here may share a hue and never be seen together.
 
-     The six of the leg come first, in the order the design names them,
+     The six of the round come first, in the order the design names them,
      because that is the order a reader of this file is looking for them
      in. The shipyard's two sub states and the two terminals follow.
   */
-  /* Harbor: the pier, before the leg begins. */
+  /* Harbor: the pier, before the round begins. */
   --w-harbor: oklch(0.53 0.13 68);
   /* Path Draft: the deal a dealing Gambit departure opens at. Between the
      pier and Dawn because that is where the room meets it, and a hue no
@@ -291,7 +291,7 @@
      distance rules that keep the widget hues apart. A House colour is
      data: it says which House a captain sails for, and it is the same in
      every panel that mentions one. The word for this used to be faction,
-     which [D1: the path configuration module] retired: a captain's
+     which retired: a captain's
      identity in this game is a path (see src/lib/game/paths.ts), and a
      House is the account level colour a captain sails under rather than
      an identity the table is built around.

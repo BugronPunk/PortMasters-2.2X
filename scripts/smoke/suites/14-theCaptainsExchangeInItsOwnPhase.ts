@@ -28,8 +28,7 @@ export async function theCaptainsExchangeInItsOwnPhaseSuite(inputs: {
     where: { userId: guest.id },
     data: { renownLevel: 1, renownXP: 0 },
   });
-  // [J2: the mute and the report] A mute belongs to the table it was set
-  // at, so setting sail lifts it. The host silences the guest here, with
+  // A mute belongs to the table it was set at, so setting sail lifts it. The host silences the guest here, with
   // the harbor still in the lobby, and the frame the departure sends is
   // what says the silence did not come along. The guest rather than the
   // third captain, who has just given up their seat: a mute can only be
@@ -52,7 +51,7 @@ export async function theCaptainsExchangeInItsOwnPhaseSuite(inputs: {
     "room:members",
     (payload) => (payload?.mutedUserIds ?? []).length === 0,
   );
-  // The exchange only opens while the room is actually in the Parley,
+  // The exchange only opens while the harbor is actually in the Parley,
   // and the checkpoint only follows a report from a voyage that has set
   // sail, so both of those have to happen before the board will take one.
   hostSocket.emit("room:start", { roomId: roomId });

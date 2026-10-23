@@ -40,23 +40,11 @@ import {
   statusGuardedFragments,
   validateStatusCopy,
 } from "@/lib/game/status-copy";
-import { walkSrc } from "./walk-src";
+import { walkSrc, withoutComments } from "./walk-src";
 
 const ROOT = join(import.meta.dirname, "..");
 const SRC = join(ROOT, "src");
 const MODULE = join(SRC, "lib", "game", "status-copy.ts");
-
-/* The three comment shapes stripped before the sweep reads a file, the
-   same three the smoke harness's withoutComments strips. It is kept here
-   rather than imported because this script runs inside the build, and the
-   harness's import graph carries the socket client and the database:
-   nothing about a string check should need either. */
-function withoutComments(source: string): string {
-  return source
-    .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
-    .replace(/\/\*[\s\S]*?\*\//g, " ")
-    .replace(/^[ \t]*\/\/.*$/gm, " ");
-}
 
 const findings: string[] = validateStatusCopy();
 

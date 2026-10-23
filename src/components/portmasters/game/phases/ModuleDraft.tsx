@@ -26,7 +26,7 @@ import {
  * The cards are the same draft cards the boon draft deals, in the module
  * hue.
  *
- * The room's bar is drawn under the header because this screen is a seat
+ * The harbor's bar is drawn under the header because this screen is a seat
  * the ready check waits on: a captain inside the draft is standing at
  * Dusk, and the table holds for them until they finish or the seat's clock
  * runs out. The bar is what says so, with the countdown and the captains
@@ -76,7 +76,7 @@ export function ModuleDraft({
           {!game.moduleSwapUsed && !swapDealable && (
             <PanelNote className="text-center text-[11px] mb-3">
               {t(
-                "Nothing new to deal: every module the yard could offer this hull is either on this table already or aboard. Take one of these, or come back next leg.",
+                "Nothing new to deal: every module the yard could offer this hull is either on this table already or aboard. Take one of these, or come back next round.",
               )}
             </PanelNote>
           )}

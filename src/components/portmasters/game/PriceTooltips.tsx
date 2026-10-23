@@ -27,20 +27,20 @@ export function PriceBreakdownTooltip({
     <div className="space-y-0.5 min-w-[160px]">
       <div className="flex justify-between gap-3">
         <span>{t("Base")}</span>
-        <span>{breakdown.base}g</span>
+        <span>{breakdown.base} Gold</span>
       </div>
       {breakdown.steps.map((s, i) => (
         <div key={i} className="flex justify-between gap-3">
           <span>{s.label}</span>
           <span>
             {s.delta >= 0 ? "+" : ""}
-            {s.delta}g
+            {s.delta} Gold
           </span>
         </div>
       ))}
       <div className="flex justify-between gap-3 font-semibold border-t border-current/15 pt-0.5 mt-0.5">
         <span>{t("Final")}</span>
-        <span>{breakdown.final}g</span>
+        <span>{breakdown.final} Gold</span>
       </div>
     </div>
   );

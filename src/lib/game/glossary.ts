@@ -27,8 +27,8 @@ import { INCOME_TAX_RATE, VAT_RATE } from "./engine";
 import { listJoiner, t, type Params } from "./i18n";
 
 // The two ladders the pack's cells leave as tokens, built from the
-// charter table the engine prices by rather than written out: the one
-// escort fee this entry used to quote for all three charters was wrong
+// difficulty table the engine prices by rather than written out: the one
+// escort fee this entry used to quote for all three waters was wrong
 // on two of them, and the two tiers that raise their raid odds at the
 // midpoint raise them to a different figure. The names inside are read
 // for the language the captain holds, the joining separator is the
@@ -88,43 +88,43 @@ export const GLOSSARY: Record<string, string> = {
   // a second telling of the same promise.
   Renown:
     "Your standing across every harbor, kept on the account rather than in one voyage: the Reputation you bank becomes Renown XP when a voyage ends. {RENOWN_BONUS_LINE}. The title beside your level is the ladder's own name for the rung you have reached.",
-  Gold: "Your spendable funds. Hit zero with bills still due and the voyage ends in bankruptcy.",
+  Gold: "The Gold you can spend. Hit zero with bills still due and the voyage ends in bankruptcy.",
   VAT: "A {vatPct}% tax on the profit margin of finished good sales (selling price minus material cost minus wage). Raw material sales aren't taxed this way.",
   "Income Tax":
     "A {incomeTaxPct}% tax on your net profit for the round, charged at Resolve after everything else is paid.",
   Freight:
-    "The shipping fee for completing a trade order, based on how many items you're moving. Reduced by your ship level and certain boons or modules.",
+    "The fee charged for delivering a trade order, based on how many items you're moving. Reduced by your ship level and certain boons or modules.",
   Maintenance:
     "A fixed per round upkeep fee for your ship, due at Resolve regardless of how the round went.",
   "Ship Level":
-    "Raises your module slots and gives a flat discount on freight costs. Upgraded from the Shipyard at Dusk.",
+    "Raised by a Hull Upgrade at the Shipyard during Dusk. Each level opens a module slot and adds a flat discount on freight costs.",
   Wages:
     "What your hired artisans cost per round, paid at Resolve whether they produced anything or not.",
   Boon: "A one round bonus you draft at the start of each round, at Dawn. It's picked personally, so your three choices differ from everyone else's.",
   Module:
-    "A permanent ship upgrade, drafted from the Shipyard once you have a free slot. Stays equipped until you swap it out.",
+    "A permanent module drafted at the Shipyard once you have a free slot. It stays rigged until you swap or trade it.",
   Barter:
     "Trade directly with another captain instead of through the market, on the Captain's Exchange during the Parley or from the harbor chat once you reach Renown Level {FLEXIBLE_BARTER_UNLOCK_LEVEL}. Post what you have for what you want; the offered amount is set aside the moment you post it, and comes back to you if it's canceled, if nobody takes it, or if a flexible offer of yours is taken and this one is retired with it.",
   // The odds ladder is a token the reader fills (see pirateLadder).
   "Pirate Attack":
-    "A roll at Resolve, before wages and maintenance come due, that can take every Gold coin you're carrying. The charter sets the odds: {pirateLadder}. Hire an escort beforehand to guarantee safe passage instead of risking it.",
+    "A roll at Resolve, before wages and maintenance come due, that can take every Gold coin you're carrying. The voyage's rules set the odds: {pirateLadder}. Hire an escort beforehand to guarantee safe passage instead of risking it.",
   // The harbor's own escort, bought at Resolve by any captain. The fee
   // ladder is a token the reader fills (see escortLadder). The escort a
   // Convoy captain sells on a Gambit voyage is a different thing with the
   // same name, and it has its own entry below rather than a share of this
   // one.
   Escort:
-    "The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the charter sets as a share of your Gold: {escortLadder}. Once hired, the round's pirates are no longer a risk.",
+    "The harbor's escort, hired at Resolve by any captain: guarantees safe passage from that round's pirate attack, for a fee the voyage's rules set as a share of your Gold: {escortLadder}. Once hired, the round's pirates are no longer a risk.",
   // The other escort, named so the two cannot be read as one: the market
   // a Convoy captain sells from at the Parley on a Gambit voyage, priced
-  // by the two captains rather than by the charter, and read at the raid
+  // by the two captains rather than by the voyage's rules, and read at the raid
   // by the coverage figure (see CONVOY_RAID_COVERAGE in ./constants/paths
   // for the share the seller's guns beat off). It ends on the offer's own
   // rule rather than a second telling of it (see ESCORT_OFFER_DEATH in
   // ./constants/copy), which is the same sentence the desk that posts the
   // offer opens with.
   "Escort Market":
-    "A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one leg of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off {convoyCoverPct}% of a raid in that leg, and the rest comes out of the seller's own Gold. {ESCORT_OFFER_DEATH}",
+    "A Convoy path market at the Parley on a Gambit voyage: a Convoy captain sells one round of protection to one other captain at a price the two of them agree. The buyer pays the fee at the handshake, the seller's cannons beat off {convoyCoverPct}% of a raid in that round, and the rest comes out of the seller's own Gold. {ESCORT_OFFER_DEATH}",
   "Financial Aid":
     "A loan from another captain when you can't cover this round's wages or maintenance on your own. The lender's Gold transfers to you immediately; you owe it back before the voyage ends, or it's deducted automatically and handed to them at the voyage's final round.",
 
@@ -179,7 +179,7 @@ const FIGURED_ENTRIES: Record<string, () => Params> = {
   }),
 };
 
-// [F2: the card record, and the mode weighting field] The two card
+// The two card
 // entries a captain can hover, read off the records rather than off
 // copies kept in the map above, so a card renamed or retuned moves its
 // glossary entry with it. The description comes off cardText, which is

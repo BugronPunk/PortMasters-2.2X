@@ -101,10 +101,10 @@ export default function Home() {
     );
   }
 
-  // Entering a harbor always means the same two things: hold the room
+  // Entering a harbor always means the same two things: hold the harbor
   // detail this page renders from, and switch to the game screen. Both
   // Lobby renders below hand over this handler, so the fall through one
-  // cannot strand a click by having no room to pass on.
+  // cannot strand a click by having no harbor to pass on.
   const enterRoom = async (summary: RoomSummary) => {
     try {
       const { room: detail } = await api.getRoom(summary.id);
@@ -150,7 +150,7 @@ export default function Home() {
     );
   }
 
-  // The fall through: a game screen with no room to draw, which is where a
+  // The fall through: a game screen with no harbor to draw, which is where a
   // harbor that closed underneath this captain lands.
   return harbor;
 }

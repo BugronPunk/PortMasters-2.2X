@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import {
@@ -97,6 +98,21 @@ type LanguageSetting = {
 const LanguageContext = createContext<LanguageSetting | null>(null);
 
 /**
+ * The reading for a render outside the provider.
+ *
+ * One object rather than a new one per call, so a consumer that reads it
+ * is not handed a fresh identity every time it renders, and the language
+ * it carries is read live rather than captured, so a screen mounted
+ * without the provider still prints in the language the process holds.
+ */
+const OUTSIDE_PROVIDER: LanguageSetting = {
+  get locale() {
+    return getLocale();
+  },
+  setLanguage: storeLocale,
+};
+
+/**
  * The captain's language, and the write that changes it.
  *
  * Read through the context so every screen under the provider redraws
@@ -108,7 +124,7 @@ const LanguageContext = createContext<LanguageSetting | null>(null);
 export function useLanguage(): LanguageSetting {
   const context = useContext(LanguageContext);
   if (context) return context;
-  return { locale: getLocale(), setLanguage: storeLocale };
+  return OUTSIDE_PROVIDER;
 }
 
 /**
@@ -146,8 +162,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLocaleState(next);
   }, []);
 
+  // The value is one object for as long as the language and the write
+  // are the same, so the screens that read it redraw when the pick
+  // changes rather than every time this provider renders for any other
+  // reason.
+  const setting = useMemo<LanguageSetting>(
+    () => ({ locale, setLanguage }),
+    [locale, setLanguage],
+  );
+
   return (
-    <LanguageContext.Provider value={{ locale, setLanguage }}>
+    <LanguageContext.Provider value={setting}>
       {children}
     </LanguageContext.Provider>
   );
